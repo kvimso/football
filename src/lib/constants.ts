@@ -27,9 +27,7 @@ export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 
 export const PLAYER_STATUSES = [
   'active',
-  'injured',
-  'transferred',
-  'inactive',
+  'free_agent',
 ] as const
 
 export const CONTACT_REQUEST_STATUSES = [

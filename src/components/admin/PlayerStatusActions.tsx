@@ -34,11 +34,11 @@ export function PlayerStatusActions({ playerId, status }: PlayerStatusActionsPro
       disabled={loading}
       className={`text-xs disabled:opacity-50 ${
         status === 'active'
-          ? 'text-red-400 hover:text-red-300'
+          ? 'text-yellow-400 hover:text-yellow-300'
           : 'text-green-400 hover:text-green-300'
       }`}
     >
-      {status === 'active' ? t('admin.players.deactivate') : t('admin.players.reactivate')}
+      {status === 'active' ? t('admin.players.markFreeAgent') : t('admin.players.reactivate')}
     </button>
   )
 }

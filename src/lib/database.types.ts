@@ -264,6 +264,45 @@ export type Database = {
           },
         ]
       }
+      player_club_history: {
+        Row: {
+          club_id: string
+          id: string
+          joined_at: string
+          left_at: string | null
+          player_id: string
+        }
+        Insert: {
+          club_id: string
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          player_id: string
+        }
+        Update: {
+          club_id?: string
+          id?: string
+          joined_at?: string
+          left_at?: string | null
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_club_history_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_club_history_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       player_season_stats: {
         Row: {
           assists: number | null
@@ -433,13 +472,15 @@ export type Database = {
           name: string
           name_ka: string
           nationality: string | null
+          parent_guardian_contact: string | null
           photo_url: string | null
+          platform_id: string
           position: string
           preferred_foot: string | null
           scouting_report: string | null
           scouting_report_ka: string | null
           slug: string
-          status: string | null
+          status: Database["public"]["Enums"]["player_status"] | null
           updated_at: string | null
           weight_kg: number | null
         }
@@ -454,13 +495,15 @@ export type Database = {
           name: string
           name_ka: string
           nationality?: string | null
+          parent_guardian_contact?: string | null
           photo_url?: string | null
+          platform_id: string
           position: string
           preferred_foot?: string | null
           scouting_report?: string | null
           scouting_report_ka?: string | null
           slug: string
-          status?: string | null
+          status?: Database["public"]["Enums"]["player_status"] | null
           updated_at?: string | null
           weight_kg?: number | null
         }
@@ -475,13 +518,15 @@ export type Database = {
           name?: string
           name_ka?: string
           nationality?: string | null
+          parent_guardian_contact?: string | null
           photo_url?: string | null
+          platform_id?: string
           position?: string
           preferred_foot?: string | null
           scouting_report?: string | null
           scouting_report_ka?: string | null
           slug?: string
-          status?: string | null
+          status?: Database["public"]["Enums"]["player_status"] | null
           updated_at?: string | null
           weight_kg?: number | null
         }
@@ -578,6 +623,61 @@ export type Database = {
           },
         ]
       }
+      transfer_requests: {
+        Row: {
+          expires_at: string
+          from_club_id: string
+          id: string
+          player_id: string
+          requested_at: string
+          resolved_at: string | null
+          status: Database["public"]["Enums"]["transfer_status"]
+          to_club_id: string
+        }
+        Insert: {
+          expires_at?: string
+          from_club_id: string
+          id?: string
+          player_id: string
+          requested_at?: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["transfer_status"]
+          to_club_id: string
+        }
+        Update: {
+          expires_at?: string
+          from_club_id?: string
+          id?: string
+          player_id?: string
+          requested_at?: string
+          resolved_at?: string | null
+          status?: Database["public"]["Enums"]["transfer_status"]
+          to_club_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transfer_requests_from_club_id_fkey"
+            columns: ["from_club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transfer_requests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transfer_requests_to_club_id_fkey"
+            columns: ["to_club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -587,7 +687,8 @@ export type Database = {
       get_user_role: { Args: never; Returns: string }
     }
     Enums: {
-      [_ in never]: never
+      player_status: "active" | "free_agent"
+      transfer_status: "pending" | "accepted" | "declined" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -714,6 +815,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      player_status: ["active", "free_agent"],
+      transfer_status: ["pending", "accepted", "declined", "expired"],
+    },
   },
 } as const

@@ -26,7 +26,7 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
 
   const { data: player, error: playerError } = await supabase
     .from('players')
-    .select('id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, status, scouting_report, scouting_report_ka, is_featured, club_id')
+    .select('id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, parent_guardian_contact, club_id')
     .eq('id', id)
     .single()
 

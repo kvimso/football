@@ -44,7 +44,7 @@ insert into public.clubs (id, name, name_ka, slug, city, region, description, de
 -- ============================================================
 
 -- Dinamo Tbilisi Academy (4 players)
-insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, status, is_featured, scouting_report, scouting_report_ka) values
+insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, platform_id, status, is_featured, scouting_report, scouting_report_ka) values
 (
   'b1b2c3d4-0001-4000-8000-000000000001',
   'a1b2c3d4-0001-4000-8000-000000000001',
@@ -55,6 +55,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'ST',
   'Right',
   178, 70, 9,
+  'GFP-00001',
   'active', true,
   'Clinical finisher with exceptional movement in the box. Strong off-the-ball runs, good first touch, and composure under pressure. Needs to improve aerial ability and hold-up play. Top prospect for his age group.',
   'კლინიკური დამამთავრებელი, განსაკუთრებული მოძრაობით მოედნის ფართობში. ძლიერი გარბენები ბურთის გარეშე, კარგი პირველი შეხება და სიმშვიდე წნეხის ქვეშ. საჰაერო თამაშისა და ბურთის შეკავების გაუმჯობესება სჭირდება.'
@@ -69,6 +70,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'MID',
   'Both',
   175, 68, 8,
+  'GFP-00002',
   'active', true,
   'Creative central midfielder with excellent vision and passing range. Dictates tempo, finds pockets of space, and delivers precise through balls. Defensively needs more discipline. Captain material.',
   'შემოქმედებითი ცენტრალური ნახევარმცველი, შესანიშნავი ხედვითა და პასის დიაპაზონით. არეგულირებს ტემპს, პოულობს თავისუფალ სივრცეებს და აწვდის ზუსტ გამჭოლ პასებს. დამცველობითი დისციპლინის გაუმჯობესება სჭირდება.'
@@ -83,6 +85,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'DEF',
   'Left',
   184, 76, 4,
+  'GFP-00003',
   'active', false,
   'Commanding left-footed centre-back with strong aerial presence. Reads the game well, excellent in 1v1 duels, and comfortable playing out from the back. Could improve pace for recovery runs.',
   'მბრძანებლური მარცხენა ფეხის ცენტრალური მცველი, ძლიერი საჰაერო თამაშით. კარგად კითხულობს თამაშს, შესანიშნავია ერთ-ერთზე დუელებში და კომფორტულად გამოაქვს ბურთი უკნიდან. სისწრაფის გაუმჯობესება სჭირდება.'
@@ -97,13 +100,14 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'GK',
   'Right',
   188, 78, 1,
+  'GFP-00004',
   'active', false,
   'Tall, agile goalkeeper with quick reflexes and good shot-stopping ability. Commands his area well for his age. Distribution with feet needs refinement. Shows leadership qualities.',
   'მაღალი, მოქნილი მეკარე, სწრაფი რეაქციითა და კარგი დარტყმების მოგერიების უნარით. კარგად მართავს თავის ფართობს ასაკისთვის. ფეხით პასების გაუმჯობესება სჭირდება. ლიდერის თვისებები აქვს.'
 );
 
 -- Saburtalo Tbilisi Academy (4 players)
-insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, status, is_featured, scouting_report, scouting_report_ka) values
+insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, platform_id, status, is_featured, scouting_report, scouting_report_ka) values
 (
   'b1b2c3d4-0005-4000-8000-000000000005',
   'a1b2c3d4-0002-4000-8000-000000000002',
@@ -114,6 +118,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'WNG',
   'Left',
   172, 65, 11,
+  'GFP-00005',
   'active', true,
   'Explosive left winger with blistering pace and excellent dribbling in tight spaces. Cuts inside onto his right foot to shoot or create. End product improving rapidly. One of the most exciting prospects in the U18 league.',
   'ფეთქებადი მარცხენა მეფრთე, აალებული სისწრაფითა და შესანიშნავი დრიბლინგით მჭიდრო სივრცეებში. შეჭრება მარჯვენა ფეხზე დარტყმის ან შექმნისთვის. საბოლოო პროდუქტი სწრაფად უმჯობესდება.'
@@ -128,6 +133,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'ATT',
   'Right',
   180, 72, 10,
+  'GFP-00006',
   'active', true,
   'Versatile attacking midfielder who can play as a false 9 or behind the striker. Excellent technique, creative passing, and growing goal threat. Good work rate off the ball. Needs to add physicality.',
   'მრავალმხრივი შემტევი ნახევარმცველი, რომელსაც შეუძლია ცრუ ცხრიანის ან თავდამსხმელის უკან თამაში. შესანიშნავი ტექნიკა, შემოქმედებითი პასები და მზარდი სათამაშო საფრთხე. კარგი მუშაობა ბურთის გარეშე.'
@@ -142,6 +148,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'DEF',
   'Right',
   182, 75, 5,
+  'GFP-00007',
   'active', false,
   'Strong, physical right-sided centre-back. Dominant in aerial duels and tackles. Good recovery pace for his size. Can step forward with the ball confidently. Positional awareness continues to develop.',
   'ძლიერი, ფიზიკური მარჯვენა მხარის ცენტრალური მცველი. დომინანტური საჰაერო დუელებსა და ჩართვებში. კარგი აღდგენის სისწრაფე თავისი ზომისთვის. შეუძლია ბურთით წინ გამოსვლა.'
@@ -156,13 +163,14 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'MID',
   'Right',
   176, 69, 6,
+  'GFP-00008',
   'active', false,
   'Box-to-box midfielder with tireless running and strong defensive contributions. Wins the ball back high up the pitch and drives forward. Passing in the final third needs improvement. Excellent engine.',
   'ბოქს-თუ-ბოქს ნახევარმცველი, დაუღალავი სირბილითა და ძლიერი დამცველობითი წვლილით. იბრუნებს ბურთს მოედნის მაღალ ნაწილში და მიისწრაფვის წინ. პასი ბოლო მესამედში გაუმჯობესებას საჭიროებს.'
 );
 
 -- Torpedo Kutaisi Academy (4 players)
-insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, status, is_featured, scouting_report, scouting_report_ka) values
+insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, platform_id, status, is_featured, scouting_report, scouting_report_ka) values
 (
   'b1b2c3d4-0009-4000-8000-000000000009',
   'a1b2c3d4-0003-4000-8000-000000000003',
@@ -173,6 +181,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'WNG',
   'Right',
   170, 64, 7,
+  'GFP-00009',
   'active', false,
   'Tricky right winger with quick feet and ability to beat defenders 1v1. Delivers dangerous crosses and can cut inside. Inconsistent decision-making but raw talent is clear. Needs more end product.',
   'ეშმაკი მარჯვენა მეფრთე, სწრაფი ფეხებითა და მცველების 1v1-ში გავლის უნარით. საშიში გადაცემები და შეჭრის უნარი. არათანმიმდევრული გადაწყვეტილებები, მაგრამ ნედლი ტალანტი აშკარაა.'
@@ -187,6 +196,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'ST',
   'Left',
   183, 77, 9,
+  'GFP-00010',
   'active', false,
   'Powerful target striker with a lethal left foot. Holds the ball up well, brings others into play, and is a constant threat from set pieces. Pace is limited but compensates with positioning and strength.',
   'ძლიერი სამიზნე თავდამსხმელი, სასიკვდილო მარცხენა ფეხით. კარგად აკავებს ბურთს, სხვებს რთავს თამაშში და მუდმივი საფრთხეა სტანდარტებზე. სისწრაფე შეზღუდულია, მაგრამ ანაზღაურებს პოზიციონირებითა და ძალით.'
@@ -201,6 +211,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'MID',
   'Right',
   179, 71, 14,
+  'GFP-00011',
   'active', false,
   'Deep-lying playmaker with an outstanding passing range. Sprays long balls with precision and controls the rhythm of play. Needs to improve defensive intensity and mobility. Technical quality is top-tier for his age.',
   'ღრმა პლეიმეიკერი, შესანიშნავი პასის დიაპაზონით. ზუსტად ასრულებს გრძელ გადაცემებს და აკონტროლებს თამაშის რიტმს. დამცველობითი ინტენსივობისა და მობილურობის გაუმჯობესება სჭირდება.'
@@ -215,6 +226,7 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
   'GK',
   'Right',
   191, 82, 1,
+  'GFP-00012',
   'active', false,
   'Imposing goalkeeper with excellent shot-stopping and command of his area. Brave in 1v1 situations and communicates well with his defence. Distribution is improving. Potential to play at a high level.',
   'შთამბეჭდავი მეკარე, შესანიშნავი დარტყმების მოგერიებითა და ფართობის მართვით. მამაცია ერთ-ერთზე სიტუაციებში და კარგად კომუნიკაციობს თავის დაცვასთან. პასი უმჯობესდება.'
@@ -365,3 +377,26 @@ insert into public.match_player_stats (match_id, player_id, minutes_played, goal
 ('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 0, 0, 66.80, 4, 1, 1, 0, 9.70, 16, 30.8, 6.5),   -- Mikautadze
 ('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 1, 0, 82.50, 1, 1, 5, 4, 8.70, 11, 27.0, 7.6),   -- Lobzhanidze (header)
 ('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0004-4000-8000-000000000004', 90, 0, 0, 60.00, 0, 0, 0, 0, 4.10, 4, 18.2, 7.5);    -- Nika K. (GK, great saves)
+
+-- ============================================================
+-- PLAYER CLUB HISTORY (all 12 players — currently at their clubs)
+-- ============================================================
+insert into public.player_club_history (player_id, club_id, joined_at) values
+-- Dinamo Tbilisi Academy
+('b1b2c3d4-0001-4000-8000-000000000001', 'a1b2c3d4-0001-4000-8000-000000000001', '2022-08-01'),
+('b1b2c3d4-0002-4000-8000-000000000002', 'a1b2c3d4-0001-4000-8000-000000000001', '2021-08-01'),
+('b1b2c3d4-0003-4000-8000-000000000003', 'a1b2c3d4-0001-4000-8000-000000000001', '2022-08-01'),
+('b1b2c3d4-0004-4000-8000-000000000004', 'a1b2c3d4-0001-4000-8000-000000000001', '2023-08-01'),
+-- Saburtalo Tbilisi Academy
+('b1b2c3d4-0005-4000-8000-000000000005', 'a1b2c3d4-0002-4000-8000-000000000002', '2021-08-01'),
+('b1b2c3d4-0006-4000-8000-000000000006', 'a1b2c3d4-0002-4000-8000-000000000002', '2022-08-01'),
+('b1b2c3d4-0007-4000-8000-000000000007', 'a1b2c3d4-0002-4000-8000-000000000002', '2021-08-01'),
+('b1b2c3d4-0008-4000-8000-000000000008', 'a1b2c3d4-0002-4000-8000-000000000002', '2022-08-01'),
+-- Torpedo Kutaisi Academy
+('b1b2c3d4-0009-4000-8000-000000000009', 'a1b2c3d4-0003-4000-8000-000000000003', '2022-08-01'),
+('b1b2c3d4-0010-4000-8000-000000000010', 'a1b2c3d4-0003-4000-8000-000000000003', '2021-08-01'),
+('b1b2c3d4-0011-4000-8000-000000000011', 'a1b2c3d4-0003-4000-8000-000000000003', '2022-08-01'),
+('b1b2c3d4-0012-4000-8000-000000000012', 'a1b2c3d4-0003-4000-8000-000000000003', '2021-08-01');
+
+-- Reset platform_id sequence past seeded players
+select setval('public.player_platform_id_seq', 12);

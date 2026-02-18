@@ -75,9 +75,7 @@ export default async function AdminPlayersPage() {
                         className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
                           player.status === 'active'
                             ? 'bg-green-500/10 text-green-400'
-                            : player.status === 'injured'
-                              ? 'bg-yellow-500/10 text-yellow-400'
-                              : 'bg-foreground-muted/10 text-foreground-muted'
+                            : 'bg-yellow-500/10 text-yellow-400'
                         }`}
                       >
                         {t(`admin.players.${player.status}`)}
