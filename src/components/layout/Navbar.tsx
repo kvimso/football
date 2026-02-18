@@ -28,17 +28,21 @@ export function Navbar() {
   const [loggingOut, setLoggingOut] = useState(false)
 
   useEffect(() => {
-    const supabase = createClient()
+    try {
+      const supabase = createClient()
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user ? { id: user.id, email: user.email ?? undefined } : null)
-    })
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        setUser(user ? { id: user.id, email: user.email ?? undefined } : null)
+      }).catch(() => { /* env vars missing or network error */ })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null)
-    })
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null)
+      })
 
-    return () => subscription.unsubscribe()
+      return () => subscription.unsubscribe()
+    } catch {
+      // Supabase client failed to initialize (missing env vars)
+    }
   }, [])
 
   async function handleLogout() {

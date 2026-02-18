@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import { translations, getNestedValue, type Lang } from '@/lib/translations'
 
 export type { Lang }
@@ -28,7 +28,14 @@ function setLangCookie(lang: Lang) {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(getLangFromCookie)
+  // Always start with 'en' to match server render and avoid hydration mismatch
+  const [lang, setLangState] = useState<Lang>('en')
+
+  // Read cookie only after hydration
+  useEffect(() => {
+    const cookieLang = getLangFromCookie()
+    if (cookieLang !== 'en') setLangState(cookieLang)
+  }, [])
 
   const setLang = useCallback((newLang: Lang) => {
     setLangState(newLang)
