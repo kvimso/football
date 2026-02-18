@@ -16,6 +16,16 @@ export async function sendContactRequest(playerId: string, message: string) {
     return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
   }
 
+  // Check player status — contact only allowed for active players
+  const { data: player, error: playerError } = await supabase
+    .from('players')
+    .select('id, status')
+    .eq('id', parsed.data.playerId)
+    .single()
+
+  if (playerError || !player) return { error: 'Player not found' }
+  if (player.status === 'free_agent') return { error: 'Contact is not available for free agents' }
+
   // Check if request already exists
   const { data: existing, error: checkError } = await supabase
     .from('contact_requests')

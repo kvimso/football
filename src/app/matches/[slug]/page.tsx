@@ -6,6 +6,8 @@ import { getServerT } from '@/lib/server-translations'
 import { format } from 'date-fns'
 import { MatchDetailClient } from '@/components/match/MatchDetailClient'
 
+export const revalidate = 60
+
 interface MatchPageProps {
   params: Promise<{ slug: string }>
 }

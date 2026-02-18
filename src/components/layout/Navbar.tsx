@@ -2,15 +2,30 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { createClient } from '@/lib/supabase/client'
+
+function NavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
+  const pathname = usePathname()
+  const isActive = pathname === href || pathname.startsWith(href + '/')
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`text-sm transition-colors ${isActive ? 'text-accent font-medium' : 'text-foreground-muted hover:text-foreground'}`}
+    >
+      {children}
+    </Link>
+  )
+}
 
 export function Navbar() {
   const { t, lang, setLang } = useLang()
   const router = useRouter()
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -27,6 +42,8 @@ export function Navbar() {
   }, [])
 
   async function handleLogout() {
+    if (loggingOut) return
+    setLoggingOut(true)
     const supabase = createClient()
     await supabase.auth.signOut()
     setUser(null)
@@ -42,18 +59,10 @@ export function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          <Link href="/players" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-            {t('nav.players')}
-          </Link>
-          <Link href="/matches" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-            {t('nav.matches')}
-          </Link>
-          <Link href="/clubs" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-            {t('nav.clubs')}
-          </Link>
-          <Link href="/about" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-            {t('nav.about')}
-          </Link>
+          <NavLink href="/players">{t('nav.players')}</NavLink>
+          <NavLink href="/matches">{t('nav.matches')}</NavLink>
+          <NavLink href="/clubs">{t('nav.clubs')}</NavLink>
+          <NavLink href="/about">{t('nav.about')}</NavLink>
         </div>
 
         <div className="flex items-center gap-3">
@@ -71,9 +80,10 @@ export function Navbar() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
+                disabled={loggingOut}
+                className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground disabled:opacity-50 transition-colors"
               >
-                {t('nav.logout')}
+                {loggingOut ? t('common.loading') : t('nav.logout')}
               </button>
             </>
           ) : (
@@ -102,22 +112,12 @@ export function Navbar() {
       {menuOpen && (
         <div className="border-t border-border bg-background px-4 py-3 md:hidden">
           <div className="flex flex-col gap-3">
-            <Link href="/players" onClick={() => setMenuOpen(false)} className="text-sm text-foreground-muted hover:text-foreground">
-              {t('nav.players')}
-            </Link>
-            <Link href="/matches" onClick={() => setMenuOpen(false)} className="text-sm text-foreground-muted hover:text-foreground">
-              {t('nav.matches')}
-            </Link>
-            <Link href="/clubs" onClick={() => setMenuOpen(false)} className="text-sm text-foreground-muted hover:text-foreground">
-              {t('nav.clubs')}
-            </Link>
-            <Link href="/about" onClick={() => setMenuOpen(false)} className="text-sm text-foreground-muted hover:text-foreground">
-              {t('nav.about')}
-            </Link>
+            <NavLink href="/players" onClick={() => setMenuOpen(false)}>{t('nav.players')}</NavLink>
+            <NavLink href="/matches" onClick={() => setMenuOpen(false)}>{t('nav.matches')}</NavLink>
+            <NavLink href="/clubs" onClick={() => setMenuOpen(false)}>{t('nav.clubs')}</NavLink>
+            <NavLink href="/about" onClick={() => setMenuOpen(false)}>{t('nav.about')}</NavLink>
             {user && (
-              <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-sm text-foreground-muted hover:text-foreground">
-                {t('nav.dashboard')}
-              </Link>
+              <NavLink href="/dashboard" onClick={() => setMenuOpen(false)}>{t('nav.dashboard')}</NavLink>
             )}
           </div>
         </div>

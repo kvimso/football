@@ -34,7 +34,6 @@ export function RadarChart({ skills }: RadarChartProps) {
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[240px]">
       {/* Grid levels */}
       {Array.from({ length: LEVELS }, (_, level) => {
-        const r = (RADIUS * (level + 1)) / LEVELS
         const gridPoints = Array.from({ length: 6 }, (_, i) => {
           const [x, y] = getPoint(i, ((level + 1) / LEVELS) * 100, RADIUS)
           return `${x},${y}`

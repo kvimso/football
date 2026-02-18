@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   description: 'Browse match results and player performances from Georgian youth football.',
 }
 
+export const revalidate = 60
+
 interface MatchesPageProps {
   searchParams: Promise<{ competition?: string }>
 }
@@ -18,7 +20,8 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
   const supabase = await createClient()
   const { t } = await getServerT()
 
-  let query = supabase
+  // Fetch all matches (unfiltered) to extract competitions and display filtered results
+  const { data: allMatches, error: matchesError } = await supabase
     .from('matches')
     .select(`
       slug, home_score, away_score, competition, match_date,
@@ -26,25 +29,18 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
       away_club:clubs!matches_away_club_id_fkey ( name, name_ka )
     `)
     .order('match_date', { ascending: false })
-
-  if (params.competition) {
-    query = query.eq('competition', params.competition)
-  }
-
-  const { data: matches, error: matchesError } = await query
+    .limit(200)
 
   if (matchesError) console.error('Failed to fetch matches:', matchesError.message)
 
-  // Get distinct competitions for filter
-  const { data: allMatches, error: compError } = await supabase
-    .from('matches')
-    .select('competition')
+  const allMatchesList = allMatches ?? []
+  const competitions = [...new Set(allMatchesList.map((m) => m.competition).filter(Boolean))] as string[]
 
-  if (compError) console.error('Failed to fetch competitions:', compError.message)
+  const filtered = params.competition
+    ? allMatchesList.filter((m) => m.competition === params.competition)
+    : allMatchesList
 
-  const competitions = [...new Set((allMatches ?? []).map((m) => m.competition).filter(Boolean))] as string[]
-
-  const matchCards = (matches ?? []).map((m) => ({
+  const matchCards = filtered.map((m) => ({
     ...m,
     home_club: Array.isArray(m.home_club) ? m.home_club[0] : m.home_club,
     away_club: Array.isArray(m.away_club) ? m.away_club[0] : m.away_club,

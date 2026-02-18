@@ -41,6 +41,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (saving) return
     setSaving(true)
     setError('')
 

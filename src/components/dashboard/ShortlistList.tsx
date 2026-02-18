@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { removeFromShortlist, updateShortlistNote } from '@/app/actions/shortlist'
@@ -97,9 +98,9 @@ function ShortlistRow({
   return (
     <div className="card flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-background border border-border text-lg font-bold text-foreground-muted/30">
+        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-background border border-border text-lg font-bold text-foreground-muted/30">
           {player.photo_url ? (
-            <img src={player.photo_url} alt={player.name} className="h-full w-full rounded-lg object-cover" />
+            <Image src={player.photo_url} alt={player.name} fill className="rounded-lg object-cover" sizes="48px" />
           ) : (
             player.name.charAt(0)
           )}

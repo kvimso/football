@@ -17,11 +17,12 @@ async function getAdminClubId() {
     .single()
 
   if (profileError || !profile) return { error: 'Profile not found', clubId: null, supabase: null }
-  if (profile.role !== 'academy_admin' && profile.role !== 'platform_admin') {
+  if (profile.role !== 'academy_admin') {
     return { error: 'Unauthorized', clubId: null, supabase: null }
   }
+  if (!profile.club_id) return { error: 'No club assigned', clubId: null, supabase: null }
 
-  return { error: null, clubId: profile.club_id as string, supabase }
+  return { error: null, clubId: profile.club_id, supabase }
 }
 
 export async function createPlayer(data: Record<string, unknown>) {

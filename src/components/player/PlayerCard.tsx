@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
@@ -16,6 +17,7 @@ interface PlayerCardProps {
     preferred_foot: string | null
     is_featured: boolean
     photo_url: string | null
+    status: string
     club: {
       name: string
       name_ka: string
@@ -38,16 +40,19 @@ export function PlayerCard({ player }: PlayerCardProps) {
       : player.club.name
     : null
   const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
+  const isFreeAgent = player.status === 'free_agent'
 
   return (
     <Link href={`/players/${player.slug}`} className="card group block">
       {/* Photo area */}
       <div className="relative mb-3 flex h-44 items-center justify-center overflow-hidden rounded-lg bg-background">
         {player.photo_url ? (
-          <img
+          <Image
             src={player.photo_url}
             alt={player.name}
-            className="h-full w-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-foreground-muted/30">
@@ -71,8 +76,12 @@ export function PlayerCard({ player }: PlayerCardProps) {
         {displayName}
       </h3>
       <div className="mt-0.5 flex items-center gap-2 text-xs text-foreground-muted">
-        {clubName && <span className="truncate">{clubName}</span>}
-        {clubName && <span>·</span>}
+        {isFreeAgent ? (
+          <span className="font-medium text-yellow-400">{t('players.freeAgent')}</span>
+        ) : clubName ? (
+          <span className="truncate">{clubName}</span>
+        ) : null}
+        {(isFreeAgent || clubName) && <span>·</span>}
         <span>
           {age} {t('players.years')}
         </span>

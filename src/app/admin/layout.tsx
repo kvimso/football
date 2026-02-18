@@ -21,7 +21,7 @@ export default async function AdminLayout({
 
   if (profileError) console.error('Failed to get profile:', profileError.message)
 
-  if (!profile || (profile.role !== 'academy_admin' && profile.role !== 'platform_admin')) {
+  if (!profile || profile.role !== 'academy_admin') {
     redirect('/dashboard')
   }
 

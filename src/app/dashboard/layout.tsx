@@ -14,11 +14,13 @@ export default async function DashboardLayout({
   if (!user) redirect('/login')
 
   // Redirect academy admins to their admin panel
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
+
+  if (profileError) console.error('Failed to fetch profile:', profileError.message)
 
   if (profile?.role === 'academy_admin') redirect('/admin')
 

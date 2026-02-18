@@ -16,12 +16,13 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return notFound()
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('club_id')
     .eq('id', user.id)
     .single()
 
+  if (profileError) console.error('Failed to fetch profile:', profileError.message)
   if (!profile?.club_id) return notFound()
 
   const { data: player, error: playerError } = await supabase

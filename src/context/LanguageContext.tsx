@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import { createContext, useState, useCallback, type ReactNode } from 'react'
 import { translations, getNestedValue, type Lang } from '@/lib/translations'
 
 export type { Lang }
@@ -28,11 +28,7 @@ function setLangCookie(lang: Lang) {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('en')
-
-  useEffect(() => {
-    setLangState(getLangFromCookie())
-  }, [])
+  const [lang, setLangState] = useState<Lang>(getLangFromCookie)
 
   const setLang = useCallback((newLang: Lang) => {
     setLangState(newLang)

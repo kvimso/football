@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
+
+export const revalidate = 60
 
 interface ClubPageProps {
   params: Promise<{ slug: string }>
@@ -48,9 +51,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
     .from('players')
     .select(`
       slug, name, name_ka, position, date_of_birth, height_cm,
-      preferred_foot, is_featured, photo_url,
+      preferred_foot, is_featured, photo_url, status,
       club:clubs!players_club_id_fkey ( name, name_ka ),
-      season_stats:player_season_stats ( goals, assists, matches_played )
+      season_stats:player_season_stats ( season, goals, assists, matches_played )
     `)
     .eq('club_id', club.id)
     .eq('status', 'active')
@@ -59,11 +62,15 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   if (playersError) console.error('Failed to fetch club players:', playersError.message)
 
-  const playerCards = (players ?? []).map((p) => ({
-    ...p,
-    club: Array.isArray(p.club) ? p.club[0] : p.club,
-    season_stats: Array.isArray(p.season_stats) ? p.season_stats[0] : p.season_stats,
-  }))
+  const playerCards = (players ?? []).map((p) => {
+    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    return {
+      ...p,
+      club: Array.isArray(p.club) ? p.club[0] : p.club,
+      season_stats: statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
+      status: p.status ?? 'active',
+    }
+  })
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -73,9 +80,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
       {/* Club header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-background-secondary border border-border text-3xl font-bold text-accent">
+        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-background-secondary border border-border text-3xl font-bold text-accent">
           {club.logo_url ? (
-            <img src={club.logo_url} alt={club.name} className="h-full w-full rounded-2xl object-cover" />
+            <Image src={club.logo_url} alt={club.name} fill className="rounded-2xl object-cover" sizes="80px" />
           ) : (
             club.name.charAt(0)
           )}

@@ -15,11 +15,12 @@ async function getAdminContext() {
     .single()
 
   if (profileError || !profile) return { error: 'Profile not found', supabase: null, userId: null, clubId: null }
-  if (profile.role !== 'academy_admin' && profile.role !== 'platform_admin') {
+  if (profile.role !== 'academy_admin') {
     return { error: 'Unauthorized', supabase: null, userId: null, clubId: null }
   }
+  if (!profile.club_id) return { error: 'No club assigned', supabase: null, userId: null, clubId: null }
 
-  return { error: null, supabase, userId: user.id, clubId: profile.club_id as string }
+  return { error: null, supabase, userId: user.id, clubId: profile.club_id }
 }
 
 async function verifyRequestBelongsToClub(supabase: Awaited<ReturnType<typeof createClient>>, requestId: string, clubId: string) {

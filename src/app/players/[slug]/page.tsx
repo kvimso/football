@@ -1,13 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { calculateAge } from '@/lib/utils'
+import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
 import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
+
+export const revalidate = 60
 
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
@@ -33,7 +37,7 @@ export async function generateMetadata({ params }: PlayerPageProps): Promise<Met
 export default async function PlayerPage({ params }: PlayerPageProps) {
   const { slug } = await params
   const supabase = await createClient()
-  const { t } = await getServerT()
+  const { t, lang } = await getServerT()
 
   const { data: player, error } = await supabase
     .from('players')
@@ -41,6 +45,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       id, name, name_ka, slug, date_of_birth, nationality, position,
       preferred_foot, height_cm, weight_kg, photo_url, jersey_number,
       scouting_report, scouting_report_ka, status, is_featured,
+      platform_id,
       club:clubs!players_club_id_fkey ( name, name_ka, slug ),
       skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
       season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, shots_on_target, tackles, interceptions, clean_sheets, distance_covered_km, sprints ),
@@ -52,6 +57,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
           home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
           away_club:clubs!matches_away_club_id_fkey ( name, name_ka )
         )
+      ),
+      club_history:player_club_history (
+        id, joined_at, left_at,
+        club:clubs!player_club_history_club_id_fkey ( name, name_ka, slug )
       )
     `)
     .eq('slug', slug)
@@ -67,25 +76,26 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   let hasContactRequest = false
 
   if (user) {
-    const { data: shortlistEntry, error: slError } = await supabase
-      .from('shortlists')
-      .select('id')
-      .eq('scout_id', user.id)
-      .eq('player_id', player.id)
-      .maybeSingle()
+    const [shortlistResult, contactResult] = await Promise.all([
+      supabase
+        .from('shortlists')
+        .select('id')
+        .eq('scout_id', user.id)
+        .eq('player_id', player.id)
+        .maybeSingle(),
+      supabase
+        .from('contact_requests')
+        .select('id')
+        .eq('scout_id', user.id)
+        .eq('player_id', player.id)
+        .maybeSingle(),
+    ])
 
-    if (slError) console.error('Failed to check shortlist:', slError.message)
-    isShortlisted = !!shortlistEntry
+    if (shortlistResult.error) console.error('Failed to check shortlist:', shortlistResult.error.message)
+    isShortlisted = !!shortlistResult.data
 
-    const { data: contactEntry, error: crError } = await supabase
-      .from('contact_requests')
-      .select('id')
-      .eq('scout_id', user.id)
-      .eq('player_id', player.id)
-      .maybeSingle()
-
-    if (crError) console.error('Failed to check contact request:', crError.message)
-    hasContactRequest = !!contactEntry
+    if (contactResult.error) console.error('Failed to check contact request:', contactResult.error.message)
+    hasContactRequest = !!contactResult.data
   }
 
   const age = calculateAge(player.date_of_birth)
@@ -96,6 +106,13 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     ...ms,
     match: Array.isArray(ms.match) ? ms.match[0] : ms.match,
   }))
+  const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
+    .map((h) => ({
+      ...h,
+      club: Array.isArray(h.club) ? h.club[0] : h.club,
+    }))
+    .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
+  const isFreeAgent = player.status === 'free_agent'
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -107,9 +124,9 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       {/* Player header */}
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:gap-10">
         {/* Photo */}
-        <div className="flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background-secondary border border-border">
+        <div className="relative flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background-secondary border border-border">
           {player.photo_url ? (
-            <img src={player.photo_url} alt={player.name} className="h-full w-full object-cover" />
+            <Image src={player.photo_url} alt={player.name} fill className="object-cover" sizes="224px" />
           ) : (
             <span className="text-6xl font-bold text-foreground-muted/20">{player.name.charAt(0)}</span>
           )}
@@ -127,18 +144,29 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             club_name: club?.name ?? null,
             club_name_ka: club?.name_ka ?? null,
             club_slug: club?.slug ?? null,
+            platform_id: player.platform_id,
+            status: player.status,
           }} />
+
+          {/* Free agent notice */}
+          {isFreeAgent && (
+            <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-400">
+              {t('players.freeAgentNotice')}
+            </div>
+          )}
 
           {/* Action buttons */}
           {user && (
             <div className="mt-4 flex gap-3">
               <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
-              {!hasContactRequest ? (
-                <ContactRequestForm playerId={player.id} />
-              ) : (
-                <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
-                  {t('players.requestSent')}
-                </span>
+              {!isFreeAgent && (
+                !hasContactRequest ? (
+                  <ContactRequestForm playerId={player.id} />
+                ) : (
+                  <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
+                    {t('players.requestSent')}
+                  </span>
+                )
               )}
             </div>
           )}
@@ -152,6 +180,12 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
           {/* Meta grid */}
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+            {player.platform_id && (
+              <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
+                <div className="text-foreground-muted text-xs">{t('players.platformId')}</div>
+                <div className="font-mono font-semibold text-foreground">{player.platform_id}</div>
+              </div>
+            )}
             <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
               <div className="text-foreground-muted text-xs">{t('players.age')}</div>
               <div className="font-semibold text-foreground">{age}</div>
@@ -260,8 +294,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   const m = ms.match
                   const homeClub = m ? (Array.isArray(m.home_club) ? m.home_club[0] : m.home_club) : null
                   const awayClub = m ? (Array.isArray(m.away_club) ? m.away_club[0] : m.away_club) : null
-                  const matchLabel = homeClub && awayClub
-                    ? `${homeClub.name} vs ${awayClub.name}`
+                  const homeName = homeClub ? (lang === 'ka' ? homeClub.name_ka : homeClub.name) : null
+                  const awayName = awayClub ? (lang === 'ka' ? awayClub.name_ka : awayClub.name) : null
+                  const matchLabel = homeName && awayName
+                    ? `${homeName} vs ${awayName}`
                     : t('stats.match')
                   return (
                     <tr key={i} className="border-b border-border/50">
@@ -272,7 +308,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                           </Link>
                         ) : matchLabel}
                       </td>
-                      <td className="py-2 pr-4 text-foreground-muted">{m?.match_date ?? '-'}</td>
+                      <td className="py-2 pr-4 text-foreground-muted">{m?.match_date ? format(new Date(m.match_date), 'MMM d, yyyy') : '-'}</td>
                       <td className="py-2 pr-4 text-foreground-muted">{ms.minutes_played ?? '-'}</td>
                       <td className="py-2 pr-4 font-semibold text-foreground">{ms.goals}</td>
                       <td className="py-2 pr-4 font-semibold text-foreground">{ms.assists}</td>
@@ -291,6 +327,37 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Career history */}
+      {clubHistory.length > 0 && (
+        <div className="mt-6 card">
+          <h3 className="mb-4 text-lg font-semibold text-foreground">{t('players.careerHistory')}</h3>
+          <div className="space-y-3">
+            {clubHistory.map((entry) => {
+              const entryClubName = entry.club
+                ? (lang === 'ka' ? entry.club.name_ka : entry.club.name)
+                : t('matches.unknown')
+              return (
+                <div key={entry.id} className="flex items-center gap-3 rounded-lg border border-border p-3">
+                  <div className="h-8 w-1 shrink-0 rounded-full bg-accent" />
+                  <div className="min-w-0 flex-1">
+                    {entry.club?.slug ? (
+                      <Link href={`/clubs/${entry.club.slug}`} className="text-sm font-medium text-foreground hover:text-accent transition-colors">
+                        {entryClubName}
+                      </Link>
+                    ) : (
+                      <span className="text-sm font-medium text-foreground">{entryClubName}</span>
+                    )}
+                    <p className="text-xs text-foreground-muted">
+                      {format(new Date(entry.joined_at), 'MMM d, yyyy')} &mdash; {entry.left_at ? format(new Date(entry.left_at), 'MMM d, yyyy') : t('players.present')}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

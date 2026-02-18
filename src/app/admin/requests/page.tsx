@@ -15,13 +15,22 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('club_id')
     .eq('id', user.id)
     .single()
 
+  if (profileError) console.error('Failed to fetch profile:', profileError.message)
   if (!profile?.club_id) return null
+
+  // First get this club's player IDs for filtering
+  const { data: clubPlayers } = await supabase
+    .from('players')
+    .select('id')
+    .eq('club_id', profile.club_id)
+
+  const playerIds = (clubPlayers ?? []).map((p) => p.id)
 
   let query = supabase
     .from('contact_requests')
@@ -35,6 +44,19 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
       player:players!contact_requests_player_id_fkey(name, name_ka, club_id, slug)
     `)
     .order('created_at', { ascending: false })
+    .limit(100)
+
+  if (playerIds.length > 0) {
+    query = query.in('player_id', playerIds)
+  } else {
+    // No players in club, no requests to show
+    return (
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">{t('admin.requests.title')}</h1>
+        <p className="mt-6 text-sm text-foreground-muted">{t('admin.requests.noRequests')}</p>
+      </div>
+    )
+  }
 
   if (params.status && params.status !== 'all') {
     query = query.eq('status', params.status)
@@ -44,11 +66,11 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
 
   if (error) console.error('Failed to fetch requests:', error.message)
 
-  // Filter to only requests for this club's players (client-side since inner filter not possible on joined column)
-  const clubRequests = (requests ?? []).filter((r) => {
-    const player = Array.isArray(r.player) ? r.player[0] : r.player
-    return player?.club_id === profile.club_id
-  })
+  const clubRequests = (requests ?? []).map((r) => ({
+    ...r,
+    player: Array.isArray(r.player) ? r.player[0] : r.player,
+    scout: Array.isArray(r.scout) ? r.scout[0] : r.scout,
+  })).filter((r) => r.player)
 
   const statusFilters = ['all', 'pending', 'approved', 'rejected']
 
@@ -79,9 +101,7 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
       {clubRequests.length > 0 ? (
         <div className="mt-6 space-y-3">
           {clubRequests.map((req) => {
-            const scout = Array.isArray(req.scout) ? req.scout[0] : req.scout
-            const player = Array.isArray(req.player) ? req.player[0] : req.player
-            const playerName = lang === 'ka' ? player?.name_ka : player?.name
+            const playerName = lang === 'ka' ? req.player?.name_ka : req.player?.name
 
             return (
               <div key={req.id} className="card p-4">
@@ -89,14 +109,14 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-foreground">
-                        {scout?.full_name ?? t('matches.unknown')}
+                        {req.scout?.full_name ?? t('matches.unknown')}
                       </span>
-                      {scout?.organization && (
-                        <span className="text-xs text-foreground-muted">({scout.organization})</span>
+                      {req.scout?.organization && (
+                        <span className="text-xs text-foreground-muted">({req.scout.organization})</span>
                       )}
                       <span className="text-xs text-foreground-muted">&rarr;</span>
                       <a
-                        href={`/players/${player?.slug}`}
+                        href={`/players/${req.player?.slug}`}
                         className="text-sm font-medium text-accent hover:underline"
                       >
                         {playerName ?? ''}

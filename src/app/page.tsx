@@ -6,63 +6,67 @@ import { MatchCard } from '@/components/match/MatchCard'
 import { HomeHero } from '@/components/home/HomeHero'
 import { StatsBar } from '@/components/home/StatsBar'
 
+export const revalidate = 60
+
 export default async function Home() {
   const supabase = await createClient()
   const { t } = await getServerT()
 
-  // Fetch featured players
-  const { data: featuredPlayers, error: fpError } = await supabase
-    .from('players')
-    .select(`
-      slug, name, name_ka, position, date_of_birth, height_cm,
-      preferred_foot, is_featured, photo_url,
-      club:clubs!players_club_id_fkey ( name, name_ka ),
-      season_stats:player_season_stats ( goals, assists, matches_played )
-    `)
-    .eq('is_featured', true)
-    .eq('status', 'active')
-    .limit(4)
+  // Fetch all data in parallel
+  const [
+    { data: featuredPlayers, error: fpError },
+    { data: recentMatches, error: rmError },
+    { count: playerCount, error: pcError },
+    { count: clubCount, error: ccError },
+    { count: matchCount, error: mcError },
+  ] = await Promise.all([
+    supabase
+      .from('players')
+      .select(`
+        slug, name, name_ka, position, date_of_birth, height_cm,
+        preferred_foot, is_featured, photo_url, status,
+        club:clubs!players_club_id_fkey ( name, name_ka ),
+        season_stats:player_season_stats ( season, goals, assists, matches_played )
+      `)
+      .eq('is_featured', true)
+      .eq('status', 'active')
+      .limit(4),
+    supabase
+      .from('matches')
+      .select(`
+        slug, home_score, away_score, competition, match_date,
+        home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
+        away_club:clubs!matches_away_club_id_fkey ( name, name_ka )
+      `)
+      .order('match_date', { ascending: false })
+      .limit(5),
+    supabase
+      .from('players')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active'),
+    supabase
+      .from('clubs')
+      .select('*', { count: 'exact', head: true }),
+    supabase
+      .from('matches')
+      .select('*', { count: 'exact', head: true }),
+  ])
 
   if (fpError) console.error('Failed to fetch featured players:', fpError.message)
-
-  // Fetch recent matches
-  const { data: recentMatches, error: rmError } = await supabase
-    .from('matches')
-    .select(`
-      slug, home_score, away_score, competition, match_date,
-      home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
-      away_club:clubs!matches_away_club_id_fkey ( name, name_ka )
-    `)
-    .order('match_date', { ascending: false })
-    .limit(5)
-
   if (rmError) console.error('Failed to fetch recent matches:', rmError.message)
-
-  // Fetch counts for stats bar
-  const { count: playerCount, error: pcError } = await supabase
-    .from('players')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'active')
-
   if (pcError) console.error('Failed to fetch player count:', pcError.message)
-
-  const { count: clubCount, error: ccError } = await supabase
-    .from('clubs')
-    .select('*', { count: 'exact', head: true })
-
   if (ccError) console.error('Failed to fetch club count:', ccError.message)
-
-  const { count: matchCount, error: mcError } = await supabase
-    .from('matches')
-    .select('*', { count: 'exact', head: true })
-
   if (mcError) console.error('Failed to fetch match count:', mcError.message)
 
-  const playerCards = (featuredPlayers ?? []).map((p) => ({
-    ...p,
-    club: Array.isArray(p.club) ? p.club[0] : p.club,
-    season_stats: Array.isArray(p.season_stats) ? p.season_stats[0] : p.season_stats,
-  }))
+  const playerCards = (featuredPlayers ?? []).map((p) => {
+    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    return {
+      ...p,
+      club: Array.isArray(p.club) ? p.club[0] : p.club,
+      season_stats: statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
+      status: p.status ?? 'active',
+    }
+  })
 
   const matchCards = (recentMatches ?? []).map((m) => ({
     ...m,

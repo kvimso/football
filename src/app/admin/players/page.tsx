@@ -4,6 +4,7 @@ import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { calculateAge } from '@/lib/utils'
 import { PlayerStatusActions } from '@/components/admin/PlayerStatusActions'
+import { ReleasePlayerButton } from '@/components/admin/ReleasePlayerButton'
 
 export default async function AdminPlayersPage() {
   const supabase = await createClient()
@@ -12,17 +13,18 @@ export default async function AdminPlayersPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('club_id')
     .eq('id', user.id)
     .single()
 
+  if (profileError) console.error('Failed to fetch profile:', profileError.message)
   if (!profile?.club_id) return null
 
   const { data: players, error } = await supabase
     .from('players')
-    .select('id, name, name_ka, position, date_of_birth, jersey_number, status, slug')
+    .select('id, name, name_ka, platform_id, position, date_of_birth, status, slug')
     .eq('club_id', profile.club_id)
     .order('name')
 
@@ -42,7 +44,7 @@ export default async function AdminPlayersPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border text-foreground-muted">
-                <th className="pb-3 pr-4 font-medium">#</th>
+                <th className="pb-3 pr-4 font-medium">{t('players.platformId')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('admin.players.name')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('admin.players.position')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('players.age')}</th>
@@ -56,7 +58,7 @@ export default async function AdminPlayersPage() {
                 const displayName = lang === 'ka' ? player.name_ka : player.name
                 return (
                   <tr key={player.id} className="border-b border-border/50">
-                    <td className="py-3 pr-4 text-foreground-muted">{player.jersey_number ?? '-'}</td>
+                    <td className="py-3 pr-4 font-mono text-xs text-foreground-muted">{player.platform_id ?? '-'}</td>
                     <td className="py-3 pr-4">
                       <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent">
                         {displayName}
@@ -90,6 +92,9 @@ export default async function AdminPlayersPage() {
                           {t('common.edit')}
                         </Link>
                         <PlayerStatusActions playerId={player.id} status={player.status} />
+                        {player.status === 'active' && (
+                          <ReleasePlayerButton playerId={player.id} playerName={displayName} />
+                        )}
                       </div>
                     </td>
                   </tr>
