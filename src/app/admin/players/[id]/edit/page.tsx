@@ -1,0 +1,47 @@
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import { getServerT } from '@/lib/server-translations'
+import { PlayerForm } from '@/components/admin/PlayerForm'
+
+interface EditPlayerPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function AdminEditPlayerPage({ params }: EditPlayerPageProps) {
+  const { id } = await params
+  const supabase = await createClient()
+  const { t } = await getServerT()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return notFound()
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('club_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile?.club_id) return notFound()
+
+  const { data: player, error: playerError } = await supabase
+    .from('players')
+    .select('id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, jersey_number, status, scouting_report, scouting_report_ka, is_featured, club_id')
+    .eq('id', id)
+    .single()
+
+  if (playerError) console.error('Failed to fetch player:', playerError.message)
+  if (!player || player.club_id !== profile.club_id) return notFound()
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center gap-3">
+        <Link href="/admin/players" className="text-sm text-foreground-muted hover:text-foreground">
+          &larr; {t('admin.common.backToList')}
+        </Link>
+      </div>
+      <h1 className="mb-6 text-2xl font-bold text-foreground">{t('admin.players.editPlayer')}</h1>
+      <PlayerForm player={player} />
+    </div>
+  )
+}

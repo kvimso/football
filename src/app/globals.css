@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+/* ── Theme custom properties ── */
+:root {
+  --background: #0a0f0d;
+  --background-secondary: #111916;
+  --foreground: #ededed;
+  --foreground-muted: #9ca3af;
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --accent-muted: #065f46;
+  --border: #1f2937;
+  --card: #111916;
+  --card-hover: #162118;
+
+  /* Position colors */
+  --pos-gk: #f59e0b;
+  --pos-def: #3b82f6;
+  --pos-mid: #06b6d4;
+  --pos-att: #a855f7;
+  --pos-wng: #10b981;
+  --pos-st: #ef4444;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-muted: var(--accent-muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
+  --color-pos-gk: var(--pos-gk);
+  --color-pos-def: var(--pos-def);
+  --color-pos-mid: var(--pos-mid);
+  --color-pos-att: var(--pos-att);
+  --color-pos-wng: var(--pos-wng);
+  --color-pos-st: var(--pos-st);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* ── Component classes ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  background-color: var(--accent);
+  color: #fff;
+  transition: background-color 150ms;
+}
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  transition: background-color 150ms;
+}
+.btn-secondary:hover {
+  background-color: var(--background-secondary);
+}
+
+.card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: background-color 150ms;
+}
+.card:hover {
+  background-color: var(--card-hover);
+}
