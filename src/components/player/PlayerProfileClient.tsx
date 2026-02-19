@@ -9,7 +9,7 @@ interface PlayerProfileClientProps {
     name: string
     name_ka: string
     position: string
-    is_featured: boolean
+    is_featured: boolean | null
     scouting_report: string | null
     scouting_report_ka: string | null
     club_name: string | null

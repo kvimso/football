@@ -24,6 +24,7 @@ export function Navbar() {
   const { t, lang, setLang } = useLang()
   const router = useRouter()
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
 
@@ -33,10 +34,20 @@ export function Navbar() {
 
       supabase.auth.getUser().then(({ data: { user } }) => {
         setUser(user ? { id: user.id, email: user.email ?? undefined } : null)
+        if (user) {
+          supabase.from('profiles').select('role').eq('id', user.id).single()
+            .then(({ data }) => setUserRole(data?.role ?? null))
+        }
       }).catch(() => { /* env vars missing or network error */ })
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         setUser(session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null)
+        if (session?.user) {
+          supabase.from('profiles').select('role').eq('id', session.user.id).single()
+            .then(({ data }) => setUserRole(data?.role ?? null))
+        } else {
+          setUserRole(null)
+        }
       })
 
       return () => subscription.unsubscribe()
@@ -79,8 +90,11 @@ export function Navbar() {
 
           {user ? (
             <>
-              <Link href="/dashboard" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-                {t('nav.dashboard')}
+              <Link
+                href={userRole === 'platform_admin' ? '/platform' : userRole === 'academy_admin' ? '/admin' : '/dashboard'}
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
+                {userRole === 'platform_admin' ? t('platform.title') : userRole === 'academy_admin' ? t('nav.admin') : t('nav.dashboard')}
               </Link>
               <button
                 onClick={handleLogout}
@@ -121,7 +135,12 @@ export function Navbar() {
             <NavLink href="/clubs" onClick={() => setMenuOpen(false)}>{t('nav.clubs')}</NavLink>
             <NavLink href="/about" onClick={() => setMenuOpen(false)}>{t('nav.about')}</NavLink>
             {user && (
-              <NavLink href="/dashboard" onClick={() => setMenuOpen(false)}>{t('nav.dashboard')}</NavLink>
+              <NavLink
+                href={userRole === 'platform_admin' ? '/platform' : userRole === 'academy_admin' ? '/admin' : '/dashboard'}
+                onClick={() => setMenuOpen(false)}
+              >
+                {userRole === 'platform_admin' ? t('platform.title') : userRole === 'academy_admin' ? t('nav.admin') : t('nav.dashboard')}
+              </NavLink>
             )}
           </div>
         </div>

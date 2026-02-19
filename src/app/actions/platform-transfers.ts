@@ -1,0 +1,100 @@
+'use server'
+
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+import { getPlatformAdminContext } from '@/lib/auth'
+
+const uuidSchema = z.string().uuid()
+
+function today() {
+  return new Date().toISOString().split('T')[0]
+}
+
+export async function platformAcceptTransfer(requestId: string) {
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  const { error: authErr, admin } = await getPlatformAdminContext()
+  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+
+  const { data: request, error: fetchErr } = await admin
+    .from('transfer_requests')
+    .select('id, player_id, from_club_id, to_club_id, status')
+    .eq('id', requestId)
+    .single()
+
+  if (fetchErr || !request) return { error: 'Request not found' }
+  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+
+  // Accept transfer
+  const { error: reqErr } = await admin
+    .from('transfer_requests')
+    .update({ status: 'accepted' as const, resolved_at: new Date().toISOString() })
+    .eq('id', requestId)
+
+  if (reqErr) return { error: reqErr.message }
+
+  // Cancel other pending requests for this player
+  await admin
+    .from('transfer_requests')
+    .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
+    .eq('player_id', request.player_id)
+    .eq('status', 'pending')
+    .neq('id', requestId)
+
+  // Transfer player
+  const { error: playerErr } = await admin
+    .from('players')
+    .update({ club_id: request.to_club_id, updated_at: new Date().toISOString() })
+    .eq('id', request.player_id)
+
+  if (playerErr) return { error: playerErr.message }
+
+  // Update club history
+  if (request.from_club_id) {
+    await admin
+      .from('player_club_history')
+      .update({ left_at: today() })
+      .eq('player_id', request.player_id)
+      .eq('club_id', request.from_club_id)
+      .is('left_at', null)
+  }
+
+  if (request.to_club_id) {
+    await admin
+      .from('player_club_history')
+      .insert({
+        player_id: request.player_id,
+        club_id: request.to_club_id,
+        joined_at: today(),
+      })
+  }
+
+  revalidatePath('/platform/transfers')
+  revalidatePath('/platform/players')
+  revalidatePath('/players')
+  return { success: true }
+}
+
+export async function platformDeclineTransfer(requestId: string) {
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  const { error: authErr, admin } = await getPlatformAdminContext()
+  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+
+  const { data: request, error: fetchErr } = await admin
+    .from('transfer_requests')
+    .select('id, status')
+    .eq('id', requestId)
+    .single()
+
+  if (fetchErr || !request) return { error: 'Request not found' }
+  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+
+  const { error: reqErr } = await admin
+    .from('transfer_requests')
+    .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
+    .eq('id', requestId)
+
+  if (reqErr) return { error: reqErr.message }
+
+  revalidatePath('/platform/transfers')
+  return { success: true }
+}

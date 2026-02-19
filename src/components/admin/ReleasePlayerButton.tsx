@@ -14,6 +14,7 @@ export function ReleasePlayerButton({ playerId, playerName }: ReleasePlayerButto
   const { t } = useLang()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   async function handleRelease() {
     const confirmed = window.confirm(
@@ -22,9 +23,10 @@ export function ReleasePlayerButton({ playerId, playerName }: ReleasePlayerButto
     if (!confirmed) return
 
     setLoading(true)
+    setErrorMsg('')
     const result = await releasePlayer(playerId)
     if (result.error) {
-      alert(result.error)
+      setErrorMsg(result.error)
     } else {
       router.refresh()
     }
@@ -32,12 +34,17 @@ export function ReleasePlayerButton({ playerId, playerName }: ReleasePlayerButto
   }
 
   return (
-    <button
+    <>
+      <button
       onClick={handleRelease}
       disabled={loading}
       className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
     >
       {loading ? t('common.loading') : t('admin.transfers.release')}
     </button>
+      {errorMsg && (
+        <span className="text-xs text-red-400">{errorMsg}</span>
+      )}
+    </>
   )
 }

@@ -20,8 +20,17 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
   const supabase = await createClient()
   const { t } = await getServerT()
 
-  // Fetch all matches (unfiltered) to extract competitions and display filtered results
-  const { data: allMatches, error: matchesError } = await supabase
+  // Query 1: Get distinct competition names for the filter dropdown
+  const { data: allMatches, error: compError } = await supabase
+    .from('matches')
+    .select('competition')
+
+  if (compError) console.error('Failed to fetch competitions:', compError.message)
+
+  const competitions = [...new Set((allMatches ?? []).map((m) => m.competition).filter(Boolean))] as string[]
+
+  // Query 2: Fetch filtered matches
+  let query = supabase
     .from('matches')
     .select(`
       slug, home_score, away_score, competition, match_date,
@@ -31,16 +40,15 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
     .order('match_date', { ascending: false })
     .limit(200)
 
+  if (params.competition) {
+    query = query.eq('competition', params.competition)
+  }
+
+  const { data: matches, error: matchesError } = await query
+
   if (matchesError) console.error('Failed to fetch matches:', matchesError.message)
 
-  const allMatchesList = allMatches ?? []
-  const competitions = [...new Set(allMatchesList.map((m) => m.competition).filter(Boolean))] as string[]
-
-  const filtered = params.competition
-    ? allMatchesList.filter((m) => m.competition === params.competition)
-    : allMatchesList
-
-  const matchCards = filtered.map((m) => ({
+  const matchCards = (matches ?? []).map((m) => ({
     ...m,
     home_club: Array.isArray(m.home_club) ? m.home_club[0] : m.home_club,
     away_club: Array.isArray(m.away_club) ? m.away_club[0] : m.away_club,

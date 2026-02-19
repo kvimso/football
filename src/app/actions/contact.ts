@@ -2,7 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { contactRequestSchema } from '@/lib/validations'
+import { sendEmail } from '@/lib/email'
+import { contactRequestReceivedEmail } from '@/lib/email-templates'
 
 export async function sendContactRequest(playerId: string, message: string) {
   const supabase = await createClient()
@@ -19,7 +22,7 @@ export async function sendContactRequest(playerId: string, message: string) {
   // Check player status — contact only allowed for active players
   const { data: player, error: playerError } = await supabase
     .from('players')
-    .select('id, status')
+    .select('id, name, club_id, status')
     .eq('id', parsed.data.playerId)
     .single()
 
@@ -46,6 +49,28 @@ export async function sendContactRequest(playerId: string, message: string) {
     })
 
   if (error) return { error: error.message }
+
+  // Send email notification to club admin (fire-and-forget)
+  if (player.club_id) {
+    const admin = createAdminClient()
+    Promise.all([
+      admin.from('profiles').select('email').eq('club_id', player.club_id).eq('role', 'academy_admin').limit(1).single(),
+      admin.from('profiles').select('full_name, organization').eq('id', user.id).single(),
+    ]).then(([clubAdminResult, scoutResult]) => {
+      const clubAdminEmail = clubAdminResult.data?.email
+      const scoutName = scoutResult.data?.full_name ?? 'A scout'
+      const scoutOrg = scoutResult.data?.organization ?? null
+      if (clubAdminEmail) {
+        const template = contactRequestReceivedEmail({
+          scoutName,
+          scoutOrg,
+          playerName: player.name,
+          message: parsed.data.message.trim(),
+        })
+        sendEmail({ to: clubAdminEmail, ...template })
+      }
+    }).catch((err) => console.error('Failed to send contact request email:', err))
+  }
 
   revalidatePath('/dashboard/requests')
   return { success: true }

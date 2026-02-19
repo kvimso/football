@@ -9,9 +9,9 @@ import { removeFromShortlist, updateShortlistNote } from '@/app/actions/shortlis
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 
 interface ShortlistItem {
-  player_id: string
+  player_id: string | null
   notes: string | null
-  created_at: string
+  created_at: string | null
   player: {
     id: string
     name: string
@@ -82,15 +82,17 @@ function ShortlistRow({
   const age = calculateAge(player.date_of_birth)
 
   function handleRemove() {
+    if (!item.player_id) return
     startTransition(async () => {
-      await removeFromShortlist(item.player_id)
+      await removeFromShortlist(item.player_id!)
       onRemove()
     })
   }
 
   function handleSaveNote() {
+    if (!item.player_id) return
     startTransition(async () => {
-      await updateShortlistNote(item.player_id, noteText)
+      await updateShortlistNote(item.player_id!, noteText)
       setEditingNote(false)
     })
   }

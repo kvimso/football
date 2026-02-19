@@ -17,14 +17,14 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ match }: MatchCardProps) {
-  const { lang } = useLang()
+  const { t, lang } = useLang()
 
   const homeName = match.home_club
     ? lang === 'ka' ? match.home_club.name_ka : match.home_club.name
-    : 'TBD'
+    : t('matches.tbd')
   const awayName = match.away_club
     ? lang === 'ka' ? match.away_club.name_ka : match.away_club.name
-    : 'TBD'
+    : t('matches.tbd')
 
   return (
     <Link href={`/matches/${match.slug}`} className="card group block">

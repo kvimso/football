@@ -1,32 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
 import { playerFormSchema } from '@/lib/validations'
 import { generateSlug } from '@/lib/utils'
-
-async function getAdminClubId() {
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) return { error: 'Not authenticated', clubId: null, supabase: null }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role, club_id')
-    .eq('id', user.id)
-    .single()
-
-  if (profileError || !profile) return { error: 'Profile not found', clubId: null, supabase: null }
-  if (profile.role !== 'academy_admin') {
-    return { error: 'Unauthorized', clubId: null, supabase: null }
-  }
-  if (!profile.club_id) return { error: 'No club assigned', clubId: null, supabase: null }
-
-  return { error: null, clubId: profile.club_id, supabase }
-}
+import { getAdminContext } from '@/lib/auth'
 
 export async function createPlayer(data: Record<string, unknown>) {
-  const { error: authErr, clubId, supabase } = await getAdminClubId()
+  const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
   const parsed = playerFormSchema.safeParse(data)
@@ -88,7 +68,7 @@ export async function updatePlayer(
   playerId: string,
   data: Record<string, unknown>
 ) {
-  const { error: authErr, clubId, supabase } = await getAdminClubId()
+  const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
   // Verify player belongs to admin's club
@@ -129,50 +109,3 @@ export async function updatePlayer(
   return { success: true }
 }
 
-export async function deactivatePlayer(playerId: string) {
-  const { error: authErr, clubId, supabase } = await getAdminClubId()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
-
-  const { data: player } = await supabase
-    .from('players')
-    .select('club_id')
-    .eq('id', playerId)
-    .single()
-
-  if (!player || player.club_id !== clubId) return { error: 'Unauthorized' }
-
-  const { error } = await supabase
-    .from('players')
-    .update({ status: 'free_agent' as const, updated_at: new Date().toISOString() })
-    .eq('id', playerId)
-
-  if (error) return { error: error.message }
-
-  revalidatePath('/admin/players')
-  revalidatePath('/players')
-  return { success: true }
-}
-
-export async function reactivatePlayer(playerId: string) {
-  const { error: authErr, clubId, supabase } = await getAdminClubId()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
-
-  const { data: player } = await supabase
-    .from('players')
-    .select('club_id')
-    .eq('id', playerId)
-    .single()
-
-  if (!player || player.club_id !== clubId) return { error: 'Unauthorized' }
-
-  const { error } = await supabase
-    .from('players')
-    .update({ status: 'active' as const, updated_at: new Date().toISOString() })
-    .eq('id', playerId)
-
-  if (error) return { error: error.message }
-
-  revalidatePath('/admin/players')
-  revalidatePath('/players')
-  return { success: true }
-}

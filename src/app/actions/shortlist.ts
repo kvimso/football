@@ -2,8 +2,13 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+
+const uuidSchema = z.string().uuid()
+const notesSchema = z.string().max(2000)
 
 export async function addToShortlist(playerId: string) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError) return { error: authError.message }
@@ -21,6 +26,7 @@ export async function addToShortlist(playerId: string) {
 }
 
 export async function removeFromShortlist(playerId: string) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError) return { error: authError.message }
@@ -40,6 +46,8 @@ export async function removeFromShortlist(playerId: string) {
 }
 
 export async function updateShortlistNote(playerId: string, notes: string) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!notesSchema.safeParse(notes).success) return { error: 'Notes too long (max 2000 characters)' }
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError) return { error: authError.message }

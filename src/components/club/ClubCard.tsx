@@ -1,8 +1,6 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
-import { useLang } from '@/hooks/useLang'
+import { getServerT } from '@/lib/server-translations'
 
 interface ClubCardProps {
   club: {
@@ -18,8 +16,8 @@ interface ClubCardProps {
   }
 }
 
-export function ClubCard({ club }: ClubCardProps) {
-  const { t, lang } = useLang()
+export async function ClubCard({ club }: ClubCardProps) {
+  const { t, lang } = await getServerT()
   const displayName = lang === 'ka' ? club.name_ka : club.name
   const desc = lang === 'ka' ? club.description_ka : club.description
 

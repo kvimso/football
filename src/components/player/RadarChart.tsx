@@ -1,17 +1,15 @@
-'use client'
-
 interface RadarChartProps {
   skills: {
-    pace: number
-    shooting: number
-    passing: number
-    dribbling: number
-    defending: number
-    physical: number
+    pace: number | null
+    shooting: number | null
+    passing: number | null
+    dribbling: number | null
+    defending: number | null
+    physical: number | null
   }
+  labels: string[]
 }
 
-const LABELS = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY']
 const SIZE = 240
 const CENTER = SIZE / 2
 const RADIUS = 90
@@ -23,8 +21,8 @@ function getPoint(index: number, value: number, maxRadius: number): [number, num
   return [CENTER + r * Math.cos(angle), CENTER + r * Math.sin(angle)]
 }
 
-export function RadarChart({ skills }: RadarChartProps) {
-  const values = [skills.pace, skills.shooting, skills.passing, skills.dribbling, skills.defending, skills.physical]
+export function RadarChart({ skills, labels }: RadarChartProps) {
+  const values = [skills.pace ?? 0, skills.shooting ?? 0, skills.passing ?? 0, skills.dribbling ?? 0, skills.defending ?? 0, skills.physical ?? 0]
 
   // Build polygon for player stats
   const points = values.map((v, i) => getPoint(i, v, RADIUS))
@@ -80,7 +78,7 @@ export function RadarChart({ skills }: RadarChartProps) {
       ))}
 
       {/* Labels */}
-      {LABELS.map((label, i) => {
+      {labels.map((label, i) => {
         const [x, y] = getPoint(i, 100, RADIUS + 18)
         return (
           <text

@@ -18,7 +18,13 @@ export default async function AdminTransfersPage() {
     .single()
 
   if (profileError) console.error('Failed to fetch profile:', profileError.message)
-  if (!profile?.club_id) return null
+  if (!profile?.club_id) {
+    return (
+      <div className="p-8 text-center text-foreground-muted">
+        <p>{t('admin.noClub')}</p>
+      </div>
+    )
+  }
 
   const clubId = profile.club_id
 

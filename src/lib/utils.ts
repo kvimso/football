@@ -24,18 +24,3 @@ export function calculateAge(dateOfBirth: string | Date): number {
   }
   return age
 }
-
-/**
- * Return the CSS custom property name for a player position.
- */
-export function getPositionColor(position: string): string {
-  const map: Record<string, string> = {
-    GK: 'var(--pos-gk)',
-    DEF: 'var(--pos-def)',
-    MID: 'var(--pos-mid)',
-    ATT: 'var(--pos-att)',
-    WNG: 'var(--pos-wng)',
-    ST: 'var(--pos-st)',
-  }
-  return map[position] ?? 'var(--accent)'
-}

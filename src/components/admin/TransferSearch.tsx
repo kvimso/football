@@ -27,6 +27,7 @@ export function TransferSearch() {
   const [searching, startSearch] = useTransition()
   const [actingOn, setActingOn] = useState<string | null>(null)
   const [actionMsg, setActionMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
 
   function handleSearch() {
     if (query.trim().length < 2) return
@@ -49,8 +50,9 @@ export function TransferSearch() {
     startSearch(async () => {
       const res = await requestTransfer(playerId)
       if (res.error) {
-        alert(res.error)
+        setErrorMsg(res.error)
       } else {
+        setErrorMsg('')
         setActionMsg(t('admin.transfers.requestSent').replace('{club}', res.clubName ?? ''))
         setResults((prev) => prev.filter((p) => p.id !== playerId))
         router.refresh()
@@ -64,8 +66,9 @@ export function TransferSearch() {
     startSearch(async () => {
       const res = await claimFreeAgent(playerId)
       if (res.error) {
-        alert(res.error)
+        setErrorMsg(res.error)
       } else {
+        setErrorMsg('')
         setActionMsg(t('admin.transfers.claimSuccess').replace('{name}', res.playerName ?? ''))
         setResults((prev) => prev.filter((p) => p.id !== playerId))
         router.refresh()
@@ -100,6 +103,12 @@ export function TransferSearch() {
       {actionMsg && (
         <div className="mt-3 rounded-lg border border-accent/30 bg-accent/10 p-3 text-sm text-accent">
           {actionMsg}
+        </div>
+      )}
+
+      {errorMsg && (
+        <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+          {errorMsg}
         </div>
       )}
 

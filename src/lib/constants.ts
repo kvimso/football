@@ -1,46 +1,6 @@
 export const POSITIONS = ['GK', 'DEF', 'MID', 'ATT', 'WNG', 'ST'] as const
-export type Position = (typeof POSITIONS)[number]
-
-export const REGIONS = [
-  'Tbilisi',
-  'Batumi',
-  'Kutaisi',
-  'Rustavi',
-  'Gori',
-  'Zugdidi',
-  'Poti',
-  'Telavi',
-  'Ozurgeti',
-  'Senaki',
-] as const
-
-export const STAT_SKILLS = [
-  'pace',
-  'shooting',
-  'passing',
-  'dribbling',
-  'defending',
-  'physical',
-] as const
 
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
-
-export const PLAYER_STATUSES = [
-  'active',
-  'free_agent',
-] as const
-
-export const CONTACT_REQUEST_STATUSES = [
-  'pending',
-  'approved',
-  'rejected',
-] as const
-
-export const USER_ROLES = [
-  'scout',
-  'academy_admin',
-  'platform_admin',
-] as const
 
 export const POSITION_COLOR_CLASSES: Record<string, string> = {
   GK: 'bg-pos-gk/20 text-pos-gk',
@@ -59,10 +19,9 @@ export const AGE_RANGES = [
   { value: '19+', label: '19+', min: 19, max: 99 },
 ] as const
 
-export const AGE_RANGE_MAP: Record<string, { min: number; max: number }> = {
-  u16: { min: 0, max: 15 },
-  u17: { min: 16, max: 16 },
-  u18: { min: 17, max: 17 },
-  u19: { min: 18, max: 18 },
-  '19+': { min: 19, max: 99 },
-}
+export const AGE_RANGE_MAP: Record<string, { min: number; max: number }> =
+  Object.fromEntries(AGE_RANGES.map((r) => [r.value, { min: r.min, max: r.max }]))
+
+// Tiny dark placeholder for next/image blur
+export const BLUR_DATA_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='

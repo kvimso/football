@@ -1,10 +1,8 @@
-'use client'
-
 import Link from 'next/link'
-import { useLang } from '@/hooks/useLang'
+import { getServerT } from '@/lib/server-translations'
 
-export function HomeHero() {
-  const { t } = useLang()
+export async function HomeHero() {
+  const { t } = await getServerT()
 
   return (
     <section className="relative overflow-hidden border-b border-border bg-background-secondary">

@@ -72,12 +72,12 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
       />
 
       {/* Filter row */}
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
         {/* Position */}
         <select
           value={position}
           onChange={(e) => updateParam('position', e.target.value)}
-          className={selectClasses}
+          className={`${selectClasses} w-full sm:w-auto`}
         >
           <option value="">{t('players.allPositions')}</option>
           {POSITIONS.map((pos) => (
@@ -91,7 +91,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         <select
           value={age}
           onChange={(e) => updateParam('age', e.target.value)}
-          className={selectClasses}
+          className={`${selectClasses} w-full sm:w-auto`}
         >
           <option value="">{t('players.allAges')}</option>
           {AGE_RANGES.map((range) => (
@@ -105,7 +105,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         <select
           value={club}
           onChange={(e) => updateParam('club', e.target.value)}
-          className={selectClasses}
+          className={`${selectClasses} w-full sm:w-auto`}
         >
           <option value="">{t('players.allClubs')}</option>
           {clubs.map((c) => (
@@ -119,12 +119,12 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         <select
           value={foot}
           onChange={(e) => updateParam('foot', e.target.value)}
-          className={selectClasses}
+          className={`${selectClasses} w-full sm:w-auto`}
         >
           <option value="">{t('players.allFeet')}</option>
           {PREFERRED_FEET.map((f) => (
             <option key={f} value={f}>
-              {f}
+              {t('foot.' + f)}
             </option>
           ))}
         </select>
@@ -133,7 +133,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         <select
           value={status}
           onChange={(e) => updateParam('status', e.target.value)}
-          className={selectClasses}
+          className={`${selectClasses} w-full sm:w-auto`}
         >
           <option value="">{t('players.allStatuses')}</option>
           <option value="active">{t('players.statusActive')}</option>

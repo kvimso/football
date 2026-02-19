@@ -2,12 +2,24 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    console.error('[middleware] Missing env vars:', { url: !!url, key: !!key })
+    return NextResponse.next({ request })
+  }
+
+  // Skip Supabase call if no auth cookies — anonymous users don't need session refresh
+  const hasAuthCookie = request.cookies.getAll().some(c => c.name.startsWith('sb-'))
+  if (!hasAuthCookie) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  try {
+    const supabase = createServerClient(url, key, {
       cookies: {
         getAll() {
           return request.cookies.getAll()
@@ -22,21 +34,19 @@ export async function middleware(request: NextRequest) {
           )
         },
       },
-    }
-  )
+    })
 
-  // Refresh the auth session so it doesn't expire
-  await supabase.auth.getUser()
+    // Refresh the auth session so it doesn't expire
+    await supabase.auth.getUser()
+  } catch (err) {
+    console.error('[middleware] Supabase error:', err)
+  }
 
   return supabaseResponse
 }
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/admin/:path*',
-    '/login',
-    '/register',
-    '/callback',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

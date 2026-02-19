@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { calculateAge } from '@/lib/utils'
-import { PlayerStatusActions } from '@/components/admin/PlayerStatusActions'
 import { ReleasePlayerButton } from '@/components/admin/ReleasePlayerButton'
 
 export default async function AdminPlayersPage() {
@@ -20,7 +19,13 @@ export default async function AdminPlayersPage() {
     .single()
 
   if (profileError) console.error('Failed to fetch profile:', profileError.message)
-  if (!profile?.club_id) return null
+  if (!profile?.club_id) {
+    return (
+      <div className="p-8 text-center text-foreground-muted">
+        <p>{t('admin.noClub')}</p>
+      </div>
+    )
+  }
 
   const { data: players, error } = await supabase
     .from('players')
@@ -44,10 +49,10 @@ export default async function AdminPlayersPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border text-foreground-muted">
-                <th className="pb-3 pr-4 font-medium">{t('players.platformId')}</th>
+                <th className="hidden pb-3 pr-4 font-medium sm:table-cell">{t('players.platformId')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('admin.players.name')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('admin.players.position')}</th>
-                <th className="pb-3 pr-4 font-medium">{t('players.age')}</th>
+                <th className="hidden pb-3 pr-4 font-medium sm:table-cell">{t('players.age')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('admin.players.status')}</th>
                 <th className="pb-3 font-medium">{t('admin.common.actions')}</th>
               </tr>
@@ -58,7 +63,7 @@ export default async function AdminPlayersPage() {
                 const displayName = lang === 'ka' ? player.name_ka : player.name
                 return (
                   <tr key={player.id} className="border-b border-border/50">
-                    <td className="py-3 pr-4 font-mono text-xs text-foreground-muted">{player.platform_id ?? '-'}</td>
+                    <td className="hidden py-3 pr-4 font-mono text-xs text-foreground-muted sm:table-cell">{player.platform_id ?? '-'}</td>
                     <td className="py-3 pr-4">
                       <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent">
                         {displayName}
@@ -69,7 +74,7 @@ export default async function AdminPlayersPage() {
                         {t(`positions.${player.position}`)}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 text-foreground-muted">
+                    <td className="hidden py-3 pr-4 text-foreground-muted sm:table-cell">
                       {calculateAge(player.date_of_birth)}
                     </td>
                     <td className="py-3 pr-4">
@@ -91,7 +96,6 @@ export default async function AdminPlayersPage() {
                         >
                           {t('common.edit')}
                         </Link>
-                        <PlayerStatusActions playerId={player.id} status={player.status} />
                         {player.status === 'active' && (
                           <ReleasePlayerButton playerId={player.id} playerName={displayName} />
                         )}

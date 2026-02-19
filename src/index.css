@@ -146,9 +146,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .grid-stat-numbers {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   text-align: center;
+}
+@media (min-width: 640px) {
+  .grid-stat-numbers { grid-template-columns: repeat(4, 1fr); }
 }
 
 .grid-videos {

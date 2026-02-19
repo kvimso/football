@@ -1,6 +1,4 @@
-'use client'
-
-import { useLang } from '@/hooks/useLang'
+import { getServerT } from '@/lib/server-translations'
 
 interface ClubDetailClientProps {
   club: {
@@ -11,8 +9,8 @@ interface ClubDetailClientProps {
   }
 }
 
-export function ClubDetailClient({ club }: ClubDetailClientProps) {
-  const { lang } = useLang()
+export async function ClubDetailClient({ club }: ClubDetailClientProps) {
+  const { lang } = await getServerT()
   const displayName = lang === 'ka' ? club.name_ka : club.name
   const desc = lang === 'ka' ? club.description_ka : club.description
 

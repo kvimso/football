@@ -10,6 +10,8 @@ import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
 import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
+import { trackPageView } from '@/lib/analytics'
+import { BLUR_DATA_URL } from '@/lib/constants'
 
 export const revalidate = 60
 
@@ -67,6 +69,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     .single()
 
   if (error || !player) notFound()
+
+  trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
 
   // Check if user is logged in and has shortlisted/contacted this player
   const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -126,7 +130,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         {/* Photo */}
         <div className="relative flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background-secondary border border-border">
           {player.photo_url ? (
-            <Image src={player.photo_url} alt={player.name} fill className="object-cover" sizes="224px" />
+            <Image src={player.photo_url} alt={player.name} fill className="object-cover" sizes="224px" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
           ) : (
             <span className="text-6xl font-bold text-foreground-muted/20">{player.name.charAt(0)}</span>
           )}
@@ -193,19 +197,19 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             {player.height_cm && (
               <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
                 <div className="text-foreground-muted text-xs">{t('players.height')}</div>
-                <div className="font-semibold text-foreground">{player.height_cm} cm</div>
+                <div className="font-semibold text-foreground">{player.height_cm} {t('players.cm')}</div>
               </div>
             )}
             {player.weight_kg && (
               <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
                 <div className="text-foreground-muted text-xs">{t('players.weight')}</div>
-                <div className="font-semibold text-foreground">{player.weight_kg} kg</div>
+                <div className="font-semibold text-foreground">{player.weight_kg} {t('players.kg')}</div>
               </div>
             )}
             {player.preferred_foot && (
               <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
                 <div className="text-foreground-muted text-xs">{t('players.foot')}</div>
-                <div className="font-semibold text-foreground">{player.preferred_foot}</div>
+                <div className="font-semibold text-foreground">{t('foot.' + player.preferred_foot)}</div>
               </div>
             )}
             {player.jersey_number && (
@@ -216,7 +220,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             )}
             <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
               <div className="text-foreground-muted text-xs">{t('players.nationality')}</div>
-              <div className="font-semibold text-foreground">{player.nationality}</div>
+              <div className="font-semibold text-foreground">{player.nationality ? t('nationality.' + player.nationality) : '-'}</div>
             </div>
           </div>
         </div>
@@ -228,7 +232,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         {skills && (
           <div className="card">
             <h3 className="mb-4 text-lg font-semibold text-foreground">{t('players.skills')}</h3>
-            <RadarChart skills={skills} />
+            <RadarChart skills={skills} labels={['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(k => t('skills.' + k))} />
           </div>
         )}
 

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
-import { POSITION_COLOR_CLASSES } from '@/lib/constants'
+import { POSITION_COLOR_CLASSES, BLUR_DATA_URL } from '@/lib/constants'
 
 interface PlayerCardProps {
   player: {
@@ -15,7 +15,7 @@ interface PlayerCardProps {
     date_of_birth: string
     height_cm: number | null
     preferred_foot: string | null
-    is_featured: boolean
+    is_featured: boolean | null
     photo_url: string | null
     status: string
     club: {
@@ -23,9 +23,9 @@ interface PlayerCardProps {
       name_ka: string
     } | null
     season_stats: {
-      goals: number
-      assists: number
-      matches_played: number
+      goals: number | null
+      assists: number | null
+      matches_played: number | null
     } | null
   }
 }
@@ -53,6 +53,8 @@ export function PlayerCard({ player }: PlayerCardProps) {
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-foreground-muted/30">

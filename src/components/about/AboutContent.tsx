@@ -1,10 +1,8 @@
-'use client'
-
 import Link from 'next/link'
-import { useLang } from '@/hooks/useLang'
+import { getServerT } from '@/lib/server-translations'
 
-export function AboutContent() {
-  const { t } = useLang()
+export async function AboutContent() {
+  const { t } = await getServerT()
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">

@@ -191,7 +191,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               <option value="">{t('players.allFeet')}</option>
               {PREFERRED_FEET.map((foot) => (
                 <option key={foot} value={foot}>
-                  {foot}
+                  {t('foot.' + foot)}
                 </option>
               ))}
             </select>

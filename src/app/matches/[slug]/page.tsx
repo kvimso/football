@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { format } from 'date-fns'
 import { MatchDetailClient } from '@/components/match/MatchDetailClient'
+import { trackPageView } from '@/lib/analytics'
 
 export const revalidate = 60
 
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
 export default async function MatchPage({ params }: MatchPageProps) {
   const { slug } = await params
   const supabase = await createClient()
-  const { t } = await getServerT()
+  const { t, lang } = await getServerT()
 
   const { data: match, error } = await supabase
     .from('matches')
@@ -57,6 +58,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
     .single()
 
   if (error || !match) notFound()
+
+  trackPageView({ pageType: 'match', entityId: match.id, entitySlug: match.slug })
 
   const homeClub = Array.isArray(match.home_club) ? match.home_club[0] : match.home_club
   const awayClub = Array.isArray(match.away_club) ? match.away_club[0] : match.away_club
@@ -143,7 +146,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                       <td className="py-2 pr-4">
                         {ps.player?.slug ? (
                           <Link href={`/players/${ps.player.slug}`} className="font-medium text-accent hover:underline">
-                            {ps.player.name}
+                            {lang === 'ka' ? ps.player.name_ka : ps.player.name}
                           </Link>
                         ) : (
                           <span className="font-medium text-foreground">{t('matches.unknown')}</span>

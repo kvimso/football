@@ -23,7 +23,13 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
     .single()
 
   if (profileError) console.error('Failed to fetch profile:', profileError.message)
-  if (!profile?.club_id) return notFound()
+  if (!profile?.club_id) {
+    return (
+      <div className="p-8 text-center text-foreground-muted">
+        <p>{t('admin.noClub')}</p>
+      </div>
+    )
+  }
 
   const { data: player, error: playerError } = await supabase
     .from('players')

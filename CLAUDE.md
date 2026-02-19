@@ -46,6 +46,13 @@ This file provides guidance to Claude Code when working on this project. Read th
 
 ---
 
+## Development Environment
+
+**Development path (WSL):** `~/projects/georgian-football-platform/`
+**Backup path (OneDrive):** `/mnt/c/Users/kvims/OneDrive/Desktop/georgian-football-platform/`
+
+Always develop from the WSL path. The OneDrive path causes Turbopack crashes due to file permission issues. See `TROUBLESHOOTING.md` for details and solutions to recurring problems.
+
 ## Commands
 
 ```bash
@@ -72,21 +79,22 @@ npx supabase gen types typescript --local > src/lib/database.types.ts  # Regener
 │   ├── app/                    # Next.js App Router
 │   │   ├── layout.tsx          # Root layout (providers, nav, footer)
 │   │   ├── page.tsx            # Home page
-│   │   ├── (public)/           # Route group: public pages (no auth required)
-│   │   │   ├── players/
-│   │   │   │   ├── page.tsx        # Player directory with filters
-│   │   │   │   └── [slug]/
-│   │   │   │       └── page.tsx    # Player profile (SSR for SEO)
-│   │   │   ├── matches/
-│   │   │   │   ├── page.tsx        # Match library
-│   │   │   │   └── [slug]/
-│   │   │   │       └── page.tsx    # Match detail
-│   │   │   ├── clubs/
-│   │   │   │   ├── page.tsx        # Club listing
-│   │   │   │   └── [slug]/
-│   │   │   │       └── page.tsx    # Club detail with squad
-│   │   │   └── about/
-│   │   │       └── page.tsx
+│   │   ├── players/            # Public: player pages (no auth required)
+│   │   │   ├── page.tsx        # Player directory with filters
+│   │   │   ├── compare/
+│   │   │   │   └── page.tsx    # Player comparison (side-by-side)
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx    # Player profile (SSR for SEO)
+│   │   ├── matches/            # Public: match pages
+│   │   │   ├── page.tsx        # Match library
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx    # Match detail
+│   │   ├── clubs/              # Public: club pages
+│   │   │   ├── page.tsx        # Club listing
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx    # Club detail with squad
+│   │   ├── about/
+│   │   │   └── page.tsx
 │   │   ├── (auth)/             # Route group: authentication pages
 │   │   │   ├── login/
 │   │   │   │   └── page.tsx
@@ -113,27 +121,26 @@ npx supabase gen types typescript --local > src/lib/database.types.ts  # Regener
 │   │   │   │           └── page.tsx  # Edit player profile
 │   │   │   ├── requests/
 │   │   │   │   └── page.tsx    # Incoming scout contact requests
-│   │   │   └── transfers/
-│   │   │       └── page.tsx    # Transfer requests (incoming, outgoing, search + claim)
-│   │   └── api/                # API routes
-│   │       ├── contact/
-│   │       │   └── route.ts    # POST: scout sends contact request
-│   │       ├── camera/
-│   │       │   ├── webhook/
-│   │       │   │   └── route.ts  # Camera system webhook receiver
-│   │       │   └── sync/
-│   │       │       └── route.ts  # Manual trigger to sync camera data
-│   │       ├── transfers/
-│   │       │   └── route.ts    # Transfer request actions
-│   │       └── players/
-│   │           └── search/
-│   │               └── route.ts  # Search API for autocomplete and transfer search
+│   │   │   ├── transfers/
+│   │   │   │   └── page.tsx    # Transfer requests (incoming, outgoing, search + claim)
+│   │   │   └── invite/
+│   │   │       └── page.tsx    # Invite academy admin (platform admin only)
+│   │   └── actions/            # Server actions (mutations)
+│   │       ├── admin-players.ts    # createPlayer, updatePlayer
+│   │       ├── admin-requests.ts   # approveRequest, rejectRequest
+│   │       ├── admin-transfers.ts  # releasePlayer, requestTransfer, claimFreeAgent, etc.
+│   │       ├── admin-invite.ts     # inviteAcademyAdmin
+│   │       └── shortlist.ts        # addToShortlist, removeFromShortlist, updateShortlistNote
 │   ├── components/             # Reusable UI components
-│   │   ├── ui/                 # Primitive components (Button, Input, Card, Modal, Badge)
-│   │   ├── player/             # Player-specific (PlayerCard, RadarChart, StatsTable, CompareView)
-│   │   ├── match/              # Match-specific (MatchCard, MatchTimeline, TopPerformers)
-│   │   ├── layout/             # Layout components (Navbar, Footer, Sidebar, MobileMenu)
-│   │   └── forms/              # Form components (PlayerForm, ContactForm, FilterPanel)
+│   │   ├── admin/              # Admin components (PlayerForm, TransferSearch, ReleasePlayerButton)
+│   │   ├── player/             # Player-specific (PlayerCard, RadarChart, CompareView)
+│   │   ├── match/              # Match-specific (MatchCard, MatchFilters, MatchDetailClient)
+│   │   ├── home/               # Home page (HomeHero, StatsBar)
+│   │   ├── club/               # Club components (ClubCard, ClubDetailClient)
+│   │   ├── about/              # About page (AboutContent)
+│   │   ├── dashboard/          # Scout dashboard components
+│   │   ├── layout/             # Layout components (Navbar, Footer, MobileMenu)
+│   │   └── forms/              # Form components (ContactRequestForm, FilterPanel)
 │   ├── lib/                    # Shared utilities and config
 │   │   ├── supabase/
 │   │   │   ├── client.ts       # Browser Supabase client
@@ -143,19 +150,20 @@ npx supabase gen types typescript --local > src/lib/database.types.ts  # Regener
 │   │   │   ├── client.ts       # Camera API client (zone14 or Pixellot)
 │   │   │   ├── types.ts        # Camera API response types
 │   │   │   └── sync.ts         # Logic to map camera data → our DB schema
+│   │   ├── auth.ts             # Shared getAdminContext() for server actions
 │   │   ├── database.types.ts   # Auto-generated Supabase types (DO NOT EDIT MANUALLY)
+│   │   ├── translations.ts     # i18n translation keys (en + ka)
+│   │   ├── server-translations.ts  # Server-side getServerT() helper
 │   │   ├── validations.ts      # Zod schemas for form/API validation
-│   │   ├── utils.ts            # Helpers: slug generation, age calc, position colors, platform ID generation
-│   │   └── constants.ts        # Position list, regions, stat thresholds, config values
+│   │   ├── utils.ts            # Helpers: slug generation, age calc, platform ID generation
+│   │   └── constants.ts        # Position list, preferred feet, position colors, age ranges
 │   ├── hooks/                  # Custom React hooks
-│   │   ├── useShortlist.ts     # Add/remove players from shortlist
 │   │   ├── useLang.ts          # Language toggle hook
 │   │   └── useDebounce.ts      # Search input debouncing
 │   ├── context/
 │   │   └── LanguageContext.tsx  # i18n provider with en/ka translations
 │   ├── middleware.ts           # Next.js middleware: auth session refresh, protected route checks
-│   └── styles/
-│       └── globals.css         # Tailwind config + CSS custom properties + component classes
+│   └── index.css               # Tailwind config + CSS custom properties + component classes
 ├── supabase/
 │   ├── migrations/             # SQL migration files (sequential, timestamped)
 │   ├── seed.sql                # Demo data for development
@@ -679,7 +687,7 @@ The pages scouts see. These must be excellent — they're the product.
 - [x] About page
 - [x] 404 page
 - [x] SEO: dynamic metadata, Open Graph images, structured data for player pages
-- [ ] Mobile responsive testing on all public pages
+- [x] Mobile responsive testing on all public pages
 
 ### Phase 3: Scout Features (Week 5-6)
 
@@ -704,7 +712,7 @@ How academies manage their data. **No match/stats management — camera only.**
 - [x] Release player button with confirmation
 - [x] Incoming contact requests: view, approve, reject
 - [x] Basic stats dashboard (how many scouts viewed your players)
-- [ ] Academy admin invitation flow (platform admin sends invite)
+- [x] Academy admin invitation flow (platform admin sends invite)
 - [x] Transfer system: search players by platform_id or name
 - [x] Transfer system: send transfer request for active players at other clubs
 - [x] Transfer system: claim free agent players directly
@@ -738,11 +746,11 @@ Connect camera data to the platform. Camera partner TBD (zone14 or Pixellot).
 
 ### Phase 6: Polish & Launch (Week 11-12)
 
-- [ ] Performance optimization (lazy loading, image optimization, caching)
+- [x] Performance optimization (lazy loading, image optimization, caching)
 - [x] Error boundaries and loading states on all pages
-- [ ] Email notifications (contact request received, request status update, transfer request received)
-- [ ] Analytics (basic page views, popular players, scout activity)
-- [ ] Final mobile testing
+- [x] Email notifications (contact request received, request status update, transfer request received)
+- [x] Analytics (basic page views, popular players, scout activity)
+- [x] Final mobile testing
 - [ ] Production deployment + custom domain
 
 ---

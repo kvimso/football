@@ -14,9 +14,10 @@ const links = [
 interface AdminSidebarProps {
   clubName: string
   clubNameKa: string
+  role?: string
 }
 
-export function AdminSidebar({ clubName, clubNameKa }: AdminSidebarProps) {
+export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) {
   const pathname = usePathname()
   const { t, lang } = useLang()
 
@@ -55,6 +56,21 @@ export function AdminSidebar({ clubName, clubNameKa }: AdminSidebarProps) {
                 </Link>
               )
             })}
+            {role === 'platform_admin' && (
+              <Link
+                href="/admin/invite"
+                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === '/admin/invite'
+                    ? 'bg-accent/10 text-accent'
+                    : 'text-foreground-muted hover:bg-surface hover:text-foreground'
+                }`}
+              >
+                <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+                {t('admin.invite.nav')}
+              </Link>
+            )}
           </nav>
         </div>
       </aside>
@@ -79,6 +95,18 @@ export function AdminSidebar({ clubName, clubNameKa }: AdminSidebarProps) {
             </Link>
           )
         })}
+        {role === 'platform_admin' && (
+          <Link
+            href="/admin/invite"
+            className={`whitespace-nowrap rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+              pathname === '/admin/invite'
+                ? 'border-b-2 border-accent text-accent'
+                : 'text-foreground-muted hover:text-foreground'
+            }`}
+          >
+            {t('admin.invite.nav')}
+          </Link>
+        )}
       </nav>
     </>
   )

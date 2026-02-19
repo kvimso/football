@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "UV_THREADPOOL_SIZE=16 next dev -H 127.0.0.1",
+    "dev:clean": "pkill -9 -f next-server 2>/dev/null; pkill -9 -f postcss 2>/dev/null; rm -rf .next && npm run dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -15,6 +16,7 @@
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "resend": "^6.9.2",
     "zod": "^4.3.6"
   },
   "devDependencies": {

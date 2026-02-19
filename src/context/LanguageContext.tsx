@@ -24,7 +24,7 @@ function getLangFromCookie(): Lang {
 }
 
 function setLangCookie(lang: Lang) {
-  document.cookie = `lang=${lang};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
+  document.cookie = `lang=${lang};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax;Secure`
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

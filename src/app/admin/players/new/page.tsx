@@ -13,12 +13,16 @@ export default async function AdminNewPlayerPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role, club_id')
+    .select('club_id')
     .eq('id', user.id)
     .single()
 
-  if (!profile || profile.role !== 'academy_admin' || !profile.club_id) {
-    redirect('/dashboard')
+  if (!profile?.club_id) {
+    return (
+      <div className="p-8 text-center text-foreground-muted">
+        <p>{t('admin.noClub')}</p>
+      </div>
+    )
   }
 
   return (

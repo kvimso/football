@@ -7,8 +7,8 @@ import { format } from 'date-fns'
 interface RequestItem {
   id: string
   message: string
-  status: string
-  created_at: string
+  status: string | null
+  created_at: string | null
   responded_at: string | null
   player: {
     name: string
@@ -55,8 +55,8 @@ export function RequestsList({ items }: { items: RequestItem[] }) {
           const clubName = player?.club
             ? lang === 'ka' ? player.club.name_ka : player.club.name
             : null
-          const statusClasses = statusColors[item.status] ?? statusColors.pending
-          const statusLabel = t(`dashboard.${item.status}`)
+          const statusClasses = statusColors[item.status ?? 'pending'] ?? statusColors.pending
+          const statusLabel = t(`dashboard.${item.status ?? 'pending'}`)
 
           return (
             <div key={item.id} className="card">
@@ -83,7 +83,7 @@ export function RequestsList({ items }: { items: RequestItem[] }) {
               </p>
 
               <div className="mt-3 text-xs text-foreground-muted/70">
-                {t('dashboard.sentOn')} {format(new Date(item.created_at), 'dd MMM yyyy')}
+                {t('dashboard.sentOn')} {item.created_at ? format(new Date(item.created_at), 'dd MMM yyyy') : ''}
                 {item.responded_at && (
                   <span> · {t('dashboard.responded')} {format(new Date(item.responded_at), 'dd MMM yyyy')}</span>
                 )}

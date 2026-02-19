@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { cookies } from 'next/headers'
 import { Geist, Noto_Sans_Georgian } from 'next/font/google'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { Navbar } from '@/components/layout/Navbar'
@@ -22,13 +23,16 @@ export const metadata: Metadata = {
     'Discover the next generation of Georgian football talent. A scouting platform connecting academies with international scouts and agents.',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const lang = cookieStore.get('lang')?.value || 'en'
+
   return (
-    <html lang="en">
+    <html lang={lang}>
       <body
         className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >

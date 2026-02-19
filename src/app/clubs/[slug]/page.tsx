@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
+import { trackPageView } from '@/lib/analytics'
 
 export const revalidate = 60
 
@@ -45,6 +46,8 @@ export default async function ClubPage({ params }: ClubPageProps) {
     .single()
 
   if (error || !club) notFound()
+
+  trackPageView({ pageType: 'club', entityId: club.id, entitySlug: club.slug })
 
   // Fetch players for this club
   const { data: players, error: playersError } = await supabase

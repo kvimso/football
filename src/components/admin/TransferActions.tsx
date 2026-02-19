@@ -13,15 +13,17 @@ export function TransferActions({ requestId }: TransferActionsProps) {
   const { t } = useLang()
   const router = useRouter()
   const [loadingAction, setLoadingAction] = useState<'accept' | 'decline' | null>(null)
+  const [errorMsg, setErrorMsg] = useState('')
 
   async function handleAction(action: 'accept' | 'decline') {
     setLoadingAction(action)
+    setErrorMsg('')
     const result = action === 'accept'
       ? await acceptTransfer(requestId)
       : await declineTransfer(requestId)
 
     if (result.error) {
-      alert(result.error)
+      setErrorMsg(result.error)
     } else {
       router.refresh()
     }
@@ -32,6 +34,9 @@ export function TransferActions({ requestId }: TransferActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
+      {errorMsg && (
+        <span className="text-xs text-red-400">{errorMsg}</span>
+      )}
       <button
         onClick={() => handleAction('accept')}
         disabled={isLoading}

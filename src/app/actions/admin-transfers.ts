@@ -1,33 +1,17 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getAdminContext } from '@/lib/auth'
+import { sendEmail } from '@/lib/email'
+import { transferRequestReceivedEmail } from '@/lib/email-templates'
+
+const uuidSchema = z.string().uuid()
 
 // Escape special PostgREST filter characters to prevent filter injection
 function escapePostgrestValue(value: string): string {
-  return value.replace(/[,.()"\\]/g, '')
-}
-
-async function getAdminContext() {
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) return { error: 'Not authenticated', clubId: null, supabase: null, userId: null }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role, club_id')
-    .eq('id', user.id)
-    .single()
-
-  if (profileError || !profile) return { error: 'Profile not found', clubId: null, supabase: null, userId: null }
-  if (profile.role !== 'academy_admin') {
-    return { error: 'Unauthorized', clubId: null, supabase: null, userId: null }
-  }
-
-  if (!profile.club_id) return { error: 'No club assigned', clubId: null, supabase: null, userId: null }
-
-  return { error: null, clubId: profile.club_id, supabase, userId: user.id }
+  return value.replace(/[,.()"\\%_]/g, '')
 }
 
 function today() {
@@ -35,6 +19,7 @@ function today() {
 }
 
 export async function releasePlayer(playerId: string) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
@@ -118,6 +103,7 @@ export async function searchPlayersForTransfer(query: string) {
 }
 
 export async function requestTransfer(playerId: string) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
@@ -153,11 +139,33 @@ export async function requestTransfer(playerId: string) {
 
   const club = Array.isArray(player.club) ? player.club[0] : player.club
 
+  // Send email notification to the receiving club admin (fire-and-forget)
+  try {
+    const admin = createAdminClient()
+    const [clubAdminResult, myClubResult] = await Promise.all([
+      admin.from('profiles').select('email').eq('club_id', player.club_id).eq('role', 'academy_admin').limit(1).single(),
+      admin.from('clubs').select('name').eq('id', clubId).single(),
+    ])
+    const clubAdminEmail = clubAdminResult.data?.email
+    const myClubName = myClubResult.data?.name ?? 'Another club'
+    if (clubAdminEmail) {
+      const template = transferRequestReceivedEmail({
+        playerName: player.name,
+        fromClubName: club?.name ?? 'Unknown',
+        toClubName: myClubName,
+      })
+      sendEmail({ to: clubAdminEmail, ...template })
+    }
+  } catch (err) {
+    console.error('Failed to send transfer request email:', err)
+  }
+
   revalidatePath('/admin')
   return { success: true, clubName: club?.name ?? 'the club' }
 }
 
 export async function claimFreeAgent(playerId: string) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
@@ -198,6 +206,7 @@ export async function claimFreeAgent(playerId: string) {
 }
 
 export async function acceptTransfer(requestId: string) {
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
@@ -279,6 +288,7 @@ export async function acceptTransfer(requestId: string) {
 }
 
 export async function declineTransfer(requestId: string) {
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 

@@ -21,8 +21,12 @@ export default async function AdminLayout({
 
   if (profileError) console.error('Failed to get profile:', profileError.message)
 
-  if (!profile || profile.role !== 'academy_admin') {
+  if (!profile || !['academy_admin', 'platform_admin'].includes(profile.role)) {
     redirect('/dashboard')
+  }
+
+  if (profile.role === 'platform_admin') {
+    redirect('/platform')
   }
 
   const club = Array.isArray(profile.club) ? profile.club[0] : profile.club
@@ -33,6 +37,7 @@ export default async function AdminLayout({
         <AdminSidebar
           clubName={club?.name ?? ''}
           clubNameKa={club?.name_ka ?? ''}
+          role={profile.role}
         />
         <main className="min-w-0 flex-1">{children}</main>
       </div>

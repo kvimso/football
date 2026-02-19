@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { format } from 'date-fns'
 
@@ -17,7 +18,13 @@ export default async function AdminDashboardPage() {
     .single()
 
   if (profileError) console.error('Failed to fetch profile:', profileError.message)
-  if (!profile?.club_id) return null
+  if (!profile?.club_id) {
+    return (
+      <div className="p-8 text-center text-foreground-muted">
+        <p>{t('admin.noClub')}</p>
+      </div>
+    )
+  }
 
   const clubId = profile.club_id
 
@@ -34,7 +41,8 @@ export default async function AdminDashboardPage() {
   const playerCount = playerIds.length
 
   // Fetch counts and recent requests in parallel using player IDs
-  const [requestsResult, shortlistsResult, recentRequestsResult] =
+  const admin = createAdminClient()
+  const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult] =
     await Promise.all([
       playerIds.length > 0
         ? supabase
@@ -64,16 +72,25 @@ export default async function AdminDashboardPage() {
             .order('created_at', { ascending: false })
             .limit(5)
         : Promise.resolve({ data: [], error: null }),
+      playerIds.length > 0
+        ? admin
+            .from('page_views')
+            .select('id', { count: 'exact', head: true })
+            .eq('page_type', 'player')
+            .in('entity_id', playerIds)
+        : Promise.resolve({ count: 0, error: null }),
     ])
 
   if (requestsResult.error) console.error('Failed to fetch request count:', requestsResult.error.message)
   if (shortlistsResult.error) console.error('Failed to fetch shortlist count:', shortlistsResult.error.message)
   if (recentRequestsResult.error) console.error('Failed to fetch recent requests:', recentRequestsResult.error.message)
+  if (pageViewsResult.error) console.error('Failed to fetch page views count:', pageViewsResult.error.message)
 
   const stats = [
     { label: t('admin.stats.totalPlayers'), value: playerCount, href: '/admin/players' },
     { label: t('admin.stats.pendingRequests'), value: requestsResult.count ?? 0, href: '/admin/requests' },
     { label: t('admin.stats.scoutSaves'), value: shortlistsResult.count ?? 0, href: '#' },
+    { label: t('admin.stats.playerViews'), value: pageViewsResult.count ?? 0, href: '#' },
   ]
 
   const recentRequests = ('data' in recentRequestsResult ? recentRequestsResult.data ?? [] : []).map(
@@ -89,7 +106,7 @@ export default async function AdminDashboardPage() {
       <h1 className="text-2xl font-bold text-foreground">{t('admin.nav.dashboard')}</h1>
 
       {/* Stat cards */}
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {stats.map((stat) => (
           <Link
             key={stat.label}
@@ -127,7 +144,7 @@ export default async function AdminDashboardPage() {
                     {req.message.slice(0, 80)}{req.message.length > 80 ? '...' : ''}
                   </p>
                   <p className="mt-1 text-xs text-foreground-muted/70">
-                    {format(new Date(req.created_at), 'MMM d, yyyy')}
+                    {req.created_at ? format(new Date(req.created_at), 'MMM d, yyyy') : ''}
                   </p>
                 </div>
                 <span

@@ -22,7 +22,13 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
     .single()
 
   if (profileError) console.error('Failed to fetch profile:', profileError.message)
-  if (!profile?.club_id) return null
+  if (!profile?.club_id) {
+    return (
+      <div className="p-8 text-center text-foreground-muted">
+        <p>{t('admin.noClub')}</p>
+      </div>
+    )
+  }
 
   // First get this club's player IDs for filtering
   const { data: clubPlayers } = await supabase
@@ -124,7 +130,7 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
                     </div>
                     <p className="mt-2 text-sm text-foreground-muted">{req.message}</p>
                     <p className="mt-2 text-xs text-foreground-muted/70">
-                      {format(new Date(req.created_at), 'MMM d, yyyy \'at\' HH:mm')}
+                      {req.created_at ? format(new Date(req.created_at), 'MMM d, yyyy \'at\' HH:mm') : ''}
                       {req.responded_at && (
                         <> &middot; {t('dashboard.responded')}: {format(new Date(req.responded_at), 'MMM d, yyyy')}</>
                       )}
