@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getServerT } from '@/lib/server-translations'
+// Force rebuild for Vercel env vars
 
 export async function HomeHero() {
   const { t } = await getServerT()
