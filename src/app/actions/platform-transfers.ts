@@ -33,12 +33,14 @@ export async function platformAcceptTransfer(requestId: string) {
   if (reqErr) return { error: reqErr.message }
 
   // Cancel other pending requests for this player
-  await admin
+  const { error: declineErr } = await admin
     .from('transfer_requests')
     .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
     .eq('player_id', request.player_id)
     .eq('status', 'pending')
     .neq('id', requestId)
+
+  if (declineErr) console.error('Failed to decline other transfer requests:', declineErr.message)
 
   // Transfer player
   const { error: playerErr } = await admin
@@ -50,22 +52,26 @@ export async function platformAcceptTransfer(requestId: string) {
 
   // Update club history
   if (request.from_club_id) {
-    await admin
+    const { error: closeErr } = await admin
       .from('player_club_history')
       .update({ left_at: today() })
       .eq('player_id', request.player_id)
       .eq('club_id', request.from_club_id)
       .is('left_at', null)
+
+    if (closeErr) console.error('Failed to close club history:', closeErr.message)
   }
 
   if (request.to_club_id) {
-    await admin
+    const { error: histErr } = await admin
       .from('player_club_history')
       .insert({
         player_id: request.player_id,
         club_id: request.to_club_id,
         joined_at: today(),
       })
+
+    if (histErr) console.error('Failed to insert club history:', histErr.message)
   }
 
   revalidatePath('/platform/transfers')

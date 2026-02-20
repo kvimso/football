@@ -57,6 +57,13 @@ export async function sendContactRequest(playerId: string, message: string) {
       admin.from('profiles').select('email').eq('club_id', player.club_id).eq('role', 'academy_admin').limit(1).single(),
       admin.from('profiles').select('full_name, organization').eq('id', user.id).single(),
     ]).then(([clubAdminResult, scoutResult]) => {
+      if (clubAdminResult.error) {
+        console.error('Failed to fetch club admin for email:', clubAdminResult.error.message)
+        return
+      }
+      if (scoutResult.error) {
+        console.error('Failed to fetch scout profile for email:', scoutResult.error.message)
+      }
       const clubAdminEmail = clubAdminResult.data?.email
       const scoutName = scoutResult.data?.full_name ?? 'A scout'
       const scoutOrg = scoutResult.data?.organization ?? null

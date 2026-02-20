@@ -112,22 +112,26 @@ export async function platformUpdatePlayer(playerId: string, data: Record<string
   if (currentPlayer.club_id !== newClubId) {
     // Close old club history
     if (currentPlayer.club_id) {
-      await admin
+      const { error: closeErr } = await admin
         .from('player_club_history')
         .update({ left_at: today })
         .eq('player_id', playerId)
         .eq('club_id', currentPlayer.club_id)
         .is('left_at', null)
+
+      if (closeErr) console.error('Failed to close club history:', closeErr.message)
     }
     // Open new club history
     if (newClubId) {
-      await admin
+      const { error: histErr } = await admin
         .from('player_club_history')
         .insert({
           player_id: playerId,
           club_id: newClubId,
           joined_at: today,
         })
+
+      if (histErr) console.error('Failed to insert club history:', histErr.message)
     }
   }
 
