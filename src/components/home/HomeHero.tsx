@@ -9,8 +9,9 @@ export async function HomeHero() {
     <section className="relative overflow-hidden border-b border-border bg-background-secondary">
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent" />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-28">
+      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:py-32">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             {t('home.heroTitle')}

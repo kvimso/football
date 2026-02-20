@@ -392,6 +392,7 @@ export const translations: Record<Lang, NestedStrings> = {
         deleteConfirm: 'Are you sure you want to delete this club? This cannot be undone.',
         playerCount: 'Players',
         adminCount: 'Admins',
+        cannotDeleteWithPlayers: 'Cannot delete: club has players. Reassign or release them first.',
       },
       players: {
         title: 'All Players',
@@ -826,6 +827,7 @@ export const translations: Record<Lang, NestedStrings> = {
         deleteConfirm: 'ნამდვილად გსურთ ამ კლუბის წაშლა? ეს ვერ გაუქმდება.',
         playerCount: 'მოთამაშეები',
         adminCount: 'ადმინები',
+        cannotDeleteWithPlayers: 'წაშლა შეუძლებელია: კლუბს ჰყავს მოთამაშეები. ჯერ გადაანაწილეთ ან გაათავისუფლეთ.',
       },
       players: {
         title: 'ყველა მოთამაშე',

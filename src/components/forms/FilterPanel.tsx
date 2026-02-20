@@ -55,7 +55,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
   }, [router])
 
   const selectClasses =
-    'rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent transition-colors'
+    'rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors'
 
   return (
     <div className="space-y-4">
@@ -68,7 +68,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           setSearchInput(e.target.value)
           debouncedSearch(e.target.value)
         }}
-        className="w-full rounded-lg border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-accent transition-colors"
+        className="w-full rounded-lg border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
       />
 
       {/* Filter row */}

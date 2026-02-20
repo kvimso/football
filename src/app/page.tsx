@@ -84,7 +84,7 @@ export default async function Home() {
 
       {/* Featured Players */}
       {playerCards.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-12">
+        <section className="mx-auto max-w-7xl px-4 py-14">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-foreground">{t('home.featuredPlayers')}</h2>
             <Link href="/players" className="btn-secondary text-sm">
@@ -101,7 +101,7 @@ export default async function Home() {
 
       {/* Recent Matches */}
       {matchCards.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 pb-12">
+        <section className="mx-auto max-w-7xl border-t border-border px-4 py-14">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-foreground">{t('home.recentMatches')}</h2>
             <Link href="/matches" className="btn-secondary text-sm">

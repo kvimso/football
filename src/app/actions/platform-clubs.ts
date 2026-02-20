@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { clubFormSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
 import { generateSlug } from '@/lib/utils'
+import { getServerT } from '@/lib/server-translations'
 
 export async function createClub(data: Record<string, unknown>) {
   const { error: authErr, admin } = await getPlatformAdminContext()
@@ -85,7 +86,8 @@ export async function deleteClub(clubId: string) {
     .eq('club_id', clubId)
 
   if (count && count > 0) {
-    return { error: `Cannot delete: club has ${count} player(s). Reassign or release them first.` }
+    const { t } = await getServerT()
+    return { error: t('platform.clubs.cannotDeleteWithPlayers') }
   }
 
   const { error: deleteError } = await admin

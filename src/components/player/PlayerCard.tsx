@@ -43,7 +43,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
   const isFreeAgent = player.status === 'free_agent'
 
   return (
-    <Link href={`/players/${player.slug}`} className="card group block">
+    <Link href={`/players/${player.slug}`} className="card group block overflow-hidden">
       {/* Photo area */}
       <div className="relative mb-3 flex h-44 items-center justify-center overflow-hidden rounded-lg bg-background">
         {player.photo_url ? (
