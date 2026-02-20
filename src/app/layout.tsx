@@ -29,14 +29,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const cookieStore = await cookies()
-  const lang = cookieStore.get('lang')?.value || 'en'
+  const rawLang = cookieStore.get('lang')?.value
+  const lang = rawLang === 'ka' ? 'ka' : 'en'
 
   return (
     <html lang={lang}>
       <body
         className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >
-        <LanguageProvider>
+        <LanguageProvider initialLang={lang as 'en' | 'ka'}>
           <Navbar />
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />

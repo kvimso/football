@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   description: 'Explore Georgian football academies developing the next generation of talent.',
 }
 
-export const revalidate = 60
-
 export default async function ClubsPage() {
   const supabase = await createClient()
   const { t } = await getServerT()

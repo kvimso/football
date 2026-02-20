@@ -13,8 +13,6 @@ import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
 import { trackPageView } from '@/lib/analytics'
 import { BLUR_DATA_URL } from '@/lib/constants'
 
-export const revalidate = 60
-
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
 }

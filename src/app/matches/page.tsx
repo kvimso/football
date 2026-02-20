@@ -9,8 +9,6 @@ export const metadata: Metadata = {
   description: 'Browse match results and player performances from Georgian youth football.',
 }
 
-export const revalidate = 60
-
 interface MatchesPageProps {
   searchParams: Promise<{ competition?: string }>
 }

@@ -76,7 +76,7 @@ export function transferRequestReceivedEmail({ playerName, fromClubName, toClubN
   const html = wrap(`
     <div class="header">New Transfer Request</div>
     <div class="card">
-      <p class="text"><span class="highlight">${toClubName}</span> has sent a transfer request for <span class="highlight">${playerName}</span>.</p>
+      <p class="text"><span class="highlight">${toClubName}</span> has sent a transfer request for <span class="highlight">${playerName}</span> (currently at ${fromClubName}).</p>
       <p class="text">Log in to your admin panel to accept or decline this request. The request will expire in 7 days.</p>
     </div>
     <div class="footer">Georgian Football Talent Platform</div>

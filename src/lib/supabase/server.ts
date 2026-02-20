@@ -9,7 +9,8 @@ export async function createClient() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !key) {
-    throw new Error(`Missing Supabase env vars: URL=${!!url}, KEY=${!!key}`)
+    console.error(`[supabase/server] Missing env vars: URL=${!!url}, KEY=${!!key}`)
+    throw new Error('Server configuration error. Please check environment variables.')
   }
 
   return createServerClient<Database>(url, key,

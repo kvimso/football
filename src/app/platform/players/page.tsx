@@ -25,7 +25,10 @@ export default async function PlatformPlayersPage({
   if (params.status) query = query.eq('status', params.status as 'active' | 'free_agent')
   if (params.club) query = query.eq('club_id', params.club)
   if (params.q) {
-    query = query.or(`name.ilike.%${params.q}%,name_ka.ilike.%${params.q}%,platform_id.ilike.%${params.q}%`)
+    const sanitized = params.q.replace(/[,.()"\\]/g, '')
+    if (sanitized) {
+      query = query.or(`name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%,platform_id.ilike.%${sanitized}%`)
+    }
   }
 
   const [{ data: players, error }, { data: clubs }] = await Promise.all([

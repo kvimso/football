@@ -7,8 +7,6 @@ import { format } from 'date-fns'
 import { MatchDetailClient } from '@/components/match/MatchDetailClient'
 import { trackPageView } from '@/lib/analytics'
 
-export const revalidate = 60
-
 interface MatchPageProps {
   params: Promise<{ slug: string }>
 }

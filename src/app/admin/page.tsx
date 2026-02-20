@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
@@ -9,7 +10,7 @@ export default async function AdminDashboardPage() {
   const { t } = await getServerT()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+  if (!user) redirect('/login')
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
@@ -41,7 +42,6 @@ export default async function AdminDashboardPage() {
   const playerCount = playerIds.length
 
   // Fetch counts and recent requests in parallel using player IDs
-  const admin = createAdminClient()
   const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult] =
     await Promise.all([
       playerIds.length > 0
@@ -73,11 +73,18 @@ export default async function AdminDashboardPage() {
             .limit(5)
         : Promise.resolve({ data: [], error: null }),
       playerIds.length > 0
-        ? admin
-            .from('page_views')
-            .select('id', { count: 'exact', head: true })
-            .eq('page_type', 'player')
-            .in('entity_id', playerIds)
+        ? (() => {
+            try {
+              const admin = createAdminClient()
+              return admin
+                .from('page_views')
+                .select('id', { count: 'exact', head: true })
+                .eq('page_type', 'player')
+                .in('entity_id', playerIds)
+            } catch {
+              return Promise.resolve({ count: 0, error: null })
+            }
+          })()
         : Promise.resolve({ count: 0, error: null }),
     ])
 

@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { format } from 'date-fns'
@@ -13,7 +14,7 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
   const { t, lang } = await getServerT()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
+  if (!user) redirect('/login')
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')

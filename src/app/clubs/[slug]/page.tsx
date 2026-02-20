@@ -8,8 +8,6 @@ import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
 import { trackPageView } from '@/lib/analytics'
 
-export const revalidate = 60
-
 interface ClubPageProps {
   params: Promise<{ slug: string }>
 }

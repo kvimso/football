@@ -6,8 +6,6 @@ import { MatchCard } from '@/components/match/MatchCard'
 import { HomeHero } from '@/components/home/HomeHero'
 import { StatsBar } from '@/components/home/StatsBar'
 
-export const revalidate = 60
-
 export default async function Home() {
   const supabase = await createClient()
   const { t } = await getServerT()

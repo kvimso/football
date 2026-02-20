@@ -15,8 +15,6 @@ export const metadata: Metadata = {
     'Browse and discover Georgian youth football talent. Filter by position, age, club, and preferred foot.',
 }
 
-export const revalidate = 60
-
 interface PlayersPageProps {
   searchParams: Promise<{
     position?: string
