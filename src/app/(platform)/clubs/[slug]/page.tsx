@@ -7,6 +7,7 @@ import { getServerT } from '@/lib/server-translations'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
 import { trackPageView } from '@/lib/analytics'
+import { ClubSilhouette } from '@/components/ui/ClubSilhouette'
 
 interface ClubPageProps {
   params: Promise<{ slug: string }>
@@ -85,7 +86,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
           {club.logo_url ? (
             <Image src={club.logo_url} alt={club.name} fill className="rounded-2xl object-cover" sizes="80px" />
           ) : (
-            club.name.charAt(0)
+            <ClubSilhouette className="h-12 w-12 text-accent/40" />
           )}
         </div>
         <div>

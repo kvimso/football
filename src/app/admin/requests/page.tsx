@@ -111,7 +111,7 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
             const playerName = lang === 'ka' ? req.player?.name_ka : req.player?.name
 
             return (
-              <div key={req.id} className="card p-4">
+              <div key={req.id} className="card border-l-4 border-l-transparent p-4 hover:border-l-accent">
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
@@ -141,13 +141,9 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
                     {req.status === 'pending' ? (
                       <RequestActions requestId={req.id} />
                     ) : (
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          req.status === 'approved'
-                            ? 'bg-green-500/10 text-green-400'
-                            : 'bg-red-500/10 text-red-400'
-                        }`}
-                      >
+                      <span className={`status-badge ${
+                        req.status === 'approved' ? 'status-badge-approved' : 'status-badge-rejected'
+                      }`}>
                         {t(`admin.requests.${req.status}`)}
                       </span>
                     )}

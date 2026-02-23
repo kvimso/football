@@ -46,16 +46,16 @@ export default async function AdminPlayersPage() {
       </div>
 
       {players && players.length > 0 ? (
-        <div className="mt-6 overflow-x-auto">
+        <div className="mt-6 card overflow-x-auto p-0">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-border text-foreground-muted">
-                <th className="hidden pb-3 pr-4 font-medium sm:table-cell">{t('players.platformId')}</th>
-                <th className="pb-3 pr-4 font-medium">{t('admin.players.name')}</th>
-                <th className="pb-3 pr-4 font-medium">{t('admin.players.position')}</th>
-                <th className="hidden pb-3 pr-4 font-medium sm:table-cell">{t('players.age')}</th>
-                <th className="pb-3 pr-4 font-medium">{t('admin.players.status')}</th>
-                <th className="pb-3 font-medium">{t('admin.common.actions')}</th>
+              <tr className="border-b border-border text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                <th className="hidden px-4 py-3 sm:table-cell">{t('players.platformId')}</th>
+                <th className="px-4 py-3">{t('admin.players.name')}</th>
+                <th className="px-4 py-3">{t('admin.players.position')}</th>
+                <th className="hidden px-4 py-3 sm:table-cell">{t('players.age')}</th>
+                <th className="px-4 py-3">{t('admin.players.status')}</th>
+                <th className="px-4 py-3">{t('admin.common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -63,37 +63,33 @@ export default async function AdminPlayersPage() {
                 const posClasses = POSITION_COLOR_CLASSES[player.position] ?? ''
                 const displayName = lang === 'ka' ? player.name_ka : player.name
                 return (
-                  <tr key={player.id} className="border-b border-border/50">
-                    <td className="hidden py-3 pr-4 font-mono text-xs text-foreground-muted sm:table-cell">{player.platform_id ?? '-'}</td>
-                    <td className="py-3 pr-4">
-                      <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent">
+                  <tr key={player.id} className="table-row-hover border-b border-border/50">
+                    <td className="hidden px-4 py-3 font-mono text-xs text-foreground-muted sm:table-cell">{player.platform_id ?? '-'}</td>
+                    <td className="px-4 py-3">
+                      <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent transition-colors">
                         {displayName}
                       </Link>
                     </td>
-                    <td className="py-3 pr-4">
+                    <td className="px-4 py-3">
                       <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${posClasses}`}>
                         {t(`positions.${player.position}`)}
                       </span>
                     </td>
-                    <td className="hidden py-3 pr-4 text-foreground-muted sm:table-cell">
+                    <td className="hidden px-4 py-3 text-foreground-muted sm:table-cell">
                       {calculateAge(player.date_of_birth)}
                     </td>
-                    <td className="py-3 pr-4">
-                      <span
-                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                          player.status === 'active'
-                            ? 'bg-green-500/10 text-green-400'
-                            : 'bg-yellow-500/10 text-yellow-400'
-                        }`}
-                      >
+                    <td className="px-4 py-3">
+                      <span className={`status-badge ${
+                        player.status === 'active' ? 'status-badge-approved' : 'status-badge-pending'
+                      }`}>
                         {t(`admin.players.${player.status}`)}
                       </span>
                     </td>
-                    <td className="py-3">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/admin/players/${player.id}/edit`}
-                          className="text-xs text-accent hover:underline"
+                          className="rounded-md bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent hover:bg-accent/20 transition-colors"
                         >
                           {t('common.edit')}
                         </Link>

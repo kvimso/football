@@ -27,6 +27,7 @@ export function LanguageProvider({ children, initialLang = 'en' }: { children: R
   const setLang = useCallback((newLang: Lang) => {
     setLangState(newLang)
     setLangCookie(newLang)
+    document.documentElement.lang = newLang
   }, [])
 
   const t = useCallback(

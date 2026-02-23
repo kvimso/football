@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES, BLUR_DATA_URL } from '@/lib/constants'
+import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
 interface PlayerCardProps {
   player: {
@@ -57,9 +58,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
             blurDataURL={BLUR_DATA_URL}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-foreground-muted/30">
-            {player.name.charAt(0)}
-          </div>
+          <PlayerSilhouette size="md" className="text-foreground-muted/20" />
         )}
         {player.is_featured && (
           <span className="absolute top-2 right-2 rounded-full bg-accent/90 px-2 py-0.5 text-[10px] font-semibold text-white">

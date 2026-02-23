@@ -12,6 +12,7 @@
   --border: #1f2937;
   --card: #111916;
   --card-hover: #162118;
+  --nav-bg: #080d0b;
 
   /* Position colors */
   --pos-gk: #f59e0b;
@@ -33,12 +34,18 @@
   --color-border: var(--border);
   --color-card: var(--card);
   --color-card-hover: var(--card-hover);
+  --color-nav-bg: var(--nav-bg);
   --color-pos-gk: var(--pos-gk);
   --color-pos-def: var(--pos-def);
   --color-pos-mid: var(--pos-mid);
   --color-pos-att: var(--pos-att);
   --color-pos-wng: var(--pos-wng);
   --color-pos-st: var(--pos-st);
+}
+
+/* Non-inline so --font-sans is a real CSS variable, overridable by :lang(ka) */
+@theme {
+  --font-sans: var(--font-geist-sans), var(--font-noto-georgian), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
@@ -99,4 +106,59 @@ body {
   background-color: var(--card-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+
+/* ── Section header with accent left-border ── */
+.section-header {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* ── Status badge pills ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.status-badge-pending {
+  background-color: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+}
+.status-badge-approved {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.status-badge-rejected {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* ── Data table rows ── */
+.table-row-hover:nth-child(even) {
+  background-color: rgba(17, 25, 22, 0.3);
+}
+.table-row-hover:hover {
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+/* ── Georgian typography adjustments ── */
+/* Noto Sans Georgian glyphs are taller/wider than Geist Latin glyphs.
+   These rules compensate so the UI looks polished in both languages. */
+html:lang(ka) {
+  --font-sans: var(--font-noto-georgian), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Georgian script doesn't benefit from tight letter-spacing — it looks cramped */
+html:lang(ka) h1,
+html:lang(ka) h2,
+html:lang(ka) h3 {
+  letter-spacing: 0;
+  line-height: 1.15;
 }

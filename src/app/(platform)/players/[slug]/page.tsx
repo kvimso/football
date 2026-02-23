@@ -11,7 +11,8 @@ import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
 import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
 import { trackPageView } from '@/lib/analytics'
-import { BLUR_DATA_URL } from '@/lib/constants'
+import { BLUR_DATA_URL, POSITION_BORDER_CLASSES } from '@/lib/constants'
+import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
@@ -124,105 +125,107 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       </Link>
 
       {/* Player header */}
-      <div className="mt-4 flex flex-col gap-6 md:flex-row md:gap-10">
-        {/* Photo */}
-        <div className="relative flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background-secondary border border-border">
-          {player.photo_url ? (
-            <Image src={player.photo_url} alt={player.name} fill className="object-cover" sizes="224px" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
-          ) : (
-            <span className="text-6xl font-bold text-foreground-muted/20">{player.name.charAt(0)}</span>
-          )}
-        </div>
+      <div className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position] ?? 'border-t-accent'}`}>
+        <div className="flex flex-col gap-6 md:flex-row md:gap-10">
+          {/* Photo */}
+          <div className="relative flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background border border-border">
+            {player.photo_url ? (
+              <Image src={player.photo_url} alt={player.name} fill className="object-cover" sizes="224px" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
+            ) : (
+              <PlayerSilhouette size="lg" className="text-foreground-muted/20" />
+            )}
+          </div>
 
-        {/* Info */}
-        <div className="flex-1">
-          <PlayerProfileClient player={{
-            name: player.name,
-            name_ka: player.name_ka,
-            position: player.position,
-            is_featured: player.is_featured,
-            scouting_report: player.scouting_report,
-            scouting_report_ka: player.scouting_report_ka,
-            club_name: club?.name ?? null,
-            club_name_ka: club?.name_ka ?? null,
-            club_slug: club?.slug ?? null,
-            platform_id: player.platform_id,
-            status: player.status,
-          }} />
+          {/* Info */}
+          <div className="flex-1">
+            <PlayerProfileClient player={{
+              name: player.name,
+              name_ka: player.name_ka,
+              position: player.position,
+              is_featured: player.is_featured,
+              scouting_report: player.scouting_report,
+              scouting_report_ka: player.scouting_report_ka,
+              club_name: club?.name ?? null,
+              club_name_ka: club?.name_ka ?? null,
+              club_slug: club?.slug ?? null,
+              platform_id: player.platform_id,
+              status: player.status,
+            }} />
 
-          {/* Free agent notice */}
-          {isFreeAgent && (
-            <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-400">
-              {t('players.freeAgentNotice')}
-            </div>
-          )}
+            {/* Free agent notice */}
+            {isFreeAgent && (
+              <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-400">
+                {t('players.freeAgentNotice')}
+              </div>
+            )}
 
-          {/* Action buttons */}
-          {user && (
-            <div className="mt-4 flex gap-3">
-              <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
-              {!isFreeAgent && (
-                !hasContactRequest ? (
-                  <ContactRequestForm playerId={player.id} />
-                ) : (
-                  <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
-                    {t('players.requestSent')}
-                  </span>
-                )
+            {/* Action buttons */}
+            {user && (
+              <div className="mt-4 flex gap-3">
+                <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
+                {!isFreeAgent && (
+                  !hasContactRequest ? (
+                    <ContactRequestForm playerId={player.id} />
+                  ) : (
+                    <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
+                      {t('players.requestSent')}
+                    </span>
+                  )
+                )}
+              </div>
+            )}
+
+            {/* Meta grid */}
+            <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+              {player.platform_id && (
+                <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                  <div className="text-foreground-muted text-xs">{t('players.platformId')}</div>
+                  <div className="font-mono font-semibold text-foreground">{player.platform_id}</div>
+                </div>
               )}
-            </div>
-          )}
-
-          {/* Meta grid */}
-          <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-            {player.platform_id && (
-              <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-                <div className="text-foreground-muted text-xs">{t('players.platformId')}</div>
-                <div className="font-mono font-semibold text-foreground">{player.platform_id}</div>
+              <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                <div className="text-foreground-muted text-xs">{t('players.age')}</div>
+                <div className="font-semibold text-foreground">{age}</div>
               </div>
-            )}
-            <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-              <div className="text-foreground-muted text-xs">{t('players.age')}</div>
-              <div className="font-semibold text-foreground">{age}</div>
-            </div>
-            {player.height_cm && (
-              <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-                <div className="text-foreground-muted text-xs">{t('players.height')}</div>
-                <div className="font-semibold text-foreground">{player.height_cm} {t('players.cm')}</div>
+              {player.height_cm && (
+                <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                  <div className="text-foreground-muted text-xs">{t('players.height')}</div>
+                  <div className="font-semibold text-foreground">{player.height_cm} {t('players.cm')}</div>
+                </div>
+              )}
+              {player.weight_kg && (
+                <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                  <div className="text-foreground-muted text-xs">{t('players.weight')}</div>
+                  <div className="font-semibold text-foreground">{player.weight_kg} {t('players.kg')}</div>
+                </div>
+              )}
+              {player.preferred_foot && (
+                <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                  <div className="text-foreground-muted text-xs">{t('players.foot')}</div>
+                  <div className="font-semibold text-foreground">{t('foot.' + player.preferred_foot)}</div>
+                </div>
+              )}
+              {player.jersey_number && (
+                <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                  <div className="text-foreground-muted text-xs">{t('players.jersey')}</div>
+                  <div className="font-semibold text-foreground">#{player.jersey_number}</div>
+                </div>
+              )}
+              <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                <div className="text-foreground-muted text-xs">{t('players.nationality')}</div>
+                <div className="font-semibold text-foreground">{player.nationality ? t('nationality.' + player.nationality) : '-'}</div>
               </div>
-            )}
-            {player.weight_kg && (
-              <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-                <div className="text-foreground-muted text-xs">{t('players.weight')}</div>
-                <div className="font-semibold text-foreground">{player.weight_kg} {t('players.kg')}</div>
-              </div>
-            )}
-            {player.preferred_foot && (
-              <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-                <div className="text-foreground-muted text-xs">{t('players.foot')}</div>
-                <div className="font-semibold text-foreground">{t('foot.' + player.preferred_foot)}</div>
-              </div>
-            )}
-            {player.jersey_number && (
-              <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-                <div className="text-foreground-muted text-xs">{t('players.jersey')}</div>
-                <div className="font-semibold text-foreground">#{player.jersey_number}</div>
-              </div>
-            )}
-            <div className="rounded-lg bg-background-secondary px-3 py-2 border border-border">
-              <div className="text-foreground-muted text-xs">{t('players.nationality')}</div>
-              <div className="font-semibold text-foreground">{player.nationality ? t('nationality.' + player.nationality) : '-'}</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Skills + Season Stats grid */}
-      <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Radar chart */}
         {skills && (
           <div className="card">
-            <h3 className="mb-4 text-lg font-semibold text-foreground">{t('players.skills')}</h3>
+            <h3 className="section-header mb-4">{t('players.skills')}</h3>
             <RadarChart skills={skills} labels={['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(k => t('skills.' + k))} />
           </div>
         )}
@@ -230,11 +233,11 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         {/* Season stats table */}
         {seasonStats.length > 0 && (
           <div className="card lg:col-span-2">
-            <h3 className="mb-4 text-lg font-semibold text-foreground">{t('players.seasonStats')}</h3>
+            <h3 className="section-header mb-4">{t('players.seasonStats')}</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-left text-xs text-foreground-muted">
+                  <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-foreground-muted">
                     <th className="pb-2 pr-4">{t('stats.season')}</th>
                     <th className="pb-2 pr-4">{t('stats.mp')}</th>
                     <th className="pb-2 pr-4">{t('stats.g')}</th>
@@ -247,7 +250,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </thead>
                 <tbody>
                   {seasonStats.map((s) => (
-                    <tr key={s.season} className="border-b border-border/50">
+                    <tr key={s.season} className="table-row-hover border-b border-border/50">
                       <td className="py-2 pr-4 font-medium text-foreground">{s.season}</td>
                       <td className="py-2 pr-4 text-foreground-muted">{s.matches_played}</td>
                       <td className="py-2 pr-4 font-semibold text-foreground">{s.goals}</td>
@@ -268,11 +271,11 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       {/* Match history */}
       {matchStats.length > 0 && (
         <div className="mt-6 card">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">{t('players.matchHistory')}</h3>
+          <h3 className="section-header mb-4">{t('players.matchHistory')}</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-left text-xs text-foreground-muted">
+                <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-foreground-muted">
                   <th className="pb-2 pr-4">{t('stats.match')}</th>
                   <th className="pb-2 pr-4">{t('stats.date')}</th>
                   <th className="pb-2 pr-4">{t('stats.min')}</th>
@@ -295,7 +298,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                     ? `${homeName} vs ${awayName}`
                     : t('stats.match')
                   return (
-                    <tr key={i} className="border-b border-border/50">
+                    <tr key={i} className="table-row-hover border-b border-border/50">
                       <td className="py-2 pr-4">
                         {m?.slug ? (
                           <Link href={`/matches/${m.slug}`} className="text-accent hover:underline">
@@ -329,7 +332,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       {/* Career history */}
       {clubHistory.length > 0 && (
         <div className="mt-6 card">
-          <h3 className="mb-4 text-lg font-semibold text-foreground">{t('players.careerHistory')}</h3>
+          <h3 className="section-header mb-4">{t('players.careerHistory')}</h3>
           <div className="space-y-3">
             {clubHistory.map((entry) => {
               const entryClubName = entry.club

@@ -73,10 +73,10 @@ export default async function AdminTransfersPage() {
 
   function statusClasses(status: string) {
     switch (status) {
-      case 'accepted': return 'bg-green-500/10 text-green-400'
-      case 'declined': return 'bg-red-500/10 text-red-400'
-      case 'expired': return 'bg-foreground-muted/10 text-foreground-muted'
-      default: return 'bg-yellow-500/10 text-yellow-400'
+      case 'accepted': return 'status-badge-approved'
+      case 'declined': return 'status-badge-rejected'
+      case 'expired': return 'status-badge-rejected'
+      default: return 'status-badge-pending'
     }
   }
 
@@ -91,14 +91,14 @@ export default async function AdminTransfersPage() {
 
       {/* Incoming transfer requests */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">{t('admin.transfers.incoming')}</h2>
+        <h2 className="section-header">{t('admin.transfers.incoming')}</h2>
         {incomingRequests.length > 0 ? (
           <div className="mt-3 space-y-2">
             {incomingRequests.map((req) => {
               const playerName = lang === 'ka' ? req.player?.name_ka : req.player?.name
               const toClubName = lang === 'ka' ? req.to_club?.name_ka : req.to_club?.name
               return (
-                <div key={req.id} className="card flex items-center justify-between p-4">
+                <div key={req.id} className="card border-l-4 border-l-transparent flex items-center justify-between p-4 hover:border-l-accent">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-foreground">{playerName}</span>
@@ -116,7 +116,7 @@ export default async function AdminTransfersPage() {
                     {req.status === 'pending' ? (
                       <TransferActions requestId={req.id} />
                     ) : (
-                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusClasses(req.status)}`}>
+                      <span className={`status-badge ${statusClasses(req.status)}`}>
                         {t(`admin.transfers.${req.status}`)}
                       </span>
                     )}
@@ -132,14 +132,14 @@ export default async function AdminTransfersPage() {
 
       {/* Outgoing transfer requests */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">{t('admin.transfers.outgoing')}</h2>
+        <h2 className="section-header">{t('admin.transfers.outgoing')}</h2>
         {outgoingRequests.length > 0 ? (
           <div className="mt-3 space-y-2">
             {outgoingRequests.map((req) => {
               const playerName = lang === 'ka' ? req.player?.name_ka : req.player?.name
               const fromClubName = lang === 'ka' ? req.from_club?.name_ka : req.from_club?.name
               return (
-                <div key={req.id} className="card flex items-center justify-between p-4">
+                <div key={req.id} className="card border-l-4 border-l-transparent flex items-center justify-between p-4 hover:border-l-accent">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-foreground">{playerName}</span>
@@ -153,7 +153,7 @@ export default async function AdminTransfersPage() {
                       <span>{format(new Date(req.requested_at), 'MMM d, yyyy')}</span>
                     </div>
                   </div>
-                  <span className={`ml-3 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusClasses(req.status)}`}>
+                  <span className={`status-badge ml-3 shrink-0 ${statusClasses(req.status)}`}>
                     {t(`admin.transfers.${req.status}`)}
                   </span>
                 </div>

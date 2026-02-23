@@ -39,59 +39,68 @@ export function LoginForm() {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-foreground">{t('auth.loginTitle')}</h1>
+      <div className="w-full max-w-md">
+        <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+          {/* GFT branding */}
+          <div className="mb-6 text-center">
+            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">GFT</span>
+            <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.welcomeBack')}</h1>
+            <p className="mt-1 text-sm text-foreground-muted">{t('auth.loginTitle')}</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-              {error}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-foreground-muted">
+                {t('auth.email')}
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+              />
             </div>
-          )}
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-foreground-muted">
-              {t('auth.email')}
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground outline-none focus:border-accent transition-colors"
-            />
-          </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-foreground-muted">
+                {t('auth.password')}
+              </label>
+              <input
+                id="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-foreground-muted">
-              {t('auth.password')}
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground outline-none focus:border-accent transition-colors"
-            />
-          </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full py-3 text-base disabled:opacity-50"
+            >
+              {loading ? t('common.loading') : t('auth.loginButton')}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full disabled:opacity-50"
-          >
-            {loading ? t('common.loading') : t('auth.loginButton')}
-          </button>
-        </form>
+          <div className="my-6 border-t border-border" />
 
-        <p className="mt-6 text-center text-sm text-foreground-muted">
-          {t('auth.noAccount')}{' '}
-          <Link href="/register" className="text-accent hover:underline">
-            {t('auth.signUpLink')}
-          </Link>
-        </p>
+          <p className="text-center text-sm text-foreground-muted">
+            {t('auth.noAccount')}{' '}
+            <Link href="/register" className="font-medium text-accent hover:underline">
+              {t('auth.signUpLink')}
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )

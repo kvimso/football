@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
 
 export default async function AdminLayout({
@@ -32,15 +34,19 @@ export default async function AdminLayout({
   const club = Array.isArray(profile.club) ? profile.club[0] : profile.club
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="flex flex-col gap-6 md:flex-row">
-        <AdminSidebar
-          clubName={club?.name ?? ''}
-          clubNameKa={club?.name_ka ?? ''}
-          role={profile.role}
-        />
-        <main className="min-w-0 flex-1">{children}</main>
+    <>
+      <Navbar />
+      <div className="mx-auto min-h-[calc(100vh-4rem)] max-w-7xl px-4 py-8">
+        <div className="flex flex-col gap-6 md:flex-row">
+          <AdminSidebar
+            clubName={club?.name ?? ''}
+            clubNameKa={club?.name_ka ?? ''}
+            role={profile.role}
+          />
+          <main className="min-w-0 flex-1">{children}</main>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   )
 }

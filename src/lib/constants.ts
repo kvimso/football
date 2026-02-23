@@ -11,6 +11,15 @@ export const POSITION_COLOR_CLASSES: Record<string, string> = {
   ST: 'bg-pos-st/20 text-pos-st',
 }
 
+export const POSITION_BORDER_CLASSES: Record<string, string> = {
+  GK: 'border-t-pos-gk',
+  DEF: 'border-t-pos-def',
+  MID: 'border-t-pos-mid',
+  ATT: 'border-t-pos-att',
+  WNG: 'border-t-pos-wng',
+  ST: 'border-t-pos-st',
+}
+
 export const AGE_RANGES = [
   { value: 'u16', label: 'U16', min: 0, max: 15 },
   { value: 'u17', label: 'U17', min: 16, max: 16 },

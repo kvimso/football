@@ -7,6 +7,7 @@ import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { removeFromShortlist, updateShortlistNote } from '@/app/actions/shortlist'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
+import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
 interface ShortlistItem {
   player_id: string | null
@@ -104,7 +105,7 @@ function ShortlistRow({
           {player.photo_url ? (
             <Image src={player.photo_url} alt={player.name} fill className="rounded-lg object-cover" sizes="48px" />
           ) : (
-            player.name.charAt(0)
+            <PlayerSilhouette size="sm" className="text-foreground-muted/30" />
           )}
         </div>
         <div>

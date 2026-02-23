@@ -453,31 +453,31 @@ Camera partner is **Starlive** (official Pixellot reseller). They already have c
 Transform the site from a developer project into a professional product.
 
 **6a. Landing Page (public)**
-- [ ] New landing page: professional, hrmony.com-style, clean layout
-- [ ] Hero section: headline, subtitle, background image, two CTAs (Register as Scout / Register Your Academy)
-- [ ] "What We Do" section with feature icons
-- [ ] "Our Services" cards: Player Database, Verified Camera Stats, Highlight Reels, Scout Contact System, Academy Management
-- [ ] "For Scouts" section with benefits and CTA
-- [ ] "For Academies" section with benefits and CTA
-- [ ] Partners section (Starlive/Pixellot logos when approved)
-- [ ] Professional footer with register CTAs
-- [ ] All landing page content bilingual (English/Georgian)
-- [ ] Use real market numbers: 37,600+ youth players, €100M+ in recent Georgian transfers
+- [x] New landing page: professional, hrmony.com-style, clean layout
+- [x] Hero section: headline, subtitle, background image, two CTAs (Register as Scout / Register Your Academy)
+- [x] "What We Do" section with feature icons
+- [x] "Our Services" cards: Player Database, Verified Camera Stats, Highlight Reels, Scout Contact System, Academy Management
+- [x] "For Scouts" section with benefits and CTA
+- [x] "For Academies" section with benefits and CTA
+- [x] Partners section (Starlive/Pixellot logos when approved)
+- [x] Professional footer with register CTAs
+- [x] All landing page content bilingual (English/Georgian)
+- [x] Use real market numbers: 37,600+ youth players, €100M+ in recent Georgian transfers
 
 **6b. Auth Protection**
 - [x] Move all player/match/club browsing behind authentication
 - [x] Update middleware: redirect unauthenticated users from `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` to `/login`
 - [x] Create `(platform)/` route group with auth guard layout
 - [x] Keep `/`, `/about`, `/login`, `/register` public
-- [ ] Professional login and register page design
+- [x] Professional login and register page design
 
 **6c. Platform UI Polish**
-- [ ] Redesign platform navigation (Transfermarkt-style, data-dense)
-- [ ] Replace letter-initial player cards with proper silhouette fallback images
-- [ ] Improve player profile layout
-- [ ] Improve admin panel design
-- [ ] Consistent dark theme color scheme across all platform pages
-- [ ] Mobile responsive on all platform pages
+- [x] Redesign platform navigation (Transfermarkt-style, data-dense)
+- [x] Replace letter-initial player cards with proper silhouette fallback images
+- [x] Improve player profile layout
+- [x] Improve admin panel design
+- [x] Consistent dark theme color scheme across all platform pages
+- [x] Mobile responsive on all platform pages
 
 ### Phase 7: Camera Integration
 

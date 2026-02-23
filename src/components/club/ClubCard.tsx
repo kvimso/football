@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getServerT } from '@/lib/server-translations'
+import { ClubSilhouette } from '@/components/ui/ClubSilhouette'
 
 interface ClubCardProps {
   club: {
@@ -28,7 +29,7 @@ export async function ClubCard({ club }: ClubCardProps) {
           {club.logo_url ? (
             <Image src={club.logo_url} alt={club.name} fill className="rounded-lg object-cover" sizes="48px" />
           ) : (
-            club.name.charAt(0)
+            <ClubSilhouette className="h-8 w-8 text-accent/40" />
           )}
         </div>
         <div className="min-w-0">

@@ -33,6 +33,12 @@ export const clubFormSchema = z.object({
   website: z.string().url().max(200).optional().or(z.literal('')),
 })
 
+export const contactMessageSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  message: z.string().min(10).max(2000),
+})
+
 export const platformPlayerFormSchema = playerFormSchema.extend({
   club_id: z.string().uuid().optional().or(z.literal('')),
   status: z.enum(['active', 'free_agent']).optional(),

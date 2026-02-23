@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
 
 export default async function PlatformLayout({
   children,
@@ -12,5 +14,11 @@ export default async function PlatformLayout({
   if (error) console.error('Failed to get user:', error.message)
   if (!user) redirect('/login')
 
-  return <>{children}</>
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+      <Footer />
+    </>
+  )
 }

@@ -2,8 +2,6 @@ import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { Geist, Noto_Sans_Georgian } from 'next/font/google'
 import { LanguageProvider } from '@/context/LanguageContext'
-import { Navbar } from '@/components/layout/Navbar'
-import { Footer } from '@/components/layout/Footer'
 import './globals.css'
 
 const geistSans = Geist({
@@ -38,9 +36,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >
         <LanguageProvider initialLang={lang as 'en' | 'ka'}>
-          <Navbar />
-          <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-          <Footer />
+          {children}
         </LanguageProvider>
       </body>
     </html>

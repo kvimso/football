@@ -29,7 +29,7 @@ export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) 
       <aside className="hidden w-56 shrink-0 md:block">
         <div className="sticky top-24">
           {displayName && (
-            <div className="mb-4 rounded-lg border border-border bg-surface p-3">
+            <div className="mb-4 rounded-lg border border-border bg-background-secondary p-3 border-l-4 border-l-accent">
               <p className="text-xs text-foreground-muted">{t('admin.title')}</p>
               <p className="mt-0.5 text-sm font-semibold text-foreground">{displayName}</p>
             </div>
@@ -45,8 +45,8 @@ export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) 
                   href={link.href}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-accent/10 text-accent'
-                      : 'text-foreground-muted hover:bg-surface hover:text-foreground'
+                      ? 'bg-accent/10 text-accent border-l-2 border-accent'
+                      : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
                   }`}
                 >
                   <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -61,8 +61,8 @@ export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) 
                 href="/admin/invite"
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   pathname === '/admin/invite'
-                    ? 'bg-accent/10 text-accent'
-                    : 'text-foreground-muted hover:bg-surface hover:text-foreground'
+                    ? 'bg-accent/10 text-accent border-l-2 border-accent'
+                    : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
                 }`}
               >
                 <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

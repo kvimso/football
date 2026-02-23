@@ -94,10 +94,10 @@ export default async function AdminDashboardPage() {
   if (pageViewsResult.error) console.error('Failed to fetch page views count:', pageViewsResult.error.message)
 
   const stats = [
-    { label: t('admin.stats.totalPlayers'), value: playerCount, href: '/admin/players' },
-    { label: t('admin.stats.pendingRequests'), value: requestsResult.count ?? 0, href: '/admin/requests' },
-    { label: t('admin.stats.scoutSaves'), value: shortlistsResult.count ?? 0, href: '#' },
-    { label: t('admin.stats.playerViews'), value: pageViewsResult.count ?? 0, href: '#' },
+    { label: t('admin.stats.totalPlayers'), value: playerCount, href: '/admin/players', borderColor: 'border-l-accent', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
+    { label: t('admin.stats.pendingRequests'), value: requestsResult.count ?? 0, href: '/admin/requests', borderColor: 'border-l-yellow-500', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+    { label: t('admin.stats.scoutSaves'), value: shortlistsResult.count ?? 0, href: '#', borderColor: 'border-l-pos-att', icon: 'M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z' },
+    { label: t('admin.stats.playerViews'), value: pageViewsResult.count ?? 0, href: '#', borderColor: 'border-l-pos-mid', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM15 12a3 3 0 11-6 0 3 3 0 016 0z' },
   ]
 
   const recentRequests = ('data' in recentRequestsResult ? recentRequestsResult.data ?? [] : []).map(
@@ -118,17 +118,22 @@ export default async function AdminDashboardPage() {
           <Link
             key={stat.label}
             href={stat.href}
-            className="card p-4 transition-colors hover:border-accent/30"
+            className={`card border-l-4 p-4 transition-colors hover:border-l-accent ${stat.borderColor}`}
           >
-            <p className="text-sm text-foreground-muted">{stat.label}</p>
-            <p className="mt-1 text-2xl font-bold text-foreground">{stat.value}</p>
+            <div className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-foreground-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d={stat.icon} />
+              </svg>
+              <p className="text-xs text-foreground-muted">{stat.label}</p>
+            </div>
+            <p className="mt-2 text-3xl font-bold text-foreground">{stat.value}</p>
           </Link>
         ))}
       </div>
 
       {/* Quick actions */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">{t('admin.common.quickActions')}</h2>
+        <h2 className="section-header">{t('admin.common.quickActions')}</h2>
         <div className="mt-3 flex flex-wrap gap-3">
           <Link href="/admin/players/new" className="btn-primary text-sm">
             {t('admin.players.addPlayer')}
@@ -138,7 +143,7 @@ export default async function AdminDashboardPage() {
 
       {/* Recent requests */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">{t('admin.common.recentRequests')}</h2>
+        <h2 className="section-header">{t('admin.common.recentRequests')}</h2>
         {recentRequests.length > 0 ? (
           <div className="mt-3 space-y-3">
             {recentRequests.map((req) => (
@@ -154,15 +159,11 @@ export default async function AdminDashboardPage() {
                     {req.created_at ? format(new Date(req.created_at), 'MMM d, yyyy') : ''}
                   </p>
                 </div>
-                <span
-                  className={`ml-3 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    req.status === 'approved'
-                      ? 'bg-green-500/10 text-green-400'
-                      : req.status === 'rejected'
-                        ? 'bg-red-500/10 text-red-400'
-                        : 'bg-yellow-500/10 text-yellow-400'
-                  }`}
-                >
+                <span className={`status-badge ml-3 shrink-0 ${
+                  req.status === 'approved' ? 'status-badge-approved'
+                    : req.status === 'rejected' ? 'status-badge-rejected'
+                    : 'status-badge-pending'
+                }`}>
                   {t(`admin.requests.${req.status}`)}
                 </span>
               </div>

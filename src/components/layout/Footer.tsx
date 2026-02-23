@@ -12,7 +12,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand */}
           <div>
-            <Link href="/" className="text-lg font-bold text-accent">
+            <Link href="/" className="inline-block rounded bg-accent px-2 py-0.5 text-sm font-bold text-white">
               GFT
             </Link>
             <p className="mt-2 text-sm text-foreground-muted">
@@ -42,6 +42,9 @@ export function Footer() {
             <nav className="mt-2 flex flex-col gap-1.5">
               <Link href="/about" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
                 {t('nav.about')}
+              </Link>
+              <Link href="/contact" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+                {t('nav.contact')}
               </Link>
               <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
                 {t('nav.login')}

@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
 import { DashboardNav } from '@/components/dashboard/DashboardNav'
 
 export default async function DashboardLayout({
@@ -26,9 +28,13 @@ export default async function DashboardLayout({
   if (profile?.role === 'platform_admin') redirect('/platform')
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      <DashboardNav />
-      <div className="mt-6">{children}</div>
-    </div>
+    <>
+      <Navbar />
+      <div className="mx-auto min-h-[calc(100vh-4rem)] max-w-7xl px-4 py-8">
+        <DashboardNav />
+        <div className="mt-6">{children}</div>
+      </div>
+      <Footer />
+    </>
   )
 }
