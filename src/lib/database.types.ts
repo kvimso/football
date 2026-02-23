@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       clubs: {
@@ -56,6 +81,30 @@ export type Database = {
           slug?: string
           updated_at?: string | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
         }
         Relationships: []
       }
@@ -130,7 +179,7 @@ export type Database = {
           rating: number | null
           shots: number | null
           shots_on_target: number | null
-          source: string | null
+          source: string
           sprints: number | null
           tackles: number | null
           top_speed_kmh: number | null
@@ -150,7 +199,7 @@ export type Database = {
           rating?: number | null
           shots?: number | null
           shots_on_target?: number | null
-          source?: string | null
+          source: string
           sprints?: number | null
           tackles?: number | null
           top_speed_kmh?: number | null
@@ -170,7 +219,7 @@ export type Database = {
           rating?: number | null
           shots?: number | null
           shots_on_target?: number | null
-          source?: string | null
+          source?: string
           sprints?: number | null
           tackles?: number | null
           top_speed_kmh?: number | null
@@ -199,6 +248,7 @@ export type Database = {
           camera_source: string | null
           competition: string | null
           created_at: string | null
+          external_event_id: string | null
           highlights_url: string | null
           home_club_id: string | null
           home_score: number | null
@@ -206,7 +256,6 @@ export type Database = {
           match_date: string
           match_report: string | null
           match_report_ka: string | null
-          external_event_id: string | null
           slug: string
           venue: string | null
           video_url: string | null
@@ -217,6 +266,7 @@ export type Database = {
           camera_source?: string | null
           competition?: string | null
           created_at?: string | null
+          external_event_id?: string | null
           highlights_url?: string | null
           home_club_id?: string | null
           home_score?: number | null
@@ -224,7 +274,6 @@ export type Database = {
           match_date: string
           match_report?: string | null
           match_report_ka?: string | null
-          external_event_id?: string | null
           slug: string
           venue?: string | null
           video_url?: string | null
@@ -235,6 +284,7 @@ export type Database = {
           camera_source?: string | null
           competition?: string | null
           created_at?: string | null
+          external_event_id?: string | null
           highlights_url?: string | null
           home_club_id?: string | null
           home_score?: number | null
@@ -242,7 +292,6 @@ export type Database = {
           match_date?: string
           match_report?: string | null
           match_report_ka?: string | null
-          external_event_id?: string | null
           slug?: string
           venue?: string | null
           video_url?: string | null
@@ -266,45 +315,45 @@ export type Database = {
       }
       page_views: {
         Row: {
-          id: string
-          page_type: string
           entity_id: string | null
           entity_slug: string | null
+          id: string
+          page_type: string
           viewed_at: string | null
         }
         Insert: {
-          id?: string
-          page_type: string
           entity_id?: string | null
           entity_slug?: string | null
+          id?: string
+          page_type: string
           viewed_at?: string | null
         }
         Update: {
-          id?: string
-          page_type?: string
           entity_id?: string | null
           entity_slug?: string | null
+          id?: string
+          page_type?: string
           viewed_at?: string | null
         }
         Relationships: []
       }
       player_club_history: {
         Row: {
-          club_id: string
+          club_id: string | null
           id: string
           joined_at: string
           left_at: string | null
           player_id: string
         }
         Insert: {
-          club_id: string
+          club_id?: string | null
           id?: string
           joined_at?: string
           left_at?: string | null
           player_id: string
         }
         Update: {
-          club_id?: string
+          club_id?: string | null
           id?: string
           joined_at?: string
           left_at?: string | null
@@ -342,7 +391,7 @@ export type Database = {
           player_id: string | null
           season: string
           shots_on_target: number | null
-          source: string | null
+          source: string
           sprints: number | null
           tackles: number | null
         }
@@ -360,7 +409,7 @@ export type Database = {
           player_id?: string | null
           season: string
           shots_on_target?: number | null
-          source?: string | null
+          source: string
           sprints?: number | null
           tackles?: number | null
         }
@@ -378,7 +427,7 @@ export type Database = {
           player_id?: string | null
           season?: string
           shots_on_target?: number | null
-          source?: string | null
+          source?: string
           sprints?: number | null
           tackles?: number | null
         }
@@ -484,6 +533,42 @@ export type Database = {
           },
         ]
       }
+      player_views: {
+        Row: {
+          id: string
+          player_id: string
+          viewed_at: string
+          viewer_id: string
+        }
+        Insert: {
+          id?: string
+          player_id: string
+          viewed_at?: string
+          viewer_id: string
+        }
+        Update: {
+          id?: string
+          player_id?: string
+          viewed_at?: string
+          viewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_views_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       players: {
         Row: {
           club_id: string | null
@@ -521,7 +606,7 @@ export type Database = {
           nationality?: string | null
           parent_guardian_contact?: string | null
           photo_url?: string | null
-          platform_id?: string // auto-generated by trigger, optional on insert
+          platform_id?: string
           position: string
           preferred_foot?: string | null
           scouting_report?: string | null
@@ -650,33 +735,33 @@ export type Database = {
       transfer_requests: {
         Row: {
           expires_at: string
-          from_club_id: string
+          from_club_id: string | null
           id: string
           player_id: string
           requested_at: string
           resolved_at: string | null
           status: Database["public"]["Enums"]["transfer_status"]
-          to_club_id: string
+          to_club_id: string | null
         }
         Insert: {
           expires_at?: string
-          from_club_id: string
+          from_club_id?: string | null
           id?: string
           player_id: string
           requested_at?: string
           resolved_at?: string | null
           status?: Database["public"]["Enums"]["transfer_status"]
-          to_club_id: string
+          to_club_id?: string | null
         }
         Update: {
           expires_at?: string
-          from_club_id?: string
+          from_club_id?: string | null
           id?: string
           player_id?: string
           requested_at?: string
           resolved_at?: string | null
           status?: Database["public"]["Enums"]["transfer_status"]
-          to_club_id?: string
+          to_club_id?: string | null
         }
         Relationships: [
           {
@@ -838,6 +923,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       player_status: ["active", "free_agent"],

@@ -27,10 +27,11 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
   const foot = searchParams.get('foot') ?? ''
   const search = searchParams.get('q') ?? ''
   const status = searchParams.get('status') ?? ''
+  const sort = searchParams.get('sort') ?? ''
 
   const [searchInput, setSearchInput] = useState(search)
 
-  const hasFilters = position || age || club || foot || search || status
+  const hasFilters = position || age || club || foot || search || status || sort
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -138,6 +139,16 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           <option value="">{t('players.allStatuses')}</option>
           <option value="active">{t('players.statusActive')}</option>
           <option value="free_agent">{t('players.statusFreeAgent')}</option>
+        </select>
+
+        {/* Sort */}
+        <select
+          value={sort}
+          onChange={(e) => updateParam('sort', e.target.value)}
+          className={`${selectClasses} w-full sm:w-auto`}
+        >
+          <option value="">{t('players.sortName')}</option>
+          <option value="most_viewed">{t('players.sortMostViewed')}</option>
         </select>
 
         {/* Clear filters */}

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
-import { POSITION_COLOR_CLASSES, BLUR_DATA_URL } from '@/lib/constants'
+import { POSITION_COLOR_CLASSES, BLUR_DATA_URL, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
 interface PlayerCardProps {
@@ -29,9 +29,10 @@ interface PlayerCardProps {
       matches_played: number | null
     } | null
   }
+  viewCount?: number
 }
 
-export function PlayerCard({ player }: PlayerCardProps) {
+export function PlayerCard({ player, viewCount }: PlayerCardProps) {
   const { t, lang } = useLang()
   const age = calculateAge(player.date_of_birth)
   const displayName = lang === 'ka' ? player.name_ka : player.name
@@ -70,6 +71,11 @@ export function PlayerCard({ player }: PlayerCardProps) {
         >
           {player.position}
         </span>
+        {viewCount != null && viewCount >= POPULAR_VIEWS_THRESHOLD && (
+          <span className="absolute bottom-2 right-2 rounded-full bg-amber-500/90 px-2 py-0.5 text-[10px] font-semibold text-white">
+            {t('players.popular')}
+          </span>
+        )}
       </div>
 
       {/* Info */}
@@ -90,6 +96,17 @@ export function PlayerCard({ player }: PlayerCardProps) {
           <>
             <span>·</span>
             <span>{player.preferred_foot}</span>
+          </>
+        )}
+        {viewCount != null && viewCount > 0 && (
+          <>
+            <span>·</span>
+            <span className="inline-flex items-center gap-0.5">
+              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {viewCount}
+            </span>
           </>
         )}
       </div>

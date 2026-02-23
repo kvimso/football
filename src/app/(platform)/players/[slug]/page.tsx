@@ -11,7 +11,9 @@ import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
 import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
 import { trackPageView } from '@/lib/analytics'
-import { BLUR_DATA_URL, POSITION_BORDER_CLASSES } from '@/lib/constants'
+import { trackPlayerView } from '@/app/actions/player-views'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
 interface PlayerPageProps {
@@ -70,6 +72,45 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   if (error || !player) notFound()
 
   trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
+  trackPlayerView(player.id)
+
+  // Fetch view counts for this player
+  let totalViews = 0
+  let recentViews = 0
+  let previousViews = 0
+  try {
+    const admin = createAdminClient()
+    const now = new Date()
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
+
+    const [totalResult, recentResult, previousResult] = await Promise.all([
+      admin
+        .from('player_views')
+        .select('id', { count: 'exact', head: true })
+        .eq('player_id', player.id),
+      admin
+        .from('player_views')
+        .select('id', { count: 'exact', head: true })
+        .eq('player_id', player.id)
+        .gte('viewed_at', sevenDaysAgo),
+      admin
+        .from('player_views')
+        .select('id', { count: 'exact', head: true })
+        .eq('player_id', player.id)
+        .gte('viewed_at', fourteenDaysAgo)
+        .lt('viewed_at', sevenDaysAgo),
+    ])
+
+    if (!totalResult.error) totalViews = totalResult.count ?? 0
+    if (!recentResult.error) recentViews = recentResult.count ?? 0
+    if (!previousResult.error) previousViews = previousResult.count ?? 0
+  } catch {
+    // View counts are non-critical
+  }
+
+  const isTrending = recentViews > previousViews && recentViews > 0
+  const isPopular = totalViews >= POPULAR_VIEWS_THRESHOLD
 
   // Check if user is logged in and has shortlisted/contacted this player
   const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -152,6 +193,28 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               status: player.status,
             }} />
 
+            {/* Badges row */}
+            {(isPopular || isTrending) && (
+              <div className="mt-2 flex items-center gap-2">
+                {isPopular && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-400">
+                    <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
+                    </svg>
+                    {t('players.popular')}
+                  </span>
+                )}
+                {isTrending && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-semibold text-accent">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+                    </svg>
+                    {t('players.trending')}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Free agent notice */}
             {isFreeAgent && (
               <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-400">
@@ -215,6 +278,17 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 <div className="text-foreground-muted text-xs">{t('players.nationality')}</div>
                 <div className="font-semibold text-foreground">{player.nationality ? t('nationality.' + player.nationality) : '-'}</div>
               </div>
+              {totalViews > 0 && (
+                <div className="rounded-lg bg-background px-3 py-2 border border-border">
+                  <div className="text-foreground-muted text-xs flex items-center gap-1">
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {t('players.scoutViews')}
+                  </div>
+                  <div className="font-semibold text-foreground">{totalViews}</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

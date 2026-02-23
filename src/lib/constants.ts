@@ -31,6 +31,8 @@ export const AGE_RANGES = [
 export const AGE_RANGE_MAP: Record<string, { min: number; max: number }> =
   Object.fromEntries(AGE_RANGES.map((r) => [r.value, { min: r.min, max: r.max }]))
 
+export const POPULAR_VIEWS_THRESHOLD = 20
+
 // Tiny dark placeholder for next/image blur
 export const BLUR_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='

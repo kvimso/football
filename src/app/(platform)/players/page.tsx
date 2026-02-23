@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { calculateAge } from '@/lib/utils'
 import { PlayerCard } from '@/components/player/PlayerCard'
@@ -23,13 +24,14 @@ interface PlayersPageProps {
     foot?: string
     q?: string
     status?: string
+    sort?: string
     page?: string
   }>
 }
 
 export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   const params = await searchParams
-  const { position, age, club, foot, q, status } = params
+  const { position, age, club, foot, q, status, sort } = params
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
 
   const supabase = await createClient()
@@ -48,6 +50,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     .from('players')
     .select(
       `
+      id,
       slug,
       name,
       name_ka,
@@ -103,10 +106,11 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     }
   }
 
-  // Pagination — when age filter is active we can't paginate at DB level
-  // because age is calculated client-side from DOB
+  // Pagination — when age filter or most_viewed sort is active we can't paginate at DB level
+  // because age is calculated client-side from DOB and most_viewed needs client-side reordering
   const hasAgeFilter = age && AGE_RANGE_MAP[age]
-  if (!hasAgeFilter) {
+  const needsClientPagination = hasAgeFilter || sort === 'most_viewed'
+  if (!needsClientPagination) {
     const from = (page - 1) * PAGE_SIZE
     query = query.range(from, from + PAGE_SIZE - 1)
   } else {
@@ -128,6 +132,26 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     })
   }
 
+  // Fetch view counts using service role (bypasses RLS for aggregation)
+  let viewCountMap = new Map<string, number>()
+  try {
+    const admin = createAdminClient()
+    const { data: viewCounts, error: vcError } = await admin
+      .from('player_views')
+      .select('player_id')
+    if (vcError) {
+      console.error('Failed to fetch view counts:', vcError.message)
+    } else if (viewCounts) {
+      const counts: Record<string, number> = {}
+      for (const row of viewCounts) {
+        counts[row.player_id] = (counts[row.player_id] ?? 0) + 1
+      }
+      viewCountMap = new Map(Object.entries(counts))
+    }
+  } catch {
+    // Silently fail — view counts are non-critical
+  }
+
   // Map to card props — pick the latest season stats
   const allCards = filteredPlayers.map((p) => {
     const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
@@ -140,12 +164,17 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     }
   })
 
-  // For age-filtered results, paginate client-side
-  const playerCards = hasAgeFilter
+  // Sort by most viewed if requested
+  if (sort === 'most_viewed') {
+    allCards.sort((a, b) => (viewCountMap.get(b.id) ?? 0) - (viewCountMap.get(a.id) ?? 0))
+  }
+
+  // For age-filtered / most-viewed results, paginate client-side
+  const playerCards = needsClientPagination
     ? allCards.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
     : allCards
 
-  const total = hasAgeFilter ? allCards.length : (totalCount ?? 0)
+  const total = needsClientPagination ? allCards.length : (totalCount ?? 0)
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   // Build pagination URL helper
@@ -157,6 +186,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     if (foot) sp.set('foot', foot)
     if (q) sp.set('q', q)
     if (status) sp.set('status', status)
+    if (sort) sp.set('sort', sort)
     if (p > 1) sp.set('page', String(p))
     const qs = sp.toString()
     return `/players${qs ? `?${qs}` : ''}`
@@ -184,7 +214,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       {playerCards.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {playerCards.map((player) => (
-            <PlayerCard key={player.slug} player={player} />
+            <PlayerCard key={player.slug} player={player} viewCount={viewCountMap.get(player.id) ?? 0} />
           ))}
         </div>
       ) : (
