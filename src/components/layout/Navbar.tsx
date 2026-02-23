@@ -36,7 +36,9 @@ export function Navbar() {
         setUser(user ? { id: user.id, email: user.email ?? undefined } : null)
         if (user) {
           supabase.from('profiles').select('role').eq('id', user.id).single()
-            .then(({ data }) => setUserRole(data?.role ?? null))
+            .then(({ data, error }) => {
+              if (!error) setUserRole(data?.role ?? null)
+            })
         }
       }).catch(() => { /* env vars missing or network error */ })
 
@@ -44,7 +46,9 @@ export function Navbar() {
         setUser(session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null)
         if (session?.user) {
           supabase.from('profiles').select('role').eq('id', session.user.id).single()
-            .then(({ data }) => setUserRole(data?.role ?? null))
+            .then(({ data, error }) => {
+              if (!error) setUserRole(data?.role ?? null)
+            })
         } else {
           setUserRole(null)
         }

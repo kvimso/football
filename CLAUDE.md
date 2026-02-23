@@ -14,44 +14,63 @@ This file provides guidance to Claude Code when working on this project. Read th
 
 **The problem:** Georgian football talent is booming (Kvaratskhelia €70M to PSG, Mamardashvili €30M to Liverpool, 37,000+ registered youth players) but there is no centralized digital platform for scouts to discover Georgian youth players. Player data is fragmented, match footage is scattered, and international scouts have no single source.
 
-**The solution:** A scouting platform where academies register player profiles, camera systems provide verified statistics automatically, and scouts can search, filter, compare, and contact players — all bilingual in English and Georgian.
+**The solution:** A scouting platform where academies register player profiles, camera systems (provided by our partner Starlive via Pixellot cameras) deliver verified statistics automatically, and scouts can search, filter, compare, and contact players — all bilingual in English and Georgian.
 
 ### Target Users
 
 - **Scouts/Agents** (international) — browse players, view verified camera stats, watch highlights, request contact. English-first experience.
 - **Academy Admins** (Georgian) — register and manage their club's player profiles, respond to scout inquiries, handle transfer requests. Georgian-first experience.
 
+### Camera Partner: Starlive
+
+Starlive is an official Pixellot reseller (Kyrgyzstan, Armenia, expanding into Georgia). They already have cameras installed at several Georgian clubs. They provide cameras, video, and analytics to clubs. We provide the scouting platform as an add-on that makes their camera package more valuable.
+
+**Deal:** Starlive provides camera data to us for free. When we start generating revenue, we negotiate a revenue share. Pixellot directly introduced us to Starlive.
+
+---
+
+## Site Architecture
+
+The platform has two distinct parts:
+
+### Part 1: Public Landing Page (no auth required)
+
+A professional marketing page — clean, hrmony.com-style layout. This is what everyone sees first. Its job is to explain what the platform does, build trust, and convert visitors into registered users.
+
+**Public pages:** `/` (landing), `/about`, `/login`, `/register`
+
+**Landing page structure:**
+
+1. Hero — headline, subtitle, background image, CTA buttons (Register as Scout / Register Your Academy)
+2. What We Do — brief explanation with icons for key features
+3. Our Services — service cards (Player Database, Verified Camera Stats, Highlight Reels, Scout Contact System, Academy Management)
+4. For Scouts — benefits and CTA to register
+5. For Academies — benefits and CTA to register
+6. Partners — "Powered by Pixellot" / Starlive logo (when approved)
+7. Footer — links, contact info, register CTAs
+
+### Part 2: Protected Platform (auth required)
+
+A Transfermarkt-style data marketplace behind login. All player browsing, stats, matches, clubs, scout tools, and admin panel require authentication.
+
+**Protected pages:** Everything under `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin`
+
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                  | Why                                                                                                                                   |
-| ---------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Framework  | **Next.js 15 (App Router)** | SSR for SEO (scouts find players via Google), API routes (no separate backend), server components for DB queries, middleware for auth |
-| Database   | **Supabase (PostgreSQL)**   | Auth, row-level security, file storage, realtime — all built-in. No infrastructure to manage                                          |
-| Auth       | **Supabase Auth**           | Email/password for scouts, magic link or invite-based for academy admins                                                              |
-| Storage    | **Supabase Storage**        | Player photos, club logos                                                                                                             |
-| Styling    | **Tailwind CSS v4**         | Utility-first, dark theme, responsive                                                                                                 |
-| Deployment | **Vercel**                  | Native Next.js hosting, edge functions, preview deployments                                                                           |
-| Camera API | **zone14 / Pixellot** (TBD) | Automated match footage + individual player statistics via API                                                                        |
-| Language   | **TypeScript**              | Type safety across the full stack — prevents data shape bugs                                                                          |
-
-### Key Libraries
-
-- `@supabase/supabase-js` + `@supabase/ssr` — Supabase client for server/client components
-- `next/image` — optimized image loading for player photos
-- `recharts` or SVG — radar charts and stat visualizations
-- `zod` — runtime validation for API inputs and form data
-- `date-fns` — date formatting (match dates, player DOB, age calculation)
+| Layer      | Technology                  | Why                                                                                                |
+| ---------- | --------------------------- | -------------------------------------------------------------------------------------------------- |
+| Framework  | **Next.js 15 (App Router)** | API routes (no separate backend), server components for DB queries, middleware for auth             |
+| Database   | **Supabase (PostgreSQL)**   | Auth, row-level security, file storage, realtime — all built-in. No infrastructure to manage       |
+| Auth       | **Supabase Auth**           | Email/password for scouts, magic link or invite-based for academy admins                           |
+| Storage    | **Supabase Storage**        | Player photos, club logos                                                                          |
+| Styling    | **Tailwind CSS v4**         | Utility-first, responsive                                                                          |
+| Deployment | **Vercel**                  | Native Next.js hosting, edge functions, preview deployments                                        |
+| Camera API | **Starlive (Pixellot)**     | Automated match footage + individual player statistics via API                                     |
+| Language   | **TypeScript**              | Type safety across the full stack                                                                  |
 
 ---
-
-## Development Environment
-
-**Development path (WSL):** `~/projects/georgian-football-platform/`
-**Backup path (OneDrive):** `/mnt/c/Users/kvims/OneDrive/Desktop/georgian-football-platform/`
-
-Always develop from the WSL path. The OneDrive path causes Turbopack crashes due to file permission issues. See `TROUBLESHOOTING.md` for details and solutions to recurring problems.
 
 ## Commands
 
@@ -74,317 +93,87 @@ npx supabase gen types typescript --local > src/lib/database.types.ts  # Regener
 ## Project Structure
 
 ```
-├── public/                     # Static assets (logos, OG images)
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── layout.tsx          # Root layout (providers, nav, footer)
-│   │   ├── page.tsx            # Home page
-│   │   ├── players/            # Public: player pages (no auth required)
-│   │   │   ├── page.tsx        # Player directory with filters
-│   │   │   ├── compare/
-│   │   │   │   └── page.tsx    # Player comparison (side-by-side)
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx    # Player profile (SSR for SEO)
-│   │   ├── matches/            # Public: match pages
-│   │   │   ├── page.tsx        # Match library
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx    # Match detail
-│   │   ├── clubs/              # Public: club pages
-│   │   │   ├── page.tsx        # Club listing
-│   │   │   └── [slug]/
-│   │   │       └── page.tsx    # Club detail with squad
-│   │   ├── about/
-│   │   │   └── page.tsx
-│   │   ├── (auth)/             # Route group: authentication pages
-│   │   │   ├── login/
-│   │   │   │   └── page.tsx
-│   │   │   ├── register/
-│   │   │   │   └── page.tsx
-│   │   │   └── callback/
-│   │   │       └── route.ts    # Supabase auth callback handler
-│   │   ├── dashboard/          # Protected: scout dashboard
-│   │   │   ├── layout.tsx      # Auth guard wrapper
-│   │   │   ├── page.tsx        # Scout home (saved players, recent activity)
-│   │   │   ├── shortlist/
-│   │   │   │   └── page.tsx    # Saved/shortlisted players
-│   │   │   └── requests/
-│   │   │       └── page.tsx    # Sent contact requests + statuses
-│   │   ├── admin/              # Protected: academy admin panel
-│   │   │   ├── layout.tsx      # Admin auth guard (role check)
-│   │   │   ├── page.tsx        # Admin overview
-│   │   │   ├── players/
-│   │   │   │   ├── page.tsx    # Manage academy's players
-│   │   │   │   ├── new/
-│   │   │   │   │   └── page.tsx    # Add player form
-│   │   │   │   └── [id]/
-│   │   │   │       └── edit/
-│   │   │   │           └── page.tsx  # Edit player profile
-│   │   │   ├── requests/
-│   │   │   │   └── page.tsx    # Incoming scout contact requests
-│   │   │   ├── transfers/
-│   │   │   │   └── page.tsx    # Transfer requests (incoming, outgoing, search + claim)
-│   │   │   └── invite/
-│   │   │       └── page.tsx    # Invite academy admin (platform admin only)
-│   │   └── actions/            # Server actions (mutations)
-│   │       ├── admin-players.ts    # createPlayer, updatePlayer
-│   │       ├── admin-requests.ts   # approveRequest, rejectRequest
-│   │       ├── admin-transfers.ts  # releasePlayer, requestTransfer, claimFreeAgent, etc.
-│   │       ├── admin-invite.ts     # inviteAcademyAdmin
-│   │       └── shortlist.ts        # addToShortlist, removeFromShortlist, updateShortlistNote
-│   ├── components/             # Reusable UI components
-│   │   ├── admin/              # Admin components (PlayerForm, TransferSearch, ReleasePlayerButton)
-│   │   ├── player/             # Player-specific (PlayerCard, RadarChart, CompareView)
-│   │   ├── match/              # Match-specific (MatchCard, MatchFilters, MatchDetailClient)
-│   │   ├── home/               # Home page (HomeHero, StatsBar)
-│   │   ├── club/               # Club components (ClubCard, ClubDetailClient)
-│   │   ├── about/              # About page (AboutContent)
-│   │   ├── dashboard/          # Scout dashboard components
-│   │   ├── layout/             # Layout components (Navbar, Footer, MobileMenu)
-│   │   └── forms/              # Form components (ContactRequestForm, FilterPanel)
-│   ├── lib/                    # Shared utilities and config
-│   │   ├── supabase/
-│   │   │   ├── client.ts       # Browser Supabase client
-│   │   │   ├── server.ts       # Server-side Supabase client (cookies-based)
-│   │   │   └── admin.ts        # Service role client (for webhooks, admin ops)
-│   │   ├── camera/
-│   │   │   ├── client.ts       # Camera API client (zone14 or Pixellot)
-│   │   │   ├── types.ts        # Camera API response types
-│   │   │   └── sync.ts         # Logic to map camera data → our DB schema
-│   │   ├── auth.ts             # Shared getAdminContext() for server actions
-│   │   ├── database.types.ts   # Auto-generated Supabase types (DO NOT EDIT MANUALLY)
-│   │   ├── translations.ts     # i18n translation keys (en + ka)
-│   │   ├── server-translations.ts  # Server-side getServerT() helper
-│   │   ├── validations.ts      # Zod schemas for form/API validation
-│   │   ├── utils.ts            # Helpers: slug generation, age calc, platform ID generation
-│   │   └── constants.ts        # Position list, preferred feet, position colors, age ranges
-│   ├── hooks/                  # Custom React hooks
-│   │   ├── useLang.ts          # Language toggle hook
-│   │   └── useDebounce.ts      # Search input debouncing
-│   ├── context/
-│   │   └── LanguageContext.tsx  # i18n provider with en/ka translations
-│   ├── middleware.ts           # Next.js middleware: auth session refresh, protected route checks
-│   └── index.css               # Tailwind config + CSS custom properties + component classes
-├── supabase/
-│   ├── migrations/             # SQL migration files (sequential, timestamped)
-│   ├── seed.sql                # Demo data for development
-│   └── config.toml             # Local Supabase config
-├── .env.local                  # Supabase URL + anon key + service role key (NEVER commit)
-├── next.config.ts
-├── tailwind.config.ts
-├── tsconfig.json
-└── CLAUDE.md                   # This file
+src/
+  app/
+    layout.tsx              # Root layout (minimal — no platform nav for landing page)
+    page.tsx                # Landing page (public, professional, hrmony-style)
+    about/page.tsx          # About page (public)
+    (auth)/
+      login/page.tsx
+      register/page.tsx
+      callback/route.ts     # Supabase auth callback handler
+    (platform)/             # Route group: ALL auth-protected marketplace pages
+      layout.tsx            # Platform layout (Navbar, Footer, auth guard — redirects to /login if not authenticated)
+      players/
+        page.tsx            # Player directory with filters
+        [slug]/page.tsx     # Player profile
+      matches/
+        page.tsx            # Match library
+        [slug]/page.tsx     # Match detail
+      clubs/
+        page.tsx            # Club listing
+        [slug]/page.tsx     # Club detail with squad
+      dashboard/
+        layout.tsx          # Scout role check
+        page.tsx            # Scout home (saved players, recent activity)
+        shortlist/page.tsx  # Saved/shortlisted players
+        requests/page.tsx   # Sent contact requests + statuses
+      admin/
+        layout.tsx          # Admin role check (academy_admin only)
+        page.tsx            # Admin overview
+        players/
+          page.tsx          # Manage academy's players
+          new/page.tsx      # Add player form
+          [id]/edit/page.tsx # Edit player profile
+        requests/page.tsx   # Incoming scout contact requests
+        transfers/page.tsx  # Transfer requests (incoming, outgoing, search + claim)
+    api/
+      contact/route.ts      # POST: scout sends contact request
+      camera/
+        webhook/route.ts    # Pixellot webhook receiver
+        sync/route.ts       # Manual trigger to sync camera data
+      transfers/route.ts    # Transfer request actions
+      players/search/route.ts # Search API for autocomplete and transfer search
+  components/
+    ui/                     # Primitive components (Button, Input, Card, Modal, Badge)
+    landing/                # Landing page sections (Hero, Services, ForScouts, ForAcademies, Partners)
+    player/                 # Player-specific (PlayerCard, RadarChart, StatsTable, CompareView)
+    match/                  # Match-specific (MatchCard, MatchTimeline, TopPerformers)
+    layout/                 # Layout components (PlatformNavbar, Footer, Sidebar, MobileMenu)
+    forms/                  # Form components (PlayerForm, ContactForm, FilterPanel)
+  lib/
+    supabase/
+      client.ts             # Browser Supabase client
+      server.ts             # Server-side Supabase client (cookies-based)
+      admin.ts              # Service role client (for webhooks, admin ops)
+    camera/
+      client.ts             # Pixellot API client
+      types.ts              # Pixellot API response types
+      sync.ts               # Logic to map Pixellot data → our DB schema
+    database.types.ts       # Auto-generated Supabase types (DO NOT EDIT MANUALLY)
+    validations.ts          # Zod schemas for form/API validation
+    utils.ts                # Helpers: slug generation, age calc, position colors, platform ID generation
+    constants.ts            # Position list, regions, stat thresholds, config values
+  hooks/
+    useShortlist.ts
+    useLang.ts
+    useDebounce.ts
+  context/
+    LanguageContext.tsx      # i18n provider with en/ka translations
+  middleware.ts             # Auth session refresh + redirect unauthenticated users from platform pages to /login
+  styles/
+    globals.css             # Tailwind config + CSS custom properties + component classes
+supabase/
+  migrations/               # SQL migration files (sequential, timestamped)
+  seed.sql                  # Demo data for development
+  config.toml               # Local Supabase config
 ```
 
 ---
 
 ## Database Schema
 
-### Core Tables
-
-```sql
--- Clubs / Academies
-create table clubs (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  name_ka text not null,
-  slug text unique not null,
-  logo_url text,
-  city text,
-  region text,
-  description text,
-  description_ka text,
-  website text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
--- Players
-create table players (
-  id uuid primary key default gen_random_uuid(),
-  club_id uuid references clubs(id) on delete set null,
-  platform_id text unique not null,     -- Auto-generated unique ID (format: GFP-XXXXX), visible on profile
-  name text not null,
-  name_ka text not null,
-  slug text unique not null,
-  date_of_birth date not null,
-  nationality text default 'Georgian',
-  position text not null,               -- GK, DEF, MID, ATT, WNG, ST
-  preferred_foot text,                  -- Left, Right, Both
-  height_cm int,
-  weight_kg int,
-  photo_url text,
-  jersey_number int,
-  parent_guardian_contact text,          -- Email or phone, NEVER shown publicly, for future use
-  status text default 'active',         -- 'active' | 'free_agent'
-  is_featured boolean default false,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
--- Player Club History (tracks career across multiple clubs)
-create table player_club_history (
-  id uuid primary key default gen_random_uuid(),
-  player_id uuid references players(id) on delete cascade,
-  club_id uuid references clubs(id),
-  joined_at date not null,
-  left_at date                          -- null means currently at this club
-);
-
--- Player Skills (1-100 ratings for radar chart — camera-generated only)
-create table player_skills (
-  id uuid primary key default gen_random_uuid(),
-  player_id uuid references players(id) on delete cascade,
-  pace int check (pace between 1 and 100),
-  shooting int check (shooting between 1 and 100),
-  passing int check (passing between 1 and 100),
-  dribbling int check (dribbling between 1 and 100),
-  defending int check (defending between 1 and 100),
-  physical int check (physical between 1 and 100),
-  updated_at timestamptz default now(),
-  unique(player_id)
-);
-
--- Season Stats (aggregated per season — camera-generated only)
-create table player_season_stats (
-  id uuid primary key default gen_random_uuid(),
-  player_id uuid references players(id) on delete cascade,
-  season text not null,
-  matches_played int default 0,
-  goals int default 0,
-  assists int default 0,
-  minutes_played int default 0,
-  pass_accuracy numeric(5,2),
-  shots_on_target int default 0,
-  tackles int default 0,
-  interceptions int default 0,
-  clean_sheets int default 0,
-  distance_covered_km numeric(6,2),
-  sprints int default 0,
-  source text not null,                 -- 'pixellot' | 'zone14' — always camera source, never manual
-  created_at timestamptz default now(),
-  unique(player_id, season)
-);
-
--- Matches (camera-generated only)
-create table matches (
-  id uuid primary key default gen_random_uuid(),
-  home_club_id uuid references clubs(id),
-  away_club_id uuid references clubs(id),
-  slug text unique not null,
-  home_score int,
-  away_score int,
-  competition text,
-  match_date date not null,
-  venue text,
-  video_url text,
-  highlights_url text,
-  match_report text,
-  match_report_ka text,
-  camera_source text not null,          -- 'pixellot' | 'zone14'
-  external_event_id text,               -- Camera system's event ID for API sync
-  created_at timestamptz default now()
-);
-
--- Per-Match Player Stats (camera-generated only)
-create table match_player_stats (
-  id uuid primary key default gen_random_uuid(),
-  match_id uuid references matches(id) on delete cascade,
-  player_id uuid references players(id) on delete cascade,
-  minutes_played int,
-  goals int default 0,
-  assists int default 0,
-  pass_accuracy numeric(5,2),
-  shots int default 0,
-  shots_on_target int default 0,
-  tackles int default 0,
-  interceptions int default 0,
-  distance_km numeric(5,2),
-  sprints int default 0,
-  top_speed_kmh numeric(4,1),
-  heat_map_data jsonb,
-  rating numeric(3,1),
-  source text not null,                 -- 'pixellot' | 'zone14'
-  created_at timestamptz default now(),
-  unique(match_id, player_id)
-);
-
--- User Profiles (extends Supabase auth.users)
-create table profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  role text not null default 'scout',   -- 'scout' | 'academy_admin'
-  full_name text,
-  organization text,
-  email text,
-  phone text,
-  club_id uuid references clubs(id),    -- Only for academy_admin role
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
--- Contact Requests (scout → player)
-create table contact_requests (
-  id uuid primary key default gen_random_uuid(),
-  scout_id uuid references profiles(id) on delete cascade,
-  player_id uuid references players(id) on delete cascade,
-  message text not null,
-  status text default 'pending',        -- 'pending' | 'approved' | 'rejected'
-  responded_at timestamptz,
-  responded_by uuid references profiles(id),
-  created_at timestamptz default now()
-);
-
--- Player Shortlists (scout saves players)
-create table shortlists (
-  id uuid primary key default gen_random_uuid(),
-  scout_id uuid references profiles(id) on delete cascade,
-  player_id uuid references players(id) on delete cascade,
-  notes text,
-  created_at timestamptz default now(),
-  unique(scout_id, player_id)
-);
-
--- Player Videos (camera-generated highlight clips)
-create table player_videos (
-  id uuid primary key default gen_random_uuid(),
-  player_id uuid references players(id) on delete cascade,
-  match_id uuid references matches(id),
-  title text not null,
-  url text not null,
-  video_type text default 'highlight',  -- 'highlight' | 'full_match' | 'training'
-  duration_seconds int,
-  created_at timestamptz default now()
-);
-
--- Transfer Requests (club → club player transfers)
-create table transfer_requests (
-  id uuid primary key default gen_random_uuid(),
-  player_id uuid references players(id) on delete cascade,
-  from_club_id uuid references clubs(id),
-  to_club_id uuid references clubs(id),
-  status text default 'pending',        -- 'pending' | 'accepted' | 'declined' | 'expired'
-  requested_at timestamptz default now(),
-  resolved_at timestamptz,
-  expires_at timestamptz default (now() + interval '7 days')
-);
-```
-
-### Indexes
-
-```sql
-create index idx_players_club on players(club_id);
-create index idx_players_position on players(position);
-create index idx_players_slug on players(slug);
-create index idx_players_platform_id on players(platform_id);
-create index idx_players_status on players(status);
-create index idx_player_club_history_player on player_club_history(player_id);
-create index idx_matches_date on matches(match_date desc);
-create index idx_match_stats_player on match_player_stats(player_id);
-create index idx_contact_requests_scout on contact_requests(scout_id);
-create index idx_contact_requests_player on contact_requests(player_id);
-create index idx_shortlists_scout on shortlists(scout_id);
-create index idx_transfer_requests_from on transfer_requests(from_club_id);
-create index idx_transfer_requests_to on transfer_requests(to_club_id);
-```
+**Database schema** is defined in `supabase/migrations/`. Run `npx supabase gen types typescript --local > src/lib/database.types.ts` after any schema change.
 
 ---
 
@@ -415,7 +204,6 @@ This is the core trust model of the platform. Follow it strictly.
 - Enter or edit player statistics of any kind (player_season_stats, match_player_stats, player_skills)
 - Upload match footage or highlights (camera system only)
 - See or modify any other club's players or data
-- Claim a free agent who was released from another club without going through a transfer request (7-day timeout then auto-release)
 
 ### Scout Permissions
 
@@ -436,43 +224,15 @@ This is the core trust model of the platform. Follow it strictly.
 ### Data Source Rules
 
 - **All stats come from cameras only.** No manual entry by anyone.
-- Stats display a "verified" indicator with the camera source (zone14/Pixellot)
+- Stats display a "Verified by Pixellot" badge
 - Player profile info (bio, photo, physical attributes) shows as "club submitted"
 - Matches, match stats, highlights, and player videos are created exclusively by camera API integration
 
----
+### Transfer Flow Summary
 
-## Transfer System
-
-### Registration
-
-- Club admin registers a player with required fields (first_name, last_name, date_of_birth, position)
-- System auto-generates a unique platform_id (format: GFP-XXXXX)
-- A player_club_history row is inserted with joined_at as today
-
-### Transfer Flow
-
-1. New club admin searches for a player by platform_id or name
-2. If player is **active** at another club: sends a transfer request (inserts into transfer_requests with status 'pending')
-3. Old club admin sees incoming requests in their dashboard
-4. Old club admin **accepts** → player.club_id changes to new club, player_club_history updated (old row gets left_at, new row inserted), transfer_requests.status set to 'accepted'
-5. Old club admin **declines** → transfer_requests.status set to 'declined', nothing changes on player
-6. If **7 days pass** with no response → transfer_requests.status set to 'expired', player.club_id set to null, player.status set to 'free_agent'
-7. If player is already **free_agent**: new club admin can claim them directly (set player.club_id, insert player_club_history row)
-
-### Release Flow
-
-- Club admin clicks "Release Player"
-- Confirmation dialog required
-- player.club_id set to null, player.status set to 'free_agent'
-- player_club_history current row gets left_at set to today
-
-### Player Career History
-
-- player_club_history tracks every club a player has been part of with dates
-- Player profile page shows a career timeline (club name + joined/left dates)
-- All match stats persist across transfers (linked to player_id, not club_id)
-- Scouts see the full career arc — this is a key selling point
+- **Active player transfer:** New club sends request → old club accepts/declines → 7-day expiry auto-releases player to free_agent if no response
+- **Free agent claim:** New club claims directly (no request needed)
+- **Release:** Club admin releases player → becomes free_agent, career history preserved via `player_club_history`
 
 ---
 
@@ -490,36 +250,10 @@ This is the core trust model of the platform. Follow it strictly.
 1. Supabase Auth handles login/register/session
 2. On signup, a trigger creates a row in `profiles` with default role `scout`
 3. `middleware.ts` refreshes the session cookie on every request
-4. Protected routes (`/dashboard/*`, `/admin/*`) check session in their `layout.tsx`
-5. Admin routes additionally verify `role === 'academy_admin'`
-6. API routes validate session via `createServerClient` from `@supabase/ssr`
-
-### Auth Implementation Pattern
-
-```typescript
-// Server component auth check pattern:
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-
-export default async function AdminLayout({ children }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) redirect('/login')
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role, club_id')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'academy_admin') {
-    redirect('/dashboard')
-  }
-
-  return <>{children}</>
-}
-```
+4. **Only `/`, `/about`, `/login`, `/register` are publicly accessible** — everything else requires authentication
+5. `(platform)/layout.tsx` checks for authenticated user — redirects to `/login` if not
+6. Admin routes additionally verify `role === 'academy_admin'`
+7. API routes validate session via `createServerClient` from `@supabase/ssr`
 
 ### Row-Level Security (RLS)
 
@@ -555,44 +289,30 @@ export default async function AdminLayout({ children }) {
 - Database fields have paired columns: `name` + `name_ka`, `description` + `description_ka`
 - Georgian font: Noto Sans Georgian loaded via `next/font`
 - Language preference stored in cookie (persists across sessions)
+- **Landing page must be fully bilingual** — all headings, descriptions, CTAs need both languages
 
 **Critical rule:** Never hardcode English or Georgian text in components. Always use `t()`. When adding new UI text, add both `en` and `ka` translations.
 
 ---
 
-## Camera Integration (Phase 5)
+## Camera Integration (Phase 7)
 
-Camera partner is TBD (zone14 or Pixellot — both in discussion). The architecture is camera-agnostic.
+Camera partner is **Starlive** (official Pixellot reseller). They already have cameras at Georgian clubs.
 
 ### How It Works
 
-1. Camera system records matches at partner academies
-2. After match processing, camera sends data via webhook to `/api/camera/webhook`
-3. Webhook triggers data sync: pull match video, individual player stats, highlights
+1. Starlive's Pixellot cameras record matches at partner academies
+2. After match processing, data becomes available via Pixellot API
+3. Our system pulls match video, individual player stats, highlights
 4. Data maps to our `matches`, `match_player_stats`, and `player_videos` tables
 5. Player identification via jersey number recognition → mapped to our player records via `jersey_number` + `club_id`
-
-### Camera Client (`src/lib/camera/`)
-
-- `client.ts` — Authenticated API client (abstract, works with zone14 or Pixellot)
-- `types.ts` — TypeScript types for camera API responses
-- `sync.ts` — Functions that transform camera data → our DB schema
-
-### Mapping Logic
-
-```
-Camera Event → matches (one row per event)
-Camera Player Stats → match_player_stats (one row per player per match)
-Camera Highlights → player_videos (auto-generated clips)
-Camera Season Aggregates → player_season_stats (periodic sync)
-```
 
 ### Important Notes
 
 - Player matching: `jersey_number` + `club_id` → our `players.jersey_number` + `players.club_id`
 - If a player can't be matched, log a warning and skip (don't crash the sync)
-- All camera data has `source` field set to 'zone14' or 'pixellot'
-- Do NOT build mock camera integration — use real API types but gate behind feature flag until API credentials are available
+- All camera data has `source: 'pixellot'`
+- Do NOT build mock camera integration — use real API types but gate behind feature flag until Starlive provides API credentials
 
 ---
 
@@ -600,7 +320,8 @@ Camera Season Aggregates → player_season_stats (periodic sync)
 
 ### Theme
 
-- Dark theme (football pitch aesthetic)
+- **Landing page:** Light/neutral theme, professional, clean — hrmony.com style. Must feel like a business website, not a developer project.
+- **Platform (behind login):** Dark theme, data-dense, Transfermarkt-style. Football pitch aesthetic.
 - CSS custom properties in `globals.css` for colors
 - Primary accent: emerald green
 - Position-specific colors: GK=amber, DEF=blue, MID=cyan, ATT=purple, WNG=emerald, ST=red
@@ -612,7 +333,8 @@ Camera Season Aggregates → player_season_stats (periodic sync)
 - Use `globals.css` component classes for repeated patterns (`.btn-primary`, `.card`, etc.)
 - Check `globals.css` before creating new component classes — most patterns exist
 - Mobile-first responsive design — all pages must work at 375px+
-- Use `next/image` for all images (player photos, club logos)
+- Use `next/image` for all images (player photos, club logos, hero images)
+- **Landing page: no placeholder content, no developer UI, use real market numbers (37,600+ youth players, €100M+ in transfers)**
 
 ---
 
@@ -657,26 +379,20 @@ Camera Season Aggregates → player_season_stats (periodic sync)
 
 ## Build Phases
 
-The project should be built in this exact order. Complete each phase before moving to the next.
-
-### Phase 1: Foundation (Week 1-2)
-
-Set up the project skeleton with auth working end-to-end.
+### Phase 1: Foundation ✅ COMPLETE
 
 - [x] Initialize Next.js 15 with TypeScript + Tailwind CSS v4
 - [x] Set up Supabase project (remote + local dev)
-- [x] Create database migrations for all tables above
+- [x] Create database migrations for all tables
 - [x] Implement Supabase Auth (register, login, logout, session refresh)
 - [x] Create `profiles` trigger (auto-create profile on signup)
 - [x] Set up middleware for session management
 - [x] Create RLS policies for all tables
-- [x] Set up seed data (3 clubs, 12 players, 5 matches — port from current MVP)
+- [x] Set up seed data (3 clubs, 12 players, 5 matches)
 - [x] Build root layout with Navbar + Footer + LanguageContext
 - [x] Deploy skeleton to Vercel with env vars configured
 
-### Phase 2: Public Pages (Week 3-4)
-
-The pages scouts see. These must be excellent — they're the product.
+### Phase 2: Public Pages ✅ COMPLETE
 
 - [x] Home page: hero, platform stats, featured players, recent matches
 - [x] Player directory: server-side filtered list with search, position/age/club/foot filters
@@ -687,11 +403,8 @@ The pages scouts see. These must be excellent — they're the product.
 - [x] About page
 - [x] 404 page
 - [x] SEO: dynamic metadata, Open Graph images, structured data for player pages
-- [x] Mobile responsive testing on all public pages
 
-### Phase 3: Scout Features (Week 5-6)
-
-The features that make scouts come back.
+### Phase 3: Scout Features ✅ COMPLETE
 
 - [x] Scout registration + login flow (no approval needed)
 - [x] Scout dashboard (home, activity feed)
@@ -701,27 +414,21 @@ The features that make scouts come back.
 - [x] Request status tracking (pending/approved/rejected)
 - [x] Player comparison tool (side-by-side stats)
 
-### Phase 4: Academy Admin Panel (Week 7-8)
-
-How academies manage their data. **No match/stats management — camera only.**
+### Phase 4: Academy Admin Panel + Transfers ✅ COMPLETE
 
 - [x] Admin layout with sidebar navigation
 - [x] Player management: list, add new, edit profile (scoped to own club, profile fields only)
-- [x] Player registration form (first_name, last_name, DOB, position required; photo, height, weight, preferred_foot, parent_guardian_contact optional)
-- [x] Auto-generate platform_id on player registration
+- [x] Player registration form with auto-generated platform_id
 - [x] Release player button with confirmation
 - [x] Incoming contact requests: view, approve, reject
 - [x] Basic stats dashboard (how many scouts viewed your players)
-- [x] Academy admin invitation flow (platform admin sends invite)
 - [x] Transfer system: search players by platform_id or name
 - [x] Transfer system: send transfer request for active players at other clubs
 - [x] Transfer system: claim free agent players directly
 - [x] Transfer system: incoming transfer requests — accept or decline
 - [x] Transfer system: outgoing transfer requests — view status
 
-### Phase 4.5: Database Migration for Permissions & Transfers
-
-Run before implementing Phase 4 transfer features.
+### Phase 4.5: Database Migration ✅ COMPLETE
 
 - [x] Add players.platform_id (unique, format GFP-XXXXX)
 - [x] Add players.parent_guardian_contact (nullable)
@@ -731,26 +438,67 @@ Run before implementing Phase 4 transfer features.
 - [x] Update RLS: remove club admin INSERT/UPDATE on matches, match_player_stats, player_season_stats, player_skills, player_videos
 - [x] Update seed data with platform_id, status, and player_club_history rows
 
-### Phase 5: Camera Integration (Week 9-10)
+### Phase 5: Audit & Bug Fixes ✅ COMPLETE
 
-Connect camera data to the platform. Camera partner TBD (zone14 or Pixellot).
+- [x] Run `npm run build` — fix all TypeScript errors
+- [x] Run `npm run lint` — fix all lint warnings
+- [x] Fix race condition: all action buttons must have disabled/loading state while processing (use `useTransition` or local state). Affects: shortlist add/remove, contact request send, admin approve/reject, transfer actions, player edit/add forms
+- [x] Fix slow rendering: identify unnecessary `'use client'` components, add missing `loading.tsx` files in route segments, add Suspense boundaries for independent data fetches
+- [x] Verify all API routes have auth validation
+- [x] Verify all Supabase `.from()` calls check `.error` before using `.data`
+- [x] Mobile responsive check on all pages
 
-- [ ] Camera API client with authentication (zone14 or Pixellot)
+### Phase 6: Site Redesign ← CURRENT PRIORITY
+
+Transform the site from a developer project into a professional product.
+
+**6a. Landing Page (public)**
+- [ ] New landing page: professional, hrmony.com-style, clean layout
+- [ ] Hero section: headline, subtitle, background image, two CTAs (Register as Scout / Register Your Academy)
+- [ ] "What We Do" section with feature icons
+- [ ] "Our Services" cards: Player Database, Verified Camera Stats, Highlight Reels, Scout Contact System, Academy Management
+- [ ] "For Scouts" section with benefits and CTA
+- [ ] "For Academies" section with benefits and CTA
+- [ ] Partners section (Starlive/Pixellot logos when approved)
+- [ ] Professional footer with register CTAs
+- [ ] All landing page content bilingual (English/Georgian)
+- [ ] Use real market numbers: 37,600+ youth players, €100M+ in recent Georgian transfers
+
+**6b. Auth Protection**
+- [ ] Move all player/match/club browsing behind authentication
+- [ ] Update middleware: redirect unauthenticated users from `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` to `/login`
+- [ ] Create `(platform)/` route group with auth guard layout
+- [ ] Keep `/`, `/about`, `/login`, `/register` public
+- [ ] Professional login and register page design
+
+**6c. Platform UI Polish**
+- [ ] Redesign platform navigation (Transfermarkt-style, data-dense)
+- [ ] Replace letter-initial player cards with proper silhouette fallback images
+- [ ] Improve player profile layout
+- [ ] Improve admin panel design
+- [ ] Consistent dark theme color scheme across all platform pages
+- [ ] Mobile responsive on all platform pages
+
+### Phase 7: Camera Integration
+
+Connect Starlive/Pixellot camera data to the platform.
+
+- [ ] Pixellot API client with authentication (via Starlive credentials)
 - [ ] Webhook endpoint to receive match completion events
-- [ ] Data sync: transform camera stats → our schema
+- [ ] Data sync: transform Pixellot stats → our schema
 - [ ] Player matching logic (jersey number + club)
 - [ ] Display verified camera stats on player profiles and match pages
-- [ ] "Verified by [camera source]" badge on all camera-generated data
+- [ ] "Verified by Pixellot" badge on all camera-generated data
 - [ ] Auto-generated highlight clips on player profiles
 - [ ] Manual sync trigger for admin (in case webhook fails)
 
-### Phase 6: Polish & Launch (Week 11-12)
+### Phase 8: Polish & Launch
 
-- [x] Performance optimization (lazy loading, image optimization, caching)
+- [ ] Performance optimization (lazy loading, image optimization, caching)
 - [x] Error boundaries and loading states on all pages
-- [x] Email notifications (contact request received, request status update, transfer request received)
-- [x] Analytics (basic page views, popular players, scout activity)
-- [x] Final mobile testing
+- [ ] Email notifications (contact request received, request status update, transfer request received)
+- [ ] Analytics (basic page views, popular players, scout activity)
+- [ ] Academy admin invitation flow
 - [ ] Production deployment + custom domain
 
 ---
@@ -763,10 +511,10 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key     # Server-only, never expose to client
 
-# Camera API (add when partnership is confirmed — zone14 or Pixellot)
-CAMERA_API_URL=
-CAMERA_API_KEY=
-CAMERA_WEBHOOK_SECRET=
+# Camera API (add when Starlive provides credentials)
+PIXELLOT_API_URL=
+PIXELLOT_API_KEY=
+PIXELLOT_WEBHOOK_SECRET=
 
 # Optional
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
@@ -776,7 +524,7 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 
 - `NEXT_PUBLIC_*` vars are exposed to the browser — only Supabase URL and anon key should be public
 - `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS — use ONLY in API routes and server actions, NEVER in client components
-- `CAMERA_*` vars are server-only — used in `/api/camera/*` routes only
+- `PIXELLOT_*` vars are server-only — used in `/api/camera/*` routes only
 
 ---
 
@@ -791,7 +539,7 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 
 ### Data and Permissions
 
-- **Do not allow manual stats entry by anyone** — all stats come from camera API only
+- **Do not allow manual stats entry by anyone** — all stats come from Pixellot camera API only
 - **Do not let club admins add/edit matches** — matches come from camera system
 - **Do not let club admins edit player stats, skills, or videos** — camera data only
 - **Do not expose service role key to client** — only use in server-side code
@@ -800,11 +548,18 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 - **Do not delete player data when they leave a club** — set status to free_agent, preserve history
 - **Do not hardcode demo data in components** — all data comes from Supabase queries (seed.sql for dev)
 
+### Design
+
+- **Do not make the landing page look like a developer project** — must be professional, hrmony.com-style
+- **Do not show player counts or demo data on the landing page** — use market statistics instead
+- **Do not allow unauthenticated access to platform pages** — `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` all require login
+- **Do not use letter initials as player photo fallbacks** — use proper silhouette images per position
+
 ### i18n
 
 - **Do not hardcode strings** — every user-facing string uses `t('key')` from `useLang()`
 - **Do not add English text without adding Georgian** — both translations must exist
-- **Do not translate slugs** — URLs are always English (`/players/vakhtang-salia`, not `/მოთამაშეები/ვახტანგ-სალია`)
+- **Do not translate slugs** — URLs are always English
 
 ### Code Quality
 
@@ -812,6 +567,7 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 - **Do not skip error handling on Supabase calls** — always check `.error` before using `.data`
 - **Do not use `useEffect` for data that can be fetched in server components** — prefer server-side data fetching
 - **Do not create files without the `.ts` or `.tsx` extension** — no `.js`/`.jsx`
+- **Do not submit forms or trigger actions without disabling the button during processing** — always use `useTransition` or loading state to prevent race conditions
 
 ### Scope
 
