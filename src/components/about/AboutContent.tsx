@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getServerT } from '@/lib/server-translations'
 
-export async function AboutContent() {
+export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
   const { t } = await getServerT()
 
   return (
@@ -29,9 +29,15 @@ export async function AboutContent() {
           <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
             {t('about.forScoutsText')}
           </p>
-          <Link href="/register" className="btn-primary mt-4 inline-block text-sm">
-            {t('nav.register')}
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/players" className="btn-primary mt-4 inline-block text-sm">
+              {t('landing.browsePlayers')}
+            </Link>
+          ) : (
+            <Link href="/register" className="btn-primary mt-4 inline-block text-sm">
+              {t('nav.register')}
+            </Link>
+          )}
         </div>
 
         <div className="card">
@@ -39,9 +45,15 @@ export async function AboutContent() {
           <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
             {t('about.forAcademiesText')}
           </p>
-          <Link href="/login" className="btn-secondary mt-4 inline-block text-sm">
-            {t('nav.login')}
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/dashboard" className="btn-secondary mt-4 inline-block text-sm">
+              {t('nav.dashboard')}
+            </Link>
+          ) : (
+            <Link href="/login" className="btn-secondary mt-4 inline-block text-sm">
+              {t('nav.login')}
+            </Link>
+          )}
         </div>
       </div>
     </div>

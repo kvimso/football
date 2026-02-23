@@ -1,10 +1,30 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
+import { createClient } from '@/lib/supabase/client'
 
 export function Footer() {
   const { t } = useLang()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    try {
+      const supabase = createClient()
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        setIsLoggedIn(!!user)
+      }).catch(() => {})
+
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        setIsLoggedIn(!!session?.user)
+      })
+
+      return () => subscription.unsubscribe()
+    } catch {
+      // Supabase client failed to initialize
+    }
+  }, [])
 
   return (
     <footer className="border-t border-border bg-background-secondary">
@@ -46,12 +66,20 @@ export function Footer() {
               <Link href="/contact" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
                 {t('nav.contact')}
               </Link>
-              <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-                {t('nav.login')}
-              </Link>
-              <Link href="/register" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
-                {t('nav.register')}
-              </Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+                  {t('nav.dashboard')}
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+                    {t('nav.login')}
+                  </Link>
+                  <Link href="/register" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+                    {t('nav.register')}
+                  </Link>
+                </>
+              )}
             </nav>
           </div>
 

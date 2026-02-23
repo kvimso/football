@@ -4,11 +4,11 @@ import { useState, useTransition } from 'react'
 import { useLang } from '@/hooks/useLang'
 import { submitContactMessage } from '@/app/actions/contact-message'
 
-export function ContactForm() {
+export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
   const { t } = useLang()
   const [isPending, startTransition] = useTransition()
   const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(defaultEmail ?? '')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
