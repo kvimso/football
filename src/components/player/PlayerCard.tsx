@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
-import { POSITION_COLOR_CLASSES, BLUR_DATA_URL, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
+import { POSITION_COLOR_CLASSES, POSITION_BORDER_CLASSES, BLUR_DATA_URL, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
 interface PlayerCardProps {
@@ -42,10 +42,11 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
       : player.club.name
     : null
   const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
+  const borderClass = POSITION_BORDER_CLASSES[player.position] ?? 'border-t-accent'
   const isFreeAgent = player.status === 'free_agent'
 
   return (
-    <Link href={`/players/${player.slug}`} className="card group block overflow-hidden">
+    <Link href={`/players/${player.slug}`} className={`card group block overflow-hidden !border-t-[3px] ${borderClass}`}>
       {/* Photo area */}
       <div className="relative mb-3 flex h-44 items-center justify-center overflow-hidden rounded-lg bg-background">
         {player.photo_url ? (
@@ -79,10 +80,10 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
       </div>
 
       {/* Info */}
-      <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
+      <h3 className="truncate text-base font-bold text-foreground group-hover:text-accent transition-colors">
         {displayName}
       </h3>
-      <div className="mt-0.5 flex items-center gap-2 text-xs text-foreground-muted">
+      <div className="mt-1 flex items-center gap-2 text-xs text-foreground-muted">
         {isFreeAgent ? (
           <span className="font-medium text-yellow-400">{t('players.freeAgent')}</span>
         ) : clubName ? (
@@ -111,26 +112,26 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
         )}
       </div>
 
-      {/* Stats row */}
+      {/* Stats bar */}
       {player.season_stats && (
-        <div className="mt-3 flex gap-4 border-t border-border pt-3 text-xs">
-          <div>
-            <span className="font-semibold text-foreground">
+        <div className="mt-3 flex gap-0 rounded-lg bg-background/60 overflow-hidden text-xs">
+          <div className="flex-1 py-2 text-center border-r border-border/50">
+            <span className="block text-sm font-bold text-foreground">
               {player.season_stats.goals}
-            </span>{' '}
-            <span className="text-foreground-muted">{t('players.goals')}</span>
+            </span>
+            <span className="text-[10px] text-foreground-muted">{t('players.goals')}</span>
           </div>
-          <div>
-            <span className="font-semibold text-foreground">
+          <div className="flex-1 py-2 text-center border-r border-border/50">
+            <span className="block text-sm font-bold text-foreground">
               {player.season_stats.assists}
-            </span>{' '}
-            <span className="text-foreground-muted">{t('players.assists')}</span>
+            </span>
+            <span className="text-[10px] text-foreground-muted">{t('players.assists')}</span>
           </div>
-          <div>
-            <span className="font-semibold text-foreground">
+          <div className="flex-1 py-2 text-center">
+            <span className="block text-sm font-bold text-foreground">
               {player.season_stats.matches_played}
-            </span>{' '}
-            <span className="text-foreground-muted">{t('players.matches')}</span>
+            </span>
+            <span className="text-[10px] text-foreground-muted">{t('players.matches')}</span>
           </div>
         </div>
       )}

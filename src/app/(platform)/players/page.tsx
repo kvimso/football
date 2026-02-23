@@ -206,10 +206,13 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       {/* Filters */}
       <FilterPanel clubs={clubs ?? []} />
 
-      {/* Results count */}
-      <p className="mt-6 mb-4 text-sm text-foreground-muted">
-        {total} {total !== 1 ? t('players.playerPlural') : t('players.player')} {t('common.found')}
-      </p>
+      {/* Results header */}
+      <div className="mt-6 mb-4 flex items-center justify-between">
+        <p className="text-sm text-foreground-muted">
+          <span className="font-semibold text-foreground">{total}</span>{' '}
+          {total !== 1 ? t('players.playerPlural') : t('players.player')} {t('common.found')}
+        </p>
+      </div>
 
       {/* Player grid */}
       {playerCards.length > 0 ? (

@@ -24,24 +24,25 @@ export async function ClubCard({ club }: ClubCardProps) {
 
   return (
     <Link href={`/clubs/${club.slug}`} className="card group block">
-      <div className="flex items-center gap-3">
-        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-background border border-border text-lg font-bold text-accent">
+      <div className="flex items-center gap-4">
+        <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-background border border-border">
           {club.logo_url ? (
-            <Image src={club.logo_url} alt={club.name} fill className="rounded-lg object-cover" sizes="48px" />
+            <Image src={club.logo_url} alt={club.name} fill className="rounded-xl object-cover" sizes="64px" />
           ) : (
-            <ClubSilhouette className="h-8 w-8 text-accent/40" />
+            <ClubSilhouette className="h-10 w-10 text-accent/40" />
           )}
         </div>
-        <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-accent transition-colors">
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-base font-bold text-foreground group-hover:text-accent transition-colors">
             {displayName}
           </h3>
-          <div className="text-xs text-foreground-muted">
+          <div className="mt-0.5 text-xs text-foreground-muted">
             {club.city}{club.city && club.region && club.city !== club.region ? `, ${club.region}` : ''}
-            {' '}&middot;{' '}
-            {club.player_count} {t('clubs.players')}
           </div>
         </div>
+        <span className="shrink-0 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
+          {club.player_count} {t('clubs.players')}
+        </span>
       </div>
       {desc && (
         <p className="mt-3 line-clamp-2 text-xs text-foreground-muted leading-relaxed">

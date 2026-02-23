@@ -14,7 +14,7 @@ export function LandingNav() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-nav-bg/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-nav-bg backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
         <Link href="/" className="text-lg font-bold text-accent">
           GFT
@@ -85,7 +85,7 @@ export function LandingNav() {
       </nav>
 
       {menuOpen && (
-        <div className="border-t border-border bg-nav-bg px-4 py-3 md:hidden">
+        <div className="border-t border-border bg-card px-4 py-3 md:hidden">
           <div className="flex flex-col gap-3">
             <Link
               href="/about"
