@@ -1,34 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/context/AuthContext'
 
 export function LandingNav() {
   const { t, lang, setLang } = useLang()
   const router = useRouter()
   const pathname = usePathname()
-  const [user, setUser] = useState<{ id: string } | null>(null)
+  const { user } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    try {
-      const supabase = createClient()
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        setUser(user ? { id: user.id } : null)
-      }).catch(() => {})
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ? { id: session.user.id } : null)
-      })
-
-      return () => subscription.unsubscribe()
-    } catch {
-      // Supabase client failed to initialize (missing env vars)
-    }
-  }, [])
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav-bg/95 backdrop-blur-md">

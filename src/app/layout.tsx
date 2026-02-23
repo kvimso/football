@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { Geist, Noto_Sans_Georgian } from 'next/font/google'
 import { LanguageProvider } from '@/context/LanguageContext'
+import { AuthProvider } from '@/context/AuthContext'
+import { createClient } from '@/lib/supabase/server'
 import './globals.css'
 
 const geistSans = Geist({
@@ -30,13 +32,33 @@ export default async function RootLayout({
   const rawLang = cookieStore.get('lang')?.value
   const lang = rawLang === 'ka' ? 'ka' : 'en'
 
+  // Check auth server-side so AuthProvider hydrates with correct state (no flash)
+  let initialUser: { id: string; email?: string } | null = null
+  let initialRole: string | null = null
+  const hasAuthCookie = cookieStore.getAll().some(c => c.name.startsWith('sb-'))
+  if (hasAuthCookie) {
+    try {
+      const supabase = await createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        initialUser = { id: user.id, email: user.email ?? undefined }
+        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        initialRole = data?.role ?? null
+      }
+    } catch {
+      // Auth check failed — hydrate as anonymous
+    }
+  }
+
   return (
     <html lang={lang}>
       <body
         className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >
         <LanguageProvider initialLang={lang as 'en' | 'ka'}>
-          {children}
+          <AuthProvider initialUser={initialUser} initialRole={initialRole}>
+            {children}
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
-import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/context/AuthContext'
 
 const NAV_ICONS: Record<string, string> = {
   '/players': 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
@@ -46,50 +46,15 @@ const ROLE_LABELS: Record<string, string> = {
 
 export function Navbar() {
   const { t, lang, setLang } = useLang()
+  const { user, userRole, signOut } = useAuth()
   const router = useRouter()
-  const [user, setUser] = useState<{ id: string; email?: string } | null>(null)
-  const [userRole, setUserRole] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
-
-  useEffect(() => {
-    try {
-      const supabase = createClient()
-
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        setUser(user ? { id: user.id, email: user.email ?? undefined } : null)
-        if (user) {
-          supabase.from('profiles').select('role').eq('id', user.id).single()
-            .then(({ data, error }) => {
-              if (!error) setUserRole(data?.role ?? null)
-            })
-        }
-      }).catch(() => { /* env vars missing or network error */ })
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ? { id: session.user.id, email: session.user.email ?? undefined } : null)
-        if (session?.user) {
-          supabase.from('profiles').select('role').eq('id', session.user.id).single()
-            .then(({ data, error }) => {
-              if (!error) setUserRole(data?.role ?? null)
-            })
-        } else {
-          setUserRole(null)
-        }
-      })
-
-      return () => subscription.unsubscribe()
-    } catch {
-      // Supabase client failed to initialize (missing env vars)
-    }
-  }, [])
 
   async function handleLogout() {
     if (loggingOut) return
     setLoggingOut(true)
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    setUser(null)
+    await signOut()
     router.push('/')
     router.refresh()
   }
