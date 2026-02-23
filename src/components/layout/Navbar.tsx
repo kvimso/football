@@ -78,9 +78,13 @@ export function Navbar() {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          <NavLink href="/players">{t('nav.players')}</NavLink>
-          <NavLink href="/matches">{t('nav.matches')}</NavLink>
-          <NavLink href="/clubs">{t('nav.clubs')}</NavLink>
+          {user && (
+            <>
+              <NavLink href="/players">{t('nav.players')}</NavLink>
+              <NavLink href="/matches">{t('nav.matches')}</NavLink>
+              <NavLink href="/clubs">{t('nav.clubs')}</NavLink>
+            </>
+          )}
           <NavLink href="/about">{t('nav.about')}</NavLink>
         </div>
 
@@ -109,9 +113,14 @@ export function Navbar() {
               </button>
             </>
           ) : (
-            <Link href="/login" className="btn-primary text-sm">
-              {t('nav.login')}
-            </Link>
+            <>
+              <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+                {t('nav.login')}
+              </Link>
+              <Link href="/register" className="btn-primary text-sm">
+                {t('nav.register')}
+              </Link>
+            </>
           )}
 
           {/* Mobile menu button */}
@@ -134,9 +143,13 @@ export function Navbar() {
       {menuOpen && (
         <div className="border-t border-border bg-background px-4 py-3 md:hidden">
           <div className="flex flex-col gap-3">
-            <NavLink href="/players" onClick={() => setMenuOpen(false)}>{t('nav.players')}</NavLink>
-            <NavLink href="/matches" onClick={() => setMenuOpen(false)}>{t('nav.matches')}</NavLink>
-            <NavLink href="/clubs" onClick={() => setMenuOpen(false)}>{t('nav.clubs')}</NavLink>
+            {user && (
+              <>
+                <NavLink href="/players" onClick={() => setMenuOpen(false)}>{t('nav.players')}</NavLink>
+                <NavLink href="/matches" onClick={() => setMenuOpen(false)}>{t('nav.matches')}</NavLink>
+                <NavLink href="/clubs" onClick={() => setMenuOpen(false)}>{t('nav.clubs')}</NavLink>
+              </>
+            )}
             <NavLink href="/about" onClick={() => setMenuOpen(false)}>{t('nav.about')}</NavLink>
             {user && (
               <NavLink

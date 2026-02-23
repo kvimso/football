@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
@@ -9,6 +9,8 @@ import { useLang } from '@/hooks/useLang'
 export function LoginForm() {
   const { t } = useLang()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -31,7 +33,7 @@ export function LoginForm() {
       return
     }
 
-    router.push('/dashboard')
+    router.push(redirectTo)
     router.refresh()
   }
 

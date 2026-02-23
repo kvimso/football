@@ -465,10 +465,10 @@ Transform the site from a developer project into a professional product.
 - [ ] Use real market numbers: 37,600+ youth players, €100M+ in recent Georgian transfers
 
 **6b. Auth Protection**
-- [ ] Move all player/match/club browsing behind authentication
-- [ ] Update middleware: redirect unauthenticated users from `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` to `/login`
-- [ ] Create `(platform)/` route group with auth guard layout
-- [ ] Keep `/`, `/about`, `/login`, `/register` public
+- [x] Move all player/match/club browsing behind authentication
+- [x] Update middleware: redirect unauthenticated users from `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` to `/login`
+- [x] Create `(platform)/` route group with auth guard layout
+- [x] Keep `/`, `/about`, `/login`, `/register` public
 - [ ] Professional login and register page design
 
 **6c. Platform UI Polish**

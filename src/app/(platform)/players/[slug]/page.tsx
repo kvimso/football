@@ -172,13 +172,6 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               )}
             </div>
           )}
-          {!user && (
-            <div className="mt-4">
-              <Link href="/login" className="btn-primary text-sm">
-                {t('players.signInToSave')}
-              </Link>
-            </div>
-          )}
 
           {/* Meta grid */}
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">

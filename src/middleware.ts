@@ -12,7 +12,17 @@ export async function middleware(request: NextRequest) {
 
   // Skip Supabase call if no auth cookies — anonymous users don't need session refresh
   const hasAuthCookie = request.cookies.getAll().some(c => c.name.startsWith('sb-'))
+
+  // Redirect unauthenticated users away from protected paths
   if (!hasAuthCookie) {
+    const protectedPrefixes = ['/players', '/matches', '/clubs', '/dashboard', '/admin', '/platform']
+    const { pathname } = request.nextUrl
+    if (protectedPrefixes.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/login'
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
     return NextResponse.next({ request })
   }
 
