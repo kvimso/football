@@ -4,6 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function trackPlayerView(playerId: string): Promise<void> {
   try {
+    // Validate playerId is a valid UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(playerId)) return
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return

@@ -71,6 +71,10 @@ export async function updatePlayer(
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
+  // Validate playerId is a valid UUID
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!uuidRegex.test(playerId)) return { error: 'Invalid player ID' }
+
   // Verify player belongs to admin's club
   const { data: existingPlayer, error: checkError } = await supabase
     .from('players')

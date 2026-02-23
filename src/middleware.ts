@@ -7,7 +7,9 @@ export async function middleware(request: NextRequest) {
 
   if (!url || !key) {
     console.error('[middleware] Missing env vars:', { url: !!url, key: !!key })
-    return NextResponse.next({ request })
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/login'
+    return NextResponse.redirect(loginUrl)
   }
 
   // Skip Supabase call if no auth cookies — anonymous users don't need session refresh

@@ -31,7 +31,7 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
           </p>
           {isLoggedIn ? (
             <Link href="/players" className="btn-primary mt-4 inline-block text-sm">
-              {t('landing.browsePlayers')}
+              {t('home.browsePlayers')}
             </Link>
           ) : (
             <Link href="/register" className="btn-primary mt-4 inline-block text-sm">

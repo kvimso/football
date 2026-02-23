@@ -100,7 +100,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   }
 
   if (q) {
-    const sanitized = q.replace(/[,.()"\\]/g, '')
+    const sanitized = q.replace(/[,.()"\\%_]/g, '')
     if (sanitized) {
       query = query.or(`name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%`)
     }
@@ -139,6 +139,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     const { data: viewCounts, error: vcError } = await admin
       .from('player_views')
       .select('player_id')
+      .limit(10000)
     if (vcError) {
       console.error('Failed to fetch view counts:', vcError.message)
     } else if (viewCounts) {

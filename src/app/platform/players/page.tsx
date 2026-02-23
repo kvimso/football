@@ -25,7 +25,7 @@ export default async function PlatformPlayersPage({
   if (params.status) query = query.eq('status', params.status as 'active' | 'free_agent')
   if (params.club) query = query.eq('club_id', params.club)
   if (params.q) {
-    const sanitized = params.q.replace(/[,.()"\\]/g, '')
+    const sanitized = params.q.replace(/[,.()"\\%_]/g, '')
     if (sanitized) {
       query = query.or(`name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%,platform_id.ilike.%${sanitized}%`)
     }
@@ -129,7 +129,7 @@ export default async function PlatformPlayersPage({
             </tbody>
           </table>
           <p className="mt-3 text-xs text-foreground-muted">
-            {(players ?? []).length} {t('players.found')}
+            {(players ?? []).length} {t('common.found')}
           </p>
         </div>
       )}

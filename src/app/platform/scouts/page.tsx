@@ -77,7 +77,7 @@ export default async function PlatformScoutsPage() {
             </tbody>
           </table>
           <p className="mt-3 text-xs text-foreground-muted">
-            {(scouts ?? []).length} {t('players.found')}
+            {(scouts ?? []).length} {t('common.found')}
           </p>
         </div>
       )}

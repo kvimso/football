@@ -150,6 +150,7 @@ export default async function AdminDashboardPage() {
                 .from('player_views')
                 .select('player_id, player:players!player_views_player_id_fkey(name, name_ka)')
                 .in('player_id', playerIds)
+                .limit(10000)
             } catch {
               return Promise.resolve({ data: [], error: null })
             }

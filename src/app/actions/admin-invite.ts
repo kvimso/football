@@ -40,18 +40,15 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
     return { error: 'Club not found', success: false }
   }
 
-  // 4. Check if user already exists with this email
-  const { data: existingUsers } = await adminClient.auth.admin.listUsers()
-  const existingUser = existingUsers?.users.find(u => u.email === parsed.data.email)
+  // 4. Check if user already exists with this email (query profiles instead of listing all auth users)
+  const { data: existingProfile } = await adminClient
+    .from('profiles')
+    .select('id, role, club_id, email')
+    .eq('email', parsed.data.email)
+    .maybeSingle()
 
-  if (existingUser) {
-    const { data: existingProfile } = await adminClient
-      .from('profiles')
-      .select('role, club_id')
-      .eq('id', existingUser.id)
-      .single()
-
-    if (existingProfile?.role === 'academy_admin') {
+  if (existingProfile) {
+    if (existingProfile.role === 'academy_admin') {
       return { error: 'This user is already an academy admin', success: false }
     }
 
@@ -59,7 +56,7 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
     const { error: updateError } = await adminClient
       .from('profiles')
       .update({ role: 'academy_admin', club_id: parsed.data.clubId })
-      .eq('id', existingUser.id)
+      .eq('id', existingProfile.id)
 
     if (updateError) return { error: updateError.message, success: false }
 
