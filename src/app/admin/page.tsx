@@ -46,7 +46,7 @@ export default async function AdminDashboardPage() {
   const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
 
   // Fetch counts and recent requests in parallel using player IDs
-  const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewsThisWeekResult, viewsLastWeekResult, perPlayerViewsResult] =
+  const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewsThisWeekResult, viewsLastWeekResult, perPlayerViewsResult, viewsAllTimeResult] =
     await Promise.all([
       playerIds.length > 0
         ? supabase
@@ -141,14 +141,14 @@ export default async function AdminDashboardPage() {
             }
           })()
         : Promise.resolve({ count: 0, error: null }),
-      // Per-player view counts (top 5)
+      // Per-player view counts (top 5) — includes viewed_at for weekly breakdown
       playerIds.length > 0
         ? (() => {
             try {
               const admin = createAdminClient()
               return admin
                 .from('player_views')
-                .select('player_id, player:players!player_views_player_id_fkey(name, name_ka)')
+                .select('player_id, viewed_at, player:players!player_views_player_id_fkey(name, name_ka)')
                 .in('player_id', playerIds)
                 .limit(10000)
             } catch {
@@ -156,6 +156,20 @@ export default async function AdminDashboardPage() {
             }
           })()
         : Promise.resolve({ data: [], error: null }),
+      // Views all time (dedicated count)
+      playerIds.length > 0
+        ? (() => {
+            try {
+              const admin = createAdminClient()
+              return admin
+                .from('player_views')
+                .select('id', { count: 'exact', head: true })
+                .in('player_id', playerIds)
+            } catch {
+              return Promise.resolve({ count: 0, error: null })
+            }
+          })()
+        : Promise.resolve({ count: 0, error: null }),
     ])
 
   if (requestsResult.error) console.error('Failed to fetch request count:', requestsResult.error.message)
@@ -166,24 +180,33 @@ export default async function AdminDashboardPage() {
   if (viewsThisWeekResult.error) console.error('Failed to fetch weekly views:', viewsThisWeekResult.error.message)
   if (viewsLastWeekResult.error) console.error('Failed to fetch last week views:', viewsLastWeekResult.error.message)
   if (perPlayerViewsResult.error) console.error('Failed to fetch per-player views:', perPlayerViewsResult.error.message)
+  if (viewsAllTimeResult.error) console.error('Failed to fetch all-time views:', viewsAllTimeResult.error.message)
 
+  const viewsAllTime = viewsAllTimeResult.count ?? 0
   const viewsThisWeek = viewsThisWeekResult.count ?? 0
   const viewsLastWeek = viewsLastWeekResult.count ?? 0
   const viewsTrendPercent = viewsLastWeek > 0
     ? Math.round(((viewsThisWeek - viewsLastWeek) / viewsLastWeek) * 100)
     : viewsThisWeek > 0 ? 100 : 0
 
-  // Aggregate per-player view counts
+  // Aggregate per-player view counts with weekly breakdown
   const perPlayerRaw = 'data' in perPlayerViewsResult ? perPlayerViewsResult.data ?? [] : []
-  const viewCountMap = new Map<string, { name: string; name_ka: string; count: number }>()
+  const viewCountMap = new Map<string, { name: string; name_ka: string; count: number; thisWeek: number; lastWeek: number }>()
   for (const row of perPlayerRaw) {
     const p = Array.isArray(row.player) ? row.player[0] : row.player
     if (!p) continue
     const existing = viewCountMap.get(row.player_id)
+    const viewedAt = row.viewed_at ? new Date(row.viewed_at).getTime() : 0
+    const sevenDaysMs = new Date(sevenDaysAgo).getTime()
+    const fourteenDaysMs = new Date(fourteenDaysAgo).getTime()
+    const isThisWeek = viewedAt >= sevenDaysMs
+    const isLastWeek = viewedAt >= fourteenDaysMs && viewedAt < sevenDaysMs
     if (existing) {
       existing.count++
+      if (isThisWeek) existing.thisWeek++
+      if (isLastWeek) existing.lastWeek++
     } else {
-      viewCountMap.set(row.player_id, { name: p.name, name_ka: p.name_ka, count: 1 })
+      viewCountMap.set(row.player_id, { name: p.name, name_ka: p.name_ka, count: 1, thisWeek: isThisWeek ? 1 : 0, lastWeek: isLastWeek ? 1 : 0 })
     }
   }
   const perPlayerViews = Array.from(viewCountMap.values())
@@ -196,6 +219,7 @@ export default async function AdminDashboardPage() {
     { label: t('admin.stats.pendingRequests'), value: requestsResult.count ?? 0, href: '/admin/requests', borderColor: 'border-l-yellow-500', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
     { label: t('admin.stats.scoutSaves'), value: shortlistsResult.count ?? 0, href: '#', borderColor: 'border-l-pos-att', icon: 'M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.562.562 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z' },
     { label: t('admin.stats.viewsThisWeek'), value: viewsThisWeek, href: '#', borderColor: 'border-l-pos-mid', icon: 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM15 12a3 3 0 11-6 0 3 3 0 016 0z', trend: viewsTrendPercent, subtitle: mostViewedPlayer ? `${t('admin.stats.mostViewed')}: ${mostViewedPlayer.name}` : undefined },
+    { label: t('admin.stats.viewsAllTime'), value: viewsAllTime, href: '#', borderColor: 'border-l-pos-def', icon: 'M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6' },
   ]
 
   const recentRequests = ('data' in recentRequestsResult ? recentRequestsResult.data ?? [] : []).map(
@@ -219,7 +243,7 @@ export default async function AdminDashboardPage() {
       <h1 className="text-2xl font-bold text-foreground">{t('admin.nav.dashboard')}</h1>
 
       {/* Stat cards */}
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {stats.map((stat) => (
           <Link
             key={stat.label}
@@ -299,11 +323,26 @@ export default async function AdminDashboardPage() {
             {perPlayerViews.map((pv, i) => (
               <div key={i} className="card flex items-center justify-between p-3">
                 <span className="text-sm font-medium text-foreground">{pv.name}</span>
-                <span className="inline-flex items-center gap-1 text-sm text-foreground-muted">
+                <span className="inline-flex items-center gap-1.5 text-sm text-foreground-muted">
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   {pv.count} {t('players.views')}
+                  {pv.thisWeek > 0 && (
+                    <span className="text-xs text-foreground-muted/70">
+                      ({pv.thisWeek} {t('players.thisWeek')})
+                    </span>
+                  )}
+                  {pv.thisWeek > pv.lastWeek && (
+                    <svg className="h-3 w-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                    </svg>
+                  )}
+                  {pv.thisWeek > 0 && pv.thisWeek < pv.lastWeek && (
+                    <svg className="h-3 w-3 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 4.5l15 15m0 0V8.25m0 11.25H8.25" />
+                    </svg>
+                  )}
                 </span>
               </div>
             ))}

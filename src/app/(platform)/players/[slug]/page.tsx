@@ -287,6 +287,21 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                     {t('players.scoutViews')}
                   </div>
                   <div className="font-semibold text-foreground">{totalViews}</div>
+                  {recentViews > 0 && (
+                    <div className="mt-0.5 text-[11px] text-foreground-muted">
+                      {recentViews} {t('players.thisWeek')}
+                      {previousViews > 0 ? (() => {
+                        const pct = Math.round(((recentViews - previousViews) / previousViews) * 100)
+                        return (
+                          <span className={pct >= 0 ? 'text-accent' : 'text-red-400'}>
+                            {' '}({pct >= 0 ? '+' : ''}{pct}%)
+                          </span>
+                        )
+                      })() : (
+                        <span className="text-accent"> ({t('players.new')})</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
