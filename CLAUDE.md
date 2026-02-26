@@ -61,7 +61,7 @@ A Transfermarkt-style data marketplace behind login. All player browsing, stats,
 
 | Layer      | Technology                  | Why                                                                                                |
 | ---------- | --------------------------- | -------------------------------------------------------------------------------------------------- |
-| Framework  | **Next.js 15 (App Router)** | API routes (no separate backend), server components for DB queries, middleware for auth             |
+| Framework  | **Next.js 16 (App Router)** | API routes (no separate backend), server components for DB queries, middleware for auth             |
 | Database   | **Supabase (PostgreSQL)**   | Auth, row-level security, file storage, realtime — all built-in. No infrastructure to manage       |
 | Auth       | **Supabase Auth**           | Email/password for scouts, magic link or invite-based for academy admins                           |
 | Storage    | **Supabase Storage**        | Player photos, club logos                                                                          |
@@ -95,15 +95,21 @@ npx supabase gen types typescript --local > src/lib/database.types.ts  # Regener
 ```
 src/
   app/
-    layout.tsx              # Root layout (minimal — no platform nav for landing page)
-    page.tsx                # Landing page (public, professional, hrmony-style)
-    about/page.tsx          # About page (public)
-    (auth)/
+    layout.tsx              # Root layout (AuthProvider wrapper, minimal — no nav)
+    globals.css             # Tailwind config + CSS custom properties + component classes
+    (public)/               # Route group: landing page ONLY (LandingNav + LandingFooter)
+      layout.tsx
+      page.tsx              # Landing page (professional, hrmony-style)
+    (shared)/               # Route group: public pages accessible to everyone (Navbar + Footer)
+      about/page.tsx
+      contact/page.tsx
+    (auth)/                 # Route group: login/register (LandingNav, .landing theme)
+      layout.tsx
       login/page.tsx
       register/page.tsx
       callback/route.ts     # Supabase auth callback handler
-    (platform)/             # Route group: ALL auth-protected marketplace pages
-      layout.tsx            # Platform layout (Navbar, Footer, auth guard — redirects to /login if not authenticated)
+    (platform)/             # Route group: auth-protected marketplace pages (Navbar + Footer + auth guard)
+      layout.tsx            # Checks auth — redirects to /login if not authenticated
       players/
         page.tsx            # Player directory with filters
         [slug]/page.tsx     # Player profile
@@ -121,12 +127,18 @@ src/
       admin/
         layout.tsx          # Admin role check (academy_admin only)
         page.tsx            # Admin overview
-        players/
-          page.tsx          # Manage academy's players
-          new/page.tsx      # Add player form
-          [id]/edit/page.tsx # Edit player profile
+        players/            # Manage academy's players (list, add, edit)
         requests/page.tsx   # Incoming scout contact requests
         transfers/page.tsx  # Transfer requests (incoming, outgoing, search + claim)
+    platform/               # Platform admin routes (platform_admin role)
+      layout.tsx            # getPlatformAdminContext() auth guard
+      page.tsx              # Platform admin dashboard
+      clubs/                # Manage all clubs (list, add, edit)
+      players/              # Manage all players (list, add, edit)
+      scouts/               # View scouts (list, detail)
+      requests/page.tsx     # All contact requests
+      transfers/page.tsx    # All transfer requests
+      invite/page.tsx       # Invite academy admins
     api/
       contact/route.ts      # POST: scout sends contact request
       camera/
@@ -135,34 +147,36 @@ src/
       transfers/route.ts    # Transfer request actions
       players/search/route.ts # Search API for autocomplete and transfer search
   components/
-    ui/                     # Primitive components (Button, Input, Card, Modal, Badge)
+    ui/                     # Primitive components (Button, PlayerSilhouette, Icons, Modal, Badge)
     landing/                # Landing page sections (Hero, Services, ForScouts, ForAcademies, Partners)
     player/                 # Player-specific (PlayerCard, RadarChart, StatsTable, CompareView)
     match/                  # Match-specific (MatchCard, MatchTimeline, TopPerformers)
-    layout/                 # Layout components (PlatformNavbar, Footer, Sidebar, MobileMenu)
+    layout/                 # Layout components (Navbar, Footer, Sidebar, MobileMenu)
     forms/                  # Form components (PlayerForm, ContactForm, FilterPanel)
+    platform/               # Platform admin components (ClubForm, etc.)
   lib/
     supabase/
       client.ts             # Browser Supabase client
       server.ts             # Server-side Supabase client (cookies-based)
       admin.ts              # Service role client (for webhooks, admin ops)
+    auth.ts                 # getAdminContext(), getPlatformAdminContext()
     camera/
       client.ts             # Pixellot API client
       types.ts              # Pixellot API response types
       sync.ts               # Logic to map Pixellot data → our DB schema
     database.types.ts       # Auto-generated Supabase types (DO NOT EDIT MANUALLY)
+    translations.ts         # i18n translations object, getServerT() for server components
     validations.ts          # Zod schemas for form/API validation
     utils.ts                # Helpers: slug generation, age calc, position colors, platform ID generation
     constants.ts            # Position list, regions, stat thresholds, config values
   hooks/
     useShortlist.ts
-    useLang.ts
+    useLang.ts              # Client-side i18n: { t, lang, setLang }
     useDebounce.ts
   context/
+    AuthContext.tsx          # AuthProvider — root-level auth context, useAuth() hook
     LanguageContext.tsx      # i18n provider with en/ka translations
-  middleware.ts             # Auth session refresh + redirect unauthenticated users from platform pages to /login
-  styles/
-    globals.css             # Tailwind config + CSS custom properties + component classes
+  middleware.ts             # Auth session refresh + redirect unauthenticated users to /login
 supabase/
   migrations/               # SQL migration files (sequential, timestamped)
   seed.sql                  # Demo data for development
@@ -250,10 +264,12 @@ This is the core trust model of the platform. Follow it strictly.
 1. Supabase Auth handles login/register/session
 2. On signup, a trigger creates a row in `profiles` with default role `scout`
 3. `middleware.ts` refreshes the session cookie on every request
-4. **Only `/`, `/about`, `/login`, `/register` are publicly accessible** — everything else requires authentication
-5. `(platform)/layout.tsx` checks for authenticated user — redirects to `/login` if not
-6. Admin routes additionally verify `role === 'academy_admin'`
-7. API routes validate session via `createServerClient` from `@supabase/ssr`
+4. **Only `/`, `/about`, `/contact`, `/login`, `/register` are publicly accessible** — everything else requires authentication
+5. `AuthProvider` in root layout provides `useAuth()` context with server-side initial state — eliminates flash between route groups
+6. All nav components use `useAuth()` — never standalone `useEffect` auth checks
+7. `(platform)/layout.tsx` checks for authenticated user — redirects to `/login` if not
+8. Admin routes additionally verify `role === 'academy_admin'`; platform admin routes use `getPlatformAdminContext()`
+9. API routes validate session via `createServerClient` from `@supabase/ssr`
 
 ### Row-Level Security (RLS)
 
@@ -448,7 +464,7 @@ Camera partner is **Starlive** (official Pixellot reseller). They already have c
 - [x] Verify all Supabase `.from()` calls check `.error` before using `.data`
 - [x] Mobile responsive check on all pages
 
-### Phase 6: Site Redesign ← CURRENT PRIORITY
+### Phase 6: Site Redesign ✅ COMPLETE
 
 Transform the site from a developer project into a professional product.
 
@@ -575,5 +591,5 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 - **Do not build a mobile app** — responsive web only
 - **Do not build real-time chat between scouts and academies** — contact requests are async
 - **Do not build AI-powered scouting recommendations** — future feature, not MVP
-- **Do not build platform admin role** — not in MVP scope, manage directly in Supabase dashboard
+- **Do not bypass platform admin auth guards** — `platform_admin` role exists with full `/platform/*` admin routes; always use `getPlatformAdminContext()` for authorization
 - **Do not build auto-expiry cron for transfer requests** — will add later
