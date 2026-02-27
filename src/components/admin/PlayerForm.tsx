@@ -59,7 +59,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
     let result
     if (isEditing) {
       if (!player?.id) {
-        setError('Player ID is missing')
+        setError(t('errors.invalidPlayerId'))
         setSaving(false)
         return
       }
@@ -71,7 +71,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
     setSaving(false)
 
     if (result.error) {
-      setError(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.push('/admin/players')
       router.refresh()

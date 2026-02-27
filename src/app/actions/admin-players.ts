@@ -10,10 +10,10 @@ type PlayerFormInput = z.infer<typeof playerFormSchema>
 
 export async function createPlayer(data: PlayerFormInput) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = playerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -72,9 +72,9 @@ export async function updatePlayer(
   data: PlayerFormInput,
 ) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
-  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid player ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidPlayerId' }
 
   // Verify player belongs to admin's club
   const { data: existingPlayer, error: checkError } = await supabase
@@ -83,11 +83,11 @@ export async function updatePlayer(
     .eq('id', playerId)
     .single()
 
-  if (checkError || !existingPlayer) return { error: 'Player not found' }
-  if (existingPlayer.club_id !== clubId) return { error: 'Unauthorized' }
+  if (checkError || !existingPlayer) return { error: 'errors.playerNotFound' }
+  if (existingPlayer.club_id !== clubId) return { error: 'errors.unauthorized' }
 
   const parsed = playerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`

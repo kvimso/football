@@ -38,10 +38,10 @@ function NavLink({ href, children, onClick }: { href: string; children: React.Re
   )
 }
 
-const ROLE_LABELS: Record<string, string> = {
-  scout: 'Scout',
-  academy_admin: 'Admin',
-  platform_admin: 'Platform',
+const ROLE_TRANSLATION_KEYS: Record<string, string> = {
+  scout: 'roles.scout',
+  academy_admin: 'roles.admin',
+  platform_admin: 'roles.platform',
 }
 
 export function Navbar() {
@@ -112,7 +112,7 @@ export function Navbar() {
                 {dashboardLabel}
                 {userRole && (
                   <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
-                    {ROLE_LABELS[userRole] ?? userRole}
+                    {t(ROLE_TRANSLATION_KEYS[userRole] ?? 'roles.scout')}
                   </span>
                 )}
               </Link>

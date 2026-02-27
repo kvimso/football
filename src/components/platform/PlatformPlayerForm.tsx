@@ -69,7 +69,7 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
     let result
     if (isEditing) {
       if (!player?.id) {
-        setError('Player ID is missing')
+        setError(t('errors.invalidPlayerId'))
         setSaving(false)
         return
       }
@@ -81,7 +81,7 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
     setSaving(false)
 
     if (result.error) {
-      setError(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.push('/platform/players')
       router.refresh()

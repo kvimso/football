@@ -11,10 +11,10 @@ type ClubFormInput = z.infer<typeof clubFormSchema>
 
 export async function createClub(data: ClubFormInput) {
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = clubFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const slug = generateSlug(parsed.data.name)
 
@@ -48,12 +48,12 @@ export async function createClub(data: ClubFormInput) {
 }
 
 export async function updateClub(clubId: string, data: ClubFormInput) {
-  if (!uuidSchema.safeParse(clubId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(clubId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = clubFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const { error: updateError } = await admin
     .from('clubs')
@@ -77,9 +77,9 @@ export async function updateClub(clubId: string, data: ClubFormInput) {
 }
 
 export async function deleteClub(clubId: string) {
-  if (!uuidSchema.safeParse(clubId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(clubId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   // Check for active players
   const { count } = await admin

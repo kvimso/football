@@ -22,15 +22,17 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
   const { t } = useLang()
   const router = useRouter()
   const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleAction(requestId: string, action: 'accept' | 'decline') {
     setLoading(requestId)
+    setError(null)
     const result = action === 'accept'
       ? await platformAcceptTransfer(requestId)
       : await platformDeclineTransfer(requestId)
 
     if (result.error) {
-      alert(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     }
     setLoading(null)
     router.refresh()
@@ -49,13 +51,18 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
 
   return (
     <div className="space-y-3">
+      {error && (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
       {transfers.map((transfer) => (
         <div key={transfer.id} className="card p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <Link href={`/players/${transfer.player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
-                  {transfer.player?.name ?? 'Unknown'}
+                  {transfer.player?.name ?? t('common.unknown')}
                 </Link>
                 {transfer.player?.platform_id && (
                   <span className="font-mono text-xs text-foreground-muted">{transfer.player.platform_id}</span>

@@ -21,15 +21,17 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
   const { t } = useLang()
   const router = useRouter()
   const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleAction(requestId: string, action: 'approve' | 'reject') {
     setLoading(requestId)
+    setError(null)
     const result = action === 'approve'
       ? await platformApproveRequest(requestId)
       : await platformRejectRequest(requestId)
 
     if (result.error) {
-      alert(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     }
     setLoading(null)
     router.refresh()
@@ -41,6 +43,11 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
 
   return (
     <div className="space-y-3">
+      {error && (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
       {requests.map((req) => {
         const club = req.player?.club
           ? unwrapRelation(req.player.club)
@@ -51,14 +58,14 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-foreground">
-                    {req.scout?.full_name ?? 'Unknown Scout'}
+                    {req.scout?.full_name ?? t('common.unknownScout')}
                   </p>
                   {req.scout?.organization && (
                     <span className="text-xs text-foreground-muted">({req.scout.organization})</span>
                   )}
                   <span className="text-foreground-muted">&rarr;</span>
                   <Link href={`/players/${req.player?.slug ?? ''}`} className="text-sm text-accent hover:underline">
-                    {req.player?.name ?? 'Unknown'}
+                    {req.player?.name ?? t('common.unknown')}
                   </Link>
                   {club?.name && (
                     <span className="text-xs text-foreground-muted">({club.name})</span>

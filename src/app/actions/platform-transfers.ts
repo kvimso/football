@@ -6,9 +6,9 @@ import { todayDateString } from '@/lib/utils'
 import { uuidSchema } from '@/lib/validations'
 
 export async function platformAcceptTransfer(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: request, error: fetchErr } = await admin
     .from('transfer_requests')
@@ -16,8 +16,8 @@ export async function platformAcceptTransfer(requestId: string) {
     .eq('id', requestId)
     .single()
 
-  if (fetchErr || !request) return { error: 'Request not found' }
-  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+  if (fetchErr || !request) return { error: 'errors.requestNotFound' }
+  if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   // Accept transfer
   const { error: reqErr } = await admin
@@ -76,9 +76,9 @@ export async function platformAcceptTransfer(requestId: string) {
 }
 
 export async function platformDeclineTransfer(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: request, error: fetchErr } = await admin
     .from('transfer_requests')
@@ -86,8 +86,8 @@ export async function platformDeclineTransfer(requestId: string) {
     .eq('id', requestId)
     .single()
 
-  if (fetchErr || !request) return { error: 'Request not found' }
-  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+  if (fetchErr || !request) return { error: 'errors.requestNotFound' }
+  if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   const { error: reqErr } = await admin
     .from('transfer_requests')

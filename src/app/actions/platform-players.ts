@@ -10,10 +10,10 @@ type PlatformPlayerFormInput = z.infer<typeof platformPlayerFormSchema>
 
 export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = platformPlayerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -69,12 +69,12 @@ export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
 }
 
 export async function platformUpdatePlayer(playerId: string, data: PlatformPlayerFormInput) {
-  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = platformPlayerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   // Get current player state
   const { data: currentPlayer, error: fetchErr } = await admin
@@ -83,7 +83,7 @@ export async function platformUpdatePlayer(playerId: string, data: PlatformPlaye
     .eq('id', playerId)
     .single()
 
-  if (fetchErr || !currentPlayer) return { error: 'Player not found' }
+  if (fetchErr || !currentPlayer) return { error: 'errors.playerNotFound' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -143,9 +143,9 @@ export async function platformUpdatePlayer(playerId: string, data: PlatformPlaye
 }
 
 export async function platformDeletePlayer(playerId: string) {
-  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const { error: deleteError } = await admin
     .from('players')

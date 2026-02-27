@@ -23,12 +23,12 @@ async function verifyRequestBelongsToClub(supabase: Awaited<ReturnType<typeof cr
 }
 
 export async function approveRequest(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, supabase, userId, clubId } = await getAdminContext()
-  if (authErr || !supabase || !userId || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !userId || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const belongs = await verifyRequestBelongsToClub(supabase, requestId, clubId)
-  if (!belongs) return { error: 'Unauthorized' }
+  if (!belongs) return { error: 'errors.unauthorized' }
 
   const { error } = await supabase
     .from('contact_requests')
@@ -49,12 +49,12 @@ export async function approveRequest(requestId: string) {
 }
 
 export async function rejectRequest(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, supabase, userId, clubId } = await getAdminContext()
-  if (authErr || !supabase || !userId || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !userId || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const belongs = await verifyRequestBelongsToClub(supabase, requestId, clubId)
-  if (!belongs) return { error: 'Unauthorized' }
+  if (!belongs) return { error: 'errors.unauthorized' }
 
   const { error } = await supabase
     .from('contact_requests')

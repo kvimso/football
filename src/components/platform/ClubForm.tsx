@@ -47,7 +47,7 @@ export function ClubForm({ club }: ClubFormProps) {
     setSaving(false)
 
     if (result.error) {
-      setError(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.push('/platform/clubs')
       router.refresh()

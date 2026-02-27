@@ -1,3 +1,6 @@
+// TODO: i18n — email templates are English-only. Add bilingual support
+// (detect recipient language preference) when email notifications ship in Phase 8.
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')

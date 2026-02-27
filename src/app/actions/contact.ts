@@ -11,12 +11,12 @@ export async function sendContactRequest(playerId: string, message: string) {
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError) return { error: authError.message }
-  if (!user) return { error: 'Not authenticated' }
+  if (!user) return { error: 'errors.notAuthenticated' }
 
   // Validate with Zod schema
   const parsed = contactRequestSchema.safeParse({ playerId, message })
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+    return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
   }
 
   // Check player status — contact only allowed for active players
@@ -26,8 +26,8 @@ export async function sendContactRequest(playerId: string, message: string) {
     .eq('id', parsed.data.playerId)
     .single()
 
-  if (playerError || !player) return { error: 'Player not found' }
-  if (player.status === 'free_agent') return { error: 'Contact is not available for free agents' }
+  if (playerError || !player) return { error: 'errors.playerNotFound' }
+  if (player.status === 'free_agent') return { error: 'errors.contactNotAvailableForFreeAgents' }
 
   // Check if request already exists
   const { data: existing, error: checkError } = await supabase
@@ -38,7 +38,7 @@ export async function sendContactRequest(playerId: string, message: string) {
     .maybeSingle()
 
   if (checkError) return { error: checkError.message }
-  if (existing) return { error: 'You have already sent a request for this player' }
+  if (existing) return { error: 'errors.alreadySentRequest' }
 
   const { error } = await supabase
     .from('contact_requests')

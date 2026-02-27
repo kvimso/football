@@ -32,7 +32,7 @@ export function InviteForm({ clubs }: InviteFormProps) {
     const result = await inviteAcademyAdmin({ email, clubId })
 
     if (result.error) {
-      setError(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       setSuccess(result.message ?? t('admin.invite.sent'))
       setEmail('')

@@ -53,7 +53,7 @@ export function TransferSearch() {
     startSearch(async () => {
       const res = await requestTransfer(playerId)
       if (res.error) {
-        setErrorMsg(res.error)
+        setErrorMsg(res.error.startsWith('errors.') ? t(res.error) : res.error)
       } else {
         setErrorMsg('')
         setActionMsg(t('admin.transfers.requestSent').replace('{club}', res.clubName ?? ''))
@@ -69,7 +69,7 @@ export function TransferSearch() {
     startSearch(async () => {
       const res = await claimFreeAgent(playerId)
       if (res.error) {
-        setErrorMsg(res.error)
+        setErrorMsg(res.error.startsWith('errors.') ? t(res.error) : res.error)
       } else {
         setErrorMsg('')
         setActionMsg(t('admin.transfers.claimSuccess').replace('{name}', res.playerName ?? ''))

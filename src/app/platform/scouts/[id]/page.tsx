@@ -89,7 +89,7 @@ export default async function PlatformScoutDetailPage({
                 <div key={item.id} className="card flex items-center justify-between p-3">
                   <div>
                     <Link href={`/players/${player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
-                      {player?.name ?? 'Unknown'}
+                      {player?.name ?? t('common.unknown')}
                     </Link>
                     <p className="text-xs text-foreground-muted">
                       {player?.position} {club?.name ? `— ${club.name}` : ''}
@@ -124,7 +124,7 @@ export default async function PlatformScoutDetailPage({
                 <div key={req.id} className="card flex items-center justify-between p-3">
                   <div className="min-w-0 flex-1">
                     <Link href={`/players/${player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
-                      {player?.name ?? 'Unknown'}
+                      {player?.name ?? t('common.unknown')}
                     </Link>
                     {club?.name && (
                       <span className="ml-2 text-xs text-foreground-muted">({club.name})</span>
