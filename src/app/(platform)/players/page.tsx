@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { calculateAge, unwrapRelation, escapePostgrestValue } from '@/lib/utils'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { FilterPanel } from '@/components/forms/FilterPanel'
 
@@ -185,9 +186,10 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     const stats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,
+      position: p.position as Position,
+      status: (p.status ?? 'active') as PlayerStatus,
       club: unwrapRelation(p.club),
       season_stats: stats ?? null,
-      status: p.status ?? 'active',
     }
   })
 

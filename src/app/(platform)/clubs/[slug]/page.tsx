@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { unwrapRelation } from '@/lib/utils'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
 import { trackPageView } from '@/lib/analytics'
@@ -69,9 +70,10 @@ export default async function ClubPage({ params }: ClubPageProps) {
     const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
     return {
       ...p,
+      position: p.position as Position,
+      status: (p.status ?? 'active') as PlayerStatus,
       club: unwrapRelation(p.club),
       season_stats: statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
-      status: p.status ?? 'active',
     }
   })
 

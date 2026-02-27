@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { unwrapRelation } from '@/lib/utils'
+import type { Position } from '@/lib/types'
 import { CompareView } from '@/components/player/CompareView'
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, s
 
   return {
     ...data,
+    position: data.position as Position,
     club: unwrapRelation(data.club),
     skills: unwrapRelation(data.skills),
     season_stats: unwrapRelation(data.season_stats),
@@ -60,7 +62,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <CompareView
-        allPlayers={allPlayers ?? []}
+        allPlayers={(allPlayers ?? []).map(p => ({ ...p, position: p.position as Position }))}
         player1={player1}
         player2={player2}
         selectedP1={params.p1 ?? ''}

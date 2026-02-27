@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { unwrapRelation } from '@/lib/utils'
+import type { Position } from '@/lib/types'
 import { ShortlistList } from '@/components/dashboard/ShortlistList'
 
 export default async function ShortlistPage() {
@@ -31,6 +32,7 @@ export default async function ShortlistPage() {
       ...item,
       player: {
         ...player,
+        position: player.position as Position,
         club: unwrapRelation(player.club),
       },
     }

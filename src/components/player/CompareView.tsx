@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { RadarChart } from './RadarChart'
+import type { Position } from '@/lib/types'
 
 interface PlayerData {
   name: string
   name_ka: string
   slug: string
-  position: string
+  position: Position
   date_of_birth: string
   height_cm: number | null
   weight_kg: number | null
@@ -21,7 +22,7 @@ interface PlayerData {
 }
 
 interface CompareViewProps {
-  allPlayers: { slug: string; name: string; name_ka: string; position: string }[]
+  allPlayers: { slug: string; name: string; name_ka: string; position: Position }[]
   player1: PlayerData | null
   player2: PlayerData | null
   selectedP1: string

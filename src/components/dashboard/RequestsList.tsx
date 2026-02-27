@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
 import { format } from 'date-fns'
+import type { Position } from '@/lib/types'
 
 interface RequestItem {
   id: string
@@ -14,7 +15,7 @@ interface RequestItem {
     name: string
     name_ka: string
     slug: string
-    position: string
+    position: Position
     club: { name: string; name_ka: string } | null
   } | null
 }

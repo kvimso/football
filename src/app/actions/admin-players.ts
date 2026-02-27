@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { playerFormSchema, uuidSchema } from '@/lib/validations'
 import { generateSlug, todayDateString } from '@/lib/utils'
 import { getAdminContext } from '@/lib/auth'
+import type { z } from 'zod'
 
-export async function createPlayer(data: Record<string, unknown>) {
+type PlayerFormInput = z.infer<typeof playerFormSchema>
+
+export async function createPlayer(data: PlayerFormInput) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
@@ -66,7 +69,7 @@ export async function createPlayer(data: Record<string, unknown>) {
 
 export async function updatePlayer(
   playerId: string,
-  data: Record<string, unknown>
+  data: PlayerFormInput,
 ) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
+import type { Position } from '@/lib/types'
 import { calculateAge, unwrapRelation } from '@/lib/utils'
 
 export default async function PlatformPlayersPage({
@@ -100,7 +101,7 @@ export default async function PlatformPlayersPage({
                   <tr key={player.id} className="border-b border-border/50">
                     <td className="py-3 pr-4 font-medium text-foreground">{displayName}</td>
                     <td className="py-3 pr-4">
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${POSITION_COLOR_CLASSES[player.position] ?? ''}`}>
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${POSITION_COLOR_CLASSES[player.position as Position] ?? ''}`}>
                         {player.position}
                       </span>
                     </td>

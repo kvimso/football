@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
+import type { Position } from '@/lib/types'
 import { calculateAge } from '@/lib/utils'
 import { ReleasePlayerButton } from '@/components/admin/ReleasePlayerButton'
 
@@ -60,7 +61,7 @@ export default async function AdminPlayersPage() {
             </thead>
             <tbody>
               {players.map((player) => {
-                const posClasses = POSITION_COLOR_CLASSES[player.position] ?? ''
+                const posClasses = POSITION_COLOR_CLASSES[player.position as Position] ?? ''
                 const displayName = lang === 'ka' ? player.name_ka : player.name
                 return (
                   <tr key={player.id} className="table-row-hover border-b border-border/50">

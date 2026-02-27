@@ -8,6 +8,7 @@ import { calculateAge } from '@/lib/utils'
 import { removeFromShortlist, updateShortlistNote } from '@/app/actions/shortlist'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
+import type { Position } from '@/lib/types'
 
 interface ShortlistItem {
   player_id: string | null
@@ -18,7 +19,7 @@ interface ShortlistItem {
     name: string
     name_ka: string
     slug: string
-    position: string
+    position: Position
     date_of_birth: string
     photo_url: string | null
     club: { name: string; name_ka: string } | null

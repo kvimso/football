@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { unwrapRelation } from '@/lib/utils'
+import type { Position } from '@/lib/types'
 import { RequestsList } from '@/components/dashboard/RequestsList'
 
 export default async function RequestsPage() {
@@ -31,6 +32,7 @@ export default async function RequestsPage() {
       player: player
         ? {
             ...player,
+            position: player.position as Position,
             club: unwrapRelation(player.club),
           }
         : null,

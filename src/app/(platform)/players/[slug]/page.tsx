@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { calculateAge, unwrapRelation } from '@/lib/utils'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
@@ -166,7 +167,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       </Link>
 
       {/* Player header */}
-      <div className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position] ?? 'border-t-accent'}`}>
+      <div className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position as Position] ?? 'border-t-accent'}`}>
         <div className="flex flex-col gap-6 md:flex-row md:gap-10">
           {/* Photo */}
           <div className="relative flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background border border-border">
@@ -182,7 +183,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             <PlayerProfileClient player={{
               name: player.name,
               name_ka: player.name_ka,
-              position: player.position,
+              position: player.position as Position,
               is_featured: player.is_featured,
               scouting_report: player.scouting_report,
               scouting_report_ka: player.scouting_report_ka,
@@ -190,7 +191,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               club_name_ka: club?.name_ka ?? null,
               club_slug: club?.slug ?? null,
               platform_id: player.platform_id,
-              status: player.status,
+              status: player.status as PlayerStatus | null,
             }} />
 
             {/* Badges row */}

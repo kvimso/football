@@ -6,19 +6,20 @@ import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES, POSITION_BORDER_CLASSES, BLUR_DATA_URL, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
+import type { Position, PlayerStatus } from '@/lib/types'
 
 interface PlayerCardProps {
   player: {
     slug: string
     name: string
     name_ka: string
-    position: string
+    position: Position
     date_of_birth: string
     height_cm: number | null
     preferred_foot: string | null
     is_featured: boolean | null
     photo_url: string | null
-    status: string
+    status: PlayerStatus
     club: {
       name: string
       name_ka: string

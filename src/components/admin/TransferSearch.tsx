@@ -6,15 +6,16 @@ import { useLang } from '@/hooks/useLang'
 import { calculateAge, unwrapRelation } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { searchPlayersForTransfer, requestTransfer, claimFreeAgent } from '@/app/actions/admin-transfers'
+import type { Position, PlayerStatus } from '@/lib/types'
 
 interface SearchResult {
   id: string
   name: string
   name_ka: string
   platform_id: string
-  position: string
+  position: Position
   date_of_birth: string
-  status: string | null
+  status: PlayerStatus | null
   club: { id: string; name: string; name_ka: string } | null
 }
 
@@ -39,6 +40,8 @@ export function TransferSearch() {
       }
       setResults((res.players ?? []).map((p) => ({
         ...p,
+        position: p.position as Position,
+        status: p.status as PlayerStatus | null,
         club: unwrapRelation(p.club),
       })))
       setSearched(true)

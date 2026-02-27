@@ -5,8 +5,11 @@ import { clubFormSchema, uuidSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
 import { generateSlug } from '@/lib/utils'
 import { getServerT } from '@/lib/server-translations'
+import type { z } from 'zod'
 
-export async function createClub(data: Record<string, unknown>) {
+type ClubFormInput = z.infer<typeof clubFormSchema>
+
+export async function createClub(data: ClubFormInput) {
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
 
@@ -44,7 +47,7 @@ export async function createClub(data: Record<string, unknown>) {
   return { success: true }
 }
 
-export async function updateClub(clubId: string, data: Record<string, unknown>) {
+export async function updateClub(clubId: string, data: ClubFormInput) {
   if (!uuidSchema.safeParse(clubId).success) return { error: 'Invalid ID' }
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }

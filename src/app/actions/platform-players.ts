@@ -4,8 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { platformPlayerFormSchema, uuidSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
 import { generateSlug, todayDateString } from '@/lib/utils'
+import type { z } from 'zod'
 
-export async function platformCreatePlayer(data: Record<string, unknown>) {
+type PlatformPlayerFormInput = z.infer<typeof platformPlayerFormSchema>
+
+export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
 
@@ -65,7 +68,7 @@ export async function platformCreatePlayer(data: Record<string, unknown>) {
   return { success: true }
 }
 
-export async function platformUpdatePlayer(playerId: string, data: Record<string, unknown>) {
+export async function platformUpdatePlayer(playerId: string, data: PlatformPlayerFormInput) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }

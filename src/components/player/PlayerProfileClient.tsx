@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
+import type { Position, PlayerStatus } from '@/lib/types'
 
 interface PlayerProfileClientProps {
   player: {
     name: string
     name_ka: string
-    position: string
+    position: Position
     is_featured: boolean | null
     scouting_report: string | null
     scouting_report_ka: string | null
@@ -16,7 +17,7 @@ interface PlayerProfileClientProps {
     club_name_ka: string | null
     club_slug: string | null
     platform_id: string | null
-    status: string | null
+    status: PlayerStatus | null
   }
 }
 

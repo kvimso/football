@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import type { UserRole } from '@/lib/types'
 
 interface AuthUser {
   id: string
@@ -10,7 +11,7 @@ interface AuthUser {
 
 interface AuthState {
   user: AuthUser | null
-  userRole: string | null
+  userRole: UserRole | null
   signOut: () => Promise<void>
 }
 
@@ -30,11 +31,11 @@ export function AuthProvider({
   children,
 }: {
   initialUser: AuthUser | null
-  initialRole: string | null
+  initialRole: UserRole | null
   children: React.ReactNode
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser)
-  const [userRole, setUserRole] = useState<string | null>(initialRole)
+  const [userRole, setUserRole] = useState<UserRole | null>(initialRole)
 
   useEffect(() => {
     try {
@@ -49,7 +50,7 @@ export function AuthProvider({
         if (session?.user) {
           supabase.from('profiles').select('role').eq('id', session.user.id).single()
             .then(({ data, error }) => {
-              if (!error) setUserRole(data?.role ?? null)
+              if (!error) setUserRole((data?.role as UserRole) ?? null)
             })
         } else {
           setUserRole(null)

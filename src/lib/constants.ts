@@ -1,8 +1,10 @@
+import type { Position } from '@/lib/types'
+
 export const POSITIONS = ['GK', 'DEF', 'MID', 'ATT', 'WNG', 'ST'] as const
 
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 
-export const POSITION_COLOR_CLASSES: Record<string, string> = {
+export const POSITION_COLOR_CLASSES: Record<Position, string> = {
   GK: 'bg-pos-gk/20 text-pos-gk',
   DEF: 'bg-pos-def/20 text-pos-def',
   MID: 'bg-pos-mid/20 text-pos-mid',
@@ -11,7 +13,7 @@ export const POSITION_COLOR_CLASSES: Record<string, string> = {
   ST: 'bg-pos-st/20 text-pos-st',
 }
 
-export const POSITION_BORDER_CLASSES: Record<string, string> = {
+export const POSITION_BORDER_CLASSES: Record<Position, string> = {
   GK: 'border-t-pos-gk',
   DEF: 'border-t-pos-def',
   MID: 'border-t-pos-mid',
