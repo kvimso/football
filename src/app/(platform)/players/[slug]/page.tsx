@@ -16,6 +16,7 @@ import { trackPlayerView } from '@/app/actions/player-views'
 import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 import { DownloadPdfButton } from '@/components/player/DownloadPdfButton'
+import { PlayerCard } from '@/components/player/PlayerCard'
 
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
@@ -157,6 +158,58 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
   const isFreeAgent = player.status === 'free_agent'
+
+  // Fetch similar players: same position, similar age (±2 years), different club
+  const dob = new Date(player.date_of_birth)
+  const dobMinus2 = new Date(dob)
+  dobMinus2.setFullYear(dob.getFullYear() - 2)
+  const dobPlus2 = new Date(dob)
+  dobPlus2.setFullYear(dob.getFullYear() + 2)
+
+  let similarQuery = supabase
+    .from('players')
+    .select(`
+      slug, name, name_ka, position, date_of_birth, height_cm,
+      preferred_foot, is_featured, photo_url, status,
+      club:clubs!players_club_id_fkey ( name, name_ka ),
+      season_stats:player_season_stats ( season, goals, assists, matches_played )
+    `)
+    .eq('position', player.position)
+    .neq('id', player.id)
+    .in('status', ['active', 'free_agent'])
+    .gte('date_of_birth', dobMinus2.toISOString().split('T')[0])
+    .lte('date_of_birth', dobPlus2.toISOString().split('T')[0])
+    .limit(4)
+
+  // Fetch extra so we can prefer players from different clubs
+  if (player.club && !isFreeAgent) {
+    similarQuery = similarQuery.limit(8)
+  }
+
+  const { data: rawSimilar } = await similarQuery
+
+  // Process similar players — prefer different clubs, take up to 4
+  const similarPlayers = (rawSimilar ?? [])
+    .map((p) => {
+      const pClub = unwrapRelation(p.club)
+      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
+      return {
+        ...p,
+        position: p.position as Position,
+        status: (p.status ?? 'active') as PlayerStatus,
+        club: pClub,
+        season_stats: latestStats,
+        _sameClub: pClub?.name === club?.name,
+      }
+    })
+    .sort((a, b) => {
+      // Different club first
+      if (a._sameClub && !b._sameClub) return 1
+      if (!a._sameClub && b._sameClub) return -1
+      return 0
+    })
+    .slice(0, 4)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -455,6 +508,18 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </div>
               )
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Similar Players */}
+      {similarPlayers.length > 0 && (
+        <div className="mt-6">
+          <h3 className="section-header mb-4">{t('players.similarPlayers')}</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {similarPlayers.map((sp) => (
+              <PlayerCard key={sp.slug} player={sp} />
+            ))}
           </div>
         </div>
       )}

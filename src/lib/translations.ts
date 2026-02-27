@@ -99,6 +99,7 @@ export const translations: Record<Lang, NestedStrings> = {
       advancedFilters: 'Advanced Filters',
       downloadPdf: 'Download PDF',
       downloadingPdf: 'Generating...',
+      similarPlayers: 'Similar Players',
     },
     foot: {
       Left: 'Left',
@@ -692,6 +693,7 @@ export const translations: Record<Lang, NestedStrings> = {
       advancedFilters: 'დამატებითი ფილტრები',
       downloadPdf: 'PDF ჩამოტვირთვა',
       downloadingPdf: 'მზადდება...',
+      similarPlayers: 'მსგავსი მოთამაშეები',
     },
     foot: {
       Left: 'მარცხენა',
