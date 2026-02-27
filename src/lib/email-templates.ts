@@ -1,3 +1,12 @@
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 interface ContactRequestReceivedParams {
   scoutName: string
   scoutOrg: string | null
@@ -39,47 +48,56 @@ function wrap(content: string): string {
 }
 
 export function contactRequestReceivedEmail({ scoutName, scoutOrg, playerName, message }: ContactRequestReceivedParams) {
-  const orgLine = scoutOrg ? ` from <span class="highlight">${scoutOrg}</span>` : ''
+  const safeScoutName = escapeHtml(scoutName)
+  const safePlayerName = escapeHtml(playerName)
+  const safeMessage = escapeHtml(message)
+  const orgLine = scoutOrg ? ` from <span class="highlight">${escapeHtml(scoutOrg)}</span>` : ''
   const html = wrap(`
     <div class="header">New Contact Request</div>
     <div class="card">
-      <p class="text"><span class="highlight">${scoutName}</span>${orgLine} has sent a contact request for <span class="highlight">${playerName}</span>.</p>
-      <div class="message-box">${message}</div>
+      <p class="text"><span class="highlight">${safeScoutName}</span>${orgLine} has sent a contact request for <span class="highlight">${safePlayerName}</span>.</p>
+      <div class="message-box">${safeMessage}</div>
       <p class="text">Log in to your admin panel to approve or reject this request.</p>
     </div>
     <div class="footer">Georgian Football Talent Platform</div>
   `)
-  return { subject: `New contact request for ${playerName}`, html }
+  return { subject: `New contact request for ${safePlayerName}`, html }
 }
 
 export function contactRequestStatusEmail({ scoutName, playerName, status, clubName }: ContactRequestStatusParams) {
+  const safeScoutName = escapeHtml(scoutName)
+  const safePlayerName = escapeHtml(playerName)
+  const safeClubName = escapeHtml(clubName)
   const isApproved = status === 'approved'
   const badgeClass = isApproved ? 'badge-green' : 'badge-red'
   const statusText = isApproved ? 'Approved' : 'Declined'
   const bodyText = isApproved
-    ? `Your contact request for <span class="highlight">${playerName}</span> has been approved by <span class="highlight">${clubName}</span>. The club admin will be in touch.`
-    : `Your contact request for <span class="highlight">${playerName}</span> has been declined by <span class="highlight">${clubName}</span>.`
+    ? `Your contact request for <span class="highlight">${safePlayerName}</span> has been approved by <span class="highlight">${safeClubName}</span>. The club admin will be in touch.`
+    : `Your contact request for <span class="highlight">${safePlayerName}</span> has been declined by <span class="highlight">${safeClubName}</span>.`
 
   const html = wrap(`
     <div class="header">Contact Request Update</div>
     <div class="card">
-      <p class="text">Hi ${scoutName},</p>
+      <p class="text">Hi ${safeScoutName},</p>
       <p class="text"><span class="badge ${badgeClass}">${statusText}</span></p>
       <p class="text">${bodyText}</p>
     </div>
     <div class="footer">Georgian Football Talent Platform</div>
   `)
-  return { subject: `Contact request ${statusText.toLowerCase()}: ${playerName}`, html }
+  return { subject: `Contact request ${statusText.toLowerCase()}: ${safePlayerName}`, html }
 }
 
 export function transferRequestReceivedEmail({ playerName, fromClubName, toClubName }: TransferRequestReceivedParams) {
+  const safePlayerName = escapeHtml(playerName)
+  const safeFromClubName = escapeHtml(fromClubName)
+  const safeToClubName = escapeHtml(toClubName)
   const html = wrap(`
     <div class="header">New Transfer Request</div>
     <div class="card">
-      <p class="text"><span class="highlight">${toClubName}</span> has sent a transfer request for <span class="highlight">${playerName}</span> (currently at ${fromClubName}).</p>
+      <p class="text"><span class="highlight">${safeToClubName}</span> has sent a transfer request for <span class="highlight">${safePlayerName}</span> (currently at ${safeFromClubName}).</p>
       <p class="text">Log in to your admin panel to accept or decline this request. The request will expire in 7 days.</p>
     </div>
     <div class="footer">Georgian Football Talent Platform</div>
   `)
-  return { subject: `Transfer request for ${playerName} from ${toClubName}`, html }
+  return { subject: `Transfer request for ${safePlayerName} from ${safeToClubName}`, html }
 }

@@ -33,12 +33,15 @@ export async function releasePlayer(playerId: string) {
 
   const admin = createAdminClient()
 
-  const { error: updateErr } = await admin
+  const { error: updateErr, data: released } = await admin
     .from('players')
     .update({ club_id: null, status: 'free_agent' as const, updated_at: new Date().toISOString() })
     .eq('id', playerId)
+    .eq('club_id', clubId)
+    .select('id')
 
   if (updateErr) return { error: updateErr.message }
+  if (!released || released.length === 0) return { error: 'Player is no longer at your club' }
 
   // Close club history
   const { error: historyErr } = await admin
@@ -182,12 +185,16 @@ export async function claimFreeAgent(playerId: string) {
 
   const admin = createAdminClient()
 
-  const { error: updateErr } = await admin
+  const { error: updateErr, data: updated } = await admin
     .from('players')
     .update({ club_id: clubId, status: 'active' as const, updated_at: new Date().toISOString() })
     .eq('id', playerId)
+    .is('club_id', null)
+    .eq('status', 'free_agent')
+    .select('id')
 
   if (updateErr) return { error: updateErr.message }
+  if (!updated || updated.length === 0) return { error: 'Player is no longer a free agent' }
 
   const { error: historyErr } = await admin
     .from('player_club_history')
