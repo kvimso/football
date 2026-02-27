@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAdminContext } from '@/lib/auth'
 import { unwrapRelation } from '@/lib/utils'
-import { uuidSchema } from '@/lib/validations'
+import { uuidSchema, responseMessageSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { contactRequestStatusEmail } from '@/lib/email-templates'
 
@@ -22,8 +22,12 @@ async function verifyRequestBelongsToClub(supabase: Awaited<ReturnType<typeof cr
   return player?.club_id === clubId
 }
 
-export async function approveRequest(requestId: string) {
+export async function approveRequest(requestId: string, responseMessage?: string) {
   if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
+  if (responseMessage !== undefined) {
+    const msgParsed = responseMessageSchema.safeParse(responseMessage)
+    if (!msgParsed.success) return { error: msgParsed.error.issues[0]?.message ?? 'errors.invalidInput' }
+  }
   const { error: authErr, supabase, userId, clubId } = await getAdminContext()
   if (authErr || !supabase || !userId || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
@@ -36,6 +40,7 @@ export async function approveRequest(requestId: string) {
       status: 'approved',
       responded_at: new Date().toISOString(),
       responded_by: userId,
+      response_message: responseMessage?.trim() || null,
     })
     .eq('id', requestId)
 

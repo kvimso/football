@@ -46,6 +46,7 @@ export async function sendContactRequest(playerId: string, message: string) {
       scout_id: user.id,
       player_id: parsed.data.playerId,
       message: parsed.data.message.trim(),
+      expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     })
 
   if (error) return { error: error.message }

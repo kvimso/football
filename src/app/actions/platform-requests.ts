@@ -2,10 +2,14 @@
 
 import { revalidatePath } from 'next/cache'
 import { getPlatformAdminContext } from '@/lib/auth'
-import { uuidSchema } from '@/lib/validations'
+import { uuidSchema, responseMessageSchema } from '@/lib/validations'
 
-export async function platformApproveRequest(requestId: string) {
+export async function platformApproveRequest(requestId: string, responseMessage?: string) {
   if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
+  if (responseMessage !== undefined) {
+    const msgParsed = responseMessageSchema.safeParse(responseMessage)
+    if (!msgParsed.success) return { error: msgParsed.error.issues[0]?.message ?? 'errors.invalidInput' }
+  }
   const { error: authErr, admin, userId } = await getPlatformAdminContext()
   if (authErr || !admin || !userId) return { error: authErr ?? 'errors.unauthorized' }
 
@@ -15,6 +19,7 @@ export async function platformApproveRequest(requestId: string) {
       status: 'approved',
       responded_at: new Date().toISOString(),
       responded_by: userId,
+      response_message: responseMessage?.trim() || null,
     })
     .eq('id', requestId)
 

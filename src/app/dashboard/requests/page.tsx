@@ -14,7 +14,7 @@ export default async function RequestsPage() {
   const { data: requests, error: reqError } = await supabase
     .from('contact_requests')
     .select(`
-      id, message, status, created_at, responded_at,
+      id, message, status, created_at, responded_at, expires_at, response_message,
       player:players!contact_requests_player_id_fkey (
         name, name_ka, slug, position,
         club:clubs!players_club_id_fkey ( name, name_ka )

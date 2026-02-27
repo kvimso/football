@@ -86,31 +86,37 @@ export type Database = {
       contact_requests: {
         Row: {
           created_at: string | null
+          expires_at: string | null
           id: string
           message: string
           player_id: string | null
           responded_at: string | null
           responded_by: string | null
+          response_message: string | null
           scout_id: string | null
           status: string | null
         }
         Insert: {
           created_at?: string | null
+          expires_at?: string | null
           id?: string
           message: string
           player_id?: string | null
           responded_at?: string | null
           responded_by?: string | null
+          response_message?: string | null
           scout_id?: string | null
           status?: string | null
         }
         Update: {
           created_at?: string | null
+          expires_at?: string | null
           id?: string
           message?: string
           player_id?: string | null
           responded_at?: string | null
           responded_by?: string | null
+          response_message?: string | null
           scout_id?: string | null
           status?: string | null
         }

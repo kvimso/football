@@ -7,6 +7,8 @@ export const contactRequestSchema = z.object({
   message: z.string().min(10).max(1000),
 })
 
+export const responseMessageSchema = z.string().max(500).optional()
+
 export const playerFormSchema = z.object({
   first_name: z.string().min(1).max(50),
   last_name: z.string().min(1).max(50),
