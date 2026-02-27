@@ -48,7 +48,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   const { data: allPlayers, error: apError } = await supabase
     .from('players')
     .select('slug, name, name_ka, position')
-    .eq('status', 'active')
+    .in('status', ['active', 'free_agent'])
     .order('name')
 
   if (apError) console.error('Failed to fetch players list:', apError.message)

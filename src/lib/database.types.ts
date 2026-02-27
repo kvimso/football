@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       clubs: {
@@ -792,6 +767,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_player_view_counts: {
+        Args: never
+        Returns: {
+          player_id: string
+          prev_week_views: number
+          total_views: number
+          weekly_views: number
+        }[]
+      }
       get_user_club_id: { Args: never; Returns: string }
       get_user_role: { Args: never; Returns: string }
     }
@@ -923,9 +907,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       player_status: ["active", "free_agent"],

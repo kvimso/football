@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { calculateAge, unwrapRelation, escapePostgrestValue } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
@@ -159,22 +158,14 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     })
   }
 
-  // Fetch view counts using service role (bypasses RLS for aggregation)
+  // Fetch view counts via database aggregation (RPC replaces unbounded 10k-row fetch)
   let viewCountMap = new Map<string, number>()
   try {
-    const admin = createAdminClient()
-    const { data: viewCounts, error: vcError } = await admin
-      .from('player_views')
-      .select('player_id')
-      .limit(10000)
+    const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts')
     if (vcError) {
       console.error('Failed to fetch view counts:', vcError.message)
     } else if (viewCounts) {
-      const counts: Record<string, number> = {}
-      for (const row of viewCounts) {
-        counts[row.player_id] = (counts[row.player_id] ?? 0) + 1
-      }
-      viewCountMap = new Map(Object.entries(counts))
+      viewCountMap = new Map(viewCounts.map(v => [v.player_id, Number(v.total_views)]))
     }
   } catch {
     // Silently fail — view counts are non-critical

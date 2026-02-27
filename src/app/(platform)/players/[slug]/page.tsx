@@ -13,7 +13,6 @@ import { ShortlistButton } from '@/components/player/ShortlistButton'
 import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
 import { trackPageView } from '@/lib/analytics'
 import { trackPlayerView } from '@/app/actions/player-views'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 
@@ -75,27 +74,26 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   void trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
   void trackPlayerView(player.id)
 
-  // Fetch view counts for this player
+  // Fetch view counts for this player using regular client (RLS allows authenticated reads)
   let totalViews = 0
   let recentViews = 0
   let previousViews = 0
   try {
-    const admin = createAdminClient()
     const now = new Date()
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
     const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
 
     const [totalResult, recentResult, previousResult] = await Promise.all([
-      admin
+      supabase
         .from('player_views')
         .select('id', { count: 'exact', head: true })
         .eq('player_id', player.id),
-      admin
+      supabase
         .from('player_views')
         .select('id', { count: 'exact', head: true })
         .eq('player_id', player.id)
         .gte('viewed_at', sevenDaysAgo),
-      admin
+      supabase
         .from('player_views')
         .select('id', { count: 'exact', head: true })
         .eq('player_id', player.id)

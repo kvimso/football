@@ -30,10 +30,10 @@ export default async function AdminDashboardPage() {
 
   const clubId = profile.club_id
 
-  // Fetch club player IDs first, then use for downstream counts
+  // Fetch club player IDs + names for downstream counts and per-player breakdown
   const { data: clubPlayers, error: cpError } = await supabase
     .from('players')
-    .select('id')
+    .select('id, name, name_ka')
     .eq('club_id', clubId)
     .eq('status', 'active')
 
@@ -42,14 +42,10 @@ export default async function AdminDashboardPage() {
   const playerIds = (clubPlayers ?? []).map((p) => p.id)
   const playerCount = playerIds.length
 
-  const now = new Date()
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
-
   const admin = createAdminClient()
 
-  // Fetch counts and recent requests in parallel using player IDs
-  const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewsThisWeekResult, viewsLastWeekResult, perPlayerViewsResult, viewsAllTimeResult] =
+  // Fetch counts, recent requests, and view stats in parallel
+  const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewCountsResult] =
     await Promise.all([
       playerIds.length > 0
         ? supabase
@@ -99,38 +95,8 @@ export default async function AdminDashboardPage() {
             .order('viewed_at', { ascending: false })
             .limit(20)
         : Promise.resolve({ data: [], error: null }),
-      // Views this week
-      playerIds.length > 0
-        ? admin
-            .from('player_views')
-            .select('id', { count: 'exact', head: true })
-            .in('player_id', playerIds)
-            .gte('viewed_at', sevenDaysAgo)
-        : Promise.resolve({ count: 0, error: null }),
-      // Views last week (for trend)
-      playerIds.length > 0
-        ? admin
-            .from('player_views')
-            .select('id', { count: 'exact', head: true })
-            .in('player_id', playerIds)
-            .gte('viewed_at', fourteenDaysAgo)
-            .lt('viewed_at', sevenDaysAgo)
-        : Promise.resolve({ count: 0, error: null }),
-      // Per-player view counts (top 5) — includes viewed_at for weekly breakdown
-      playerIds.length > 0
-        ? admin
-            .from('player_views')
-            .select('player_id, viewed_at, player:players!player_views_player_id_fkey(name, name_ka)')
-            .in('player_id', playerIds)
-            .limit(10000)
-        : Promise.resolve({ data: [], error: null }),
-      // Views all time (dedicated count)
-      playerIds.length > 0
-        ? admin
-            .from('player_views')
-            .select('id', { count: 'exact', head: true })
-            .in('player_id', playerIds)
-        : Promise.resolve({ count: 0, error: null }),
+      // Single RPC replaces 4 separate view count queries (10k-row fetch + 3 count queries)
+      admin.rpc('get_player_view_counts'),
     ])
 
   if (requestsResult.error) console.error('Failed to fetch request count:', requestsResult.error.message)
@@ -138,39 +104,32 @@ export default async function AdminDashboardPage() {
   if (recentRequestsResult.error) console.error('Failed to fetch recent requests:', recentRequestsResult.error.message)
   if (pageViewsResult.error) console.error('Failed to fetch page views count:', pageViewsResult.error.message)
   if (scoutActivityResult.error) console.error('Failed to fetch scout activity:', scoutActivityResult.error.message)
-  if (viewsThisWeekResult.error) console.error('Failed to fetch weekly views:', viewsThisWeekResult.error.message)
-  if (viewsLastWeekResult.error) console.error('Failed to fetch last week views:', viewsLastWeekResult.error.message)
-  if (perPlayerViewsResult.error) console.error('Failed to fetch per-player views:', perPlayerViewsResult.error.message)
-  if (viewsAllTimeResult.error) console.error('Failed to fetch all-time views:', viewsAllTimeResult.error.message)
+  if (viewCountsResult.error) console.error('Failed to fetch view counts:', viewCountsResult.error.message)
 
-  const viewsAllTime = viewsAllTimeResult.count ?? 0
-  const viewsThisWeek = viewsThisWeekResult.count ?? 0
-  const viewsLastWeek = viewsLastWeekResult.count ?? 0
+  // Build per-player view breakdown from RPC data (replaces 10k-row fetch)
+  const allViewCounts = viewCountsResult.data ?? []
+  const playerNameMap = new Map((clubPlayers ?? []).map(p => [p.id, { name: p.name, name_ka: p.name_ka }]))
+  const clubViewCounts = allViewCounts.filter(v => playerIds.includes(v.player_id))
+
+  const viewsAllTime = clubViewCounts.reduce((sum, v) => sum + Number(v.total_views), 0)
+  const viewsThisWeek = clubViewCounts.reduce((sum, v) => sum + Number(v.weekly_views), 0)
+  const viewsLastWeek = clubViewCounts.reduce((sum, v) => sum + Number(v.prev_week_views), 0)
   const viewsTrendPercent = viewsLastWeek > 0
     ? Math.round(((viewsThisWeek - viewsLastWeek) / viewsLastWeek) * 100)
     : viewsThisWeek > 0 ? 100 : 0
 
-  // Aggregate per-player view counts with weekly breakdown
-  const perPlayerRaw = 'data' in perPlayerViewsResult ? perPlayerViewsResult.data ?? [] : []
-  const viewCountMap = new Map<string, { name: string; name_ka: string; count: number; thisWeek: number; lastWeek: number }>()
-  for (const row of perPlayerRaw) {
-    const p = unwrapRelation(row.player)
-    if (!p) continue
-    const existing = viewCountMap.get(row.player_id)
-    const viewedAt = row.viewed_at ? new Date(row.viewed_at).getTime() : 0
-    const sevenDaysMs = new Date(sevenDaysAgo).getTime()
-    const fourteenDaysMs = new Date(fourteenDaysAgo).getTime()
-    const isThisWeek = viewedAt >= sevenDaysMs
-    const isLastWeek = viewedAt >= fourteenDaysMs && viewedAt < sevenDaysMs
-    if (existing) {
-      existing.count++
-      if (isThisWeek) existing.thisWeek++
-      if (isLastWeek) existing.lastWeek++
-    } else {
-      viewCountMap.set(row.player_id, { name: p.name, name_ka: p.name_ka, count: 1, thisWeek: isThisWeek ? 1 : 0, lastWeek: isLastWeek ? 1 : 0 })
-    }
-  }
-  const perPlayerViews = Array.from(viewCountMap.values())
+  const perPlayerViews = clubViewCounts
+    .map(v => {
+      const p = playerNameMap.get(v.player_id)
+      return {
+        name: p?.name ?? '',
+        name_ka: p?.name_ka ?? '',
+        count: Number(v.total_views),
+        thisWeek: Number(v.weekly_views),
+        lastWeek: Number(v.prev_week_views),
+      }
+    })
+    .filter(v => v.name)
     .sort((a, b) => b.count - a.count)
     .slice(0, 5)
   const mostViewedPlayer = perPlayerViews[0] ?? null
