@@ -28,12 +28,18 @@ interface PlayersPageProps {
     page?: string
     height_min?: string
     height_max?: string
+    weight_min?: string
+    weight_max?: string
+    goals_min?: string
+    assists_min?: string
+    matches_min?: string
+    pass_acc_min?: string
   }>
 }
 
 export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   const params = await searchParams
-  const { position, age_min, age_max, club, foot, q, status, sort, height_min, height_max } = params
+  const { position, age_min, age_max, club, foot, q, status, sort, height_min, height_max, weight_min, weight_max, goals_min, assists_min, matches_min, pass_acc_min } = params
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
 
   const supabase = await createClient()
@@ -71,7 +77,8 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
         season,
         goals,
         assists,
-        matches_played
+        matches_played,
+        pass_accuracy
       )
     `,
       { count: 'exact' }
@@ -129,10 +136,25 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     }
   }
 
+  // Weight filter — DB-level
+  if (weight_min) {
+    const wMin = parseInt(weight_min, 10)
+    if (!isNaN(wMin)) {
+      query = query.gte('weight_kg', wMin)
+    }
+  }
+  if (weight_max) {
+    const wMax = parseInt(weight_max, 10)
+    if (!isNaN(wMax)) {
+      query = query.lte('weight_kg', wMax)
+    }
+  }
+
   // Pagination — when age filter or most_viewed sort is active we can't paginate at DB level
   // because age is calculated client-side from DOB and most_viewed needs client-side reordering
   const hasAgeFilter = !!(age_min || age_max)
-  const needsClientPagination = hasAgeFilter || sort === 'most_viewed'
+  const hasStatFilter = !!(goals_min || assists_min || matches_min || pass_acc_min)
+  const needsClientPagination = hasAgeFilter || hasStatFilter || sort === 'most_viewed'
   if (!needsClientPagination) {
     const from = (page - 1) * PAGE_SIZE
     query = query.range(from, from + PAGE_SIZE - 1)
@@ -155,6 +177,25 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     filteredPlayers = filteredPlayers.filter((p) => {
       const playerAge = calculateAge(p.date_of_birth)
       return playerAge >= minAge && playerAge <= maxAge
+    })
+  }
+
+  // Filter by stat minimums — client-side (latest season stats)
+  if (hasStatFilter) {
+    const minGoals = goals_min ? parseInt(goals_min, 10) : 0
+    const minAssists = assists_min ? parseInt(assists_min, 10) : 0
+    const minMatches = matches_min ? parseInt(matches_min, 10) : 0
+    const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
+
+    filteredPlayers = filteredPlayers.filter((p) => {
+      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
+      if (!latest) return false // No stats → excluded when stat filters are active
+      if (minGoals && (latest.goals ?? 0) < minGoals) return false
+      if (minAssists && (latest.assists ?? 0) < minAssists) return false
+      if (minMatches && (latest.matches_played ?? 0) < minMatches) return false
+      if (minPassAcc && (latest.pass_accuracy ?? 0) < minPassAcc) return false
+      return true
     })
   }
 
@@ -210,6 +251,12 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     if (sort) sp.set('sort', sort)
     if (height_min) sp.set('height_min', height_min)
     if (height_max) sp.set('height_max', height_max)
+    if (weight_min) sp.set('weight_min', weight_min)
+    if (weight_max) sp.set('weight_max', weight_max)
+    if (goals_min) sp.set('goals_min', goals_min)
+    if (assists_min) sp.set('assists_min', assists_min)
+    if (matches_min) sp.set('matches_min', matches_min)
+    if (pass_acc_min) sp.set('pass_acc_min', pass_acc_min)
     if (p > 1) sp.set('page', String(p))
     const qs = sp.toString()
     return `/players${qs ? `?${qs}` : ''}`

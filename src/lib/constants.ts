@@ -28,6 +28,15 @@ export const AGE_OPTIONS = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] 
 
 export const HEIGHT_OPTIONS = [150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200] as const
 
+export const WEIGHT_OPTIONS = [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95] as const
+
+export const STAT_FILTER_OPTIONS = {
+  goals: [1, 2, 3, 5, 8, 10, 15, 20],
+  assists: [1, 2, 3, 5, 8, 10, 15],
+  matches: [5, 10, 15, 20, 25, 30],
+  passAccuracy: [50, 60, 70, 75, 80, 85, 90],
+} as const
+
 export const POPULAR_VIEWS_THRESHOLD = 20
 
 // Tiny dark placeholder for next/image blur

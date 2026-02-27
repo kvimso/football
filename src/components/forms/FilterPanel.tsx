@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useCallback } from 'react'
 import { useLang } from '@/hooks/useLang'
 import { useDebouncedCallback } from '@/hooks/useDebounce'
-import { POSITIONS, PREFERRED_FEET, AGE_OPTIONS, HEIGHT_OPTIONS } from '@/lib/constants'
+import { POSITIONS, PREFERRED_FEET, AGE_OPTIONS, HEIGHT_OPTIONS, WEIGHT_OPTIONS, STAT_FILTER_OPTIONS } from '@/lib/constants'
 
 interface Club {
   id: string
@@ -40,13 +40,19 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
   const sort = searchParams.get('sort') ?? ''
   const heightMin = searchParams.get('height_min') ?? ''
   const heightMax = searchParams.get('height_max') ?? ''
+  const weightMin = searchParams.get('weight_min') ?? ''
+  const weightMax = searchParams.get('weight_max') ?? ''
+  const goalsMin = searchParams.get('goals_min') ?? ''
+  const assistsMin = searchParams.get('assists_min') ?? ''
+  const matchesMin = searchParams.get('matches_min') ?? ''
+  const passAccMin = searchParams.get('pass_acc_min') ?? ''
 
   const [searchInput, setSearchInput] = useState(search)
 
-  const hasHeightFilters = heightMin || heightMax
-  const [advancedOpen, setAdvancedOpen] = useState(!!hasHeightFilters)
+  const hasAdvancedFilters = heightMin || heightMax || weightMin || weightMax || goalsMin || assistsMin || matchesMin || passAccMin
+  const [advancedOpen, setAdvancedOpen] = useState(!!hasAdvancedFilters)
 
-  const hasFilters = position || ageMin || ageMax || club || foot || search || status || sort || heightMin || heightMax
+  const hasFilters = position || ageMin || ageMax || club || foot || search || status || sort || heightMin || heightMax || weightMin || weightMax || goalsMin || assistsMin || matchesMin || passAccMin
 
   // Parse multi-value params
   const activePositions = position ? position.split(',') : []
@@ -216,7 +222,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         {/* Advanced filters toggle */}
         <button
           onClick={() => setAdvancedOpen(!advancedOpen)}
-          className={`filter-chip ${advancedOpen || hasHeightFilters ? 'bg-accent/10 text-accent border-accent/30' : ''}`}
+          className={`filter-chip ${advancedOpen || hasAdvancedFilters ? 'bg-accent/10 text-accent border-accent/30' : ''}`}
         >
           <svg className="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
@@ -238,7 +244,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         )}
       </div>
 
-      {/* Advanced filters — height range */}
+      {/* Advanced filters — height, weight, stat ranges */}
       {advancedOpen && (
         <div className="flex flex-wrap gap-2 rounded-lg border border-border/50 bg-background-secondary/50 p-3">
           <select
@@ -263,6 +269,84 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             {HEIGHT_OPTIONS.map((h) => (
               <option key={h} value={h}>
                 {h} {t('players.cm')}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={weightMin}
+            onChange={(e) => updateParam('weight_min', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.weightMin')}</option>
+            {WEIGHT_OPTIONS.map((w) => (
+              <option key={w} value={w}>
+                {w} {t('players.kg')}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={weightMax}
+            onChange={(e) => updateParam('weight_max', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.weightMax')}</option>
+            {WEIGHT_OPTIONS.map((w) => (
+              <option key={w} value={w}>
+                {w} {t('players.kg')}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={goalsMin}
+            onChange={(e) => updateParam('goals_min', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.goalsMin')}</option>
+            {STAT_FILTER_OPTIONS.goals.map((v) => (
+              <option key={v} value={v}>
+                {v}+
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={assistsMin}
+            onChange={(e) => updateParam('assists_min', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.assistsMin')}</option>
+            {STAT_FILTER_OPTIONS.assists.map((v) => (
+              <option key={v} value={v}>
+                {v}+
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={matchesMin}
+            onChange={(e) => updateParam('matches_min', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.matchesMin')}</option>
+            {STAT_FILTER_OPTIONS.matches.map((v) => (
+              <option key={v} value={v}>
+                {v}+
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={passAccMin}
+            onChange={(e) => updateParam('pass_acc_min', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.passAccuracyMin')}</option>
+            {STAT_FILTER_OPTIONS.passAccuracy.map((v) => (
+              <option key={v} value={v}>
+                {v}%+
               </option>
             ))}
           </select>
