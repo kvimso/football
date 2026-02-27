@@ -102,20 +102,22 @@ export async function GET(
   for (let i = 0; i < infoRows.length; i += 2) {
     const y = doc.y
     // Left pair
-    doc.fontSize(9).font('Helvetica-Bold').fillColor('#888888').text(infoRows[i][0], col1X, y)
-    doc.fontSize(10).font('Helvetica').fillColor('#000000').text(infoRows[i][1], col2X, y)
+    doc.fontSize(9).font('Helvetica-Bold').fillColor('#888888').text(infoRows[i][0], col1X, y, { width: 120 })
+    doc.fontSize(10).font('Helvetica').fillColor('#000000').text(infoRows[i][1], col2X, y, { width: 130 })
     // Right pair (if exists)
     if (infoRows[i + 1]) {
-      doc.fontSize(9).font('Helvetica-Bold').fillColor('#888888').text(infoRows[i + 1][0], col3X, y)
-      doc.fontSize(10).font('Helvetica').fillColor('#000000').text(infoRows[i + 1][1], col4X, y)
+      doc.fontSize(9).font('Helvetica-Bold').fillColor('#888888').text(infoRows[i + 1][0], col3X, y, { width: 120 })
+      doc.fontSize(10).font('Helvetica').fillColor('#000000').text(infoRows[i + 1][1], col4X, y, { width: 130 })
     }
+    doc.x = col1X
     doc.moveDown(0.6)
   }
 
   // --- Skills ---
   if (skills) {
+    doc.x = col1X
     doc.moveDown(0.5)
-    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Skills')
+    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Skills', col1X)
     doc.moveDown(0.4)
 
     const skillEntries: [string, number | null][] = [
@@ -136,14 +138,15 @@ export async function GET(
       doc.fontSize(12).font('Helvetica-Bold').fillColor('#000000').text(String(value ?? '-'), x, skillY + 12, { width: skillColWidth })
     })
 
-    doc.y = skillY + 30
-    doc.moveDown(0.5)
+    doc.x = col1X
+    doc.y = skillY + 35
   }
 
   // --- Season Stats ---
   if (seasonStats.length > 0) {
-    doc.moveDown(0.3)
-    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Season Statistics')
+    doc.x = col1X
+    doc.moveDown(0.5)
+    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Season Statistics', col1X)
     doc.moveDown(0.4)
 
     // Table header
@@ -158,7 +161,8 @@ export async function GET(
     })
 
     // Divider below header
-    doc.moveDown(0.5)
+    doc.x = col1X
+    doc.y = headerY + 14
     doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#eeeeee').lineWidth(0.5).stroke()
     doc.moveDown(0.3)
 
@@ -183,7 +187,8 @@ export async function GET(
         tableX += colWidths[idx]
       })
 
-      doc.moveDown(0.6)
+      doc.x = col1X
+      doc.y = rowY + 16
 
       // Page break safety
       if (doc.y > 720) {
@@ -194,8 +199,9 @@ export async function GET(
 
   // --- Career History ---
   if (clubHistory.length > 0) {
-    doc.moveDown(0.5)
-    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Career History')
+    doc.x = col1X
+    doc.moveDown(0.8)
+    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Career History', col1X)
     doc.moveDown(0.4)
 
     for (const entry of clubHistory) {

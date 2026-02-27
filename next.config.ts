@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverExternalPackages: ["pdfkit"],
   experimental: {
     optimizePackageImports: ["date-fns"],
   },
