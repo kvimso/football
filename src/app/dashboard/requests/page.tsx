@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { unwrapRelation } from '@/lib/utils'
 import { RequestsList } from '@/components/dashboard/RequestsList'
 
 export default async function RequestsPage() {
@@ -24,13 +25,13 @@ export default async function RequestsPage() {
   if (reqError) console.error('Failed to fetch requests:', reqError.message)
 
   const items = (requests ?? []).map((r) => {
-    const player = Array.isArray(r.player) ? r.player[0] : r.player
+    const player = unwrapRelation(r.player)
     return {
       ...r,
       player: player
         ? {
             ...player,
-            club: Array.isArray(player.club) ? player.club[0] : player.club,
+            club: unwrapRelation(player.club),
           }
         : null,
     }

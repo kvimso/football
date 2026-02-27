@@ -1,8 +1,8 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { playerFormSchema } from '@/lib/validations'
-import { generateSlug } from '@/lib/utils'
+import { playerFormSchema, uuidSchema } from '@/lib/validations'
+import { generateSlug, todayDateString } from '@/lib/utils'
 import { getAdminContext } from '@/lib/auth'
 
 export async function createPlayer(data: Record<string, unknown>) {
@@ -53,7 +53,7 @@ export async function createPlayer(data: Record<string, unknown>) {
       .insert({
         player_id: newPlayer.id,
         club_id: clubId,
-        joined_at: new Date().toISOString().split('T')[0],
+        joined_at: todayDateString(),
       })
 
     if (historyError) console.error('Failed to insert club history:', historyError.message)
@@ -71,9 +71,7 @@ export async function updatePlayer(
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
 
-  // Validate playerId is a valid UUID
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  if (!uuidRegex.test(playerId)) return { error: 'Invalid player ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid player ID' }
 
   // Verify player belongs to admin's club
   const { data: existingPlayer, error: checkError } = await supabase

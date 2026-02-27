@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { unwrapRelation } from '@/lib/utils'
 import { ShortlistList } from '@/components/dashboard/ShortlistList'
 
 export default async function ShortlistPage() {
@@ -24,13 +25,13 @@ export default async function ShortlistPage() {
   if (slError) console.error('Failed to fetch shortlist:', slError.message)
 
   const items = (shortlistItems ?? []).map((item) => {
-    const player = Array.isArray(item.player) ? item.player[0] : item.player
+    const player = unwrapRelation(item.player)
     if (!player) return null
     return {
       ...item,
       player: {
         ...player,
-        club: Array.isArray(player.club) ? player.club[0] : player.club,
+        club: unwrapRelation(player.club),
       },
     }
   }).filter((item): item is NonNullable<typeof item> => item !== null)

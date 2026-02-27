@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 import { TransferSearch } from '@/components/admin/TransferSearch'
 import { TransferActions } from '@/components/admin/TransferActions'
@@ -59,16 +60,16 @@ export default async function AdminTransfersPage() {
 
   const incomingRequests = (incoming ?? []).map((r) => ({
     ...r,
-    player: Array.isArray(r.player) ? r.player[0] : r.player,
-    from_club: Array.isArray(r.from_club) ? r.from_club[0] : r.from_club,
-    to_club: Array.isArray(r.to_club) ? r.to_club[0] : r.to_club,
+    player: unwrapRelation(r.player),
+    from_club: unwrapRelation(r.from_club),
+    to_club: unwrapRelation(r.to_club),
   }))
 
   const outgoingRequests = (outgoing ?? []).map((r) => ({
     ...r,
-    player: Array.isArray(r.player) ? r.player[0] : r.player,
-    from_club: Array.isArray(r.from_club) ? r.from_club[0] : r.from_club,
-    to_club: Array.isArray(r.to_club) ? r.to_club[0] : r.to_club,
+    player: unwrapRelation(r.player),
+    from_club: unwrapRelation(r.from_club),
+    to_club: unwrapRelation(r.to_club),
   }))
 
   function statusClasses(status: string) {

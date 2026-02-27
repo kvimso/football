@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
+import { unwrapRelation } from '@/lib/utils'
 import { platformApproveRequest, platformRejectRequest } from '@/app/actions/platform-requests'
 import { format } from 'date-fns'
 
@@ -42,7 +43,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
     <div className="space-y-3">
       {requests.map((req) => {
         const club = req.player?.club
-          ? Array.isArray(req.player.club) ? req.player.club[0] : req.player.club
+          ? unwrapRelation(req.player.club)
           : null
         return (
           <div key={req.id} className="card p-4">

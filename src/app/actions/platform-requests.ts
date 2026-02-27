@@ -1,10 +1,8 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { getPlatformAdminContext } from '@/lib/auth'
-
-const uuidSchema = z.string().uuid()
+import { uuidSchema } from '@/lib/validations'
 
 export async function platformApproveRequest(requestId: string) {
   if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }

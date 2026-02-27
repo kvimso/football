@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 import { RequestActions } from '@/components/admin/RequestActions'
 
@@ -75,8 +76,8 @@ export default async function AdminRequestsPage({ searchParams }: AdminRequestsP
 
   const clubRequests = (requests ?? []).map((r) => ({
     ...r,
-    player: Array.isArray(r.player) ? r.player[0] : r.player,
-    scout: Array.isArray(r.scout) ? r.scout[0] : r.scout,
+    player: unwrapRelation(r.player),
+    scout: unwrapRelation(r.scout),
   })).filter((r) => r.player)
 
   const statusFilters = ['all', 'pending', 'approved', 'rejected']

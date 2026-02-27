@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+export const uuidSchema = z.string().uuid()
+
 export const contactRequestSchema = z.object({
   playerId: z.string().uuid(),
   message: z.string().min(10).max(1000),

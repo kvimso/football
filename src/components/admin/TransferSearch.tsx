@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
-import { calculateAge } from '@/lib/utils'
+import { calculateAge, unwrapRelation } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { searchPlayersForTransfer, requestTransfer, claimFreeAgent } from '@/app/actions/admin-transfers'
 
@@ -39,7 +39,7 @@ export function TransferSearch() {
       }
       setResults((res.players ?? []).map((p) => ({
         ...p,
-        club: Array.isArray(p.club) ? p.club[0] : p.club,
+        club: unwrapRelation(p.club),
       })))
       setSearched(true)
     })

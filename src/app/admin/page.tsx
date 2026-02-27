@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { format, formatDistanceToNow } from 'date-fns'
 
 export default async function AdminDashboardPage() {
@@ -45,6 +46,8 @@ export default async function AdminDashboardPage() {
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
   const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
 
+  const admin = createAdminClient()
+
   // Fetch counts and recent requests in parallel using player IDs
   const [requestsResult, shortlistsResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewsThisWeekResult, viewsLastWeekResult, perPlayerViewsResult, viewsAllTimeResult] =
     await Promise.all([
@@ -77,98 +80,56 @@ export default async function AdminDashboardPage() {
             .limit(5)
         : Promise.resolve({ data: [], error: null }),
       playerIds.length > 0
-        ? (() => {
-            try {
-              const admin = createAdminClient()
-              return admin
-                .from('page_views')
-                .select('id', { count: 'exact', head: true })
-                .eq('page_type', 'player')
-                .in('entity_id', playerIds)
-            } catch {
-              return Promise.resolve({ count: 0, error: null })
-            }
-          })()
+        ? admin
+            .from('page_views')
+            .select('id', { count: 'exact', head: true })
+            .eq('page_type', 'player')
+            .in('entity_id', playerIds)
         : Promise.resolve({ count: 0, error: null }),
       playerIds.length > 0
-        ? (() => {
-            try {
-              const admin = createAdminClient()
-              return admin
-                .from('player_views')
-                .select(`
-                  id,
-                  viewed_at,
-                  viewer:profiles!player_views_viewer_id_fkey(full_name, organization, role),
-                  player:players!player_views_player_id_fkey(name, name_ka)
-                `)
-                .in('player_id', playerIds)
-                .order('viewed_at', { ascending: false })
-                .limit(20)
-            } catch {
-              return Promise.resolve({ data: [], error: null })
-            }
-          })()
+        ? admin
+            .from('player_views')
+            .select(`
+              id,
+              viewed_at,
+              viewer:profiles!player_views_viewer_id_fkey(full_name, organization, role),
+              player:players!player_views_player_id_fkey(name, name_ka)
+            `)
+            .in('player_id', playerIds)
+            .order('viewed_at', { ascending: false })
+            .limit(20)
         : Promise.resolve({ data: [], error: null }),
       // Views this week
       playerIds.length > 0
-        ? (() => {
-            try {
-              const admin = createAdminClient()
-              return admin
-                .from('player_views')
-                .select('id', { count: 'exact', head: true })
-                .in('player_id', playerIds)
-                .gte('viewed_at', sevenDaysAgo)
-            } catch {
-              return Promise.resolve({ count: 0, error: null })
-            }
-          })()
+        ? admin
+            .from('player_views')
+            .select('id', { count: 'exact', head: true })
+            .in('player_id', playerIds)
+            .gte('viewed_at', sevenDaysAgo)
         : Promise.resolve({ count: 0, error: null }),
       // Views last week (for trend)
       playerIds.length > 0
-        ? (() => {
-            try {
-              const admin = createAdminClient()
-              return admin
-                .from('player_views')
-                .select('id', { count: 'exact', head: true })
-                .in('player_id', playerIds)
-                .gte('viewed_at', fourteenDaysAgo)
-                .lt('viewed_at', sevenDaysAgo)
-            } catch {
-              return Promise.resolve({ count: 0, error: null })
-            }
-          })()
+        ? admin
+            .from('player_views')
+            .select('id', { count: 'exact', head: true })
+            .in('player_id', playerIds)
+            .gte('viewed_at', fourteenDaysAgo)
+            .lt('viewed_at', sevenDaysAgo)
         : Promise.resolve({ count: 0, error: null }),
       // Per-player view counts (top 5) — includes viewed_at for weekly breakdown
       playerIds.length > 0
-        ? (() => {
-            try {
-              const admin = createAdminClient()
-              return admin
-                .from('player_views')
-                .select('player_id, viewed_at, player:players!player_views_player_id_fkey(name, name_ka)')
-                .in('player_id', playerIds)
-                .limit(10000)
-            } catch {
-              return Promise.resolve({ data: [], error: null })
-            }
-          })()
+        ? admin
+            .from('player_views')
+            .select('player_id, viewed_at, player:players!player_views_player_id_fkey(name, name_ka)')
+            .in('player_id', playerIds)
+            .limit(10000)
         : Promise.resolve({ data: [], error: null }),
       // Views all time (dedicated count)
       playerIds.length > 0
-        ? (() => {
-            try {
-              const admin = createAdminClient()
-              return admin
-                .from('player_views')
-                .select('id', { count: 'exact', head: true })
-                .in('player_id', playerIds)
-            } catch {
-              return Promise.resolve({ count: 0, error: null })
-            }
-          })()
+        ? admin
+            .from('player_views')
+            .select('id', { count: 'exact', head: true })
+            .in('player_id', playerIds)
         : Promise.resolve({ count: 0, error: null }),
     ])
 
@@ -193,7 +154,7 @@ export default async function AdminDashboardPage() {
   const perPlayerRaw = 'data' in perPlayerViewsResult ? perPlayerViewsResult.data ?? [] : []
   const viewCountMap = new Map<string, { name: string; name_ka: string; count: number; thisWeek: number; lastWeek: number }>()
   for (const row of perPlayerRaw) {
-    const p = Array.isArray(row.player) ? row.player[0] : row.player
+    const p = unwrapRelation(row.player)
     if (!p) continue
     const existing = viewCountMap.get(row.player_id)
     const viewedAt = row.viewed_at ? new Date(row.viewed_at).getTime() : 0
@@ -225,16 +186,16 @@ export default async function AdminDashboardPage() {
   const recentRequests = ('data' in recentRequestsResult ? recentRequestsResult.data ?? [] : []).map(
     (r) => ({
       ...r,
-      scout: Array.isArray(r.scout) ? r.scout[0] : r.scout,
-      player: Array.isArray(r.player) ? r.player[0] : r.player,
+      scout: unwrapRelation(r.scout),
+      player: unwrapRelation(r.player),
     })
   ).filter((r) => r.player)
 
   const scoutActivity = ('data' in scoutActivityResult ? scoutActivityResult.data ?? [] : []).map(
     (v) => ({
       ...v,
-      viewer: Array.isArray(v.viewer) ? v.viewer[0] : v.viewer,
-      player: Array.isArray(v.player) ? v.player[0] : v.player,
+      viewer: unwrapRelation(v.viewer),
+      player: unwrapRelation(v.player),
     })
   ).filter((v) => v.player && v.viewer?.role === 'scout')
 

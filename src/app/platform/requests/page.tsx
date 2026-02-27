@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { PlatformRequestsList } from '@/components/platform/PlatformRequestsList'
 
 export default async function PlatformRequestsPage({
@@ -29,8 +30,8 @@ export default async function PlatformRequestsPage({
 
   const processed = (requests ?? []).map((r) => ({
     ...r,
-    scout: Array.isArray(r.scout) ? r.scout[0] : r.scout,
-    player: Array.isArray(r.player) ? r.player[0] : r.player,
+    scout: unwrapRelation(r.scout),
+    player: unwrapRelation(r.player),
   }))
 
   return (

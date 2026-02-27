@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge } from '@/lib/utils'
+import { calculateAge, unwrapRelation, escapePostgrestValue } from '@/lib/utils'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { FilterPanel } from '@/components/forms/FilterPanel'
 
@@ -109,7 +109,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   }
 
   if (q) {
-    const sanitized = q.replace(/[,.()"\\%_]/g, '')
+    const sanitized = escapePostgrestValue(q)
     if (sanitized) {
       query = query.or(`name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%`)
     }
@@ -185,7 +185,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     const stats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,
-      club: Array.isArray(p.club) ? p.club[0] : p.club,
+      club: unwrapRelation(p.club),
       season_stats: stats ?? null,
       status: p.status ?? 'active',
     }

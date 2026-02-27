@@ -1,14 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { getPlatformAdminContext } from '@/lib/auth'
-
-const uuidSchema = z.string().uuid()
-
-function today() {
-  return new Date().toISOString().split('T')[0]
-}
+import { todayDateString } from '@/lib/utils'
+import { uuidSchema } from '@/lib/validations'
 
 export async function platformAcceptTransfer(requestId: string) {
   if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
@@ -54,7 +49,7 @@ export async function platformAcceptTransfer(requestId: string) {
   if (request.from_club_id) {
     const { error: closeErr } = await admin
       .from('player_club_history')
-      .update({ left_at: today() })
+      .update({ left_at: todayDateString() })
       .eq('player_id', request.player_id)
       .eq('club_id', request.from_club_id)
       .is('left_at', null)
@@ -68,7 +63,7 @@ export async function platformAcceptTransfer(requestId: string) {
       .insert({
         player_id: request.player_id,
         club_id: request.to_club_id,
-        joined_at: today(),
+        joined_at: todayDateString(),
       })
 
     if (histErr) console.error('Failed to insert club history:', histErr.message)

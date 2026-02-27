@@ -1,10 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
-import { platformPlayerFormSchema } from '@/lib/validations'
+import { platformPlayerFormSchema, uuidSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
-import { generateSlug } from '@/lib/utils'
+import { generateSlug, todayDateString } from '@/lib/utils'
 
 export async function platformCreatePlayer(data: Record<string, unknown>) {
   const { error: authErr, admin } = await getPlatformAdminContext()
@@ -55,7 +54,7 @@ export async function platformCreatePlayer(data: Record<string, unknown>) {
       .insert({
         player_id: newPlayer.id,
         club_id: clubId,
-        joined_at: new Date().toISOString().split('T')[0],
+        joined_at: todayDateString(),
       })
 
     if (historyError) console.error('Failed to insert club history:', historyError.message)
@@ -67,7 +66,7 @@ export async function platformCreatePlayer(data: Record<string, unknown>) {
 }
 
 export async function platformUpdatePlayer(playerId: string, data: Record<string, unknown>) {
-  if (!z.string().uuid().safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
 
@@ -108,7 +107,7 @@ export async function platformUpdatePlayer(playerId: string, data: Record<string
   if (updateError) return { error: updateError.message }
 
   // Handle club change
-  const today = new Date().toISOString().split('T')[0]
+  const today = todayDateString()
   if (currentPlayer.club_id !== newClubId) {
     // Close old club history
     if (currentPlayer.club_id) {
@@ -141,7 +140,7 @@ export async function platformUpdatePlayer(playerId: string, data: Record<string
 }
 
 export async function platformDeletePlayer(playerId: string) {
-  if (!z.string().uuid().safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
 

@@ -1,22 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAdminContext } from '@/lib/auth'
+import { unwrapRelation, todayDateString, escapePostgrestValue } from '@/lib/utils'
+import { uuidSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { transferRequestReceivedEmail } from '@/lib/email-templates'
-
-const uuidSchema = z.string().uuid()
-
-// Escape special PostgREST filter characters to prevent filter injection
-function escapePostgrestValue(value: string): string {
-  return value.replace(/[,.()"\\%_]/g, '')
-}
-
-function today() {
-  return new Date().toISOString().split('T')[0]
-}
 
 export async function releasePlayer(playerId: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
@@ -46,7 +36,7 @@ export async function releasePlayer(playerId: string) {
   // Close club history
   const { error: historyErr } = await admin
     .from('player_club_history')
-    .update({ left_at: today() })
+    .update({ left_at: todayDateString() })
     .eq('player_id', playerId)
     .eq('club_id', clubId)
     .is('left_at', null)
@@ -140,7 +130,7 @@ export async function requestTransfer(playerId: string) {
 
   if (insertErr) return { error: insertErr.message }
 
-  const club = Array.isArray(player.club) ? player.club[0] : player.club
+  const club = unwrapRelation(player.club)
 
   // Send email notification to the receiving club admin (fire-and-forget)
   try {
@@ -201,7 +191,7 @@ export async function claimFreeAgent(playerId: string) {
     .insert({
       player_id: playerId,
       club_id: clubId,
-      joined_at: today(),
+      joined_at: todayDateString(),
     })
 
   if (historyErr) console.error('Failed to insert club history:', historyErr.message)
@@ -269,7 +259,7 @@ export async function acceptTransfer(requestId: string) {
   // Close old club history
   const { error: closeErr } = await admin
     .from('player_club_history')
-    .update({ left_at: today() })
+    .update({ left_at: todayDateString() })
     .eq('player_id', request.player_id)
     .eq('club_id', request.from_club_id)
     .is('left_at', null)
@@ -282,7 +272,7 @@ export async function acceptTransfer(requestId: string) {
     .insert({
       player_id: request.player_id,
       club_id: request.to_club_id,
-      joined_at: today(),
+      joined_at: todayDateString(),
     })
 
   if (newHistErr) console.error('Failed to insert new club history:', newHistErr.message)

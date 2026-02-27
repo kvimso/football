@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { createPlayer, updatePlayer } from '@/app/actions/admin-players'
 import { POSITIONS, PREFERRED_FEET } from '@/lib/constants'
+import { splitName } from '@/lib/utils'
 
 interface PlayerData {
   id?: string
@@ -20,12 +21,6 @@ interface PlayerData {
 
 interface PlayerFormProps {
   player?: PlayerData
-}
-
-function splitName(fullName: string): { first: string; last: string } {
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length <= 1) return { first: parts[0] ?? '', last: '' }
-  return { first: parts[0], last: parts.slice(1).join(' ') }
 }
 
 export function PlayerForm({ player }: PlayerFormProps) {

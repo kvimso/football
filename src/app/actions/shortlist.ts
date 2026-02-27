@@ -3,8 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
-
-const uuidSchema = z.string().uuid()
+import { uuidSchema } from '@/lib/validations'
 const notesSchema = z.string().max(2000)
 
 export async function addToShortlist(playerId: string) {

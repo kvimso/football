@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { unwrapRelation } from '@/lib/utils'
 import { CompareView } from '@/components/player/CompareView'
 
 export const metadata: Metadata = {
@@ -31,9 +32,9 @@ async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, s
 
   return {
     ...data,
-    club: Array.isArray(data.club) ? data.club[0] : data.club,
-    skills: Array.isArray(data.skills) ? data.skills[0] : data.skills,
-    season_stats: Array.isArray(data.season_stats) ? data.season_stats[0] : data.season_stats,
+    club: unwrapRelation(data.club),
+    skills: unwrapRelation(data.skills),
+    season_stats: unwrapRelation(data.season_stats),
   }
 }
 

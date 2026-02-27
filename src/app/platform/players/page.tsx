@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
-import { calculateAge } from '@/lib/utils'
+import { calculateAge, unwrapRelation } from '@/lib/utils'
 
 export default async function PlatformPlayersPage({
   searchParams,
@@ -94,7 +94,7 @@ export default async function PlatformPlayersPage({
             </thead>
             <tbody>
               {(players ?? []).map((player) => {
-                const club = Array.isArray(player.club) ? player.club[0] : player.club
+                const club = unwrapRelation(player.club)
                 const displayName = lang === 'ka' && player.name_ka ? player.name_ka : player.name
                 return (
                   <tr key={player.id} className="border-b border-border/50">

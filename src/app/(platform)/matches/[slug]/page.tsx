@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 import { MatchDetailClient } from '@/components/match/MatchDetailClient'
 import { trackPageView } from '@/lib/analytics'
@@ -25,8 +26,8 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
     .single()
 
   if (error || !match) return { title: 'Match Not Found' }
-  const home = Array.isArray(match.home_club) ? match.home_club[0] : match.home_club
-  const away = Array.isArray(match.away_club) ? match.away_club[0] : match.away_club
+  const home = unwrapRelation(match.home_club)
+  const away = unwrapRelation(match.away_club)
 
   return {
     title: `${home?.name ?? 'TBD'} ${match.home_score}-${match.away_score} ${away?.name ?? 'TBD'} | Georgian Football Talent Platform`,
@@ -59,11 +60,11 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   trackPageView({ pageType: 'match', entityId: match.id, entitySlug: match.slug })
 
-  const homeClub = Array.isArray(match.home_club) ? match.home_club[0] : match.home_club
-  const awayClub = Array.isArray(match.away_club) ? match.away_club[0] : match.away_club
+  const homeClub = unwrapRelation(match.home_club)
+  const awayClub = unwrapRelation(match.away_club)
   const playerStats = (Array.isArray(match.player_stats) ? match.player_stats : []).map((ps) => ({
     ...ps,
-    player: Array.isArray(ps.player) ? ps.player[0] : ps.player,
+    player: unwrapRelation(ps.player),
   }))
 
   const dateFormatted = format(new Date(match.match_date), 'EEEE, dd MMMM yyyy')

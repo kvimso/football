@@ -1,8 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
-import { clubFormSchema } from '@/lib/validations'
+import { clubFormSchema, uuidSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
 import { generateSlug } from '@/lib/utils'
 import { getServerT } from '@/lib/server-translations'
@@ -46,7 +45,7 @@ export async function createClub(data: Record<string, unknown>) {
 }
 
 export async function updateClub(clubId: string, data: Record<string, unknown>) {
-  if (!z.string().uuid().safeParse(clubId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(clubId).success) return { error: 'Invalid ID' }
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
 
@@ -75,7 +74,7 @@ export async function updateClub(clubId: string, data: Record<string, unknown>) 
 }
 
 export async function deleteClub(clubId: string) {
-  if (!z.string().uuid().safeParse(clubId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(clubId).success) return { error: 'Invalid ID' }
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
 

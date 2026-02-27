@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge } from '@/lib/utils'
+import { calculateAge, unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
@@ -143,17 +143,17 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   }
 
   const age = calculateAge(player.date_of_birth)
-  const club = Array.isArray(player.club) ? player.club[0] : player.club
-  const skills = Array.isArray(player.skills) ? player.skills[0] : player.skills
+  const club = unwrapRelation(player.club)
+  const skills = unwrapRelation(player.skills)
   const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
   const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
     ...ms,
-    match: Array.isArray(ms.match) ? ms.match[0] : ms.match,
+    match: unwrapRelation(ms.match),
   }))
   const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
     .map((h) => ({
       ...h,
-      club: Array.isArray(h.club) ? h.club[0] : h.club,
+      club: unwrapRelation(h.club),
     }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
   const isFreeAgent = player.status === 'free_agent'
@@ -379,8 +379,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               <tbody>
                 {matchStats.map((ms, i) => {
                   const m = ms.match
-                  const homeClub = m ? (Array.isArray(m.home_club) ? m.home_club[0] : m.home_club) : null
-                  const awayClub = m ? (Array.isArray(m.away_club) ? m.away_club[0] : m.away_club) : null
+                  const homeClub = m ? unwrapRelation(m.home_club) : null
+                  const awayClub = m ? unwrapRelation(m.away_club) : null
                   const homeName = homeClub ? (lang === 'ka' ? homeClub.name_ka : homeClub.name) : null
                   const awayName = awayClub ? (lang === 'ka' ? awayClub.name_ka : awayClub.name) : null
                   const matchLabel = homeName && awayName
