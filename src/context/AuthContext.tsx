@@ -11,14 +11,12 @@ interface AuthUser {
 interface AuthState {
   user: AuthUser | null
   userRole: string | null
-  isLoading: boolean
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState>({
   user: null,
   userRole: null,
-  isLoading: true,
   signOut: async () => {},
 })
 
@@ -37,7 +35,6 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser)
   const [userRole, setUserRole] = useState<string | null>(initialRole)
-  const [isLoading] = useState(false)
 
   useEffect(() => {
     try {
@@ -60,8 +57,8 @@ export function AuthProvider({
       })
 
       return () => subscription.unsubscribe()
-    } catch {
-      // Supabase client failed to initialize
+    } catch (err) {
+      console.error('Failed to initialize Supabase auth listener:', err)
     }
   }, [])
 
@@ -73,7 +70,7 @@ export function AuthProvider({
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, userRole, isLoading, signOut }}>
+    <AuthContext.Provider value={{ user, userRole, signOut }}>
       {children}
     </AuthContext.Provider>
   )

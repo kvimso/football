@@ -41,7 +41,6 @@ export default async function AdminLayout({
           <AdminSidebar
             clubName={club?.name ?? ''}
             clubNameKa={club?.name_ka ?? ''}
-            role={profile.role}
           />
           <main className="min-w-0 flex-1">{children}</main>
         </div>

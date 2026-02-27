@@ -71,8 +71,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
   if (error || !player) notFound()
 
-  trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
-  trackPlayerView(player.id)
+  void trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
+  void trackPlayerView(player.id)
 
   // Fetch view counts for this player
   let totalViews = 0
