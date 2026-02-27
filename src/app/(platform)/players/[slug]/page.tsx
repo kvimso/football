@@ -223,7 +223,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
             {/* Action buttons */}
             {user && (
-              <div className="mt-4 flex gap-3">
+              <div className="mt-4 flex flex-wrap gap-3">
                 <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
                 {!isFreeAgent && (
                   !hasContactRequest ? (
@@ -234,6 +234,15 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                     </span>
                   )
                 )}
+                <Link
+                  href={`/players/compare?p1=${player.slug}`}
+                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-accent/50 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                  </svg>
+                  {t('compare.comparePlayer')}
+                </Link>
               </div>
             )}
 

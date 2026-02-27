@@ -328,6 +328,11 @@ export const translations: Record<Lang, NestedStrings> = {
       minutes: 'Minutes',
       passPercent: 'Pass %',
       tackles: 'Tackles',
+      skillsComparison: 'Skills Comparison',
+      diff: 'Diff',
+      copyLink: 'Copy Link',
+      copied: 'Copied!',
+      comparePlayer: 'Compare',
     },
     notFound: {
       title: 'Page Not Found',
@@ -908,6 +913,11 @@ export const translations: Record<Lang, NestedStrings> = {
       minutes: 'წუთები',
       passPercent: 'პას %',
       tackles: 'ჩარევა',
+      skillsComparison: 'უნარების შედარება',
+      diff: 'სხვაობა',
+      copyLink: 'ბმულის კოპირება',
+      copied: 'დაკოპირებულია!',
+      comparePlayer: 'შედარება',
     },
     notFound: {
       title: 'გვერდი ვერ მოიძებნა',

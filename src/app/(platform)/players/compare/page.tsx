@@ -4,13 +4,33 @@ import { unwrapRelation } from '@/lib/utils'
 import type { Position } from '@/lib/types'
 import { CompareView } from '@/components/player/CompareView'
 
-export const metadata: Metadata = {
-  title: 'Compare Players | Georgian Football Talent Platform',
-  description: 'Side-by-side comparison of Georgian youth football players.',
-}
-
 interface ComparePageProps {
   searchParams: Promise<{ p1?: string; p2?: string }>
+}
+
+export async function generateMetadata({ searchParams }: ComparePageProps): Promise<Metadata> {
+  const params = await searchParams
+  if (!params.p1 || !params.p2) {
+    return {
+      title: 'Compare Players | Georgian Football Talent Platform',
+      description: 'Side-by-side comparison of Georgian youth football players.',
+    }
+  }
+
+  const supabase = await createClient()
+  const [{ data: p1 }, { data: p2 }] = await Promise.all([
+    supabase.from('players').select('name').eq('slug', params.p1).single(),
+    supabase.from('players').select('name').eq('slug', params.p2).single(),
+  ])
+
+  const title = p1 && p2
+    ? `${p1.name} vs ${p2.name} | Compare Players`
+    : 'Compare Players | Georgian Football Talent Platform'
+
+  return {
+    title,
+    description: 'Side-by-side comparison of Georgian youth football players.',
+  }
 }
 
 async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, slug: string) {
