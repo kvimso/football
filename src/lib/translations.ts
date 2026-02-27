@@ -97,6 +97,8 @@ export const translations: Record<Lang, NestedStrings> = {
       matchesMin: 'Min Matches',
       passAccuracyMin: 'Min Pass %',
       advancedFilters: 'Advanced Filters',
+      downloadPdf: 'Download PDF',
+      downloadingPdf: 'Generating...',
     },
     foot: {
       Left: 'Left',
@@ -688,6 +690,8 @@ export const translations: Record<Lang, NestedStrings> = {
       matchesMin: 'მინ. მატჩები',
       passAccuracyMin: 'მინ. პას %',
       advancedFilters: 'დამატებითი ფილტრები',
+      downloadPdf: 'PDF ჩამოტვირთვა',
+      downloadingPdf: 'მზადდება...',
     },
     foot: {
       Left: 'მარცხენა',

@@ -15,6 +15,7 @@ import { trackPageView } from '@/lib/analytics'
 import { trackPlayerView } from '@/app/actions/player-views'
 import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
+import { DownloadPdfButton } from '@/components/player/DownloadPdfButton'
 
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
@@ -243,6 +244,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </svg>
                   {t('compare.comparePlayer')}
                 </Link>
+                <DownloadPdfButton playerId={player.id} playerName={player.name} />
               </div>
             )}
 
