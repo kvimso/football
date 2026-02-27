@@ -78,6 +78,11 @@ export const translations: Record<Lang, NestedStrings> = {
       new: 'new',
       sortName: 'Name',
       sortMostViewed: 'Most Viewed',
+      ageMin: 'Min Age',
+      ageMax: 'Max Age',
+      heightMin: 'Min Height',
+      heightMax: 'Max Height',
+      advancedFilters: 'Advanced Filters',
     },
     foot: {
       Left: 'Left',
@@ -608,6 +613,11 @@ export const translations: Record<Lang, NestedStrings> = {
       new: 'ახალი',
       sortName: 'სახელი',
       sortMostViewed: 'ყველაზე ნანახი',
+      ageMin: 'მინ. ასაკი',
+      ageMax: 'მაქს. ასაკი',
+      heightMin: 'მინ. სიმაღლე',
+      heightMax: 'მაქს. სიმაღლე',
+      advancedFilters: 'დამატებითი ფილტრები',
     },
     foot: {
       Left: 'მარცხენა',

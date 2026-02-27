@@ -6,7 +6,6 @@ import { getServerT } from '@/lib/server-translations'
 import { calculateAge } from '@/lib/utils'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { FilterPanel } from '@/components/forms/FilterPanel'
-import { AGE_RANGE_MAP } from '@/lib/constants'
 
 const PAGE_SIZE = 24
 
@@ -19,19 +18,22 @@ export const metadata: Metadata = {
 interface PlayersPageProps {
   searchParams: Promise<{
     position?: string
-    age?: string
+    age_min?: string
+    age_max?: string
     club?: string
     foot?: string
     q?: string
     status?: string
     sort?: string
     page?: string
+    height_min?: string
+    height_max?: string
   }>
 }
 
 export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   const params = await searchParams
-  const { position, age, club, foot, q, status, sort } = params
+  const { position, age_min, age_max, club, foot, q, status, sort, height_min, height_max } = params
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
 
   const supabase = await createClient()
@@ -86,13 +88,20 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     query = query.in('status', ['active', 'free_agent'])
   }
 
-  // Apply filters
+  // Apply filters — multi-select position
   if (position) {
-    query = query.eq('position', position)
+    const positions = position.split(',').filter(Boolean)
+    if (positions.length > 0) {
+      query = query.in('position', positions)
+    }
   }
 
+  // Multi-select club
   if (club) {
-    query = query.eq('club_id', club)
+    const clubIds = club.split(',').filter(Boolean)
+    if (clubIds.length > 0) {
+      query = query.in('club_id', clubIds)
+    }
   }
 
   if (foot) {
@@ -106,9 +115,23 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     }
   }
 
+  // Height filter — DB-level
+  if (height_min) {
+    const hMin = parseInt(height_min, 10)
+    if (!isNaN(hMin)) {
+      query = query.gte('height_cm', hMin)
+    }
+  }
+  if (height_max) {
+    const hMax = parseInt(height_max, 10)
+    if (!isNaN(hMax)) {
+      query = query.lte('height_cm', hMax)
+    }
+  }
+
   // Pagination — when age filter or most_viewed sort is active we can't paginate at DB level
   // because age is calculated client-side from DOB and most_viewed needs client-side reordering
-  const hasAgeFilter = age && AGE_RANGE_MAP[age]
+  const hasAgeFilter = !!(age_min || age_max)
   const needsClientPagination = hasAgeFilter || sort === 'most_viewed'
   if (!needsClientPagination) {
     const from = (page - 1) * PAGE_SIZE
@@ -125,10 +148,13 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   let filteredPlayers = players ?? []
 
   if (hasAgeFilter) {
-    const { min, max } = AGE_RANGE_MAP[age]
+    let minAge = age_min ? parseInt(age_min, 10) : 0
+    let maxAge = age_max ? parseInt(age_max, 10) : 99
+    // Swap if inverted
+    if (minAge > maxAge) [minAge, maxAge] = [maxAge, minAge]
     filteredPlayers = filteredPlayers.filter((p) => {
       const playerAge = calculateAge(p.date_of_birth)
-      return playerAge >= min && playerAge <= max
+      return playerAge >= minAge && playerAge <= maxAge
     })
   }
 
@@ -182,12 +208,15 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   function pageUrl(p: number) {
     const sp = new URLSearchParams()
     if (position) sp.set('position', position)
-    if (age) sp.set('age', age)
+    if (age_min) sp.set('age_min', age_min)
+    if (age_max) sp.set('age_max', age_max)
     if (club) sp.set('club', club)
     if (foot) sp.set('foot', foot)
     if (q) sp.set('q', q)
     if (status) sp.set('status', status)
     if (sort) sp.set('sort', sort)
+    if (height_min) sp.set('height_min', height_min)
+    if (height_max) sp.set('height_max', height_max)
     if (p > 1) sp.set('page', String(p))
     const qs = sp.toString()
     return `/players${qs ? `?${qs}` : ''}`

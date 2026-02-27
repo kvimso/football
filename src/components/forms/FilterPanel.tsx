@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useCallback } from 'react'
 import { useLang } from '@/hooks/useLang'
 import { useDebouncedCallback } from '@/hooks/useDebounce'
-import { POSITIONS, PREFERRED_FEET, AGE_RANGES } from '@/lib/constants'
+import { POSITIONS, PREFERRED_FEET, AGE_OPTIONS, HEIGHT_OPTIONS } from '@/lib/constants'
 
 interface Club {
   id: string
@@ -31,16 +31,26 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
   const { t, lang } = useLang()
 
   const position = searchParams.get('position') ?? ''
-  const age = searchParams.get('age') ?? ''
+  const ageMin = searchParams.get('age_min') ?? ''
+  const ageMax = searchParams.get('age_max') ?? ''
   const club = searchParams.get('club') ?? ''
   const foot = searchParams.get('foot') ?? ''
   const search = searchParams.get('q') ?? ''
   const status = searchParams.get('status') ?? ''
   const sort = searchParams.get('sort') ?? ''
+  const heightMin = searchParams.get('height_min') ?? ''
+  const heightMax = searchParams.get('height_max') ?? ''
 
   const [searchInput, setSearchInput] = useState(search)
 
-  const hasFilters = position || age || club || foot || search || status || sort
+  const hasHeightFilters = heightMin || heightMax
+  const [advancedOpen, setAdvancedOpen] = useState(!!hasHeightFilters)
+
+  const hasFilters = position || ageMin || ageMax || club || foot || search || status || sort || heightMin || heightMax
+
+  // Parse multi-value params
+  const activePositions = position ? position.split(',') : []
+  const activeClubs = club ? club.split(',') : []
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -50,19 +60,31 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
       } else {
         params.delete(key)
       }
+      params.delete('page')
       router.push(`/players?${params.toString()}`)
     },
     [router, searchParams]
+  )
+
+  const toggleMultiParam = useCallback(
+    (key: string, value: string, currentValues: string[]) => {
+      const next = currentValues.includes(value)
+        ? currentValues.filter((v) => v !== value)
+        : [...currentValues, value]
+      updateParam(key, next.join(','))
+    },
+    [updateParam]
   )
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     updateParam('q', value)
   }, 400)
 
-  const clearFilters = useCallback(() => {
+  const clearFilters = () => {
     setSearchInput('')
+    setAdvancedOpen(false)
     router.push('/players')
-  }, [router])
+  }
 
   const selectClasses =
     'rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors'
@@ -92,14 +114,14 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         />
       </div>
 
-      {/* Position chips */}
+      {/* Position chips — multi-select */}
       <div className="flex flex-wrap gap-2">
         {POSITIONS.map((pos) => {
-          const isActive = position === pos
+          const isActive = activePositions.includes(pos)
           return (
             <button
               key={pos}
-              onClick={() => updateParam('position', isActive ? '' : pos)}
+              onClick={() => toggleMultiParam('position', pos, activePositions)}
               className={`filter-chip ${isActive ? POSITION_CHIP_COLORS[pos] ?? 'active' : ''}`}
             >
               {t(`positions.${pos}`)}
@@ -108,32 +130,50 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         })}
       </div>
 
+      {/* Club chips — multi-select */}
+      {clubs.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {clubs.map((c) => {
+            const isActive = activeClubs.includes(c.id)
+            return (
+              <button
+                key={c.id}
+                onClick={() => toggleMultiParam('club', c.id, activeClubs)}
+                className={`filter-chip ${isActive ? 'bg-accent text-white border-accent' : ''}`}
+              >
+                {lang === 'ka' ? c.name_ka : c.name}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {/* Other filters row */}
       <div className="flex flex-wrap gap-2">
-        {/* Age range */}
+        {/* Age min */}
         <select
-          value={age}
-          onChange={(e) => updateParam('age', e.target.value)}
+          value={ageMin}
+          onChange={(e) => updateParam('age_min', e.target.value)}
           className={`${selectClasses} w-auto`}
         >
-          <option value="">{t('players.allAges')}</option>
-          {AGE_RANGES.map((range) => (
-            <option key={range.value} value={range.value}>
-              {range.label}
+          <option value="">{t('players.ageMin')}</option>
+          {AGE_OPTIONS.map((age) => (
+            <option key={age} value={age}>
+              {age}
             </option>
           ))}
         </select>
 
-        {/* Club */}
+        {/* Age max */}
         <select
-          value={club}
-          onChange={(e) => updateParam('club', e.target.value)}
+          value={ageMax}
+          onChange={(e) => updateParam('age_max', e.target.value)}
           className={`${selectClasses} w-auto`}
         >
-          <option value="">{t('players.allClubs')}</option>
-          {clubs.map((c) => (
-            <option key={c.id} value={c.id}>
-              {lang === 'ka' ? c.name_ka : c.name}
+          <option value="">{t('players.ageMax')}</option>
+          {AGE_OPTIONS.map((age) => (
+            <option key={age} value={age}>
+              {age}
             </option>
           ))}
         </select>
@@ -173,6 +213,17 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           <option value="most_viewed">{t('players.sortMostViewed')}</option>
         </select>
 
+        {/* Advanced filters toggle */}
+        <button
+          onClick={() => setAdvancedOpen(!advancedOpen)}
+          className={`filter-chip ${advancedOpen || hasHeightFilters ? 'bg-accent/10 text-accent border-accent/30' : ''}`}
+        >
+          <svg className="mr-1 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+          </svg>
+          {t('players.advancedFilters')}
+        </button>
+
         {/* Clear filters */}
         {hasFilters && (
           <button
@@ -186,6 +237,37 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           </button>
         )}
       </div>
+
+      {/* Advanced filters — height range */}
+      {advancedOpen && (
+        <div className="flex flex-wrap gap-2 rounded-lg border border-border/50 bg-background-secondary/50 p-3">
+          <select
+            value={heightMin}
+            onChange={(e) => updateParam('height_min', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.heightMin')}</option>
+            {HEIGHT_OPTIONS.map((h) => (
+              <option key={h} value={h}>
+                {h} {t('players.cm')}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={heightMax}
+            onChange={(e) => updateParam('height_max', e.target.value)}
+            className={`${selectClasses} w-auto`}
+          >
+            <option value="">{t('players.heightMax')}</option>
+            {HEIGHT_OPTIONS.map((h) => (
+              <option key={h} value={h}>
+                {h} {t('players.cm')}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   )
 }

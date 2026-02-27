@@ -20,16 +20,11 @@ export const POSITION_BORDER_CLASSES: Record<string, string> = {
   ST: 'border-t-pos-st',
 }
 
-export const AGE_RANGES = [
-  { value: 'u16', label: 'U16', min: 0, max: 15 },
-  { value: 'u17', label: 'U17', min: 16, max: 16 },
-  { value: 'u18', label: 'U18', min: 17, max: 17 },
-  { value: 'u19', label: 'U19', min: 18, max: 18 },
-  { value: '19+', label: '19+', min: 19, max: 99 },
-] as const
+export const AGE_MIN_DEFAULT = 14
+export const AGE_MAX_DEFAULT = 25
+export const AGE_OPTIONS = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const
 
-export const AGE_RANGE_MAP: Record<string, { min: number; max: number }> =
-  Object.fromEntries(AGE_RANGES.map((r) => [r.value, { min: r.min, max: r.max }]))
+export const HEIGHT_OPTIONS = [150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200] as const
 
 export const POPULAR_VIEWS_THRESHOLD = 20
 
