@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useAuth } from '@/context/AuthContext'
+import { createClient } from '@/lib/supabase/client'
 
 const NAV_ICONS: Record<string, string> = {
   '/players': 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
@@ -50,6 +51,15 @@ export function Navbar() {
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    if (!user || userRole === 'platform_admin') return
+    const supabase = createClient()
+    supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+      if (!error && data != null) setUnreadCount(Number(data))
+    })
+  }, [user, userRole])
 
   async function handleLogout() {
     if (loggingOut) return
@@ -113,6 +123,11 @@ export function Navbar() {
                 {userRole && (
                   <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-accent">
                     {t(ROLE_TRANSLATION_KEYS[userRole] ?? 'roles.scout')}
+                  </span>
+                )}
+                {unreadCount > 0 && (
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}
               </Link>

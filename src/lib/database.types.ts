@@ -933,6 +933,7 @@ export type Database = {
           weekly_views: number
         }[]
       }
+      get_total_unread_count: { Args: never; Returns: number }
       get_user_club_id: { Args: never; Returns: string }
       get_user_role: { Args: never; Returns: string }
       mark_messages_read: {

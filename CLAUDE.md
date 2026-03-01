@@ -383,7 +383,7 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 - [x] Supabase Storage bucket: chat-attachments (private)
 - [x] API: create/list conversations, send/load messages, mark read, file upload
 - [x] Anti-spam: rate limits + block check
-- [ ] Scout inbox + admin inbox pages
+- [x] Scout inbox + admin inbox pages
 - [ ] Conversation thread: real-time messages, auto-scroll, date dividers, read indicators
 - [ ] Chat input: text + file attach + player reference embed
 - [ ] File attachments: upload, display images inline, docs as downloads

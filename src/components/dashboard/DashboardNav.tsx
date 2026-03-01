@@ -7,7 +7,7 @@ import { useLang } from '@/hooks/useLang'
 const links = [
   { href: '/dashboard', labelKey: 'dashboard.title' },
   { href: '/dashboard/shortlist', labelKey: 'dashboard.shortlist' },
-  { href: '/dashboard/requests', labelKey: 'dashboard.requests' },
+  { href: '/dashboard/messages', labelKey: 'dashboard.messages' },
 ]
 
 export function DashboardNav() {
@@ -17,7 +17,9 @@ export function DashboardNav() {
   return (
     <nav className="flex gap-1 overflow-x-auto border-b border-border pb-px">
       {links.map((link) => {
-        const isActive = pathname === link.href
+        const isActive = link.href === '/dashboard'
+          ? pathname === '/dashboard'
+          : pathname.startsWith(link.href)
         return (
           <Link
             key={link.href}
