@@ -454,21 +454,21 @@ This phase is deferred until after launch — the platform works correctly for b
 - [x] All action result checks use proper narrowing
 
 ### Phase C (Performance)
-- [ ] Player view counts use indexed/materialized aggregation
-- [ ] Age filtering happens at database level, not client-side
-- [ ] Player profile loads in fewer than 5 queries
-- [ ] Translations file is split by domain
+- [x] Player view counts use indexed/materialized aggregation
+- [x] Age filtering happens at database level, not client-side
+- [x] Player profile loads in fewer than 5 queries
+- [x] Translations file is split by domain
 
 ### Phase D (Dead Code)
-- [ ] All dead contact request UI files deleted
-- [ ] All unused types/constants removed
-- [ ] `npm run build` passes with zero warnings
+- [x] All dead contact request UI files deleted
+- [x] All unused types/constants removed
+- [x] `npm run build` passes with zero warnings
 
 ### Phase E (Deduplication)
-- [ ] Transfer logic shared between admin and platform
-- [ ] Club history operations extracted to helpers
-- [ ] UUID validation uses single approach everywhere
-- [ ] Error strings use translation keys everywhere
+- [x] Transfer logic shared between admin and platform
+- [x] Club history operations extracted to helpers
+- [x] UUID validation uses single approach everywhere
+- [x] Error strings use translation keys everywhere
 
 ### Phase F (Architecture)
 - [ ] Transfer accept is atomic (database transaction)
