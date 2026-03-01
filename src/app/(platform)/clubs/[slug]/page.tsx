@@ -10,6 +10,7 @@ import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
 import { trackPageView } from '@/lib/analytics'
 import { ClubSilhouette } from '@/components/ui/ClubSilhouette'
+import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
 
 interface ClubPageProps {
   params: Promise<{ slug: string }>
@@ -49,6 +50,18 @@ export default async function ClubPage({ params }: ClubPageProps) {
   if (error || !club) notFound()
 
   trackPageView({ pageType: 'club', entityId: club.id, entitySlug: club.slug })
+
+  // Fetch user + role for MessageAcademyButton
+  const { data: { user } } = await supabase.auth.getUser()
+  let userRole: string | null = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    userRole = profile?.role ?? null
+  }
 
   // Fetch players for this club
   const { data: players, error: playersError } = await supabase
@@ -110,6 +123,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
               </>
             )}
           </div>
+          {user && userRole === 'scout' && (
+            <div className="mt-3">
+              <MessageAcademyButton clubId={club.id} />
+            </div>
+          )}
         </div>
       </div>
 

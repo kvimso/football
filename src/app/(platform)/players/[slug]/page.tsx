@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
-import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
+import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
 import { trackPageView } from '@/lib/analytics'
 import { trackPlayerView } from '@/app/actions/player-views'
 import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
@@ -51,7 +51,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       preferred_foot, height_cm, weight_kg, photo_url, jersey_number,
       scouting_report, scouting_report_ka, status, is_featured,
       platform_id,
-      club:clubs!players_club_id_fkey ( name, name_ka, slug ),
+      club:clubs!players_club_id_fkey ( id, name, name_ka, slug ),
       skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
       season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, shots_on_target, tackles, interceptions, clean_sheets, distance_covered_km, sprints ),
       match_stats:match_player_stats (
@@ -118,10 +118,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   if (authError) console.error('Failed to get user:', authError.message)
 
   let isShortlisted = false
-  let hasContactRequest = false
+  let userRole: string | null = null
 
   if (user) {
-    const [shortlistResult, contactResult] = await Promise.all([
+    const [shortlistResult, profileResult] = await Promise.all([
       supabase
         .from('shortlists')
         .select('id')
@@ -129,18 +129,17 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         .eq('player_id', player.id)
         .maybeSingle(),
       supabase
-        .from('contact_requests')
-        .select('id')
-        .eq('scout_id', user.id)
-        .eq('player_id', player.id)
-        .maybeSingle(),
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single(),
     ])
 
     if (shortlistResult.error) console.error('Failed to check shortlist:', shortlistResult.error.message)
     isShortlisted = !!shortlistResult.data
 
-    if (contactResult.error) console.error('Failed to check contact request:', contactResult.error.message)
-    hasContactRequest = !!contactResult.data
+    if (profileResult.error) console.error('Failed to fetch profile:', profileResult.error.message)
+    userRole = profileResult.data?.role ?? null
   }
 
   const age = calculateAge(player.date_of_birth)
@@ -279,14 +278,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             {user && (
               <div className="mt-4 flex flex-wrap gap-3">
                 <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
-                {!isFreeAgent && (
-                  !hasContactRequest ? (
-                    <ContactRequestForm playerId={player.id} />
-                  ) : (
-                    <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
-                      {t('players.requestSent')}
-                    </span>
-                  )
+                {!isFreeAgent && userRole === 'scout' && club?.id && (
+                  <MessageAcademyButton clubId={club.id} />
                 )}
                 <Link
                   href={`/players/compare?p1=${player.slug}`}

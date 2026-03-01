@@ -388,11 +388,11 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 - [x] Chat input: text + file attach + player reference embed
 - [x] File attachments: upload, display images inline, docs as downloads
 - [x] Player reference: search modal, embedded player card in message
-- [ ] "Message Academy" button on player profiles and club pages
-- [ ] Block/unblock system for academy admins
-- [ ] Remove old contact request UI (keep table for historical data)
+- [x] "Message Academy" button on player profiles and club pages
+- [x] Block/unblock system for academy admins
+- [x] Remove old contact request UI (keep table for historical data)
 - [ ] Update navigation: Requests → Messages
-- [ ] Empty states, loading states, error handling
+- [x] Empty states, loading states, error handling
 - [ ] Global unread badge in navigation
 - [ ] Mobile responsive
 - [ ] i18n: all chat strings bilingual

@@ -36,18 +36,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'errors.conversationNotFound' }, { status: 404 })
   }
 
-  // Block check
+  // Block check — neither party can send when conversation is blocked
   const { data: blocks } = await supabase
     .from('conversation_blocks')
     .select('blocked_by')
     .eq('conversation_id', conversation_id)
 
   if (blocks && blocks.length > 0) {
-    // If the block was NOT by the current user, they are blocked
-    const blockedByOther = blocks.some(b => b.blocked_by !== user.id)
-    if (blockedByOther) {
-      return NextResponse.json({ error: 'errors.conversationBlocked' }, { status: 403 })
-    }
+    return NextResponse.json({ error: 'errors.conversationBlocked' }, { status: 403 })
   }
 
   // Rate limit: max 30 messages per user per conversation per hour

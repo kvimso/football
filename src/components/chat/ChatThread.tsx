@@ -31,6 +31,10 @@ export function ChatThread({
   const [hasMore, setHasMore] = useState(hasMoreInitial)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [newMessageCount, setNewMessageCount] = useState(0)
+  const [isBlocked, setIsBlocked] = useState(conversation.is_blocked)
+  const [blockedByMe, setBlockedByMe] = useState(conversation.blocked_by_me)
+  const [blockConfirming, setBlockConfirming] = useState(false)
+  const [blockLoading, setBlockLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
@@ -39,6 +43,58 @@ export function ChatThread({
   const displayName = lang === 'ka' && conversation.club.name_ka
     ? conversation.club.name_ka
     : (userRole === 'scout' ? conversation.club.name : conversation.other_party.full_name)
+
+  // Block/unblock handler
+  const handleBlockAction = useCallback(async () => {
+    if (blockedByMe && !blockConfirming) {
+      // Unblock — no confirmation needed
+      setBlockLoading(true)
+      try {
+        const res = await fetch(`/api/conversations/${conversation.id}/block`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'unblock' }),
+        })
+        if (res.ok) {
+          setIsBlocked(false)
+          setBlockedByMe(false)
+        }
+      } finally {
+        setBlockLoading(false)
+      }
+      return
+    }
+
+    if (!blockConfirming) {
+      // First click — show confirmation
+      setBlockConfirming(true)
+      return
+    }
+
+    // Second click — confirm block
+    setBlockLoading(true)
+    setBlockConfirming(false)
+    try {
+      const res = await fetch(`/api/conversations/${conversation.id}/block`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'block' }),
+      })
+      if (res.ok) {
+        setIsBlocked(true)
+        setBlockedByMe(true)
+      }
+    } finally {
+      setBlockLoading(false)
+    }
+  }, [conversation.id, blockedByMe, blockConfirming])
+
+  // Cancel block confirmation on click outside (after a timeout)
+  useEffect(() => {
+    if (!blockConfirming) return
+    const timer = setTimeout(() => setBlockConfirming(false), 3000)
+    return () => clearTimeout(timer)
+  }, [blockConfirming])
 
   // Scroll to bottom helper
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
@@ -365,7 +421,7 @@ export function ChatThread({
   const dateGroups = groupMessagesByDate(messages)
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col">
+    <div className="flex h-[calc(100dvh-11rem)] flex-col">
       {/* Thread Header */}
       <div className="flex items-center gap-3 border-b border-border bg-background px-4 py-3">
         <Link
@@ -395,11 +451,35 @@ export function ChatThread({
           </div>
           <div className="min-w-0">
             <h2 className="truncate text-sm font-semibold text-foreground">{displayName}</h2>
-            {conversation.is_blocked && (
+            {isBlocked && (
               <span className="text-xs text-red-400">{t('chat.blocked')}</span>
             )}
           </div>
         </div>
+
+        {userRole === 'academy_admin' && (
+          <button
+            onClick={handleBlockAction}
+            disabled={blockLoading}
+            className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
+              blockConfirming
+                ? 'border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20'
+                : isBlocked && blockedByMe
+                  ? 'border-border text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+                  : 'border-border text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+            }`}
+          >
+            {blockLoading ? (
+              <span className="h-3 w-3 animate-spin rounded-full border border-foreground-muted border-t-transparent inline-block" />
+            ) : blockConfirming ? (
+              t('chat.confirmBlock')
+            ) : isBlocked && blockedByMe ? (
+              t('chat.unblock')
+            ) : (
+              t('chat.block')
+            )}
+          </button>
+        )}
       </div>
 
       {/* Message List */}
@@ -482,8 +562,8 @@ export function ChatThread({
         onSendText={sendTextMessage}
         onSendFile={sendFileMessage}
         onSendPlayerRef={sendPlayerRefMessage}
-        isBlocked={conversation.is_blocked}
-        blockedByMe={conversation.blocked_by_me}
+        isBlocked={isBlocked}
+        blockedByMe={blockedByMe}
         lang={lang}
         t={t}
       />
