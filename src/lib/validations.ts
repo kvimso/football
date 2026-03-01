@@ -88,6 +88,12 @@ export const realtimeMessageSchema = z.object({
   created_at: z.string(),
 })
 
+// Validate Realtime UPDATE payload (e.g. read_at changes)
+export const realtimeMessageUpdateSchema = z.object({
+  id: z.string().uuid(),
+  read_at: z.string().nullable(),
+})
+
 export const loadMessagesSchema = z.object({
   conversation_id: z.string().uuid(),
   before: z.string().uuid().optional(),

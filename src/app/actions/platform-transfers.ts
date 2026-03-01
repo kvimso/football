@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 import { getPlatformAdminContext } from '@/lib/auth'
-import { todayDateString } from '@/lib/utils'
 import { uuidSchema } from '@/lib/validations'
+import { executeTransferAccept, executeTransferDecline } from '@/lib/transfer-helpers'
 
 export async function platformAcceptTransfer(requestId: string) {
   if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
@@ -19,55 +19,8 @@ export async function platformAcceptTransfer(requestId: string) {
   if (fetchErr || !request) return { error: 'errors.requestNotFound' }
   if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
-  // Accept transfer
-  const { error: reqErr } = await admin
-    .from('transfer_requests')
-    .update({ status: 'accepted' as const, resolved_at: new Date().toISOString() })
-    .eq('id', requestId)
-
-  if (reqErr) return { error: reqErr.message }
-
-  // Cancel other pending requests for this player
-  const { error: declineErr } = await admin
-    .from('transfer_requests')
-    .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
-    .eq('player_id', request.player_id)
-    .eq('status', 'pending')
-    .neq('id', requestId)
-
-  if (declineErr) console.error('Failed to decline other transfer requests:', declineErr.message)
-
-  // Transfer player
-  const { error: playerErr } = await admin
-    .from('players')
-    .update({ club_id: request.to_club_id, updated_at: new Date().toISOString() })
-    .eq('id', request.player_id)
-
-  if (playerErr) return { error: playerErr.message }
-
-  // Update club history
-  if (request.from_club_id) {
-    const { error: closeErr } = await admin
-      .from('player_club_history')
-      .update({ left_at: todayDateString() })
-      .eq('player_id', request.player_id)
-      .eq('club_id', request.from_club_id)
-      .is('left_at', null)
-
-    if (closeErr) console.error('Failed to close club history:', closeErr.message)
-  }
-
-  if (request.to_club_id) {
-    const { error: histErr } = await admin
-      .from('player_club_history')
-      .insert({
-        player_id: request.player_id,
-        club_id: request.to_club_id,
-        joined_at: todayDateString(),
-      })
-
-    if (histErr) console.error('Failed to insert club history:', histErr.message)
-  }
+  const result = await executeTransferAccept(admin, request.id)
+  if (result.error) return { error: result.error }
 
   revalidatePath('/platform/transfers')
   revalidatePath('/platform/players')
@@ -89,12 +42,8 @@ export async function platformDeclineTransfer(requestId: string) {
   if (fetchErr || !request) return { error: 'errors.requestNotFound' }
   if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
-  const { error: reqErr } = await admin
-    .from('transfer_requests')
-    .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
-    .eq('id', requestId)
-
-  if (reqErr) return { error: reqErr.message }
+  const result = await executeTransferDecline(admin, requestId)
+  if (result.error) return { error: result.error }
 
   revalidatePath('/platform/transfers')
   return { success: true }

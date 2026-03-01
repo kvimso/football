@@ -44,7 +44,10 @@ export async function approveRequest(requestId: string, responseMessage?: string
     })
     .eq('id', requestId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[admin-requests] Approve error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Send email notification to scout (fire-and-forget)
   sendRequestStatusEmail(requestId, 'approved')
@@ -70,7 +73,10 @@ export async function rejectRequest(requestId: string) {
     })
     .eq('id', requestId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[admin-requests] Reject error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Send email notification to scout (fire-and-forget)
   sendRequestStatusEmail(requestId, 'rejected')

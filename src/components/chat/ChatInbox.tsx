@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -29,6 +29,12 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
   }, [conversations])
 
   // Realtime inbox updates — deferred to survive React StrictMode double-mount
+  // Subscribe only to user's conversations + new conversation inserts
+  const conversationIdsRef = useRef<string[]>(conversations.map(c => c.id))
+  useEffect(() => {
+    conversationIdsRef.current = liveConversations.map(c => c.id)
+  }, [liveConversations])
+
   useEffect(() => {
     let cancelled = false
     const supabase = createClient()
@@ -53,19 +59,27 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
 
     const timer = setTimeout(() => {
       if (cancelled) return
-      activeChannel = supabase
-        .channel('inbox-updates')
-        .on('postgres_changes', {
+      const ids = conversationIdsRef.current
+      const channelBuilder = supabase.channel('inbox-updates')
+
+      // Only subscribe to messages in user's conversations
+      if (ids.length > 0) {
+        channelBuilder.on('postgres_changes', {
           event: '*',
           schema: 'public',
           table: 'messages',
+          filter: `conversation_id=in.(${ids.join(',')})`,
         }, refetchConversations)
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'conversations',
-        }, refetchConversations)
-        .subscribe()
+      }
+
+      // Always listen for new conversations (will refetch full list)
+      channelBuilder.on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'conversations',
+      }, refetchConversations)
+
+      activeChannel = channelBuilder.subscribe()
     }, 0)
 
     return () => {

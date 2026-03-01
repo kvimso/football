@@ -6,6 +6,7 @@ import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { RadarChart } from './RadarChart'
 import { CompareRadarChart } from './CompareRadarChart'
+import { PlayerSearchSelect } from './PlayerSearchSelect'
 import type { Position } from '@/lib/types'
 
 interface PlayerData {
@@ -24,14 +25,13 @@ interface PlayerData {
 }
 
 interface CompareViewProps {
-  allPlayers: { slug: string; name: string; name_ka: string; position: Position }[]
   player1: PlayerData | null
   player2: PlayerData | null
   selectedP1: string
   selectedP2: string
 }
 
-export function CompareView({ allPlayers, player1, player2, selectedP1, selectedP2 }: CompareViewProps) {
+export function CompareView({ player1, player2, selectedP1, selectedP2 }: CompareViewProps) {
   const router = useRouter()
   const { t, lang } = useLang()
 
@@ -56,8 +56,11 @@ export function CompareView({ allPlayers, player1, player2, selectedP1, selected
   }
 
   const radarLabels = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(k => t('skills.' + k))
-  const selectClasses = 'w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent transition-colors'
   const bothSelected = player1 && player2
+
+  // Build display labels from loaded player data
+  const p1Label = player1 ? `${lang === 'ka' ? player1.name_ka : player1.name} (${player1.position})` : ''
+  const p2Label = player2 ? `${lang === 'ka' ? player2.name_ka : player2.name} (${player2.position})` : ''
 
   return (
     <div>
@@ -67,24 +70,20 @@ export function CompareView({ allPlayers, player1, player2, selectedP1, selected
         {bothSelected && <CopyLinkButton t={t} />}
       </div>
 
-      {/* Player selectors */}
+      {/* Player selectors — async search instead of full player list */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-8">
-        <select value={selectedP1} onChange={(e) => updatePlayer('p1', e.target.value)} className={selectClasses}>
-          <option value="">{t('dashboard.selectPlayers')}</option>
-          {allPlayers.map((p) => (
-            <option key={p.slug} value={p.slug} disabled={p.slug === selectedP2}>
-              {lang === 'ka' ? p.name_ka : p.name} ({p.position})
-            </option>
-          ))}
-        </select>
-        <select value={selectedP2} onChange={(e) => updatePlayer('p2', e.target.value)} className={selectClasses}>
-          <option value="">{t('dashboard.selectPlayers')}</option>
-          {allPlayers.map((p) => (
-            <option key={p.slug} value={p.slug} disabled={p.slug === selectedP1}>
-              {lang === 'ka' ? p.name_ka : p.name} ({p.position})
-            </option>
-          ))}
-        </select>
+        <PlayerSearchSelect
+          value={selectedP1}
+          disabledSlug={selectedP2}
+          onSelect={(slug) => updatePlayer('p1', slug)}
+          selectedLabel={p1Label}
+        />
+        <PlayerSearchSelect
+          value={selectedP2}
+          disabledSlug={selectedP1}
+          onSelect={(slug) => updatePlayer('p2', slug)}
+          selectedLabel={p2Label}
+        />
       </div>
 
       {bothSelected ? (

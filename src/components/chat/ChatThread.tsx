@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
 import { groupMessagesByDate, isSameTimeGroup } from '@/lib/chat-utils'
-import { realtimeMessageSchema } from '@/lib/validations'
+import { realtimeMessageSchema, realtimeMessageUpdateSchema } from '@/lib/validations'
 import { DateDivider } from '@/components/chat/DateDivider'
 import { MessageBubble } from '@/components/chat/MessageBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
@@ -251,9 +251,14 @@ export function ChatThread({
           table: 'messages',
           filter: `conversation_id=eq.${conversation.id}`,
         }, (payload) => {
-          const updated = payload.new as Record<string, unknown>
+          const result = realtimeMessageUpdateSchema.safeParse(payload.new)
+          if (!result.success) {
+            console.warn('Malformed realtime update:', result.error)
+            return
+          }
+          const updated = result.data
           setMessages(prev => prev.map(m =>
-            m.id === updated.id ? { ...m, read_at: updated.read_at as string | null } : m
+            m.id === updated.id ? { ...m, read_at: updated.read_at } : m
           ))
         })
         .subscribe((status) => {
@@ -277,9 +282,12 @@ export function ChatThread({
     }
   }, [conversation.id, userId, scrollToBottom])
 
-  // Load older messages
+  // Load older messages — use ref to avoid recreating callback on every message change
+  const messagesRef = useRef(messages)
+  messagesRef.current = messages
+
   const loadOlder = useCallback(async () => {
-    const oldestId = messages[0]?.id
+    const oldestId = messagesRef.current[0]?.id
     if (!oldestId || !hasMore || isLoadingMore || oldestId.startsWith('temp-')) return
     setIsLoadingMore(true)
 
@@ -302,7 +310,7 @@ export function ChatThread({
     } finally {
       setIsLoadingMore(false)
     }
-  }, [messages, hasMore, isLoadingMore, conversation.id])
+  }, [hasMore, isLoadingMore, conversation.id])
 
   // Unified send message helper (optimistic update + POST)
   const sendMessage = useCallback(async (

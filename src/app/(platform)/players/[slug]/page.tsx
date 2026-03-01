@@ -76,45 +76,68 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   void trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
   void trackPlayerView(player.id)
 
-  // Fetch view counts for this player using regular client (RLS allows authenticated reads)
+  const age = calculateAge(player.date_of_birth)
+  const club = unwrapRelation(player.club)
+  const skills = unwrapRelation(player.skills)
+  const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
+  const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
+    ...ms,
+    match: unwrapRelation(ms.match),
+  }))
+  const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
+    .map((h) => ({
+      ...h,
+      club: unwrapRelation(h.club),
+    }))
+    .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
+  const isFreeAgent = player.status === 'free_agent'
+
+  // Build similar players query
+  const dob = new Date(player.date_of_birth)
+  const dobMinus2 = new Date(dob)
+  dobMinus2.setFullYear(dob.getFullYear() - 2)
+  const dobPlus2 = new Date(dob)
+  dobPlus2.setFullYear(dob.getFullYear() + 2)
+
+  const similarLimit = (player.club && !isFreeAgent) ? 8 : 4
+
+  // Run view counts, auth, and similar players in parallel (3 queries instead of sequential)
+  const [viewCountResult, authResult, similarResult] = await Promise.all([
+    supabase.rpc('get_player_view_counts', { player_ids: [player.id] }).then(
+      (res) => res,
+      () => ({ data: null, error: { message: 'RPC failed' } }),
+    ),
+    supabase.auth.getUser(),
+    supabase
+      .from('players')
+      .select(`
+        slug, name, name_ka, position, date_of_birth, height_cm,
+        preferred_foot, is_featured, photo_url, status,
+        club:clubs!players_club_id_fkey ( name, name_ka ),
+        season_stats:player_season_stats ( season, goals, assists, matches_played )
+      `)
+      .eq('position', player.position)
+      .neq('id', player.id)
+      .in('status', ['active', 'free_agent'])
+      .gte('date_of_birth', dobMinus2.toISOString().split('T')[0])
+      .lte('date_of_birth', dobPlus2.toISOString().split('T')[0])
+      .limit(similarLimit),
+  ])
+
+  // Extract view counts
   let totalViews = 0
   let recentViews = 0
   let previousViews = 0
-  try {
-    const now = new Date()
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
-    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
-
-    const [totalResult, recentResult, previousResult] = await Promise.all([
-      supabase
-        .from('player_views')
-        .select('id', { count: 'exact', head: true })
-        .eq('player_id', player.id),
-      supabase
-        .from('player_views')
-        .select('id', { count: 'exact', head: true })
-        .eq('player_id', player.id)
-        .gte('viewed_at', sevenDaysAgo),
-      supabase
-        .from('player_views')
-        .select('id', { count: 'exact', head: true })
-        .eq('player_id', player.id)
-        .gte('viewed_at', fourteenDaysAgo)
-        .lt('viewed_at', sevenDaysAgo),
-    ])
-
-    if (!totalResult.error) totalViews = totalResult.count ?? 0
-    if (!recentResult.error) recentViews = recentResult.count ?? 0
-    if (!previousResult.error) previousViews = previousResult.count ?? 0
-  } catch {
-    // View counts are non-critical
+  if (!viewCountResult.error && viewCountResult.data?.[0]) {
+    totalViews = Number(viewCountResult.data[0].total_views)
+    recentViews = Number(viewCountResult.data[0].weekly_views)
+    previousViews = Number(viewCountResult.data[0].prev_week_views)
   }
-
   const isTrending = recentViews > previousViews && recentViews > 0
   const isPopular = totalViews >= POPULAR_VIEWS_THRESHOLD
 
-  // Check if user is logged in and has shortlisted/contacted this player
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  // Extract auth + user data
+  const { data: { user }, error: authError } = authResult
   if (authError) console.error('Failed to get user:', authError.message)
 
   let isShortlisted = false
@@ -142,50 +165,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     userRole = profileResult.data?.role ?? null
   }
 
-  const age = calculateAge(player.date_of_birth)
-  const club = unwrapRelation(player.club)
-  const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
-  const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
-    ...ms,
-    match: unwrapRelation(ms.match),
-  }))
-  const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
-    .map((h) => ({
-      ...h,
-      club: unwrapRelation(h.club),
-    }))
-    .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
-  const isFreeAgent = player.status === 'free_agent'
-
-  // Fetch similar players: same position, similar age (±2 years), different club
-  const dob = new Date(player.date_of_birth)
-  const dobMinus2 = new Date(dob)
-  dobMinus2.setFullYear(dob.getFullYear() - 2)
-  const dobPlus2 = new Date(dob)
-  dobPlus2.setFullYear(dob.getFullYear() + 2)
-
-  let similarQuery = supabase
-    .from('players')
-    .select(`
-      slug, name, name_ka, position, date_of_birth, height_cm,
-      preferred_foot, is_featured, photo_url, status,
-      club:clubs!players_club_id_fkey ( name, name_ka ),
-      season_stats:player_season_stats ( season, goals, assists, matches_played )
-    `)
-    .eq('position', player.position)
-    .neq('id', player.id)
-    .in('status', ['active', 'free_agent'])
-    .gte('date_of_birth', dobMinus2.toISOString().split('T')[0])
-    .lte('date_of_birth', dobPlus2.toISOString().split('T')[0])
-    .limit(4)
-
-  // Fetch extra so we can prefer players from different clubs
-  if (player.club && !isFreeAgent) {
-    similarQuery = similarQuery.limit(8)
-  }
-
-  const { data: rawSimilar } = await similarQuery
+  // Extract similar players
+  const rawSimilar = similarResult.data
 
   // Process similar players — prefer different clubs, take up to 4
   const similarPlayers = (rawSimilar ?? [])

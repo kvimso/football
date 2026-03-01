@@ -31,6 +31,15 @@ export const POSITION_LEFT_BORDER_CLASSES: Record<Position, string> = {
   ST: 'border-l-pos-st',
 }
 
+export const POSITION_GLOW_CLASSES: Record<Position, string> = {
+  GK: 'bg-pos-gk/20 text-pos-gk border-pos-gk/30 shadow-[0_0_8px_rgba(245,158,11,0.15)]',
+  DEF: 'bg-pos-def/20 text-pos-def border-pos-def/30 shadow-[0_0_8px_rgba(59,130,246,0.15)]',
+  MID: 'bg-pos-mid/20 text-pos-mid border-pos-mid/30 shadow-[0_0_8px_rgba(6,182,212,0.15)]',
+  ATT: 'bg-pos-att/20 text-pos-att border-pos-att/30 shadow-[0_0_8px_rgba(168,85,247,0.15)]',
+  WNG: 'bg-pos-wng/20 text-pos-wng border-pos-wng/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]',
+  ST: 'bg-pos-st/20 text-pos-st border-pos-st/30 shadow-[0_0_8px_rgba(239,68,68,0.15)]',
+}
+
 export const AGE_MIN_DEFAULT = 14
 export const AGE_MAX_DEFAULT = 25
 export const AGE_OPTIONS = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const
@@ -56,7 +65,7 @@ export const CHAT_LIMITS = {
   MAX_FILE_SIZE_BYTES: 10 * 1024 * 1024, // 10MB
   MAX_MESSAGE_LENGTH: 5000,
   MESSAGES_PER_PAGE: 50,
-  SIGNED_URL_EXPIRY_SECONDS: 7 * 24 * 60 * 60, // 7 days
+  SIGNED_URL_EXPIRY_SECONDS: 60 * 60, // 1 hour
 } as const
 
 export const ALLOWED_CHAT_FILE_TYPES = [

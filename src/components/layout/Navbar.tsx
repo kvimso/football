@@ -60,40 +60,21 @@ export function Navbar() {
     let cancelled = false
     const supabase = createClient()
 
+    const fetchUnread = () => {
+      supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+        if (!error && data != null && !cancelled) setUnreadCount(Number(data))
+      })
+    }
+
     // Initial fetch
-    supabase.rpc('get_total_unread_count').then(({ data, error }) => {
-      if (!error && data != null && !cancelled) setUnreadCount(Number(data))
-    })
+    fetchUnread()
 
-    // Realtime subscription — deferred to survive React StrictMode double-mount
-    let debounceTimer: NodeJS.Timeout
-    let activeChannel: ReturnType<typeof supabase.channel> | null = null
-
-    const timer = setTimeout(() => {
-      if (cancelled) return
-      activeChannel = supabase
-        .channel('navbar-unread')
-        .on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'messages',
-        }, () => {
-          clearTimeout(debounceTimer)
-          debounceTimer = setTimeout(() => {
-            if (cancelled) return
-            supabase.rpc('get_total_unread_count').then(({ data, error }) => {
-              if (!error && data != null && !cancelled) setUnreadCount(Number(data))
-            })
-          }, 500)
-        })
-        .subscribe()
-    }, 0)
+    // Poll every 30s instead of subscribing to all messages globally
+    const interval = setInterval(fetchUnread, 30_000)
 
     return () => {
       cancelled = true
-      clearTimeout(timer)
-      clearTimeout(debounceTimer)
-      if (activeChannel) supabase.removeChannel(activeChannel)
+      clearInterval(interval)
     }
   }, [user, userRole])
 

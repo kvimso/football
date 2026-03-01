@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
   if (uploadError) {
     console.error('[chat-upload/POST] Upload error:', uploadError.message)
-    return NextResponse.json({ error: uploadError.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   // Generate signed URL
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
   if (signedUrlError || !signedUrlData) {
     console.error('[chat-upload/POST] Signed URL error:', signedUrlError?.message)
-    return NextResponse.json({ error: 'Failed to generate file URL' }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   return NextResponse.json({

@@ -3,7 +3,8 @@
 import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAdminContext } from '@/lib/auth'
-import { unwrapRelation, todayDateString, escapePostgrestValue } from '@/lib/utils'
+import { unwrapRelation, escapePostgrestValue } from '@/lib/utils'
+import { recordClubJoin, recordClubDeparture, executeTransferAccept, executeTransferDecline } from '@/lib/transfer-helpers'
 import { uuidSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { transferRequestReceivedEmail } from '@/lib/email-templates'
@@ -30,18 +31,13 @@ export async function releasePlayer(playerId: string) {
     .eq('club_id', clubId)
     .select('id')
 
-  if (updateErr) return { error: updateErr.message }
+  if (updateErr) {
+    console.error('[admin-transfers] Release error:', updateErr.message)
+    return { error: 'errors.serverError' }
+  }
   if (!released || released.length === 0) return { error: 'errors.playerNoLongerAtClub' }
 
-  // Close club history
-  const { error: historyErr } = await admin
-    .from('player_club_history')
-    .update({ left_at: todayDateString() })
-    .eq('player_id', playerId)
-    .eq('club_id', clubId)
-    .is('left_at', null)
-
-  if (historyErr) console.error('Failed to update club history:', historyErr.message)
+  await recordClubDeparture(admin, playerId, clubId)
 
   revalidatePath('/admin/players')
   revalidatePath('/admin')
@@ -80,7 +76,10 @@ export async function searchPlayersForTransfer(query: string) {
       .limit(10),
   ])
 
-  if (error) return { error: error.message, players: [] }
+  if (error) {
+    console.error('[admin-transfers] Search error:', error.message)
+    return { error: 'errors.serverError', players: [] }
+  }
   if (faError) console.error('Failed to search free agents:', faError.message)
 
   const allPlayers = [...(players ?? []), ...(freeAgents ?? [])]
@@ -128,7 +127,10 @@ export async function requestTransfer(playerId: string) {
       to_club_id: clubId,
     })
 
-  if (insertErr) return { error: insertErr.message }
+  if (insertErr) {
+    console.error('[admin-transfers] Transfer request insert error:', insertErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   const club = unwrapRelation(player.club)
 
@@ -183,18 +185,13 @@ export async function claimFreeAgent(playerId: string) {
     .eq('status', 'free_agent')
     .select('id')
 
-  if (updateErr) return { error: updateErr.message }
+  if (updateErr) {
+    console.error('[admin-transfers] Claim error:', updateErr.message)
+    return { error: 'errors.serverError' }
+  }
   if (!updated || updated.length === 0) return { error: 'errors.playerNoLongerFreeAgent' }
 
-  const { error: historyErr } = await admin
-    .from('player_club_history')
-    .insert({
-      player_id: playerId,
-      club_id: clubId,
-      joined_at: todayDateString(),
-    })
-
-  if (historyErr) console.error('Failed to insert club history:', historyErr.message)
+  await recordClubJoin(admin, playerId, clubId)
 
   revalidatePath('/admin')
   revalidatePath('/admin/players')
@@ -218,64 +215,8 @@ export async function acceptTransfer(requestId: string) {
   if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   const admin = createAdminClient()
-
-  // Verify player is still at this club before transferring
-  const { data: player } = await admin
-    .from('players')
-    .select('id, club_id')
-    .eq('id', request.player_id)
-    .single()
-
-  if (!player || player.club_id !== clubId) {
-    return { error: 'errors.playerNoLongerAtClub' }
-  }
-
-  // Update this request
-  const { error: reqErr } = await admin
-    .from('transfer_requests')
-    .update({ status: 'accepted' as const, resolved_at: new Date().toISOString() })
-    .eq('id', requestId)
-
-  if (reqErr) return { error: reqErr.message }
-
-  // Cancel all other pending transfer requests for this player
-  const { error: cancelErr } = await admin
-    .from('transfer_requests')
-    .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
-    .eq('player_id', request.player_id)
-    .eq('status', 'pending')
-    .neq('id', requestId)
-
-  if (cancelErr) console.error('Failed to cancel other pending requests:', cancelErr.message)
-
-  // Transfer player
-  const { error: playerErr } = await admin
-    .from('players')
-    .update({ club_id: request.to_club_id, updated_at: new Date().toISOString() })
-    .eq('id', request.player_id)
-
-  if (playerErr) return { error: playerErr.message }
-
-  // Close old club history
-  const { error: closeErr } = await admin
-    .from('player_club_history')
-    .update({ left_at: todayDateString() })
-    .eq('player_id', request.player_id)
-    .eq('club_id', request.from_club_id)
-    .is('left_at', null)
-
-  if (closeErr) console.error('Failed to close club history:', closeErr.message)
-
-  // Insert new club history
-  const { error: newHistErr } = await admin
-    .from('player_club_history')
-    .insert({
-      player_id: request.player_id,
-      club_id: request.to_club_id,
-      joined_at: todayDateString(),
-    })
-
-  if (newHistErr) console.error('Failed to insert new club history:', newHistErr.message)
+  const result = await executeTransferAccept(admin, request.id)
+  if (result.error) return { error: result.error }
 
   revalidatePath('/admin')
   revalidatePath('/admin/players')
@@ -299,12 +240,8 @@ export async function declineTransfer(requestId: string) {
   if (request.from_club_id !== clubId) return { error: 'errors.unauthorized' }
   if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
-  const { error: reqErr } = await supabase
-    .from('transfer_requests')
-    .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
-    .eq('id', requestId)
-
-  if (reqErr) return { error: reqErr.message }
+  const result = await executeTransferDecline(supabase, requestId)
+  if (result.error) return { error: result.error }
 
   revalidatePath('/admin')
   revalidatePath('/admin/transfers')

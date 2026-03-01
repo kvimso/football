@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge, unwrapRelation, escapePostgrestValue } from '@/lib/utils'
+import { unwrapRelation, escapePostgrestValue } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { FilterPanel } from '@/components/forms/FilterPanel'
@@ -150,11 +150,25 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     }
   }
 
-  // Pagination — when age filter or most_viewed sort is active we can't paginate at DB level
-  // because age is calculated client-side from DOB and most_viewed needs client-side reordering
-  const hasAgeFilter = !!(age_min || age_max)
+  // Age filter — converted to DOB boundaries for database-level filtering
+  if (age_min || age_max) {
+    const today = new Date()
+    let minAge = age_min ? parseInt(age_min, 10) : 0
+    let maxAge = age_max ? parseInt(age_max, 10) : 99
+    if (minAge > maxAge) [minAge, maxAge] = [maxAge, minAge]
+
+    // Players aged >= minAge: born on or before today minus minAge years
+    const maxDob = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate())
+    query = query.lte('date_of_birth', maxDob.toISOString().split('T')[0])
+
+    // Players aged <= maxAge: born after today minus (maxAge+1) years
+    const minDob = new Date(today.getFullYear() - (maxAge + 1), today.getMonth(), today.getDate())
+    query = query.gt('date_of_birth', minDob.toISOString().split('T')[0])
+  }
+
+  // Pagination — stat filters and most_viewed sort still need client-side processing
   const hasStatFilter = !!(goals_min || assists_min || matches_min || pass_acc_min)
-  const needsClientPagination = hasAgeFilter || hasStatFilter || sort === 'most_viewed'
+  const needsClientPagination = hasStatFilter || sort === 'most_viewed'
   if (!needsClientPagination) {
     const from = (page - 1) * PAGE_SIZE
     query = query.range(from, from + PAGE_SIZE - 1)
@@ -166,19 +180,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
 
   if (playersError) console.error('Failed to fetch players:', playersError.message)
 
-  // Filter by age client-side (DOB-based age ranges need date calculation)
   let filteredPlayers = players ?? []
-
-  if (hasAgeFilter) {
-    let minAge = age_min ? parseInt(age_min, 10) : 0
-    let maxAge = age_max ? parseInt(age_max, 10) : 99
-    // Swap if inverted
-    if (minAge > maxAge) [minAge, maxAge] = [maxAge, minAge]
-    filteredPlayers = filteredPlayers.filter((p) => {
-      const playerAge = calculateAge(p.date_of_birth)
-      return playerAge >= minAge && playerAge <= maxAge
-    })
-  }
 
   // Filter by stat minimums — client-side (latest season stats)
   if (hasStatFilter) {
@@ -199,19 +201,6 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     })
   }
 
-  // Fetch view counts via database aggregation (RPC replaces unbounded 10k-row fetch)
-  let viewCountMap = new Map<string, number>()
-  try {
-    const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts', {})
-    if (vcError) {
-      console.error('Failed to fetch view counts:', vcError.message)
-    } else if (viewCounts) {
-      viewCountMap = new Map(viewCounts.map(v => [v.player_id, Number(v.total_views)]))
-    }
-  } catch {
-    // Silently fail — view counts are non-critical
-  }
-
   // Map to card props — pick the latest season stats
   const allCards = filteredPlayers.map((p) => {
     const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
@@ -224,6 +213,24 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       season_stats: stats ?? null,
     }
   })
+
+  // Fetch view counts scoped to the current result set (avoids full-table scan)
+  let viewCountMap = new Map<string, number>()
+  const playerIds = allCards.map(p => p.id)
+  if (playerIds.length > 0) {
+    try {
+      const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts', {
+        player_ids: playerIds,
+      })
+      if (vcError) {
+        console.error('Failed to fetch view counts:', vcError.message)
+      } else if (viewCounts) {
+        viewCountMap = new Map(viewCounts.map((v: { player_id: string; total_views: number }) => [v.player_id, Number(v.total_views)]))
+      }
+    } catch {
+      // Silently fail — view counts are non-critical
+    }
+  }
 
   // Sort by most viewed if requested
   if (sort === 'most_viewed') {

@@ -10,14 +10,20 @@ export async function addToShortlist(playerId: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError) return { error: authError.message }
+  if (authError) {
+    console.error('[shortlist] Auth error:', authError.message)
+    return { error: 'errors.serverError' }
+  }
   if (!user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase
     .from('shortlists')
     .insert({ scout_id: user.id, player_id: playerId })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[shortlist] DB error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/dashboard/shortlist')
   revalidatePath('/players', 'layout')
@@ -28,7 +34,10 @@ export async function removeFromShortlist(playerId: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError) return { error: authError.message }
+  if (authError) {
+    console.error('[shortlist] Auth error:', authError.message)
+    return { error: 'errors.serverError' }
+  }
   if (!user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase
@@ -37,7 +46,10 @@ export async function removeFromShortlist(playerId: string) {
     .eq('scout_id', user.id)
     .eq('player_id', playerId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[shortlist] DB error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/dashboard/shortlist')
   revalidatePath('/players', 'layout')
@@ -49,7 +61,10 @@ export async function updateShortlistNote(playerId: string, notes: string) {
   if (!notesSchema.safeParse(notes).success) return { error: 'errors.notesTooLong' }
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError) return { error: authError.message }
+  if (authError) {
+    console.error('[shortlist] Auth error:', authError.message)
+    return { error: 'errors.serverError' }
+  }
   if (!user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase
@@ -58,7 +73,10 @@ export async function updateShortlistNote(playerId: string, notes: string) {
     .eq('scout_id', user.id)
     .eq('player_id', playerId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[shortlist] DB error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/dashboard/shortlist')
   return { success: true }

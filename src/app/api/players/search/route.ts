@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { escapePostgrestValue } from '@/lib/utils'
 
 // GET /api/players/search?q=query&limit=10
 export async function GET(request: NextRequest) {
@@ -15,25 +16,34 @@ export async function GET(request: NextRequest) {
   const limitParam = parseInt(searchParams.get('limit') ?? '10', 10)
   const limit = Math.min(Math.max(limitParam, 1), 20)
 
-  if (!query || query.length < 1) {
-    return NextResponse.json({ players: [] })
-  }
-
-  const pattern = `%${query}%`
-
-  const { data: players, error } = await supabase
+  // Build base query
+  let dbQuery = supabase
     .from('players')
     .select(`
       id, name, name_ka, position, date_of_birth, photo_url, slug, platform_id,
       club:clubs!players_club_id_fkey ( name, name_ka )
     `)
-    .or(`name.ilike.${pattern},name_ka.ilike.${pattern}`)
     .in('status', ['active', 'free_agent'])
     .limit(limit)
 
+  // Apply name search filter if query provided
+  if (query && query.length >= 1) {
+    const sanitized = escapePostgrestValue(query)
+    if (!sanitized) {
+      return NextResponse.json({ players: [] })
+    }
+    const pattern = `%${sanitized}%`
+    dbQuery = dbQuery.or(`name.ilike.${pattern},name_ka.ilike.${pattern}`)
+  }
+
+  // No query = return first N players (sorted by name) for dropdown initial display
+  dbQuery = dbQuery.order('name')
+
+  const { data: players, error } = await dbQuery
+
   if (error) {
     console.error('[players/search] Error:', error.message)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   const results = (players ?? []).map((p) => {

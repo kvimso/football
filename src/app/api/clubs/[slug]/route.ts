@@ -1,0 +1,59 @@
+import { NextRequest } from 'next/server'
+import { createApiClient } from '@/lib/supabase/server'
+import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
+
+// GET /api/clubs/[slug] — Club detail with squad
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params
+  const supabase = await createApiClient(request)
+  const { error: authResponse } = await authenticateRequest(supabase)
+  if (authResponse) return authResponse
+
+  const { data: club, error } = await supabase
+    .from('clubs')
+    .select(`
+      id, name, name_ka, slug, logo_url, city, region,
+      description, description_ka, website
+    `)
+    .eq('slug', slug)
+    .single()
+
+  if (error || !club) {
+    return apiError('errors.clubNotFound', 404)
+  }
+
+  // Fetch active players
+  const { data: players, error: playersError } = await supabase
+    .from('players')
+    .select(`
+      id, slug, name, name_ka, position, date_of_birth, height_cm,
+      preferred_foot, photo_url, status, platform_id,
+      season_stats:player_season_stats ( season, goals, assists, matches_played )
+    `)
+    .eq('club_id', club.id)
+    .eq('status', 'active')
+    .order('position')
+    .order('name')
+
+  if (playersError) {
+    console.error('[api/clubs] Players query error:', playersError.message)
+  }
+
+  const squad = (players ?? []).map((p) => {
+    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
+    return {
+      ...p,
+      season_stats: undefined,
+      latest_season_stats: latestStats,
+    }
+  })
+
+  return apiSuccess({
+    ...club,
+    squad,
+  })
+}

@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
   if (insertError) {
     console.error('[messages/POST] Insert error:', insertError.message)
-    return NextResponse.json({ error: insertError.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   return NextResponse.json({ message }, { status: 201 })
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
 
   if (msgError) {
     console.error('[messages/GET] Fetch error:', msgError.message)
-    return NextResponse.json({ error: msgError.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   const hasMore = (messages?.length ?? 0) > limit

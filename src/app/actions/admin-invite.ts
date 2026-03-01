@@ -58,7 +58,10 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
       .update({ role: 'academy_admin', club_id: parsed.data.clubId })
       .eq('id', existingProfile.id)
 
-    if (updateError) return { error: updateError.message, success: false }
+    if (updateError) {
+      console.error('[admin-invite] Promote error:', updateError.message)
+      return { error: 'errors.serverError', success: false }
+    }
 
     revalidatePath('/admin/invite')
     return { success: true, message: `Existing user promoted to academy admin for ${club.name}` }
@@ -77,7 +80,10 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
     }
   )
 
-  if (inviteError) return { error: inviteError.message, success: false }
+  if (inviteError) {
+    console.error('[admin-invite] Invite error:', inviteError.message)
+    return { error: 'errors.serverError', success: false }
+  }
 
   revalidatePath('/admin/invite')
   return { success: true, message: `Invitation sent to ${parsed.data.email}` }

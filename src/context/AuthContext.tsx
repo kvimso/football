@@ -40,6 +40,7 @@ export function AuthProvider({
   useEffect(() => {
     try {
       const supabase = createClient()
+      let lastUserId: string | null = initialUser?.id ?? null
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         const newUser = session?.user
@@ -48,11 +49,16 @@ export function AuthProvider({
         setUser(newUser)
 
         if (session?.user) {
-          supabase.from('profiles').select('role').eq('id', session.user.id).single()
-            .then(({ data, error }) => {
-              if (!error) setUserRole((data?.role as UserRole) ?? null)
-            })
+          // Only re-fetch role when user ID changes, not on token refreshes
+          if (session.user.id !== lastUserId) {
+            lastUserId = session.user.id
+            supabase.from('profiles').select('role').eq('id', session.user.id).single()
+              .then(({ data, error }) => {
+                if (!error) setUserRole((data?.role as UserRole) ?? null)
+              })
+          }
         } else {
+          lastUserId = null
           setUserRole(null)
         }
       })
