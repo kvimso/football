@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge } from '@/lib/utils'
+import { calculateAge, unwrapRelation, escapePostgrestValue } from '@/lib/utils'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { FilterPanel } from '@/components/forms/FilterPanel'
-import { AGE_RANGE_MAP } from '@/lib/constants'
 
 const PAGE_SIZE = 24
 
@@ -19,19 +18,28 @@ export const metadata: Metadata = {
 interface PlayersPageProps {
   searchParams: Promise<{
     position?: string
-    age?: string
+    age_min?: string
+    age_max?: string
     club?: string
     foot?: string
     q?: string
     status?: string
     sort?: string
     page?: string
+    height_min?: string
+    height_max?: string
+    weight_min?: string
+    weight_max?: string
+    goals_min?: string
+    assists_min?: string
+    matches_min?: string
+    pass_acc_min?: string
   }>
 }
 
 export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   const params = await searchParams
-  const { position, age, club, foot, q, status, sort } = params
+  const { position, age_min, age_max, club, foot, q, status, sort, height_min, height_max, weight_min, weight_max, goals_min, assists_min, matches_min, pass_acc_min } = params
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
 
   const supabase = await createClient()
@@ -69,7 +77,8 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
         season,
         goals,
         assists,
-        matches_played
+        matches_played,
+        pass_accuracy
       )
     `,
       { count: 'exact' }
@@ -86,13 +95,20 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     query = query.in('status', ['active', 'free_agent'])
   }
 
-  // Apply filters
+  // Apply filters — multi-select position
   if (position) {
-    query = query.eq('position', position)
+    const positions = position.split(',').filter(Boolean)
+    if (positions.length > 0) {
+      query = query.in('position', positions)
+    }
   }
 
+  // Multi-select club
   if (club) {
-    query = query.eq('club_id', club)
+    const clubIds = club.split(',').filter(Boolean)
+    if (clubIds.length > 0) {
+      query = query.in('club_id', clubIds)
+    }
   }
 
   if (foot) {
@@ -100,16 +116,45 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   }
 
   if (q) {
-    const sanitized = q.replace(/[,.()"\\%_]/g, '')
+    const sanitized = escapePostgrestValue(q)
     if (sanitized) {
       query = query.or(`name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%`)
     }
   }
 
+  // Height filter — DB-level
+  if (height_min) {
+    const hMin = parseInt(height_min, 10)
+    if (!isNaN(hMin)) {
+      query = query.gte('height_cm', hMin)
+    }
+  }
+  if (height_max) {
+    const hMax = parseInt(height_max, 10)
+    if (!isNaN(hMax)) {
+      query = query.lte('height_cm', hMax)
+    }
+  }
+
+  // Weight filter — DB-level
+  if (weight_min) {
+    const wMin = parseInt(weight_min, 10)
+    if (!isNaN(wMin)) {
+      query = query.gte('weight_kg', wMin)
+    }
+  }
+  if (weight_max) {
+    const wMax = parseInt(weight_max, 10)
+    if (!isNaN(wMax)) {
+      query = query.lte('weight_kg', wMax)
+    }
+  }
+
   // Pagination — when age filter or most_viewed sort is active we can't paginate at DB level
   // because age is calculated client-side from DOB and most_viewed needs client-side reordering
-  const hasAgeFilter = age && AGE_RANGE_MAP[age]
-  const needsClientPagination = hasAgeFilter || sort === 'most_viewed'
+  const hasAgeFilter = !!(age_min || age_max)
+  const hasStatFilter = !!(goals_min || assists_min || matches_min || pass_acc_min)
+  const needsClientPagination = hasAgeFilter || hasStatFilter || sort === 'most_viewed'
   if (!needsClientPagination) {
     const from = (page - 1) * PAGE_SIZE
     query = query.range(from, from + PAGE_SIZE - 1)
@@ -125,29 +170,43 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   let filteredPlayers = players ?? []
 
   if (hasAgeFilter) {
-    const { min, max } = AGE_RANGE_MAP[age]
+    let minAge = age_min ? parseInt(age_min, 10) : 0
+    let maxAge = age_max ? parseInt(age_max, 10) : 99
+    // Swap if inverted
+    if (minAge > maxAge) [minAge, maxAge] = [maxAge, minAge]
     filteredPlayers = filteredPlayers.filter((p) => {
       const playerAge = calculateAge(p.date_of_birth)
-      return playerAge >= min && playerAge <= max
+      return playerAge >= minAge && playerAge <= maxAge
     })
   }
 
-  // Fetch view counts using service role (bypasses RLS for aggregation)
+  // Filter by stat minimums — client-side (latest season stats)
+  if (hasStatFilter) {
+    const minGoals = goals_min ? parseInt(goals_min, 10) : 0
+    const minAssists = assists_min ? parseInt(assists_min, 10) : 0
+    const minMatches = matches_min ? parseInt(matches_min, 10) : 0
+    const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
+
+    filteredPlayers = filteredPlayers.filter((p) => {
+      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
+      if (!latest) return false // No stats → excluded when stat filters are active
+      if (minGoals && (latest.goals ?? 0) < minGoals) return false
+      if (minAssists && (latest.assists ?? 0) < minAssists) return false
+      if (minMatches && (latest.matches_played ?? 0) < minMatches) return false
+      if (minPassAcc && (latest.pass_accuracy ?? 0) < minPassAcc) return false
+      return true
+    })
+  }
+
+  // Fetch view counts via database aggregation (RPC replaces unbounded 10k-row fetch)
   let viewCountMap = new Map<string, number>()
   try {
-    const admin = createAdminClient()
-    const { data: viewCounts, error: vcError } = await admin
-      .from('player_views')
-      .select('player_id')
-      .limit(10000)
+    const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts')
     if (vcError) {
       console.error('Failed to fetch view counts:', vcError.message)
     } else if (viewCounts) {
-      const counts: Record<string, number> = {}
-      for (const row of viewCounts) {
-        counts[row.player_id] = (counts[row.player_id] ?? 0) + 1
-      }
-      viewCountMap = new Map(Object.entries(counts))
+      viewCountMap = new Map(viewCounts.map(v => [v.player_id, Number(v.total_views)]))
     }
   } catch {
     // Silently fail — view counts are non-critical
@@ -159,9 +218,10 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     const stats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,
-      club: Array.isArray(p.club) ? p.club[0] : p.club,
+      position: p.position as Position,
+      status: (p.status ?? 'active') as PlayerStatus,
+      club: unwrapRelation(p.club),
       season_stats: stats ?? null,
-      status: p.status ?? 'active',
     }
   })
 
@@ -182,12 +242,21 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   function pageUrl(p: number) {
     const sp = new URLSearchParams()
     if (position) sp.set('position', position)
-    if (age) sp.set('age', age)
+    if (age_min) sp.set('age_min', age_min)
+    if (age_max) sp.set('age_max', age_max)
     if (club) sp.set('club', club)
     if (foot) sp.set('foot', foot)
     if (q) sp.set('q', q)
     if (status) sp.set('status', status)
     if (sort) sp.set('sort', sort)
+    if (height_min) sp.set('height_min', height_min)
+    if (height_max) sp.set('height_max', height_max)
+    if (weight_min) sp.set('weight_min', weight_min)
+    if (weight_max) sp.set('weight_max', weight_max)
+    if (goals_min) sp.set('goals_min', goals_min)
+    if (assists_min) sp.set('assists_min', assists_min)
+    if (matches_min) sp.set('matches_min', matches_min)
+    if (pass_acc_min) sp.set('pass_acc_min', pass_acc_min)
     if (p > 1) sp.set('page', String(p))
     const qs = sp.toString()
     return `/players${qs ? `?${qs}` : ''}`
@@ -206,10 +275,13 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       {/* Filters */}
       <FilterPanel clubs={clubs ?? []} />
 
-      {/* Results count */}
-      <p className="mt-6 mb-4 text-sm text-foreground-muted">
-        {total} {total !== 1 ? t('players.playerPlural') : t('players.player')} {t('common.found')}
-      </p>
+      {/* Results header */}
+      <div className="mt-6 mb-4 flex items-center justify-between">
+        <p className="text-sm text-foreground-muted">
+          <span className="font-semibold text-foreground">{total}</span>{' '}
+          {total !== 1 ? t('players.playerPlural') : t('players.player')} {t('common.found')}
+        </p>
+      </div>
 
       {/* Player grid */}
       {playerCards.length > 0 ? (

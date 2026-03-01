@@ -1,9 +1,13 @@
 import { z } from 'zod'
 
+export const uuidSchema = z.string().uuid()
+
 export const contactRequestSchema = z.object({
   playerId: z.string().uuid(),
   message: z.string().min(10).max(1000),
 })
+
+export const responseMessageSchema = z.string().max(500).optional()
 
 export const playerFormSchema = z.object({
   first_name: z.string().min(1).max(50),
@@ -42,4 +46,50 @@ export const contactMessageSchema = z.object({
 export const platformPlayerFormSchema = playerFormSchema.extend({
   club_id: z.string().uuid().optional().or(z.literal('')),
   status: z.enum(['active', 'free_agent']).optional(),
+})
+
+// Chat system validations
+export const createConversationSchema = z.object({
+  club_id: z.string().uuid(),
+})
+
+export const sendMessageSchema = z.object({
+  conversation_id: z.string().uuid(),
+  content: z.string().min(1).max(5000).optional(),
+  message_type: z.enum(['text', 'file', 'player_ref']),
+  file_url: z.string().min(1).optional(),
+  file_name: z.string().max(255).optional(),
+  file_type: z.string().max(100).optional(),
+  file_size_bytes: z.number().int().positive().max(10 * 1024 * 1024).optional(),
+  referenced_player_id: z.string().uuid().optional(),
+}).refine(
+  (data) => {
+    if (data.message_type === 'text') return !!data.content
+    if (data.message_type === 'file') return !!data.file_url && !!data.file_name
+    if (data.message_type === 'player_ref') return !!data.referenced_player_id
+    return false
+  },
+  { message: 'Missing required fields for message type' }
+)
+
+// Validate Realtime payload from Supabase (untrusted data)
+export const realtimeMessageSchema = z.object({
+  id: z.string().uuid(),
+  conversation_id: z.string().uuid(),
+  sender_id: z.string().uuid().nullable(),
+  content: z.string().nullable(),
+  message_type: z.enum(['text', 'file', 'player_ref', 'system']),
+  file_url: z.string().nullable(),
+  file_name: z.string().nullable(),
+  file_size_bytes: z.number().nullable(),
+  file_type: z.string().nullable(),
+  referenced_player_id: z.string().uuid().nullable(),
+  read_at: z.string().nullable(),
+  created_at: z.string(),
+})
+
+export const loadMessagesSchema = z.object({
+  conversation_id: z.string().uuid(),
+  before: z.string().uuid().optional(),
+  limit: z.coerce.number().int().min(1).max(100).default(50),
 })

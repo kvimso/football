@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import type { UserRole } from '@/lib/types'
 
 interface AuthUser {
   id: string
@@ -10,15 +11,13 @@ interface AuthUser {
 
 interface AuthState {
   user: AuthUser | null
-  userRole: string | null
-  isLoading: boolean
+  userRole: UserRole | null
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState>({
   user: null,
   userRole: null,
-  isLoading: true,
   signOut: async () => {},
 })
 
@@ -32,12 +31,11 @@ export function AuthProvider({
   children,
 }: {
   initialUser: AuthUser | null
-  initialRole: string | null
+  initialRole: UserRole | null
   children: React.ReactNode
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser)
-  const [userRole, setUserRole] = useState<string | null>(initialRole)
-  const [isLoading] = useState(false)
+  const [userRole, setUserRole] = useState<UserRole | null>(initialRole)
 
   useEffect(() => {
     try {
@@ -52,7 +50,7 @@ export function AuthProvider({
         if (session?.user) {
           supabase.from('profiles').select('role').eq('id', session.user.id).single()
             .then(({ data, error }) => {
-              if (!error) setUserRole(data?.role ?? null)
+              if (!error) setUserRole((data?.role as UserRole) ?? null)
             })
         } else {
           setUserRole(null)
@@ -60,8 +58,8 @@ export function AuthProvider({
       })
 
       return () => subscription.unsubscribe()
-    } catch {
-      // Supabase client failed to initialize
+    } catch (err) {
+      console.error('Failed to initialize Supabase auth listener:', err)
     }
   }, [])
 
@@ -73,7 +71,7 @@ export function AuthProvider({
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, userRole, isLoading, signOut }}>
+    <AuthContext.Provider value={{ user, userRole, signOut }}>
       {children}
     </AuthContext.Provider>
   )

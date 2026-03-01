@@ -31,13 +31,13 @@ export function ClubForm({ club }: ClubFormProps) {
 
     const formData = new FormData(e.currentTarget)
     const data = {
-      name: formData.get('name') as string,
-      name_ka: formData.get('name_ka') as string,
-      city: formData.get('city') as string,
-      region: formData.get('region') as string,
-      description: formData.get('description') as string,
-      description_ka: formData.get('description_ka') as string,
-      website: formData.get('website') as string,
+      name: String(formData.get('name') ?? ''),
+      name_ka: String(formData.get('name_ka') ?? ''),
+      city: String(formData.get('city') ?? ''),
+      region: String(formData.get('region') ?? ''),
+      description: String(formData.get('description') ?? ''),
+      description_ka: String(formData.get('description_ka') ?? ''),
+      website: String(formData.get('website') ?? ''),
     }
 
     const result = club
@@ -47,7 +47,7 @@ export function ClubForm({ club }: ClubFormProps) {
     setSaving(false)
 
     if (result.error) {
-      setError(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.push('/platform/clubs')
       router.refresh()

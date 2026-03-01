@@ -1,18 +1,20 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
-import { clubFormSchema } from '@/lib/validations'
+import { clubFormSchema, uuidSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
 import { generateSlug } from '@/lib/utils'
 import { getServerT } from '@/lib/server-translations'
+import type { z } from 'zod'
 
-export async function createClub(data: Record<string, unknown>) {
+type ClubFormInput = z.infer<typeof clubFormSchema>
+
+export async function createClub(data: ClubFormInput) {
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = clubFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const slug = generateSlug(parsed.data.name)
 
@@ -45,13 +47,13 @@ export async function createClub(data: Record<string, unknown>) {
   return { success: true }
 }
 
-export async function updateClub(clubId: string, data: Record<string, unknown>) {
-  if (!z.string().uuid().safeParse(clubId).success) return { error: 'Invalid ID' }
+export async function updateClub(clubId: string, data: ClubFormInput) {
+  if (!uuidSchema.safeParse(clubId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = clubFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const { error: updateError } = await admin
     .from('clubs')
@@ -75,9 +77,9 @@ export async function updateClub(clubId: string, data: Record<string, unknown>) 
 }
 
 export async function deleteClub(clubId: string) {
-  if (!z.string().uuid().safeParse(clubId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(clubId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   // Check for active players
   const { count } = await admin

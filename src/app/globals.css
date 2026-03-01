@@ -23,6 +23,21 @@
   --pos-st: #ef4444;
 }
 
+/* ── Landing page light theme ── */
+.landing {
+  --background: #fafbfc;
+  --background-secondary: #f1f5f3;
+  --foreground: #111827;
+  --foreground-muted: #6b7280;
+  --accent: #059669;
+  --accent-hover: #047857;
+  --accent-muted: #d1fae5;
+  --border: #e5e7eb;
+  --card: #ffffff;
+  --card-hover: #f9fafb;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
@@ -94,6 +109,40 @@ body {
   outline-offset: 2px;
 }
 
+/* Landing-scoped button overrides for light theme */
+.landing .btn-primary {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.landing .btn-primary:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+.landing .btn-secondary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.landing .btn-secondary:hover {
+  background-color: var(--accent-muted);
+}
+
+/* ── Form inputs ── */
+.input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background-color: var(--background-secondary);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  transition: border-color 150ms;
+}
+.input::placeholder {
+  color: var(--foreground-muted);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .card {
   background-color: var(--card);
   border: 1px solid var(--border);
@@ -108,6 +157,45 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
+/* ── Enhanced card with position-colored top border ── */
+.card-enhanced {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  transition: background-color 150ms, transform 150ms, box-shadow 150ms;
+}
+.card-enhanced:hover {
+  background-color: var(--card-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* ── Filter chip pills ── */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  color: var(--foreground-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all 150ms;
+}
+.filter-chip:hover {
+  border-color: var(--accent);
+  color: var(--foreground);
+}
+.filter-chip.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 
 /* ── Section header with accent left-border ── */
 .section-header {
@@ -146,6 +234,35 @@ body {
 }
 .table-row-hover:hover {
   background-color: rgba(16, 185, 129, 0.05);
+}
+
+/* ── Football decorative patterns (CSS/SVG only) ── */
+.pitch-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Ccircle cx='200' cy='200' r='80' fill='none' stroke='%23059669' stroke-width='1' opacity='0.12'/%3E%3Ccircle cx='200' cy='200' r='3' fill='%23059669' opacity='0.15'/%3E%3Cline x1='200' y1='0' x2='200' y2='400' stroke='%23059669' stroke-width='0.75' opacity='0.08'/%3E%3Cline x1='0' y1='200' x2='400' y2='200' stroke='%23059669' stroke-width='0.75' opacity='0.08'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 400px 400px;
+}
+
+.hex-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66ZM28 100L0 84L0 50L28 34L56 50L56 84L28 100Z' fill='none' stroke='%23059669' stroke-width='0.5' opacity='0.06'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* ── Chat animations ── */
+@keyframes slide-in-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-in-down {
+  animation: slide-in-down 200ms ease-out;
+}
+
+@keyframes chat-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-chat-fade-in {
+  animation: chat-fade-in 150ms ease-out;
 }
 
 /* ── Georgian typography adjustments ── */

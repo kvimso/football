@@ -23,7 +23,7 @@ export function TransferActions({ requestId }: TransferActionsProps) {
       : await declineTransfer(requestId)
 
     if (result.error) {
-      setErrorMsg(result.error)
+      setErrorMsg(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.refresh()
     }

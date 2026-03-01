@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       clubs: {
@@ -111,31 +86,37 @@ export type Database = {
       contact_requests: {
         Row: {
           created_at: string | null
+          expires_at: string | null
           id: string
           message: string
           player_id: string | null
           responded_at: string | null
           responded_by: string | null
+          response_message: string | null
           scout_id: string | null
           status: string | null
         }
         Insert: {
           created_at?: string | null
+          expires_at?: string | null
           id?: string
           message: string
           player_id?: string | null
           responded_at?: string | null
           responded_by?: string | null
+          response_message?: string | null
           scout_id?: string | null
           status?: string | null
         }
         Update: {
           created_at?: string | null
+          expires_at?: string | null
           id?: string
           message?: string
           player_id?: string | null
           responded_at?: string | null
           responded_by?: string | null
+          response_message?: string | null
           scout_id?: string | null
           status?: string | null
         }
@@ -156,6 +137,87 @@ export type Database = {
           },
           {
             foreignKeyName: "contact_requests_scout_id_fkey"
+            columns: ["scout_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_blocks: {
+        Row: {
+          blocked_by: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_by: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_by?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_blocks_blocked_by_fkey"
+            columns: ["blocked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_blocks_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          club_id: string
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          scout_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          scout_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          scout_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_scout_id_fkey"
             columns: ["scout_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -309,6 +371,76 @@ export type Database = {
             columns: ["home_club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string | null
+          conversation_id: string
+          created_at: string | null
+
+          file_name: string | null
+          file_size_bytes: number | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          message_type: Database["public"]["Enums"]["message_type"]
+          read_at: string | null
+          referenced_player_id: string | null
+          sender_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          conversation_id: string
+          created_at?: string | null
+
+          file_name?: string | null
+          file_size_bytes?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          message_type?: Database["public"]["Enums"]["message_type"]
+          read_at?: string | null
+          referenced_player_id?: string | null
+          sender_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string
+          created_at?: string | null
+
+          file_name?: string | null
+          file_size_bytes?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          message_type?: Database["public"]["Enums"]["message_type"]
+          read_at?: string | null
+          referenced_player_id?: string | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_referenced_player_id_fkey"
+            columns: ["referenced_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -792,10 +924,48 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_conversations_with_metadata: {
+        Args: { p_user_id: string }
+        Returns: {
+          id: string
+          scout_id: string
+          club_id: string
+          last_message_at: string | null
+          created_at: string | null
+          club_name: string | null
+          club_name_ka: string | null
+          club_logo_url: string | null
+          scout_full_name: string | null
+          scout_email: string | null
+          scout_organization: string | null
+          scout_role: string | null
+          last_message_content: string | null
+          last_message_type: string | null
+          last_message_sender_id: string | null
+          last_message_created_at: string | null
+          unread_count: number
+          is_blocked: boolean
+        }[]
+      }
+      get_player_view_counts: {
+        Args: { player_ids?: string[] }
+        Returns: {
+          player_id: string
+          prev_week_views: number
+          total_views: number
+          weekly_views: number
+        }[]
+      }
+      get_total_unread_count: { Args: never; Returns: number }
       get_user_club_id: { Args: never; Returns: string }
       get_user_role: { Args: never; Returns: string }
+      mark_messages_read: {
+        Args: { p_conversation_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
+      message_type: "text" | "file" | "player_ref" | "system"
       player_status: "active" | "free_agent"
       transfer_status: "pending" | "accepted" | "declined" | "expired"
     }
@@ -923,11 +1093,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
+      message_type: ["text", "file", "player_ref", "system"],
       player_status: ["active", "free_agent"],
       transfer_status: ["pending", "accepted", "declined", "expired"],
     },

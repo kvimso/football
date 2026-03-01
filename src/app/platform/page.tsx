@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 
 export default async function PlatformDashboardPage() {
@@ -83,8 +84,8 @@ export default async function PlatformDashboardPage() {
 
   const activity = (recentRequests ?? []).map((r) => ({
     ...r,
-    scout: Array.isArray(r.scout) ? r.scout[0] : r.scout,
-    player: Array.isArray(r.player) ? r.player[0] : r.player,
+    scout: unwrapRelation(r.scout),
+    player: unwrapRelation(r.player),
   }))
 
   return (
@@ -143,13 +144,13 @@ export default async function PlatformDashboardPage() {
           <div className="mt-3 space-y-3">
             {activity.map((req) => {
               const club = req.player?.club
-                ? Array.isArray(req.player.club) ? req.player.club[0] : req.player.club
+                ? unwrapRelation(req.player.club)
                 : null
               return (
                 <div key={req.id} className="card flex items-center justify-between p-4">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">
-                      {req.scout?.full_name ?? 'Unknown'} &rarr; {req.player?.name ?? ''}
+                      {req.scout?.full_name ?? t('common.unknown')} &rarr; {req.player?.name ?? ''}
                     </p>
                     <p className="mt-0.5 text-xs text-foreground-muted">
                       {club?.name ? `${club.name} ` : ''}

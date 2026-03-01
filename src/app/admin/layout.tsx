@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { unwrapRelation } from '@/lib/utils'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { AdminSidebar } from '@/components/admin/AdminSidebar'
@@ -31,7 +32,7 @@ export default async function AdminLayout({
     redirect('/platform')
   }
 
-  const club = Array.isArray(profile.club) ? profile.club[0] : profile.club
+  const club = unwrapRelation(profile.club)
 
   return (
     <>
@@ -41,7 +42,6 @@ export default async function AdminLayout({
           <AdminSidebar
             clubName={club?.name ?? ''}
             clubNameKa={club?.name_ka ?? ''}
-            role={profile.role}
           />
           <main className="min-w-0 flex-1">{children}</main>
         </div>

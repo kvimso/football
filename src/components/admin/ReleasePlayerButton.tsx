@@ -26,7 +26,7 @@ export function ReleasePlayerButton({ playerId, playerName }: ReleasePlayerButto
     setErrorMsg('')
     const result = await releasePlayer(playerId)
     if (result.error) {
-      setErrorMsg(result.error)
+      setErrorMsg(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.refresh()
     }

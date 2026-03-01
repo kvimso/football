@@ -1,14 +1,36 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { unwrapRelation } from '@/lib/utils'
+import type { Position } from '@/lib/types'
 import { CompareView } from '@/components/player/CompareView'
-
-export const metadata: Metadata = {
-  title: 'Compare Players | Georgian Football Talent Platform',
-  description: 'Side-by-side comparison of Georgian youth football players.',
-}
 
 interface ComparePageProps {
   searchParams: Promise<{ p1?: string; p2?: string }>
+}
+
+export async function generateMetadata({ searchParams }: ComparePageProps): Promise<Metadata> {
+  const params = await searchParams
+  if (!params.p1 || !params.p2) {
+    return {
+      title: 'Compare Players | Georgian Football Talent Platform',
+      description: 'Side-by-side comparison of Georgian youth football players.',
+    }
+  }
+
+  const supabase = await createClient()
+  const [{ data: p1 }, { data: p2 }] = await Promise.all([
+    supabase.from('players').select('name').eq('slug', params.p1).single(),
+    supabase.from('players').select('name').eq('slug', params.p2).single(),
+  ])
+
+  const title = p1 && p2
+    ? `${p1.name} vs ${p2.name} | Compare Players`
+    : 'Compare Players | Georgian Football Talent Platform'
+
+  return {
+    title,
+    description: 'Side-by-side comparison of Georgian youth football players.',
+  }
 }
 
 async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, slug: string) {
@@ -31,9 +53,10 @@ async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, s
 
   return {
     ...data,
-    club: Array.isArray(data.club) ? data.club[0] : data.club,
-    skills: Array.isArray(data.skills) ? data.skills[0] : data.skills,
-    season_stats: Array.isArray(data.season_stats) ? data.season_stats[0] : data.season_stats,
+    position: data.position as Position,
+    club: unwrapRelation(data.club),
+    skills: unwrapRelation(data.skills),
+    season_stats: unwrapRelation(data.season_stats),
   }
 }
 
@@ -45,7 +68,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   const { data: allPlayers, error: apError } = await supabase
     .from('players')
     .select('slug, name, name_ka, position')
-    .eq('status', 'active')
+    .in('status', ['active', 'free_agent'])
     .order('name')
 
   if (apError) console.error('Failed to fetch players list:', apError.message)
@@ -59,7 +82,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <CompareView
-        allPlayers={allPlayers ?? []}
+        allPlayers={(allPlayers ?? []).map(p => ({ ...p, position: p.position as Position }))}
         player1={player1}
         player2={player2}
         selectedP1={params.p1 ?? ''}

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 
 export default async function PlatformScoutDetailPage({
@@ -82,13 +83,13 @@ export default async function PlatformScoutDetailPage({
         {(shortlists ?? []).length > 0 ? (
           <div className="mt-3 space-y-2">
             {(shortlists ?? []).map((item) => {
-              const player = Array.isArray(item.player) ? item.player[0] : item.player
-              const club = player?.club ? (Array.isArray(player.club) ? player.club[0] : player.club) : null
+              const player = unwrapRelation(item.player)
+              const club = player?.club ? unwrapRelation(player.club) : null
               return (
                 <div key={item.id} className="card flex items-center justify-between p-3">
                   <div>
                     <Link href={`/players/${player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
-                      {player?.name ?? 'Unknown'}
+                      {player?.name ?? t('common.unknown')}
                     </Link>
                     <p className="text-xs text-foreground-muted">
                       {player?.position} {club?.name ? `— ${club.name}` : ''}
@@ -117,13 +118,13 @@ export default async function PlatformScoutDetailPage({
         {(requests ?? []).length > 0 ? (
           <div className="mt-3 space-y-2">
             {(requests ?? []).map((req) => {
-              const player = Array.isArray(req.player) ? req.player[0] : req.player
-              const club = player?.club ? (Array.isArray(player.club) ? player.club[0] : player.club) : null
+              const player = unwrapRelation(req.player)
+              const club = player?.club ? unwrapRelation(player.club) : null
               return (
                 <div key={req.id} className="card flex items-center justify-between p-3">
                   <div className="min-w-0 flex-1">
                     <Link href={`/players/${player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
-                      {player?.name ?? 'Unknown'}
+                      {player?.name ?? t('common.unknown')}
                     </Link>
                     {club?.name && (
                       <span className="ml-2 text-xs text-foreground-muted">({club.name})</span>

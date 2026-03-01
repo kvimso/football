@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { PlatformPlayerForm } from '@/components/platform/PlatformPlayerForm'
 
 export default async function PlatformEditPlayerPage({
@@ -32,7 +33,7 @@ export default async function PlatformEditPlayerPage({
         <p className="mt-1 font-mono text-sm text-foreground-muted">{player.platform_id}</p>
       )}
       <div className="mt-6">
-        <PlatformPlayerForm player={player} clubs={clubs ?? []} />
+        <PlatformPlayerForm player={{ ...player, position: player.position as Position, status: player.status as PlayerStatus | null }} clubs={clubs ?? []} />
       </div>
     </div>
   )

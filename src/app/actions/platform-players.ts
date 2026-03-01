@@ -1,17 +1,19 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
-import { platformPlayerFormSchema } from '@/lib/validations'
+import { platformPlayerFormSchema, uuidSchema } from '@/lib/validations'
 import { getPlatformAdminContext } from '@/lib/auth'
-import { generateSlug } from '@/lib/utils'
+import { generateSlug, todayDateString } from '@/lib/utils'
+import type { z } from 'zod'
 
-export async function platformCreatePlayer(data: Record<string, unknown>) {
+type PlatformPlayerFormInput = z.infer<typeof platformPlayerFormSchema>
+
+export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = platformPlayerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -55,7 +57,7 @@ export async function platformCreatePlayer(data: Record<string, unknown>) {
       .insert({
         player_id: newPlayer.id,
         club_id: clubId,
-        joined_at: new Date().toISOString().split('T')[0],
+        joined_at: todayDateString(),
       })
 
     if (historyError) console.error('Failed to insert club history:', historyError.message)
@@ -66,13 +68,13 @@ export async function platformCreatePlayer(data: Record<string, unknown>) {
   return { success: true }
 }
 
-export async function platformUpdatePlayer(playerId: string, data: Record<string, unknown>) {
-  if (!z.string().uuid().safeParse(playerId).success) return { error: 'Invalid ID' }
+export async function platformUpdatePlayer(playerId: string, data: PlatformPlayerFormInput) {
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = platformPlayerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   // Get current player state
   const { data: currentPlayer, error: fetchErr } = await admin
@@ -81,7 +83,7 @@ export async function platformUpdatePlayer(playerId: string, data: Record<string
     .eq('id', playerId)
     .single()
 
-  if (fetchErr || !currentPlayer) return { error: 'Player not found' }
+  if (fetchErr || !currentPlayer) return { error: 'errors.playerNotFound' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -108,7 +110,7 @@ export async function platformUpdatePlayer(playerId: string, data: Record<string
   if (updateError) return { error: updateError.message }
 
   // Handle club change
-  const today = new Date().toISOString().split('T')[0]
+  const today = todayDateString()
   if (currentPlayer.club_id !== newClubId) {
     // Close old club history
     if (currentPlayer.club_id) {
@@ -141,9 +143,9 @@ export async function platformUpdatePlayer(playerId: string, data: Record<string
 }
 
 export async function platformDeletePlayer(playerId: string) {
-  if (!z.string().uuid().safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const { error: deleteError } = await admin
     .from('players')

@@ -27,28 +27,28 @@ export function MatchCard({ match }: MatchCardProps) {
     : t('matches.tbd')
 
   return (
-    <Link href={`/matches/${match.slug}`} className="card group block">
-      {/* Competition + date */}
-      <div className="flex items-center justify-between text-xs text-foreground-muted">
-        <span>{match.competition}</span>
+    <Link href={`/matches/${match.slug}`} className="card group block overflow-hidden">
+      {/* Competition + date header bar */}
+      <div className="-mx-5 -mt-5 mb-4 flex items-center justify-between border-b border-border bg-background/50 px-5 py-2.5 text-xs text-foreground-muted">
+        <span className="font-medium">{match.competition}</span>
         <span>{format(new Date(match.match_date), 'dd MMM yyyy')}</span>
       </div>
 
       {/* Score line */}
-      <div className="mt-3 flex items-center justify-between">
-        <span className="flex-1 truncate text-sm font-medium text-foreground">
+      <div className="flex items-center justify-between gap-3">
+        <span className="flex-1 truncate text-sm font-semibold text-foreground text-left">
           {homeName}
         </span>
-        <div className="mx-3 flex items-center gap-1.5 rounded-lg bg-background px-3 py-1">
-          <span className="text-lg font-bold text-foreground">
+        <div className="flex items-center gap-2 rounded-lg bg-background px-4 py-1.5">
+          <span className="text-xl font-extrabold text-foreground tabular-nums">
             {match.home_score ?? '-'}
           </span>
-          <span className="text-foreground-muted">:</span>
-          <span className="text-lg font-bold text-foreground">
+          <span className="text-foreground-muted font-light">:</span>
+          <span className="text-xl font-extrabold text-foreground tabular-nums">
             {match.away_score ?? '-'}
           </span>
         </div>
-        <span className="flex-1 truncate text-right text-sm font-medium text-foreground">
+        <span className="flex-1 truncate text-right text-sm font-semibold text-foreground">
           {awayName}
         </span>
       </div>

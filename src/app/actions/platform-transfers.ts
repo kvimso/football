@@ -1,19 +1,14 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { getPlatformAdminContext } from '@/lib/auth'
-
-const uuidSchema = z.string().uuid()
-
-function today() {
-  return new Date().toISOString().split('T')[0]
-}
+import { todayDateString } from '@/lib/utils'
+import { uuidSchema } from '@/lib/validations'
 
 export async function platformAcceptTransfer(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: request, error: fetchErr } = await admin
     .from('transfer_requests')
@@ -21,8 +16,8 @@ export async function platformAcceptTransfer(requestId: string) {
     .eq('id', requestId)
     .single()
 
-  if (fetchErr || !request) return { error: 'Request not found' }
-  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+  if (fetchErr || !request) return { error: 'errors.requestNotFound' }
+  if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   // Accept transfer
   const { error: reqErr } = await admin
@@ -54,7 +49,7 @@ export async function platformAcceptTransfer(requestId: string) {
   if (request.from_club_id) {
     const { error: closeErr } = await admin
       .from('player_club_history')
-      .update({ left_at: today() })
+      .update({ left_at: todayDateString() })
       .eq('player_id', request.player_id)
       .eq('club_id', request.from_club_id)
       .is('left_at', null)
@@ -68,7 +63,7 @@ export async function platformAcceptTransfer(requestId: string) {
       .insert({
         player_id: request.player_id,
         club_id: request.to_club_id,
-        joined_at: today(),
+        joined_at: todayDateString(),
       })
 
     if (histErr) console.error('Failed to insert club history:', histErr.message)
@@ -81,9 +76,9 @@ export async function platformAcceptTransfer(requestId: string) {
 }
 
 export async function platformDeclineTransfer(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, admin } = await getPlatformAdminContext()
-  if (authErr || !admin) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: request, error: fetchErr } = await admin
     .from('transfer_requests')
@@ -91,8 +86,8 @@ export async function platformDeclineTransfer(requestId: string) {
     .eq('id', requestId)
     .single()
 
-  if (fetchErr || !request) return { error: 'Request not found' }
-  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+  if (fetchErr || !request) return { error: 'errors.requestNotFound' }
+  if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   const { error: reqErr } = await admin
     .from('transfer_requests')

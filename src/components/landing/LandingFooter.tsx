@@ -1,14 +1,25 @@
-'use client'
-
 import Link from 'next/link'
-import { useLang } from '@/hooks/useLang'
+import { getServerT } from '@/lib/server-translations'
 
-export function LandingFooter() {
-  const { t } = useLang()
+export async function LandingFooter() {
+  const { t } = await getServerT()
 
   return (
-    <footer className="border-t border-border bg-background-secondary">
+    <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-7xl px-4 py-12">
+        {/* CTA strip */}
+        <div className="mb-10 flex flex-col items-center gap-4 rounded-xl bg-accent/5 p-8 text-center sm:flex-row sm:justify-center sm:gap-6">
+          <p className="font-semibold">{t('landing.footerTagline')}</p>
+          <div className="flex gap-3">
+            <Link href="/register" className="btn-primary text-sm">
+              {t('landing.registerScout')}
+            </Link>
+            <Link href="/login" className="btn-secondary text-sm">
+              {t('landing.registerAcademy')}
+            </Link>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
@@ -22,7 +33,7 @@ export function LandingFooter() {
 
           {/* Platform */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('landing.footerPlatform')}</h4>
+            <h4 className="text-sm font-semibold">{t('landing.footerPlatform')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
               <Link href="/about" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
                 {t('nav.about')}
@@ -41,7 +52,7 @@ export function LandingFooter() {
 
           {/* For Scouts */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('landing.footerForScouts')}</h4>
+            <h4 className="text-sm font-semibold">{t('landing.footerForScouts')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
               <Link href="/register" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
                 {t('landing.footerCreateAccount')}
@@ -54,7 +65,7 @@ export function LandingFooter() {
 
           {/* For Academies */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('landing.footerForAcademies')}</h4>
+            <h4 className="text-sm font-semibold">{t('landing.footerForAcademies')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
               <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
                 {t('landing.footerRegister')}

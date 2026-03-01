@@ -1,27 +1,71 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
+import { useAuth } from '@/context/AuthContext'
+import { createClient } from '@/lib/supabase/client'
 
 const links = [
   { href: '/admin', labelKey: 'admin.nav.dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
   { href: '/admin/players', labelKey: 'admin.nav.players', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
   { href: '/admin/transfers', labelKey: 'admin.nav.transfers', icon: 'M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' },
-  { href: '/admin/requests', labelKey: 'admin.nav.requests', icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { href: '/admin/messages', labelKey: 'admin.nav.messages', showUnread: true, icon: 'M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z' },
 ]
 
 interface AdminSidebarProps {
   clubName: string
   clubNameKa: string
-  role?: string
 }
 
-export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) {
+export function AdminSidebar({ clubName, clubNameKa }: AdminSidebarProps) {
   const pathname = usePathname()
   const { t, lang } = useLang()
+  const { user } = useAuth()
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const displayName = lang === 'ka' && clubNameKa ? clubNameKa : clubName
+
+  useEffect(() => {
+    if (!user) return
+    const supabase = createClient()
+
+    supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+      if (!error && data != null) setUnreadCount(Number(data))
+    })
+
+    let debounceTimer: NodeJS.Timeout
+    const channel = supabase
+      .channel('admin-sidebar-unread')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'messages',
+      }, () => {
+        clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(() => {
+          supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+            if (!error && data != null) setUnreadCount(Number(data))
+          })
+        }, 500)
+      })
+      .subscribe()
+
+    return () => {
+      clearTimeout(debounceTimer)
+      supabase.removeChannel(channel)
+    }
+  }, [user])
+
+  const renderUnreadBadge = (link: typeof links[number]) => {
+    if (!link.showUnread || unreadCount <= 0) return null
+    return (
+      <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+        {unreadCount > 99 ? '99+' : unreadCount}
+      </span>
+    )
+  }
 
   return (
     <>
@@ -53,24 +97,10 @@ export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) 
                     <path strokeLinecap="round" strokeLinejoin="round" d={link.icon} />
                   </svg>
                   {t(link.labelKey)}
+                  {renderUnreadBadge(link)}
                 </Link>
               )
             })}
-            {role === 'platform_admin' && (
-              <Link
-                href="/admin/invite"
-                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  pathname === '/admin/invite'
-                    ? 'bg-accent/10 text-accent border-l-2 border-accent'
-                    : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
-                }`}
-              >
-                <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                </svg>
-                {t('admin.invite.nav')}
-              </Link>
-            )}
           </nav>
         </div>
       </aside>
@@ -85,28 +115,17 @@ export function AdminSidebar({ clubName, clubNameKa, role }: AdminSidebarProps) 
             <Link
               key={link.href}
               href={link.href}
-              className={`whitespace-nowrap rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-1.5 whitespace-nowrap rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors ${
                 isActive
                   ? 'border-b-2 border-accent text-accent'
                   : 'text-foreground-muted hover:text-foreground'
               }`}
             >
               {t(link.labelKey)}
+              {renderUnreadBadge(link)}
             </Link>
           )
         })}
-        {role === 'platform_admin' && (
-          <Link
-            href="/admin/invite"
-            className={`whitespace-nowrap rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors ${
-              pathname === '/admin/invite'
-                ? 'border-b-2 border-accent text-accent'
-                : 'text-foreground-muted hover:text-foreground'
-            }`}
-          >
-            {t('admin.invite.nav')}
-          </Link>
-        )}
       </nav>
     </>
   )

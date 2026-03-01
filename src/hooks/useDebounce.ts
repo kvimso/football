@@ -1,10 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useCallback, useLayoutEffect } from 'react'
 
 export function useDebouncedCallback<T extends (...args: Parameters<T>) => void>(
   callback: T,
   delay: number
 ) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const callbackRef = useRef(callback)
+
+  useLayoutEffect(() => {
+    callbackRef.current = callback
+  })
 
   useEffect(() => {
     return () => {
@@ -12,8 +17,8 @@ export function useDebouncedCallback<T extends (...args: Parameters<T>) => void>
     }
   }, [])
 
-  return (...args: Parameters<T>) => {
+  return useCallback((...args: Parameters<T>) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => callback(...args), delay)
-  }
+    timeoutRef.current = setTimeout(() => callbackRef.current(...args), delay)
+  }, [delay])
 }

@@ -5,19 +5,21 @@ import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { platformCreatePlayer, platformUpdatePlayer } from '@/app/actions/platform-players'
 import { POSITIONS, PREFERRED_FEET } from '@/lib/constants'
+import { splitName } from '@/lib/utils'
+import type { Position, PlayerStatus, PreferredFoot } from '@/lib/types'
 
 interface PlayerData {
   id?: string
   name?: string
   name_ka?: string
   date_of_birth?: string
-  position?: string
+  position?: Position
   preferred_foot?: string | null
   height_cm?: number | null
   weight_kg?: number | null
   parent_guardian_contact?: string | null
   club_id?: string | null
-  status?: string | null
+  status?: PlayerStatus | null
 }
 
 interface Club {
@@ -28,12 +30,6 @@ interface Club {
 interface PlatformPlayerFormProps {
   player?: PlayerData
   clubs: Club[]
-}
-
-function splitName(fullName: string): { first: string; last: string } {
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length <= 1) return { first: parts[0] ?? '', last: '' }
-  return { first: parts[0], last: parts.slice(1).join(' ') }
 }
 
 export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
@@ -56,28 +52,36 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
     const form = new FormData(e.currentTarget)
 
     const playerData = {
-      first_name: form.get('first_name') as string,
-      last_name: form.get('last_name') as string,
-      first_name_ka: form.get('first_name_ka') as string,
-      last_name_ka: form.get('last_name_ka') as string,
-      date_of_birth: form.get('date_of_birth') as string,
-      position: form.get('position') as string,
-      preferred_foot: (form.get('preferred_foot') as string) || undefined,
+      first_name: String(form.get('first_name') ?? ''),
+      last_name: String(form.get('last_name') ?? ''),
+      first_name_ka: String(form.get('first_name_ka') ?? ''),
+      last_name_ka: String(form.get('last_name_ka') ?? ''),
+      date_of_birth: String(form.get('date_of_birth') ?? ''),
+      position: String(form.get('position') ?? '') as Position,
+      preferred_foot: (String(form.get('preferred_foot') ?? '') || undefined) as PreferredFoot | undefined,
       height_cm: form.get('height_cm') ? Number(form.get('height_cm')) : undefined,
       weight_kg: form.get('weight_kg') ? Number(form.get('weight_kg')) : undefined,
-      parent_guardian_contact: (form.get('parent_guardian_contact') as string) || undefined,
-      club_id: (form.get('club_id') as string) || '',
-      status: (form.get('status') as string) || undefined,
+      parent_guardian_contact: String(form.get('parent_guardian_contact') ?? '') || undefined,
+      club_id: String(form.get('club_id') ?? '') || '',
+      status: (String(form.get('status') ?? '') || undefined) as PlayerStatus | undefined,
     }
 
-    const result = isEditing
-      ? await platformUpdatePlayer(player!.id!, playerData)
-      : await platformCreatePlayer(playerData)
+    let result
+    if (isEditing) {
+      if (!player?.id) {
+        setError(t('errors.invalidPlayerId'))
+        setSaving(false)
+        return
+      }
+      result = await platformUpdatePlayer(player.id, playerData)
+    } else {
+      result = await platformCreatePlayer(playerData)
+    }
 
     setSaving(false)
 
     if (result.error) {
-      setError(result.error)
+      setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
     } else {
       router.push('/platform/players')
       router.refresh()

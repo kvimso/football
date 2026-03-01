@@ -4,17 +4,19 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge } from '@/lib/utils'
+import { calculateAge, unwrapRelation } from '@/lib/utils'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
-import { ContactRequestForm } from '@/components/forms/ContactRequestForm'
+import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
 import { trackPageView } from '@/lib/analytics'
 import { trackPlayerView } from '@/app/actions/player-views'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
+import { DownloadPdfButton } from '@/components/player/DownloadPdfButton'
+import { PlayerCard } from '@/components/player/PlayerCard'
 
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
@@ -49,7 +51,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       preferred_foot, height_cm, weight_kg, photo_url, jersey_number,
       scouting_report, scouting_report_ka, status, is_featured,
       platform_id,
-      club:clubs!players_club_id_fkey ( name, name_ka, slug ),
+      club:clubs!players_club_id_fkey ( id, name, name_ka, slug ),
       skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
       season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, shots_on_target, tackles, interceptions, clean_sheets, distance_covered_km, sprints ),
       match_stats:match_player_stats (
@@ -71,30 +73,29 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
   if (error || !player) notFound()
 
-  trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
-  trackPlayerView(player.id)
+  void trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
+  void trackPlayerView(player.id)
 
-  // Fetch view counts for this player
+  // Fetch view counts for this player using regular client (RLS allows authenticated reads)
   let totalViews = 0
   let recentViews = 0
   let previousViews = 0
   try {
-    const admin = createAdminClient()
     const now = new Date()
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
     const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString()
 
     const [totalResult, recentResult, previousResult] = await Promise.all([
-      admin
+      supabase
         .from('player_views')
         .select('id', { count: 'exact', head: true })
         .eq('player_id', player.id),
-      admin
+      supabase
         .from('player_views')
         .select('id', { count: 'exact', head: true })
         .eq('player_id', player.id)
         .gte('viewed_at', sevenDaysAgo),
-      admin
+      supabase
         .from('player_views')
         .select('id', { count: 'exact', head: true })
         .eq('player_id', player.id)
@@ -117,10 +118,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   if (authError) console.error('Failed to get user:', authError.message)
 
   let isShortlisted = false
-  let hasContactRequest = false
+  let userRole: string | null = null
 
   if (user) {
-    const [shortlistResult, contactResult] = await Promise.all([
+    const [shortlistResult, profileResult] = await Promise.all([
       supabase
         .from('shortlists')
         .select('id')
@@ -128,35 +129,86 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         .eq('player_id', player.id)
         .maybeSingle(),
       supabase
-        .from('contact_requests')
-        .select('id')
-        .eq('scout_id', user.id)
-        .eq('player_id', player.id)
-        .maybeSingle(),
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single(),
     ])
 
     if (shortlistResult.error) console.error('Failed to check shortlist:', shortlistResult.error.message)
     isShortlisted = !!shortlistResult.data
 
-    if (contactResult.error) console.error('Failed to check contact request:', contactResult.error.message)
-    hasContactRequest = !!contactResult.data
+    if (profileResult.error) console.error('Failed to fetch profile:', profileResult.error.message)
+    userRole = profileResult.data?.role ?? null
   }
 
   const age = calculateAge(player.date_of_birth)
-  const club = Array.isArray(player.club) ? player.club[0] : player.club
-  const skills = Array.isArray(player.skills) ? player.skills[0] : player.skills
+  const club = unwrapRelation(player.club)
+  const skills = unwrapRelation(player.skills)
   const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
   const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
     ...ms,
-    match: Array.isArray(ms.match) ? ms.match[0] : ms.match,
+    match: unwrapRelation(ms.match),
   }))
   const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
     .map((h) => ({
       ...h,
-      club: Array.isArray(h.club) ? h.club[0] : h.club,
+      club: unwrapRelation(h.club),
     }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
   const isFreeAgent = player.status === 'free_agent'
+
+  // Fetch similar players: same position, similar age (±2 years), different club
+  const dob = new Date(player.date_of_birth)
+  const dobMinus2 = new Date(dob)
+  dobMinus2.setFullYear(dob.getFullYear() - 2)
+  const dobPlus2 = new Date(dob)
+  dobPlus2.setFullYear(dob.getFullYear() + 2)
+
+  let similarQuery = supabase
+    .from('players')
+    .select(`
+      slug, name, name_ka, position, date_of_birth, height_cm,
+      preferred_foot, is_featured, photo_url, status,
+      club:clubs!players_club_id_fkey ( name, name_ka ),
+      season_stats:player_season_stats ( season, goals, assists, matches_played )
+    `)
+    .eq('position', player.position)
+    .neq('id', player.id)
+    .in('status', ['active', 'free_agent'])
+    .gte('date_of_birth', dobMinus2.toISOString().split('T')[0])
+    .lte('date_of_birth', dobPlus2.toISOString().split('T')[0])
+    .limit(4)
+
+  // Fetch extra so we can prefer players from different clubs
+  if (player.club && !isFreeAgent) {
+    similarQuery = similarQuery.limit(8)
+  }
+
+  const { data: rawSimilar } = await similarQuery
+
+  // Process similar players — prefer different clubs, take up to 4
+  const similarPlayers = (rawSimilar ?? [])
+    .map((p) => {
+      const pClub = unwrapRelation(p.club)
+      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
+      return {
+        ...p,
+        position: p.position as Position,
+        status: (p.status ?? 'active') as PlayerStatus,
+        club: pClub,
+        season_stats: latestStats,
+        _sameClub: pClub?.name === club?.name,
+      }
+    })
+    .sort((a, b) => {
+      // Different club first
+      if (a._sameClub && !b._sameClub) return 1
+      if (!a._sameClub && b._sameClub) return -1
+      return 0
+    })
+    .slice(0, 4)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -166,7 +218,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       </Link>
 
       {/* Player header */}
-      <div className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position] ?? 'border-t-accent'}`}>
+      <div className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position as Position] ?? 'border-t-accent'}`}>
         <div className="flex flex-col gap-6 md:flex-row md:gap-10">
           {/* Photo */}
           <div className="relative flex h-56 w-56 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-background border border-border">
@@ -182,7 +234,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             <PlayerProfileClient player={{
               name: player.name,
               name_ka: player.name_ka,
-              position: player.position,
+              position: player.position as Position,
               is_featured: player.is_featured,
               scouting_report: player.scouting_report,
               scouting_report_ka: player.scouting_report_ka,
@@ -190,7 +242,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               club_name_ka: club?.name_ka ?? null,
               club_slug: club?.slug ?? null,
               platform_id: player.platform_id,
-              status: player.status,
+              status: player.status as PlayerStatus | null,
             }} />
 
             {/* Badges row */}
@@ -224,17 +276,21 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
             {/* Action buttons */}
             {user && (
-              <div className="mt-4 flex gap-3">
+              <div className="mt-4 flex flex-wrap gap-3">
                 <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
-                {!isFreeAgent && (
-                  !hasContactRequest ? (
-                    <ContactRequestForm playerId={player.id} />
-                  ) : (
-                    <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
-                      {t('players.requestSent')}
-                    </span>
-                  )
+                {!isFreeAgent && userRole === 'scout' && club?.id && (
+                  <MessageAcademyButton clubId={club.id} />
                 )}
+                <Link
+                  href={`/players/compare?p1=${player.slug}`}
+                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-accent/50 transition-colors inline-flex items-center gap-1.5"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                  </svg>
+                  {t('compare.comparePlayer')}
+                </Link>
+                <DownloadPdfButton playerId={player.id} playerName={player.name} />
               </div>
             )}
 
@@ -287,6 +343,21 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                     {t('players.scoutViews')}
                   </div>
                   <div className="font-semibold text-foreground">{totalViews}</div>
+                  {recentViews > 0 && (
+                    <div className="mt-0.5 text-[11px] text-foreground-muted">
+                      {recentViews} {t('players.thisWeek')}
+                      {previousViews > 0 ? (() => {
+                        const pct = Math.round(((recentViews - previousViews) / previousViews) * 100)
+                        return (
+                          <span className={pct >= 0 ? 'text-accent' : 'text-red-400'}>
+                            {' '}({pct >= 0 ? '+' : ''}{pct}%)
+                          </span>
+                        )
+                      })() : (
+                        <span className="text-accent"> ({t('players.new')})</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -364,8 +435,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               <tbody>
                 {matchStats.map((ms, i) => {
                   const m = ms.match
-                  const homeClub = m ? (Array.isArray(m.home_club) ? m.home_club[0] : m.home_club) : null
-                  const awayClub = m ? (Array.isArray(m.away_club) ? m.away_club[0] : m.away_club) : null
+                  const homeClub = m ? unwrapRelation(m.home_club) : null
+                  const awayClub = m ? unwrapRelation(m.away_club) : null
                   const homeName = homeClub ? (lang === 'ka' ? homeClub.name_ka : homeClub.name) : null
                   const awayName = awayClub ? (lang === 'ka' ? awayClub.name_ka : awayClub.name) : null
                   const matchLabel = homeName && awayName
@@ -430,6 +501,18 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 </div>
               )
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Similar Players */}
+      {similarPlayers.length > 0 && (
+        <div className="mt-6">
+          <h3 className="section-header mb-4">{t('players.similarPlayers')}</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {similarPlayers.map((sp) => (
+              <PlayerCard key={sp.slug} player={sp} />
+            ))}
           </div>
         </div>
       )}

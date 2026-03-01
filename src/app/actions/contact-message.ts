@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 export async function submitContactMessage(formData: { name: string; email: string; message: string }) {
   const parsed = contactMessageSchema.safeParse(formData)
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+    return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
   }
 
   const supabase = await createClient()
@@ -18,7 +18,7 @@ export async function submitContactMessage(formData: { name: string; email: stri
 
   if (error) {
     console.error('[contact-message] Insert failed:', error.message)
-    return { error: 'Failed to send message. Please try again.' }
+    return { error: 'errors.failedToSendMessage' }
   }
 
   return { success: true }

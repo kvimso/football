@@ -1,27 +1,17 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAdminContext } from '@/lib/auth'
+import { unwrapRelation, todayDateString, escapePostgrestValue } from '@/lib/utils'
+import { uuidSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { transferRequestReceivedEmail } from '@/lib/email-templates'
 
-const uuidSchema = z.string().uuid()
-
-// Escape special PostgREST filter characters to prevent filter injection
-function escapePostgrestValue(value: string): string {
-  return value.replace(/[,.()"\\%_]/g, '')
-}
-
-function today() {
-  return new Date().toISOString().split('T')[0]
-}
-
 export async function releasePlayer(playerId: string) {
-  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: player } = await supabase
     .from('players')
@@ -29,21 +19,24 @@ export async function releasePlayer(playerId: string) {
     .eq('id', playerId)
     .single()
 
-  if (!player || player.club_id !== clubId) return { error: 'Unauthorized' }
+  if (!player || player.club_id !== clubId) return { error: 'errors.unauthorized' }
 
   const admin = createAdminClient()
 
-  const { error: updateErr } = await admin
+  const { error: updateErr, data: released } = await admin
     .from('players')
     .update({ club_id: null, status: 'free_agent' as const, updated_at: new Date().toISOString() })
     .eq('id', playerId)
+    .eq('club_id', clubId)
+    .select('id')
 
   if (updateErr) return { error: updateErr.message }
+  if (!released || released.length === 0) return { error: 'errors.playerNoLongerAtClub' }
 
   // Close club history
   const { error: historyErr } = await admin
     .from('player_club_history')
-    .update({ left_at: today() })
+    .update({ left_at: todayDateString() })
     .eq('player_id', playerId)
     .eq('club_id', clubId)
     .is('left_at', null)
@@ -58,7 +51,7 @@ export async function releasePlayer(playerId: string) {
 
 export async function searchPlayersForTransfer(query: string) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized', players: [] }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized', players: [] }
 
   if (!query || query.trim().length < 2) return { error: null, players: [] }
 
@@ -103,9 +96,9 @@ export async function searchPlayersForTransfer(query: string) {
 }
 
 export async function requestTransfer(playerId: string) {
-  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: player } = await supabase
     .from('players')
@@ -113,8 +106,8 @@ export async function requestTransfer(playerId: string) {
     .eq('id', playerId)
     .single()
 
-  if (!player || !player.club_id) return { error: 'Player not found or is a free agent' }
-  if (player.club_id === clubId) return { error: 'Player is already at your club' }
+  if (!player || !player.club_id) return { error: 'errors.playerNotFoundOrFreeAgent' }
+  if (player.club_id === clubId) return { error: 'errors.playerAlreadyAtClub' }
 
   // Check for existing pending request
   const { data: existing } = await supabase
@@ -125,7 +118,7 @@ export async function requestTransfer(playerId: string) {
     .eq('status', 'pending')
     .maybeSingle()
 
-  if (existing) return { error: 'A transfer request for this player is already pending' }
+  if (existing) return { error: 'errors.transferAlreadyPending' }
 
   const { error: insertErr } = await supabase
     .from('transfer_requests')
@@ -137,7 +130,7 @@ export async function requestTransfer(playerId: string) {
 
   if (insertErr) return { error: insertErr.message }
 
-  const club = Array.isArray(player.club) ? player.club[0] : player.club
+  const club = unwrapRelation(player.club)
 
   // Send email notification to the receiving club admin (fire-and-forget)
   try {
@@ -165,9 +158,9 @@ export async function requestTransfer(playerId: string) {
 }
 
 export async function claimFreeAgent(playerId: string) {
-  if (!uuidSchema.safeParse(playerId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: player } = await supabase
     .from('players')
@@ -175,26 +168,30 @@ export async function claimFreeAgent(playerId: string) {
     .eq('id', playerId)
     .single()
 
-  if (!player) return { error: 'Player not found' }
+  if (!player) return { error: 'errors.playerNotFound' }
   if (player.club_id !== null || player.status !== 'free_agent') {
-    return { error: 'Player is not a free agent' }
+    return { error: 'errors.playerNotFreeAgent' }
   }
 
   const admin = createAdminClient()
 
-  const { error: updateErr } = await admin
+  const { error: updateErr, data: updated } = await admin
     .from('players')
     .update({ club_id: clubId, status: 'active' as const, updated_at: new Date().toISOString() })
     .eq('id', playerId)
+    .is('club_id', null)
+    .eq('status', 'free_agent')
+    .select('id')
 
   if (updateErr) return { error: updateErr.message }
+  if (!updated || updated.length === 0) return { error: 'errors.playerNoLongerFreeAgent' }
 
   const { error: historyErr } = await admin
     .from('player_club_history')
     .insert({
       player_id: playerId,
       club_id: clubId,
-      joined_at: today(),
+      joined_at: todayDateString(),
     })
 
   if (historyErr) console.error('Failed to insert club history:', historyErr.message)
@@ -206,9 +203,9 @@ export async function claimFreeAgent(playerId: string) {
 }
 
 export async function acceptTransfer(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: request } = await supabase
     .from('transfer_requests')
@@ -216,9 +213,9 @@ export async function acceptTransfer(requestId: string) {
     .eq('id', requestId)
     .single()
 
-  if (!request) return { error: 'Request not found' }
-  if (request.from_club_id !== clubId) return { error: 'Unauthorized' }
-  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+  if (!request) return { error: 'errors.requestNotFound' }
+  if (request.from_club_id !== clubId) return { error: 'errors.unauthorized' }
+  if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   const admin = createAdminClient()
 
@@ -230,7 +227,7 @@ export async function acceptTransfer(requestId: string) {
     .single()
 
   if (!player || player.club_id !== clubId) {
-    return { error: 'Player is no longer at your club' }
+    return { error: 'errors.playerNoLongerAtClub' }
   }
 
   // Update this request
@@ -262,7 +259,7 @@ export async function acceptTransfer(requestId: string) {
   // Close old club history
   const { error: closeErr } = await admin
     .from('player_club_history')
-    .update({ left_at: today() })
+    .update({ left_at: todayDateString() })
     .eq('player_id', request.player_id)
     .eq('club_id', request.from_club_id)
     .is('left_at', null)
@@ -275,7 +272,7 @@ export async function acceptTransfer(requestId: string) {
     .insert({
       player_id: request.player_id,
       club_id: request.to_club_id,
-      joined_at: today(),
+      joined_at: todayDateString(),
     })
 
   if (newHistErr) console.error('Failed to insert new club history:', newHistErr.message)
@@ -288,9 +285,9 @@ export async function acceptTransfer(requestId: string) {
 }
 
 export async function declineTransfer(requestId: string) {
-  if (!uuidSchema.safeParse(requestId).success) return { error: 'Invalid ID' }
+  if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const { data: request } = await supabase
     .from('transfer_requests')
@@ -298,9 +295,9 @@ export async function declineTransfer(requestId: string) {
     .eq('id', requestId)
     .single()
 
-  if (!request) return { error: 'Request not found' }
-  if (request.from_club_id !== clubId) return { error: 'Unauthorized' }
-  if (request.status !== 'pending') return { error: 'Request is no longer pending' }
+  if (!request) return { error: 'errors.requestNotFound' }
+  if (request.from_club_id !== clubId) return { error: 'errors.unauthorized' }
+  if (request.status !== 'pending') return { error: 'errors.requestNoLongerPending' }
 
   const { error: reqErr } = await supabase
     .from('transfer_requests')

@@ -2,14 +2,16 @@
 
 import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
+import { StarIcon, MessageIcon, ArrowsIcon } from '@/components/ui/Icons'
 
 interface DashboardHomeProps {
   fullName: string
   shortlistCount: number
-  requestCount: number
+  messageCount: number
+  unreadCount: number
 }
 
-export function DashboardHome({ fullName, shortlistCount, requestCount }: DashboardHomeProps) {
+export function DashboardHome({ fullName, shortlistCount, messageCount, unreadCount }: DashboardHomeProps) {
   const { t } = useLang()
 
   return (
@@ -20,21 +22,46 @@ export function DashboardHome({ fullName, shortlistCount, requestCount }: Dashbo
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Link href="/dashboard/shortlist" className="card group">
-          <div className="text-3xl font-bold text-accent">{shortlistCount}</div>
-          <div className="mt-1 text-sm font-medium text-foreground">{t('dashboard.shortlist')}</div>
-          <div className="mt-0.5 text-xs text-foreground-muted">{t('dashboard.shortlistDesc')}</div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+              <StarIcon className="h-5 w-5 text-accent" />
+            </div>
+            <div>
+              <div className="text-2xl font-extrabold text-accent">{shortlistCount}</div>
+              <div className="text-sm font-medium text-foreground">{t('dashboard.shortlist')}</div>
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.shortlistDesc')}</div>
         </Link>
 
-        <Link href="/dashboard/requests" className="card group">
-          <div className="text-3xl font-bold text-accent">{requestCount}</div>
-          <div className="mt-1 text-sm font-medium text-foreground">{t('dashboard.requests')}</div>
-          <div className="mt-0.5 text-xs text-foreground-muted">{t('dashboard.requestsDesc')}</div>
+        <Link href="/dashboard/messages" className="card group">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+              <MessageIcon className="h-5 w-5 text-accent" />
+            </div>
+            <div>
+              <div className="text-2xl font-extrabold text-accent">{messageCount}</div>
+              <div className="text-sm font-medium text-foreground">{t('dashboard.messages')}</div>
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-foreground-muted">
+            {unreadCount > 0
+              ? `${unreadCount} ${t('chat.unread')}`
+              : t('dashboard.messagesDesc')}
+          </div>
         </Link>
 
         <Link href="/players/compare" className="card group">
-          <div className="text-3xl font-bold text-accent/50">&#8644;</div>
-          <div className="mt-1 text-sm font-medium text-foreground">{t('dashboard.compare')}</div>
-          <div className="mt-0.5 text-xs text-foreground-muted">{t('dashboard.compareDesc')}</div>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+              <ArrowsIcon className="h-5 w-5 text-accent" />
+            </div>
+            <div>
+              <div className="text-2xl font-extrabold text-accent/50">&#8644;</div>
+              <div className="text-sm font-medium text-foreground">{t('dashboard.compare')}</div>
+            </div>
+          </div>
+          <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.compareDesc')}</div>
         </Link>
       </div>
 

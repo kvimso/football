@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { MatchCard } from '@/components/match/MatchCard'
 import { MatchFilters } from '@/components/match/MatchFilters'
 
@@ -48,8 +49,8 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
 
   const matchCards = (matches ?? []).map((m) => ({
     ...m,
-    home_club: Array.isArray(m.home_club) ? m.home_club[0] : m.home_club,
-    away_club: Array.isArray(m.away_club) ? m.away_club[0] : m.away_club,
+    home_club: unwrapRelation(m.home_club),
+    away_club: unwrapRelation(m.away_club),
   }))
 
   return (

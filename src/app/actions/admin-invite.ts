@@ -9,7 +9,7 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
   // 1. Verify caller is platform_admin
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) return { error: 'Not authenticated', success: false }
+  if (authError || !user) return { error: 'errors.notAuthenticated', success: false }
 
   const { data: profile } = await supabase
     .from('profiles')
@@ -18,13 +18,13 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
     .single()
 
   if (!profile || profile.role !== 'platform_admin') {
-    return { error: 'Unauthorized', success: false }
+    return { error: 'errors.unauthorized', success: false }
   }
 
   // 2. Validate input
   const parsed = inviteAdminSchema.safeParse(data)
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? 'Invalid input', success: false }
+    return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput', success: false }
   }
 
   const adminClient = createAdminClient()
@@ -37,7 +37,7 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
     .single()
 
   if (clubError || !club) {
-    return { error: 'Club not found', success: false }
+    return { error: 'errors.clubNotFound', success: false }
   }
 
   // 4. Check if user already exists with this email (query profiles instead of listing all auth users)
@@ -49,7 +49,7 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
 
   if (existingProfile) {
     if (existingProfile.role === 'academy_admin') {
-      return { error: 'This user is already an academy admin', success: false }
+      return { error: 'errors.alreadyAdmin', success: false }
     }
 
     // User exists but is a scout — promote directly

@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { PlatformRequestsList } from '@/components/platform/PlatformRequestsList'
 
 export default async function PlatformRequestsPage({
@@ -11,27 +12,41 @@ export default async function PlatformRequestsPage({
   const { t } = await getServerT()
   const admin = createAdminClient()
 
+  // For 'expired' filter, we fetch pending and filter client-side
+  const dbStatusFilter = params.status === 'expired' ? 'pending' : params.status
+
   let query = admin
     .from('contact_requests')
     .select(`
-      id, message, status, created_at,
+      id, message, status, created_at, expires_at, response_message,
       scout:profiles!contact_requests_scout_id_fkey(full_name, organization, email),
       player:players!contact_requests_player_id_fkey(name, name_ka, slug, club:clubs!players_club_id_fkey(name))
     `)
     .order('created_at', { ascending: false })
 
-  if (params.status && params.status !== 'all') {
-    query = query.eq('status', params.status)
+  if (dbStatusFilter && dbStatusFilter !== 'all') {
+    query = query.eq('status', dbStatusFilter)
   }
 
   const { data: requests, error } = await query.limit(100)
   if (error) console.error('Failed to fetch requests:', error.message)
 
-  const processed = (requests ?? []).map((r) => ({
+  let processed = (requests ?? []).map((r) => ({
     ...r,
-    scout: Array.isArray(r.scout) ? r.scout[0] : r.scout,
-    player: Array.isArray(r.player) ? r.player[0] : r.player,
+    scout: unwrapRelation(r.scout),
+    player: unwrapRelation(r.player),
   }))
+
+  // Client-side filter for 'expired' tab
+  if (params.status === 'expired') {
+    processed = processed.filter((r) => r.expires_at && new Date(r.expires_at) < new Date())
+  }
+  // For 'pending' tab, exclude expired ones
+  if (params.status === 'pending') {
+    processed = processed.filter((r) => !r.expires_at || new Date(r.expires_at) >= new Date())
+  }
+
+  const statusFilters = ['all', 'pending', 'approved', 'rejected', 'expired']
 
   return (
     <div>
@@ -39,7 +54,7 @@ export default async function PlatformRequestsPage({
 
       {/* Status filter tabs */}
       <div className="mt-4 flex gap-2">
-        {['all', 'pending', 'approved', 'rejected'].map((s) => {
+        {statusFilters.map((s) => {
           const isActive = (params.status ?? 'all') === s
           return (
             <a

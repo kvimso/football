@@ -1,16 +1,19 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { playerFormSchema } from '@/lib/validations'
-import { generateSlug } from '@/lib/utils'
+import { playerFormSchema, uuidSchema } from '@/lib/validations'
+import { generateSlug, todayDateString } from '@/lib/utils'
 import { getAdminContext } from '@/lib/auth'
+import type { z } from 'zod'
 
-export async function createPlayer(data: Record<string, unknown>) {
+type PlayerFormInput = z.infer<typeof playerFormSchema>
+
+export async function createPlayer(data: PlayerFormInput) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
   const parsed = playerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -53,7 +56,7 @@ export async function createPlayer(data: Record<string, unknown>) {
       .insert({
         player_id: newPlayer.id,
         club_id: clubId,
-        joined_at: new Date().toISOString().split('T')[0],
+        joined_at: todayDateString(),
       })
 
     if (historyError) console.error('Failed to insert club history:', historyError.message)
@@ -66,14 +69,12 @@ export async function createPlayer(data: Record<string, unknown>) {
 
 export async function updatePlayer(
   playerId: string,
-  data: Record<string, unknown>
+  data: PlayerFormInput,
 ) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'Unauthorized' }
+  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
-  // Validate playerId is a valid UUID
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  if (!uuidRegex.test(playerId)) return { error: 'Invalid player ID' }
+  if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidPlayerId' }
 
   // Verify player belongs to admin's club
   const { data: existingPlayer, error: checkError } = await supabase
@@ -82,11 +83,11 @@ export async function updatePlayer(
     .eq('id', playerId)
     .single()
 
-  if (checkError || !existingPlayer) return { error: 'Player not found' }
-  if (existingPlayer.club_id !== clubId) return { error: 'Unauthorized' }
+  if (checkError || !existingPlayer) return { error: 'errors.playerNotFound' }
+  if (existingPlayer.club_id !== clubId) return { error: 'errors.unauthorized' }
 
   const parsed = playerFormSchema.safeParse(data)
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'Invalid input' }
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`

@@ -21,7 +21,7 @@ export function ContactRequestForm({ playerId }: ContactRequestFormProps) {
     startTransition(async () => {
       const result = await sendContactRequest(playerId, message)
       if (result.error) {
-        setError(result.error)
+        setError(result.error.startsWith('errors.') ? t(result.error) : result.error)
       } else {
         setSent(true)
         setOpen(false)

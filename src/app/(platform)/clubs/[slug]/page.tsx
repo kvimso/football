@@ -4,10 +4,13 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
+import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
 import { trackPageView } from '@/lib/analytics'
 import { ClubSilhouette } from '@/components/ui/ClubSilhouette'
+import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
 
 interface ClubPageProps {
   params: Promise<{ slug: string }>
@@ -48,6 +51,18 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   trackPageView({ pageType: 'club', entityId: club.id, entitySlug: club.slug })
 
+  // Fetch user + role for MessageAcademyButton
+  const { data: { user } } = await supabase.auth.getUser()
+  let userRole: string | null = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    userRole = profile?.role ?? null
+  }
+
   // Fetch players for this club
   const { data: players, error: playersError } = await supabase
     .from('players')
@@ -68,9 +83,10 @@ export default async function ClubPage({ params }: ClubPageProps) {
     const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
     return {
       ...p,
-      club: Array.isArray(p.club) ? p.club[0] : p.club,
+      position: p.position as Position,
+      status: (p.status ?? 'active') as PlayerStatus,
+      club: unwrapRelation(p.club),
       season_stats: statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
-      status: p.status ?? 'active',
     }
   })
 
@@ -107,6 +123,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
               </>
             )}
           </div>
+          {user && userRole === 'scout' && (
+            <div className="mt-3">
+              <MessageAcademyButton clubId={club.id} />
+            </div>
+          )}
         </div>
       </div>
 

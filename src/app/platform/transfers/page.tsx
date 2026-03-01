@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
+import { unwrapRelation } from '@/lib/utils'
 import { PlatformTransfersList } from '@/components/platform/PlatformTransfersList'
 
 export default async function PlatformTransfersPage({
@@ -30,9 +31,9 @@ export default async function PlatformTransfersPage({
 
   const processed = (transfers ?? []).map((t) => ({
     ...t,
-    player: Array.isArray(t.player) ? t.player[0] : t.player,
-    from_club: Array.isArray(t.from_club) ? t.from_club[0] : t.from_club,
-    to_club: Array.isArray(t.to_club) ? t.to_club[0] : t.to_club,
+    player: unwrapRelation(t.player),
+    from_club: unwrapRelation(t.from_club),
+    to_club: unwrapRelation(t.to_club),
   }))
 
   return (

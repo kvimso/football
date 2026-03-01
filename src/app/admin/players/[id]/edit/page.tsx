@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import type { Position } from '@/lib/types'
 import { PlayerForm } from '@/components/admin/PlayerForm'
 
 interface EditPlayerPageProps {
@@ -48,7 +49,7 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
         </Link>
       </div>
       <h1 className="mb-6 text-2xl font-bold text-foreground">{t('admin.players.editPlayer')}</h1>
-      <PlayerForm player={player} />
+      <PlayerForm player={{ ...player, position: player.position as Position }} />
     </div>
   )
 }
