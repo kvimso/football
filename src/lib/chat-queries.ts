@@ -26,9 +26,12 @@ export async function fetchConversations(
   }
 
   const conversations: ConversationItem[] = data.map((row) => {
+    const scoutDisplayName = row.scout_full_name
+      || (row.scout_email ? row.scout_email.split('@')[0] : '')
+
     const otherParty = role === 'scout'
       ? { id: row.club_id, full_name: row.club_name ?? '', organization: null, role: 'academy_admin' as const }
-      : { id: row.scout_id, full_name: row.scout_full_name ?? '', organization: row.scout_organization ?? null, role: 'scout' as const }
+      : { id: row.scout_id, full_name: scoutDisplayName, organization: row.scout_organization ?? null, role: 'scout' as const }
 
     const lastMessage = row.last_message_content !== null || row.last_message_type !== null
       ? {
@@ -75,7 +78,7 @@ export async function fetchConversationById(
     .select(`
       id, scout_id, club_id, created_at,
       club:clubs!conversations_club_id_fkey ( id, name, name_ka, logo_url ),
-      scout:profiles!conversations_scout_id_fkey ( id, full_name, organization, role )
+      scout:profiles!conversations_scout_id_fkey ( id, full_name, email, organization, role )
     `)
     .eq('id', conversationId)
     .single()
@@ -105,9 +108,12 @@ export async function fetchConversationById(
   const isBlocked = (blocks?.length ?? 0) > 0
   const blockedByMe = blocks?.some(b => b.blocked_by === userId) ?? false
 
+  const scoutName = scout?.full_name
+    || ((scout as Record<string, unknown>)?.email ? String((scout as Record<string, unknown>).email).split('@')[0] : '')
+
   const otherParty = role === 'scout'
     ? { id: club?.id ?? '', full_name: club?.name ?? '', organization: null, role: 'academy_admin' as UserRole }
-    : { id: scout?.id ?? '', full_name: scout?.full_name ?? '', organization: scout?.organization ?? null, role: 'scout' as UserRole }
+    : { id: scout?.id ?? '', full_name: scoutName, organization: scout?.organization ?? null, role: 'scout' as UserRole }
 
   return {
     id: conv.id,

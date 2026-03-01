@@ -47,9 +47,10 @@ export function ChatThread({
   )
 
   const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
-  const displayName = lang === 'ka' && conversation.club.name_ka
+  const rawDisplayName = lang === 'ka' && conversation.club.name_ka
     ? conversation.club.name_ka
     : (userRole === 'scout' ? conversation.club.name : conversation.other_party.full_name)
+  const displayName = rawDisplayName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
 
   // Block/unblock handler
   const handleBlockAction = useCallback(async () => {
@@ -401,27 +402,32 @@ export function ChatThread({
           </svg>
         </Link>
 
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
             {userRole === 'scout' && conversation.club.logo_url ? (
               <Image
                 src={conversation.club.logo_url}
                 alt={displayName}
-                width={36}
-                height={36}
-                className="h-9 w-9 rounded-full object-cover"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-full object-cover"
               />
             ) : (
-              <span className="text-sm font-bold text-accent">
+              <span className="text-base font-bold text-accent">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             )}
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-semibold text-foreground">{displayName}</h2>
-            {isBlocked && (
-              <span className="text-xs text-red-400">{t('chat.blocked')}</span>
-            )}
+            <h2 className="truncate text-base font-bold text-foreground">{displayName}</h2>
+            <span className="text-xs text-foreground-muted">
+              {isBlocked
+                ? t('chat.blocked')
+                : userRole === 'scout'
+                  ? t('roles.admin')
+                  : t('roles.scout')
+              }
+            </span>
           </div>
         </div>
 
@@ -493,7 +499,7 @@ export function ChatThread({
         )}
 
         {/* Messages grouped by date */}
-        <div className="space-y-1">
+        <div>
           {dateGroups.map((group) => (
             <div key={group.date}>
               <DateDivider date={group.messages[0].created_at} lang={lang} t={t} />

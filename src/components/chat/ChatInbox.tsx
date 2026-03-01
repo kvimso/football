@@ -114,11 +114,12 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
   }
 
   return (
-    <div className="space-y-2" role="list">
+    <div className="space-y-1.5" role="list">
       {liveConversations.map((conv) => {
-        const displayName = userRole === 'scout'
+        const rawName = userRole === 'scout'
           ? (lang === 'ka' && conv.club?.name_ka ? conv.club.name_ka : conv.club?.name ?? conv.other_party.full_name)
           : conv.other_party.full_name
+        const displayName = rawName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
 
         const subtitle = userRole === 'scout'
           ? null
@@ -134,22 +135,22 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
             key={conv.id}
             href={`${basePath}/${conv.id}`}
             role="listitem"
-            className={`card flex items-center gap-3 p-4 transition-colors hover:bg-background-secondary ${
-              conv.is_blocked ? 'opacity-60' : ''
-            }`}
+            className={`flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3.5 transition-all hover:bg-card-hover hover:shadow-md ${
+              conv.unread_count > 0 ? 'border-accent/20' : ''
+            } ${conv.is_blocked ? 'opacity-60' : ''}`}
           >
             {/* Avatar */}
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
+            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/10">
               {userRole === 'scout' && conv.club?.logo_url ? (
                 <Image
                   src={conv.club.logo_url}
                   alt={conv.club.name}
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full object-cover"
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <span className="text-sm font-bold text-accent">
+                <span className="text-base font-bold text-accent">
                   {displayName.charAt(0).toUpperCase()}
                 </span>
               )}
@@ -157,9 +158,9 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
 
             {/* Content */}
             <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-baseline justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className={`truncate text-sm ${conv.unread_count > 0 ? 'font-bold text-foreground' : 'font-semibold text-foreground-muted'}`}>
+                  <span className={`truncate text-sm ${conv.unread_count > 0 ? 'font-bold text-foreground' : 'font-medium text-foreground'}`}>
                     {displayName}
                   </span>
                   {conv.is_blocked && (
@@ -168,12 +169,12 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
                     </svg>
                   )}
                 </div>
-                <span className="shrink-0 text-xs text-foreground-muted">
+                <span className={`shrink-0 text-[11px] ${conv.unread_count > 0 ? 'font-semibold text-accent' : 'text-foreground-muted'}`}>
                   {timestamp}
                 </span>
               </div>
               <div className="mt-0.5 flex items-center justify-between gap-2">
-                <p className={`truncate text-xs ${conv.unread_count > 0 ? 'font-medium text-foreground-muted' : 'text-foreground-muted/70'}`}>
+                <p className={`truncate text-xs ${conv.unread_count > 0 ? 'font-medium text-foreground-muted' : 'text-foreground-muted/60'}`}>
                   {subtitle && <span className="text-foreground-muted/50">{subtitle} &middot; </span>}
                   {lastMessagePreview}
                 </p>

@@ -53,36 +53,39 @@ export function MessageBubble({
   const senderName = message.sender?.full_name ?? t('common.unknown')
   const time = formatBubbleTime(message.created_at, lang)
 
+  // Tighter spacing for consecutive messages from same sender
+  const tightSpacing = !showSenderName && !showTimestamp
+
   return (
-    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'} ${isNew ? 'animate-chat-fade-in' : ''}`}>
+    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'} ${tightSpacing ? 'mt-0.5' : 'mt-2'} ${isNew ? 'animate-chat-fade-in' : ''}`}>
       <div className={`max-w-[75%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
         {/* Sender name for received messages */}
         {!isMine && showSenderName && (
-          <span className="mb-0.5 ml-1 text-[11px] font-medium text-foreground-muted">
+          <span className="mb-0.5 ml-3 text-[11px] font-medium text-foreground-muted">
             {senderName}
           </span>
         )}
 
         {/* Timestamp */}
         {showTimestamp && (
-          <span className={`mb-0.5 text-[11px] text-foreground-muted ${isMine ? 'mr-1 text-right' : 'ml-1'}`}>
+          <span className={`mb-0.5 text-[11px] text-foreground-muted ${isMine ? 'mr-3 text-right' : 'ml-3'}`}>
             {time}
           </span>
         )}
 
         {/* Message content */}
         <div
-          className={`rounded-2xl ${
+          className={`shadow-sm ${
             isMine
-              ? 'rounded-br-md bg-accent text-white'
-              : 'rounded-bl-md bg-background-secondary text-foreground'
+              ? 'rounded-2xl rounded-br-sm bg-accent text-white'
+              : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground'
           }`}
         >
           {message.message_type === 'text' && (() => {
             const emojiOnly = message.content ? isEmojiOnly(message.content) : false
             return (
-              <div className="px-3 py-2">
-                <p className={`whitespace-pre-wrap break-words ${emojiOnly ? 'text-2xl leading-relaxed' : 'text-sm'}`}>
+              <div className="px-3.5 py-2">
+                <p className={`whitespace-pre-wrap break-words ${emojiOnly ? 'text-2xl leading-relaxed' : 'text-sm leading-relaxed'}`}>
                   {message.content ? (emojiOnly ? message.content : linkifyMessage(message.content).map((part, i) =>
                     typeof part === 'string' ? part : (
                       <a

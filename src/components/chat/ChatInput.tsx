@@ -251,18 +251,32 @@ export function ChatInput({
           </div>
         )}
 
-        <div className="flex items-end gap-2">
-          {/* Attach button */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground disabled:opacity-50"
-            aria-label={t('aria.attachFile')}
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
-            </svg>
-          </button>
+        <div className="flex items-end gap-1.5">
+          {/* Action buttons group */}
+          <div className="flex shrink-0 items-center">
+            {/* Attach button */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground disabled:opacity-50"
+              aria-label={t('aria.attachFile')}
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+              </svg>
+            </button>
+
+            {/* Player ref button */}
+            <button
+              onClick={() => setShowPlayerSearch(true)}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
+              aria-label={t('aria.addPlayerRef')}
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+            </button>
+          </div>
 
           {/* Hidden file input */}
           <input
@@ -273,7 +287,7 @@ export function ChatInput({
             onChange={handleFileSelect}
           />
 
-          {/* Textarea */}
+          {/* Textarea — pill-shaped input */}
           <div className="relative min-w-0 flex-1">
             <textarea
               ref={textareaRef}
@@ -284,26 +298,15 @@ export function ChatInput({
               placeholder={t('chat.typeMessage')}
               rows={1}
               disabled={isSending}
-              className="input max-h-[96px] min-h-[36px] w-full resize-none py-2 pr-2 text-sm"
+              className="max-h-[96px] min-h-[40px] w-full resize-none overflow-hidden rounded-3xl border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground transition-colors placeholder:text-foreground-muted focus:border-accent focus:outline-none"
             />
           </div>
 
-          {/* Player ref button */}
-          <button
-            onClick={() => setShowPlayerSearch(true)}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
-            aria-label={t('aria.addPlayerRef')}
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-            </svg>
-          </button>
-
-          {/* Send button */}
+          {/* Send button — slightly larger */}
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:hover:bg-accent"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-accent"
             aria-label={t('aria.sendMessage')}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
