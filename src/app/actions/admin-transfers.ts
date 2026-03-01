@@ -30,7 +30,10 @@ export async function releasePlayer(playerId: string) {
     .eq('club_id', clubId)
     .select('id')
 
-  if (updateErr) return { error: updateErr.message }
+  if (updateErr) {
+    console.error('[admin-transfers] Release error:', updateErr.message)
+    return { error: 'errors.serverError' }
+  }
   if (!released || released.length === 0) return { error: 'errors.playerNoLongerAtClub' }
 
   // Close club history
@@ -80,7 +83,10 @@ export async function searchPlayersForTransfer(query: string) {
       .limit(10),
   ])
 
-  if (error) return { error: error.message, players: [] }
+  if (error) {
+    console.error('[admin-transfers] Search error:', error.message)
+    return { error: 'errors.serverError', players: [] }
+  }
   if (faError) console.error('Failed to search free agents:', faError.message)
 
   const allPlayers = [...(players ?? []), ...(freeAgents ?? [])]
@@ -128,7 +134,10 @@ export async function requestTransfer(playerId: string) {
       to_club_id: clubId,
     })
 
-  if (insertErr) return { error: insertErr.message }
+  if (insertErr) {
+    console.error('[admin-transfers] Transfer request insert error:', insertErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   const club = unwrapRelation(player.club)
 
@@ -183,7 +192,10 @@ export async function claimFreeAgent(playerId: string) {
     .eq('status', 'free_agent')
     .select('id')
 
-  if (updateErr) return { error: updateErr.message }
+  if (updateErr) {
+    console.error('[admin-transfers] Claim error:', updateErr.message)
+    return { error: 'errors.serverError' }
+  }
   if (!updated || updated.length === 0) return { error: 'errors.playerNoLongerFreeAgent' }
 
   const { error: historyErr } = await admin
@@ -236,7 +248,10 @@ export async function acceptTransfer(requestId: string) {
     .update({ status: 'accepted' as const, resolved_at: new Date().toISOString() })
     .eq('id', requestId)
 
-  if (reqErr) return { error: reqErr.message }
+  if (reqErr) {
+    console.error('[admin-transfers] Accept transfer error:', reqErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Cancel all other pending transfer requests for this player
   const { error: cancelErr } = await admin
@@ -254,7 +269,10 @@ export async function acceptTransfer(requestId: string) {
     .update({ club_id: request.to_club_id, updated_at: new Date().toISOString() })
     .eq('id', request.player_id)
 
-  if (playerErr) return { error: playerErr.message }
+  if (playerErr) {
+    console.error('[admin-transfers] Player transfer error:', playerErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Close old club history
   const { error: closeErr } = await admin
@@ -304,7 +322,10 @@ export async function declineTransfer(requestId: string) {
     .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
     .eq('id', requestId)
 
-  if (reqErr) return { error: reqErr.message }
+  if (reqErr) {
+    console.error('[admin-transfers] Decline error:', reqErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/admin')
   revalidatePath('/admin/transfers')

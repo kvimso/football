@@ -40,7 +40,10 @@ export async function createClub(data: ClubFormInput) {
       website: parsed.data.website || null,
     })
 
-  if (insertError) return { error: insertError.message }
+  if (insertError) {
+    console.error('[platform-clubs] Create error:', insertError.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/clubs')
   revalidatePath('/clubs')
@@ -69,7 +72,10 @@ export async function updateClub(clubId: string, data: ClubFormInput) {
     })
     .eq('id', clubId)
 
-  if (updateError) return { error: updateError.message }
+  if (updateError) {
+    console.error('[platform-clubs] Update error:', updateError.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/clubs')
   revalidatePath('/clubs')
@@ -97,7 +103,10 @@ export async function deleteClub(clubId: string) {
     .delete()
     .eq('id', clubId)
 
-  if (deleteError) return { error: deleteError.message }
+  if (deleteError) {
+    console.error('[platform-clubs] Delete error:', deleteError.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/clubs')
   revalidatePath('/clubs')

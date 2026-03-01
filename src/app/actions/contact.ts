@@ -10,7 +10,10 @@ import { contactRequestReceivedEmail } from '@/lib/email-templates'
 export async function sendContactRequest(playerId: string, message: string) {
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError) return { error: authError.message }
+  if (authError) {
+    console.error('[contact] Auth error:', authError.message)
+    return { error: 'errors.serverError' }
+  }
   if (!user) return { error: 'errors.notAuthenticated' }
 
   // Validate with Zod schema
@@ -37,7 +40,10 @@ export async function sendContactRequest(playerId: string, message: string) {
     .eq('player_id', playerId)
     .maybeSingle()
 
-  if (checkError) return { error: checkError.message }
+  if (checkError) {
+    console.error('[contact] Check error:', checkError.message)
+    return { error: 'errors.serverError' }
+  }
   if (existing) return { error: 'errors.alreadySentRequest' }
 
   const { error } = await supabase
@@ -49,7 +55,10 @@ export async function sendContactRequest(playerId: string, message: string) {
       expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[contact] Insert error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Send email notification to club admin (fire-and-forget)
   if (player.club_id) {

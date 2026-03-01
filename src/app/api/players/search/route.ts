@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { escapePostgrestValue } from '@/lib/utils'
 
 // GET /api/players/search?q=query&limit=10
 export async function GET(request: NextRequest) {
@@ -19,7 +20,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ players: [] })
   }
 
-  const pattern = `%${query}%`
+  const sanitized = escapePostgrestValue(query)
+  if (!sanitized) {
+    return NextResponse.json({ players: [] })
+  }
+  const pattern = `%${sanitized}%`
 
   const { data: players, error } = await supabase
     .from('players')
@@ -33,7 +38,7 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     console.error('[players/search] Error:', error.message)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   const results = (players ?? []).map((p) => {

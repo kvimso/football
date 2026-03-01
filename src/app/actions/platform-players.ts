@@ -48,7 +48,10 @@ export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
     .select('id')
     .single()
 
-  if (insertError) return { error: insertError.message }
+  if (insertError) {
+    console.error('[platform-players] Create error:', insertError.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Insert club history if assigned to a club
   if (newPlayer && clubId) {
@@ -107,7 +110,10 @@ export async function platformUpdatePlayer(playerId: string, data: PlatformPlaye
     })
     .eq('id', playerId)
 
-  if (updateError) return { error: updateError.message }
+  if (updateError) {
+    console.error('[platform-players] Update error:', updateError.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Handle club change
   const today = todayDateString()
@@ -152,7 +158,10 @@ export async function platformDeletePlayer(playerId: string) {
     .delete()
     .eq('id', playerId)
 
-  if (deleteError) return { error: deleteError.message }
+  if (deleteError) {
+    console.error('[platform-players] Delete error:', deleteError.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/players')
   revalidatePath('/players')

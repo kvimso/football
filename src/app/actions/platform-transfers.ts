@@ -25,7 +25,10 @@ export async function platformAcceptTransfer(requestId: string) {
     .update({ status: 'accepted' as const, resolved_at: new Date().toISOString() })
     .eq('id', requestId)
 
-  if (reqErr) return { error: reqErr.message }
+  if (reqErr) {
+    console.error('[platform-transfers] Accept error:', reqErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Cancel other pending requests for this player
   const { error: declineErr } = await admin
@@ -43,7 +46,10 @@ export async function platformAcceptTransfer(requestId: string) {
     .update({ club_id: request.to_club_id, updated_at: new Date().toISOString() })
     .eq('id', request.player_id)
 
-  if (playerErr) return { error: playerErr.message }
+  if (playerErr) {
+    console.error('[platform-transfers] Player transfer error:', playerErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Update club history
   if (request.from_club_id) {
@@ -94,7 +100,10 @@ export async function platformDeclineTransfer(requestId: string) {
     .update({ status: 'declined' as const, resolved_at: new Date().toISOString() })
     .eq('id', requestId)
 
-  if (reqErr) return { error: reqErr.message }
+  if (reqErr) {
+    console.error('[platform-transfers] Decline error:', reqErr.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/transfers')
   return { success: true }

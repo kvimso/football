@@ -47,7 +47,10 @@ export async function createPlayer(data: PlayerFormInput) {
     .select('id')
     .single()
 
-  if (insertError) return { error: insertError.message }
+  if (insertError) {
+    console.error('[admin-players] Create error:', insertError.message)
+    return { error: 'errors.serverError' }
+  }
 
   // Insert player_club_history row
   if (newPlayer) {
@@ -107,7 +110,10 @@ export async function updatePlayer(
     })
     .eq('id', playerId)
 
-  if (updateError) return { error: updateError.message }
+  if (updateError) {
+    console.error('[admin-players] Update error:', updateError.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/admin/players')
   revalidatePath('/players')

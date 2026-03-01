@@ -23,7 +23,10 @@ export async function platformApproveRequest(requestId: string, responseMessage?
     })
     .eq('id', requestId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[platform-requests] Error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/requests')
   return { success: true }
@@ -43,7 +46,10 @@ export async function platformRejectRequest(requestId: string) {
     })
     .eq('id', requestId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[platform-requests] Error:', error.message)
+    return { error: 'errors.serverError' }
+  }
 
   revalidatePath('/platform/requests')
   return { success: true }
