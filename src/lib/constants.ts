@@ -22,6 +22,15 @@ export const POSITION_BORDER_CLASSES: Record<Position, string> = {
   ST: 'border-t-pos-st',
 }
 
+export const POSITION_LEFT_BORDER_CLASSES: Record<Position, string> = {
+  GK: 'border-l-pos-gk',
+  DEF: 'border-l-pos-def',
+  MID: 'border-l-pos-mid',
+  ATT: 'border-l-pos-att',
+  WNG: 'border-l-pos-wng',
+  ST: 'border-l-pos-st',
+}
+
 export const AGE_MIN_DEFAULT = 14
 export const AGE_MAX_DEFAULT = 25
 export const AGE_OPTIONS = [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25] as const

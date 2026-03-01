@@ -202,7 +202,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   // Fetch view counts via database aggregation (RPC replaces unbounded 10k-row fetch)
   let viewCountMap = new Map<string, number>()
   try {
-    const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts')
+    const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts', {})
     if (vcError) {
       console.error('Failed to fetch view counts:', vcError.message)
     } else if (viewCounts) {

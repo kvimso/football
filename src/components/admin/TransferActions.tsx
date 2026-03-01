@@ -35,21 +35,35 @@ export function TransferActions({ requestId }: TransferActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {errorMsg && (
-        <span className="text-xs text-red-400">{errorMsg}</span>
+        <span className="text-[10px] text-red-400">{errorMsg}</span>
       )}
       <button
         onClick={() => handleAction('accept')}
         disabled={isLoading}
-        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+        title={t('admin.transfers.accept')}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 text-green-400 transition-all hover:bg-green-500/20 hover:shadow-[0_0_12px_rgba(34,197,94,0.15)] disabled:opacity-50"
       >
-        {loadingAction === 'accept' ? t('common.loading') : t('admin.transfers.accept')}
+        {loadingAction === 'accept' ? (
+          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-green-400/30 border-t-green-400" />
+        ) : (
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        )}
       </button>
       <button
         onClick={() => handleAction('decline')}
         disabled={isLoading}
-        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+        title={t('admin.transfers.decline')}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/10 text-red-400 transition-all hover:bg-red-500/20 hover:shadow-[0_0_12px_rgba(239,68,68,0.15)] disabled:opacity-50"
       >
-        {loadingAction === 'decline' ? t('common.loading') : t('admin.transfers.decline')}
+        {loadingAction === 'decline' ? (
+          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-400/30 border-t-red-400" />
+        ) : (
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        )}
       </button>
     </div>
   )

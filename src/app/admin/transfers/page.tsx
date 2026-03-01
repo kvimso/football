@@ -2,9 +2,8 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { unwrapRelation } from '@/lib/utils'
-import { format } from 'date-fns'
 import { TransferSearch } from '@/components/admin/TransferSearch'
-import { TransferActions } from '@/components/admin/TransferActions'
+import { TransferTabs } from '@/components/admin/TransferTabs'
 
 export default async function AdminTransfersPage() {
   const supabase = await createClient()
@@ -58,113 +57,66 @@ export default async function AdminTransfersPage() {
 
   if (outErr) console.error('Failed to fetch outgoing transfers:', outErr.message)
 
-  const incomingRequests = (incoming ?? []).map((r) => ({
-    ...r,
-    player: unwrapRelation(r.player),
-    from_club: unwrapRelation(r.from_club),
-    to_club: unwrapRelation(r.to_club),
-  }))
-
-  const outgoingRequests = (outgoing ?? []).map((r) => ({
-    ...r,
-    player: unwrapRelation(r.player),
-    from_club: unwrapRelation(r.from_club),
-    to_club: unwrapRelation(r.to_club),
-  }))
-
-  function statusClasses(status: string) {
-    switch (status) {
-      case 'accepted': return 'status-badge-approved'
-      case 'declined': return 'status-badge-rejected'
-      case 'expired': return 'status-badge-rejected'
-      default: return 'status-badge-pending'
-    }
+  // Serialize for client components
+  function serializeRequests(requests: typeof incoming, direction: 'incoming' | 'outgoing') {
+    return (requests ?? []).map((r) => {
+      const player = unwrapRelation(r.player)
+      const fromClub = unwrapRelation(r.from_club)
+      const toClub = unwrapRelation(r.to_club)
+      const clubName = direction === 'incoming'
+        ? (lang === 'ka' ? toClub?.name_ka : toClub?.name) ?? ''
+        : (lang === 'ka' ? fromClub?.name_ka : fromClub?.name) ?? ''
+      return {
+        id: r.id,
+        status: r.status,
+        requested_at: r.requested_at,
+        playerName: (lang === 'ka' ? player?.name_ka : player?.name) ?? '',
+        position: player?.position ?? null,
+        platformId: player?.platform_id ?? null,
+        clubName,
+      }
+    })
   }
 
+  const incomingItems = serializeRequests(incoming, 'incoming')
+  const outgoingItems = serializeRequests(outgoing, 'outgoing')
+  const pendingIncoming = incomingItems.filter(r => r.status === 'pending').length
+  const pendingOutgoing = outgoingItems.filter(r => r.status === 'pending').length
+  const pendingTotal = pendingIncoming + pendingOutgoing
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-foreground">{t('admin.transfers.title')}</h1>
-
-      {/* Transfer search */}
-      <div className="mt-6">
-        <TransferSearch />
-      </div>
-
-      {/* Incoming transfer requests */}
-      <div className="mt-8">
-        <h2 className="section-header">{t('admin.transfers.incoming')}</h2>
-        {incomingRequests.length > 0 ? (
-          <div className="mt-3 space-y-2">
-            {incomingRequests.map((req) => {
-              const playerName = lang === 'ka' ? req.player?.name_ka : req.player?.name
-              const toClubName = lang === 'ka' ? req.to_club?.name_ka : req.to_club?.name
-              return (
-                <div key={req.id} className="card border-l-4 border-l-transparent flex items-center justify-between p-4 hover:border-l-accent">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground">{playerName}</span>
-                      {req.player?.platform_id && (
-                        <span className="font-mono text-xs text-foreground-muted">{req.player.platform_id}</span>
-                      )}
-                    </div>
-                    <div className="mt-0.5 flex items-center gap-2 text-xs text-foreground-muted">
-                      <span>{t('admin.transfers.to')}: {toClubName}</span>
-                      <span>&middot;</span>
-                      <span>{format(new Date(req.requested_at), 'MMM d, yyyy')}</span>
-                    </div>
-                  </div>
-                  <div className="ml-3 flex items-center gap-2">
-                    {req.status === 'pending' ? (
-                      <TransferActions requestId={req.id} />
-                    ) : (
-                      <span className={`status-badge ${statusClasses(req.status)}`}>
-                        {t(`admin.transfers.${req.status}`)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+    <div className="space-y-5">
+      {/* Compact header bar */}
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10">
+          <svg className="h-4.5 w-4.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+          </svg>
+        </div>
+        <h1 className="text-lg font-bold text-foreground">{t('admin.transfers.title')}</h1>
+        {pendingTotal > 0 && (
+          <div className="flex items-center gap-1.5 rounded-full bg-yellow-500/10 px-2.5 py-1">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-yellow-400" />
+            </span>
+            <span className="text-xs font-semibold text-yellow-400">
+              {pendingTotal}
+            </span>
           </div>
-        ) : (
-          <p className="mt-3 text-sm text-foreground-muted">{t('admin.transfers.noIncoming')}</p>
         )}
       </div>
 
-      {/* Outgoing transfer requests */}
-      <div className="mt-8">
-        <h2 className="section-header">{t('admin.transfers.outgoing')}</h2>
-        {outgoingRequests.length > 0 ? (
-          <div className="mt-3 space-y-2">
-            {outgoingRequests.map((req) => {
-              const playerName = lang === 'ka' ? req.player?.name_ka : req.player?.name
-              const fromClubName = lang === 'ka' ? req.from_club?.name_ka : req.from_club?.name
-              return (
-                <div key={req.id} className="card border-l-4 border-l-transparent flex items-center justify-between p-4 hover:border-l-accent">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground">{playerName}</span>
-                      {req.player?.platform_id && (
-                        <span className="font-mono text-xs text-foreground-muted">{req.player.platform_id}</span>
-                      )}
-                    </div>
-                    <div className="mt-0.5 flex items-center gap-2 text-xs text-foreground-muted">
-                      <span>{t('admin.transfers.from')}: {fromClubName}</span>
-                      <span>&middot;</span>
-                      <span>{format(new Date(req.requested_at), 'MMM d, yyyy')}</span>
-                    </div>
-                  </div>
-                  <span className={`status-badge ml-3 shrink-0 ${statusClasses(req.status)}`}>
-                    {t(`admin.transfers.${req.status}`)}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <p className="mt-3 text-sm text-foreground-muted">{t('admin.transfers.noOutgoing')}</p>
-        )}
-      </div>
+      {/* Search section */}
+      <TransferSearch />
+
+      {/* Transfer tabs */}
+      <TransferTabs
+        incoming={incomingItems}
+        outgoing={outgoingItems}
+        pendingIncoming={pendingIncoming}
+        pendingOutgoing={pendingOutgoing}
+      />
     </div>
   )
 }

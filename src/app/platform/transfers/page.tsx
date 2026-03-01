@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { unwrapRelation } from '@/lib/utils'
@@ -36,33 +37,47 @@ export default async function PlatformTransfersPage({
     to_club: unwrapRelation(t.to_club),
   }))
 
+  const statusFilters = ['all', 'pending', 'accepted', 'declined', 'expired']
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-foreground">{t('platform.transfers.title')}</h1>
+    <div className="space-y-6">
+      {/* Page header */}
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent/10">
+            <svg className="h-7 w-7 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">{t('platform.transfers.title')}</h1>
+            <p className="mt-0.5 text-sm text-foreground-muted">{processed.length} {t('admin.transfers.title').toLowerCase()}</p>
+          </div>
+        </div>
+      </div>
 
       {/* Status filter tabs */}
-      <div className="mt-4 flex gap-2">
-        {['all', 'pending', 'accepted', 'declined', 'expired'].map((s) => {
+      <div className="flex gap-1.5 rounded-xl border border-border bg-card p-1.5">
+        {statusFilters.map((s) => {
           const isActive = (params.status ?? 'all') === s
           return (
-            <a
+            <Link
               key={s}
               href={`/platform/transfers${s === 'all' ? '' : `?status=${s}`}`}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                 isActive
-                  ? 'bg-accent/10 text-accent'
-                  : 'text-foreground-muted hover:text-foreground'
+                  ? 'bg-accent/10 text-accent shadow-sm'
+                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t(`admin.transfers.${s === 'all' ? 'title' : s}`)}
-            </a>
+            </Link>
           )
         })}
       </div>
 
-      <div className="mt-6">
-        <PlatformTransfersList transfers={processed} />
-      </div>
+      {/* Transfers list */}
+      <PlatformTransfersList transfers={processed} />
     </div>
   )
 }

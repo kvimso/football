@@ -103,7 +103,7 @@ export default async function AdminDashboardPage() {
             .limit(20)
         : Promise.resolve({ data: [], error: null }),
       // Single RPC replaces 4 separate view count queries (10k-row fetch + 3 count queries)
-      admin.rpc('get_player_view_counts'),
+      admin.rpc('get_player_view_counts', { player_ids: playerIds }),
       supabase.rpc('get_total_unread_count'),
     ])
 
@@ -115,10 +115,9 @@ export default async function AdminDashboardPage() {
   if (viewCountsResult.error) console.error('Failed to fetch view counts:', viewCountsResult.error.message)
   if (unreadResult.error) console.error('Failed to fetch unread count:', unreadResult.error.message)
 
-  // Build per-player view breakdown from RPC data (replaces 10k-row fetch)
-  const allViewCounts = viewCountsResult.data ?? []
+  // Build per-player view breakdown from RPC data
+  const clubViewCounts = viewCountsResult.data ?? []
   const playerNameMap = new Map((clubPlayers ?? []).map(p => [p.id, { name: p.name, name_ka: p.name_ka }]))
-  const clubViewCounts = allViewCounts.filter(v => playerIds.includes(v.player_id))
 
   const viewsAllTime = clubViewCounts.reduce((sum, v) => sum + Number(v.total_views), 0)
   const viewsThisWeek = clubViewCounts.reduce((sum, v) => sum + Number(v.weekly_views), 0)

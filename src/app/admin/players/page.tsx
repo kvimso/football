@@ -5,7 +5,7 @@ import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import type { Position } from '@/lib/types'
 import { calculateAge } from '@/lib/utils'
-import { ReleasePlayerButton } from '@/components/admin/ReleasePlayerButton'
+import { PlayerActionsMenu } from '@/components/admin/PlayerActionsMenu'
 
 export default async function AdminPlayersPage() {
   const supabase = await createClient()
@@ -56,7 +56,7 @@ export default async function AdminPlayersPage() {
                 <th className="px-4 py-3">{t('admin.players.position')}</th>
                 <th className="hidden px-4 py-3 sm:table-cell">{t('players.age')}</th>
                 <th className="px-4 py-3">{t('admin.players.status')}</th>
-                <th className="px-4 py-3">{t('admin.common.actions')}</th>
+                <th className="px-4 py-3 text-center">{t('admin.common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -86,18 +86,12 @@ export default async function AdminPlayersPage() {
                         {t(`admin.players.${player.status}`)}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/admin/players/${player.id}/edit`}
-                          className="rounded-md bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent hover:bg-accent/20 transition-colors"
-                        >
-                          {t('common.edit')}
-                        </Link>
-                        {player.status === 'active' && (
-                          <ReleasePlayerButton playerId={player.id} playerName={displayName} />
-                        )}
-                      </div>
+                    <td className="px-4 py-3 text-center">
+                      <PlayerActionsMenu
+                        playerId={player.id}
+                        playerName={displayName}
+                        isActive={player.status === 'active'}
+                      />
                     </td>
                   </tr>
                 )
