@@ -47,9 +47,9 @@ export function ChatThread({
   )
 
   const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
-  const rawDisplayName = lang === 'ka' && conversation.club.name_ka
-    ? conversation.club.name_ka
-    : (userRole === 'scout' ? conversation.club.name : conversation.other_party.full_name)
+  const rawDisplayName = userRole === 'scout'
+    ? (lang === 'ka' && conversation.club.name_ka ? conversation.club.name_ka : conversation.club.name)
+    : conversation.other_party.full_name
   const displayName = rawDisplayName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
 
   // Block/unblock handler

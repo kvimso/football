@@ -251,7 +251,7 @@ export function ChatInput({
           </div>
         )}
 
-        <div className="flex items-end gap-1.5">
+        <div className="flex items-center gap-1.5">
           {/* Action buttons group */}
           <div className="flex shrink-0 items-center">
             {/* Attach button */}
