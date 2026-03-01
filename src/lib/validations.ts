@@ -57,7 +57,7 @@ export const sendMessageSchema = z.object({
   conversation_id: z.string().uuid(),
   content: z.string().min(1).max(5000).optional(),
   message_type: z.enum(['text', 'file', 'player_ref']),
-  file_url: z.string().url().optional(),
+  file_url: z.string().min(1).optional(),
   file_name: z.string().max(255).optional(),
   file_type: z.string().max(100).optional(),
   file_size_bytes: z.number().int().positive().max(10 * 1024 * 1024).optional(),

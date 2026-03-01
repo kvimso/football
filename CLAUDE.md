@@ -384,10 +384,10 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 - [x] API: create/list conversations, send/load messages, mark read, file upload
 - [x] Anti-spam: rate limits + block check
 - [x] Scout inbox + admin inbox pages
-- [ ] Conversation thread: real-time messages, auto-scroll, date dividers, read indicators
-- [ ] Chat input: text + file attach + player reference embed
-- [ ] File attachments: upload, display images inline, docs as downloads
-- [ ] Player reference: search modal, embedded player card in message
+- [x] Conversation thread: real-time messages, auto-scroll, date dividers, read indicators
+- [x] Chat input: text + file attach + player reference embed
+- [x] File attachments: upload, display images inline, docs as downloads
+- [x] Player reference: search modal, embedded player card in message
 - [ ] "Message Academy" button on player profiles and club pages
 - [ ] Block/unblock system for academy admins
 - [ ] Remove old contact request UI (keep table for historical data)

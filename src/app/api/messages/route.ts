@@ -123,14 +123,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'errors.conversationNotFound' }, { status: 404 })
   }
 
-  // Build query
+  // Build query — include player ref data via JOIN
   let query = supabase
     .from('messages')
     .select(`
       id, conversation_id, sender_id, content, message_type,
       file_url, file_name, file_type, file_size_bytes,
       referenced_player_id, read_at, created_at,
-      sender:profiles!messages_sender_id_fkey ( id, full_name, role )
+      sender:profiles!messages_sender_id_fkey ( id, full_name, role ),
+      referenced_player:players!messages_referenced_player_id_fkey (
+        id, name, name_ka, position, photo_url, slug,
+        club:clubs!players_club_id_fkey ( name, name_ka )
+      )
     `)
     .eq('conversation_id', conversation_id)
     .is('deleted_at', null)
@@ -160,8 +164,21 @@ export async function GET(request: NextRequest) {
   const hasMore = (messages?.length ?? 0) > limit
   const trimmed = messages?.slice(0, limit) ?? []
 
+  // Generate signed URLs for file messages that store a storage path
+  const enriched = await Promise.all(
+    trimmed.map(async (msg) => {
+      if (msg.message_type === 'file' && msg.file_url && !msg.file_url.startsWith('http')) {
+        const { data } = await supabase.storage
+          .from('chat-attachments')
+          .createSignedUrl(msg.file_url, 3600)
+        return { ...msg, file_url: data?.signedUrl ?? msg.file_url }
+      }
+      return msg
+    })
+  )
+
   return NextResponse.json({
-    messages: trimmed,
+    messages: enriched,
     has_more: hasMore,
   })
 }

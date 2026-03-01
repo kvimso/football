@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({
+    storage_path: storagePath,
     file_url: signedUrlData.signedUrl,
     file_name: file.name,
     file_type: file.type,
