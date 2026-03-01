@@ -402,7 +402,7 @@ export function ChatThread({
           </svg>
         </Link>
 
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex flex-1 items-center justify-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
             {userRole === 'scout' && conversation.club.logo_url ? (
               <Image
