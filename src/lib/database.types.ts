@@ -144,6 +144,87 @@ export type Database = {
           },
         ]
       }
+      conversation_blocks: {
+        Row: {
+          blocked_by: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_by: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_by?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_blocks_blocked_by_fkey"
+            columns: ["blocked_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_blocks_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          club_id: string
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          scout_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          club_id: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          scout_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          club_id?: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          scout_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_scout_id_fkey"
+            columns: ["scout_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_player_stats: {
         Row: {
           assists: number | null
@@ -290,6 +371,76 @@ export type Database = {
             columns: ["home_club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string | null
+          conversation_id: string
+          created_at: string | null
+          deleted_at: string | null
+          file_name: string | null
+          file_size_bytes: number | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          message_type: Database["public"]["Enums"]["message_type"]
+          read_at: string | null
+          referenced_player_id: string | null
+          sender_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          conversation_id: string
+          created_at?: string | null
+          deleted_at?: string | null
+          file_name?: string | null
+          file_size_bytes?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          message_type?: Database["public"]["Enums"]["message_type"]
+          read_at?: string | null
+          referenced_player_id?: string | null
+          sender_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string
+          created_at?: string | null
+          deleted_at?: string | null
+          file_name?: string | null
+          file_size_bytes?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          message_type?: Database["public"]["Enums"]["message_type"]
+          read_at?: string | null
+          referenced_player_id?: string | null
+          sender_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_referenced_player_id_fkey"
+            columns: ["referenced_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -784,8 +935,13 @@ export type Database = {
       }
       get_user_club_id: { Args: never; Returns: string }
       get_user_role: { Args: never; Returns: string }
+      mark_messages_read: {
+        Args: { p_conversation_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
+      message_type: "text" | "file" | "player_ref" | "system"
       player_status: "active" | "free_agent"
       transfer_status: "pending" | "accepted" | "declined" | "expired"
     }
@@ -915,6 +1071,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      message_type: ["text", "file", "player_ref", "system"],
       player_status: ["active", "free_agent"],
       transfer_status: ["pending", "accepted", "declined", "expired"],
     },

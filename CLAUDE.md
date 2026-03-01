@@ -14,16 +14,22 @@ This file provides guidance to Claude Code when working on this project. Read th
 
 **The problem:** Georgian football talent is booming (Kvaratskhelia €70M to PSG, Mamardashvili €30M to Liverpool, 37,000+ registered youth players) but there is no centralized digital platform for scouts to discover Georgian youth players. Player data is fragmented, match footage is scattered, and international scouts have no single source.
 
-**The solution:** A scouting platform where academies register player profiles, camera systems (provided by our partner Starlive via Pixellot cameras) deliver verified statistics automatically, and scouts can search, filter, compare, and contact players — all bilingual in English and Georgian.
+**The solution:** A scouting platform where academies register player profiles, camera systems (provided by our partner Starlive via Pixellot cameras) deliver verified statistics automatically, and scouts can search, filter, compare, message academies, and discover players — all bilingual in English and Georgian.
+
+### Revenue Model
+
+- **Scout yearly subscription** — access to the platform, messaging, player data
+- **Academy monthly payment** — premium features, enhanced profile visibility
+- No free tier planned — all platform access will require subscription (not yet implemented)
 
 ### Target Users
 
-- **Scouts/Agents** (international) — browse players, view verified camera stats, watch highlights, request contact. English-first experience.
-- **Academy Admins** (Georgian) — register and manage their club's player profiles, respond to scout inquiries, handle transfer requests. Georgian-first experience.
+- **Scouts/Agents** (international) — browse players, view verified camera stats, watch highlights, message academies. English-first experience.
+- **Academy Admins** (Georgian) — register and manage their club's player profiles, respond to scout messages, handle transfer requests. Georgian-first experience.
 
 ### Camera Partner: Starlive
 
-Starlive is an official Pixellot reseller (Kyrgyzstan, Armenia, expanding into Georgia). They already have cameras installed at several Georgian clubs. They provide cameras, video, and analytics to clubs. We provide the scouting platform as an add-on that makes their camera package more valuable.
+Starlive is an official Pixellot reseller (Kyrgyzstan, Armenia, expanding into Georgia). They already have cameras at several Georgian clubs. They provide cameras, video, and analytics to clubs. We provide the scouting platform as an add-on that makes their camera package more valuable.
 
 **Deal:** Starlive provides camera data to us for free. When we start generating revenue, we negotiate a revenue share. Pixellot directly introduced us to Starlive.
 
@@ -31,44 +37,33 @@ Starlive is an official Pixellot reseller (Kyrgyzstan, Armenia, expanding into G
 
 ## Site Architecture
 
-The platform has two distinct parts:
-
 ### Part 1: Public Landing Page (no auth required)
 
 A professional marketing page — clean, hrmony.com-style layout. This is what everyone sees first. Its job is to explain what the platform does, build trust, and convert visitors into registered users.
 
-**Public pages:** `/` (landing), `/about`, `/login`, `/register`
-
-**Landing page structure:**
-
-1. Hero — headline, subtitle, background image, CTA buttons (Register as Scout / Register Your Academy)
-2. What We Do — brief explanation with icons for key features
-3. Our Services — service cards (Player Database, Verified Camera Stats, Highlight Reels, Scout Contact System, Academy Management)
-4. For Scouts — benefits and CTA to register
-5. For Academies — benefits and CTA to register
-6. Partners — "Powered by Pixellot" / Starlive logo (when approved)
-7. Footer — links, contact info, register CTAs
+**Public pages:** `/` (landing), `/about`, `/contact`, `/login`, `/register`
 
 ### Part 2: Protected Platform (auth required)
 
 A Transfermarkt-style data marketplace behind login. All player browsing, stats, matches, clubs, scout tools, and admin panel require authentication.
 
-**Protected pages:** Everything under `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin`
+**Protected pages:** Everything under `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin`, `/platform`
 
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                  | Why                                                                                                |
-| ---------- | --------------------------- | -------------------------------------------------------------------------------------------------- |
-| Framework  | **Next.js 16 (App Router)** | API routes (no separate backend), server components for DB queries, middleware for auth             |
-| Database   | **Supabase (PostgreSQL)**   | Auth, row-level security, file storage, realtime — all built-in. No infrastructure to manage       |
-| Auth       | **Supabase Auth**           | Email/password for scouts, magic link or invite-based for academy admins                           |
-| Storage    | **Supabase Storage**        | Player photos, club logos                                                                          |
-| Styling    | **Tailwind CSS v4**         | Utility-first, responsive                                                                          |
-| Deployment | **Vercel**                  | Native Next.js hosting, edge functions, preview deployments                                        |
-| Camera API | **Starlive (Pixellot)**     | Automated match footage + individual player statistics via API                                     |
-| Language   | **TypeScript**              | Type safety across the full stack                                                                  |
+| Layer      | Technology                  | Why                                                                                     |
+| ---------- | --------------------------- | --------------------------------------------------------------------------------------- |
+| Framework  | **Next.js 16 (App Router)** | API routes, server components, middleware for auth                                      |
+| Database   | **Supabase (PostgreSQL)**   | Auth, RLS, storage, realtime — all built-in                                             |
+| Realtime   | **Supabase Realtime**       | Instant chat messaging (Phase 6.5)                                                      |
+| Auth       | **Supabase Auth**           | Email/password for scouts, magic link or invite-based for academy admins                |
+| Storage    | **Supabase Storage**        | Player photos, club logos, chat file attachments (Phase 6.5)                            |
+| Styling    | **Tailwind CSS v4**         | Utility-first, responsive                                                               |
+| Deployment | **Vercel**                  | Native Next.js hosting, edge functions, preview deployments                             |
+| Camera API | **Starlive (Pixellot)**     | Automated match footage + individual player statistics via API                          |
+| Language   | **TypeScript**              | Type safety across the full stack                                                       |
 
 ---
 
@@ -123,12 +118,12 @@ src/
         layout.tsx          # Scout role check
         page.tsx            # Scout home (saved players, recent activity)
         shortlist/page.tsx  # Saved/shortlisted players
-        requests/page.tsx   # Sent contact requests + statuses
+        requests/page.tsx   # Sent contact requests + statuses (→ Messages in Phase 6.5)
       admin/
         layout.tsx          # Admin role check (academy_admin only)
         page.tsx            # Admin overview
         players/            # Manage academy's players (list, add, edit)
-        requests/page.tsx   # Incoming scout contact requests
+        requests/page.tsx   # Incoming scout contact requests (→ Messages in Phase 6.5)
         transfers/page.tsx  # Transfer requests (incoming, outgoing, search + claim)
     platform/               # Platform admin routes (platform_admin role)
       layout.tsx            # getPlatformAdminContext() auth guard
@@ -187,7 +182,13 @@ supabase/
 
 ## Database Schema
 
-**Database schema** is defined in `supabase/migrations/`. Run `npx supabase gen types typescript --local > src/lib/database.types.ts` after any schema change.
+Schema is defined in `supabase/migrations/`. Regenerate types after any change.
+
+**Current tables:** clubs, players, player_club_history, player_skills, player_season_stats, matches, match_player_stats, profiles, shortlists, contact_requests, player_videos, transfer_requests, player_views.
+
+**Phase 6.5 tables (planned):** conversations, messages, conversation_blocks.
+
+The `contact_requests` table will remain for historical data once chat is built.
 
 ---
 
@@ -202,38 +203,15 @@ This is the core trust model of the platform. Follow it strictly.
 
 ### Club Admin Permissions
 
-**CAN do:**
+**CAN:** Register players to their club, edit own club's player profiles (bio/photo/physical only — never stats), view/respond to scout contact requests, accept/decline transfers, release players, search and send transfer requests, message scouts (Phase 6.5), block scouts (Phase 6.5).
 
-- Register new players to their club (first_name, last_name, date_of_birth, position, photo optional, height, weight, preferred_foot, parent_guardian_contact optional)
-- Edit their own club's player profiles (same fields only — never stats)
-- View incoming scout contact requests for their players and respond (approve/reject)
-- Accept or decline incoming transfer requests from other clubs
-- Release a player from their club (player becomes free_agent)
-- Transfer a player directly to a requesting club (one action — accept transfer request)
-- Search for players from other clubs or free agents and send transfer requests
-
-**CANNOT do:**
-
-- Add, edit, or delete matches (camera system only)
-- Enter or edit player statistics of any kind (player_season_stats, match_player_stats, player_skills)
-- Upload match footage or highlights (camera system only)
-- See or modify any other club's players or data
+**CANNOT:** Add/edit/delete matches (camera only), enter/edit player statistics (camera only), upload footage/highlights (camera only), see or modify other clubs' data.
 
 ### Scout Permissions
 
-**CAN do:**
+**CAN:** Register freely, browse all players, view career history, shortlist with private notes, send contact requests (active players only), use comparison tool, message any academy (Phase 6.5), download player PDFs.
 
-- Register and log in freely (no approval needed)
-- Browse all players (active and free_agent)
-- View full player career history across all clubs
-- Shortlist players and add private notes
-- Send contact requests for active players (goes to club admin)
-- Use player comparison tool
-
-**CANNOT do:**
-
-- Contact free_agent players (feature not built yet — show message "Contact not available for free agents")
-- Edit any player, club, or match data
+**CANNOT:** Contact free_agent players (show "Contact not available for free agents"), edit any data.
 
 ### Data Source Rules
 
@@ -242,11 +220,38 @@ This is the core trust model of the platform. Follow it strictly.
 - Player profile info (bio, photo, physical attributes) shows as "club submitted"
 - Matches, match stats, highlights, and player videos are created exclusively by camera API integration
 
-### Transfer Flow Summary
+### Transfer Flow
 
-- **Active player transfer:** New club sends request → old club accepts/declines → 7-day expiry auto-releases player to free_agent if no response
+- **Active player transfer:** New club sends request → old club accepts/declines → 7-day expiry auto-releases to free_agent
 - **Free agent claim:** New club claims directly (no request needed)
 - **Release:** Club admin releases player → becomes free_agent, career history preserved via `player_club_history`
+
+---
+
+## Messaging System (Phase 6.5 — Planned)
+
+Real-time chat between scouts and academy admins. **Will replace the contact request system.**
+
+### Architecture
+
+- One conversation thread per scout-academy pair (all player discussions in one thread)
+- Any subscribed scout can message any academy directly (no approval gate)
+- Real-time via Supabase Realtime subscriptions
+- Both sides can send: text, file attachments (images/PDFs/docs, max 10MB), and player references (embedded player cards)
+
+### Anti-Spam
+
+- Max 10 new conversations per scout per day
+- Max 30 messages per user per conversation per hour
+- Max 5 file uploads per user per day, max 10MB per file
+- Academy can block scouts
+- All users are subscribers — verified and paying
+
+### Navigation Changes
+
+- Scout sidebar: Home | Shortlist | **Messages** (replaces Requests)
+- Admin sidebar: Overview | Players | **Messages** (replaces Requests) | Transfers
+- "Message Academy" button on every player profile and club page
 
 ---
 
@@ -256,8 +261,9 @@ This is the core trust model of the platform. Follow it strictly.
 
 | Role            | Access                                                                   | How they register                                      |
 | --------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| `scout`         | Browse players, shortlist, send contact requests                         | Self-registration (email/password), no approval needed |
-| `academy_admin` | Manage own club's player profiles, respond to requests, handle transfers | Invited (magic link)                                   |
+| `scout`         | Browse players, shortlist, message, compare                              | Self-registration (email/password), no approval needed |
+| `academy_admin` | Manage own club's player profiles, message scouts, handle transfers      | Invited (magic link)                                   |
+| `platform_admin`| Full platform management (all clubs, players, scouts, requests)          | Manually assigned in DB                                |
 
 ### Auth Flow
 
@@ -273,84 +279,53 @@ This is the core trust model of the platform. Follow it strictly.
 
 ### Row-Level Security (RLS)
 
-**Public read:**
+**Public read:** players, matches, clubs, player_club_history, player_skills, player_season_stats, match_player_stats, player_videos — anyone can SELECT.
 
-- players, matches, clubs, player_club_history, player_skills, player_season_stats, match_player_stats, player_videos — anyone can SELECT
+**Scout permissions:** contact_requests INSERT (scout_id match), shortlists INSERT/UPDATE/DELETE (scout_id match).
 
-**Scout permissions:**
+**Club admin permissions:** players INSERT/UPDATE (club_id match, profile fields only), contact_requests UPDATE (player's club_id match), transfer_requests INSERT (to_club_id match), transfer_requests UPDATE (from_club_id match), transfer_requests SELECT (from/to club_id match).
 
-- contact_requests: INSERT where scout_id matches their auth id
-- shortlists: INSERT/UPDATE/DELETE where scout_id matches their auth id
-
-**Club admin permissions:**
-
-- players: INSERT/UPDATE where club_id matches their profile's club_id (profile fields only)
-- contact_requests: UPDATE where player belongs to their club_id (approve/reject only)
-- transfer_requests: INSERT where to_club_id matches their club_id
-- transfer_requests: UPDATE where from_club_id matches their club_id (accept/decline)
-- transfer_requests: SELECT where from_club_id or to_club_id matches their club_id
-
-**Club admin CANNOT write to:**
-
-- matches, match_player_stats, player_season_stats, player_skills, player_videos — these are camera-only, written by service role via API
+**Club admin CANNOT write to:** matches, match_player_stats, player_season_stats, player_skills, player_videos — camera-only, written by service role.
 
 ---
 
 ## Internationalization (i18n)
 
-- Full English/Georgian bilingual support
-- Translation keys stored in a translations object (context provider)
-- Access via `useLang()` hook → returns `{ t, lang, setLang }`
-- Every user-facing string uses `t('key.subkey')`
-- Database fields have paired columns: `name` + `name_ka`, `description` + `description_ka`
+- Full English/Georgian bilingual support via `useLang()` hook → `{ t, lang, setLang }`
+- Server-side: `getServerT()` from `translations.ts`
+- Every user-facing string uses `t('key.subkey')` — never hardcode English or Georgian
+- Database: paired columns (`name` + `name_ka`, `description` + `description_ka`)
 - Georgian font: Noto Sans Georgian loaded via `next/font`
 - Language preference stored in cookie (persists across sessions)
-- **Landing page must be fully bilingual** — all headings, descriptions, CTAs need both languages
-
-**Critical rule:** Never hardcode English or Georgian text in components. Always use `t()`. When adding new UI text, add both `en` and `ka` translations.
+- **All pages including landing page and chat (Phase 6.5) must be fully bilingual**
 
 ---
 
-## Camera Integration (Phase 7)
-
-Camera partner is **Starlive** (official Pixellot reseller). They already have cameras at Georgian clubs.
-
-### How It Works
+## Camera Integration (Phase 7 — Blocked on Starlive)
 
 1. Starlive's Pixellot cameras record matches at partner academies
-2. After match processing, data becomes available via Pixellot API
-3. Our system pulls match video, individual player stats, highlights
-4. Data maps to our `matches`, `match_player_stats`, and `player_videos` tables
-5. Player identification via jersey number recognition → mapped to our player records via `jersey_number` + `club_id`
-
-### Important Notes
-
-- Player matching: `jersey_number` + `club_id` → our `players.jersey_number` + `players.club_id`
-- If a player can't be matched, log a warning and skip (don't crash the sync)
-- All camera data has `source: 'pixellot'`
-- Do NOT build mock camera integration — use real API types but gate behind feature flag until Starlive provides API credentials
+2. After processing, data available via Pixellot API
+3. Our system pulls match video, player stats, highlights
+4. Maps to `matches`, `match_player_stats`, `player_videos` tables
+5. Player matching: `jersey_number` + `club_id` → our player records
+6. Unmatched players: log warning and skip (don't crash)
+7. All camera data has `source: 'pixellot'`
+8. Do NOT build mock integration — use real API types but gate behind feature flag
 
 ---
 
 ## Styling System
 
-### Theme
-
-- **Landing page:** Light/neutral theme, professional, clean — hrmony.com style. Must feel like a business website, not a developer project.
-- **Platform (behind login):** Dark theme, data-dense, Transfermarkt-style. Football pitch aesthetic.
+- **Landing page:** Light/neutral theme, professional, hrmony.com-style
+- **Platform:** Dark theme, data-dense, Transfermarkt-style football pitch aesthetic
 - CSS custom properties in `globals.css` for colors
 - Primary accent: emerald green
-- Position-specific colors: GK=amber, DEF=blue, MID=cyan, ATT=purple, WNG=emerald, ST=red
-
-### Conventions
-
-- Use Tailwind utilities for layout and spacing
-- Use CSS custom properties for theme colors
-- Use `globals.css` component classes for repeated patterns (`.btn-primary`, `.card`, etc.)
+- Position colors: GK=amber, DEF=blue, MID=cyan, ATT=purple, WNG=emerald, ST=red
+- Use Tailwind utilities for layout, CSS custom properties for theme colors
 - Check `globals.css` before creating new component classes — most patterns exist
-- Mobile-first responsive design — all pages must work at 375px+
-- Use `next/image` for all images (player photos, club logos, hero images)
-- **Landing page: no placeholder content, no developer UI, use real market numbers (37,600+ youth players, €100M+ in transfers)**
+- Mobile-first — all pages work at 375px+
+- Use `next/image` for all images
+- **Landing page: no placeholder content, use real market numbers (37,600+ youth players, €100M+)**
 
 ---
 
@@ -360,161 +335,83 @@ Camera partner is **Starlive** (official Pixellot reseller). They already have c
 
 - **TypeScript** everywhere — no `.js` or `.jsx` files
 - **Functional components only** — no class components
-- **Server components by default** — only add `'use client'` when you need interactivity (forms, state, effects)
+- **Server components by default** — only add `'use client'` when you need interactivity
 - **Named exports** for components, **default exports** for pages
 - **Absolute imports** using `@/` prefix (mapped to `src/`)
 
 ### Naming
 
 - Files: PascalCase for components (`PlayerCard.tsx`), camelCase for utilities (`utils.ts`)
-- Types/Interfaces: PascalCase with descriptive names (`PlayerWithStats`, `ContactRequestInsert`)
-- Hooks: `use` prefix (`useShortlist`, `useLang`, `useDebounce`)
-- Server actions: descriptive verbs (`createContactRequest`, `updatePlayer`, `releasePlayer`, `acceptTransfer`)
+- Types/Interfaces: PascalCase (`PlayerWithStats`, `ContactRequestInsert`)
+- Hooks: `use` prefix (`useShortlist`, `useLang`)
+- Server actions: descriptive verbs (`createContactRequest`, `updatePlayer`, `releasePlayer`)
 
 ### Data Fetching
 
-- **Server components**: Query Supabase directly in the component (no API route needed)
+- **Server components**: Query Supabase directly (no API route needed)
 - **Client components**: Use API routes (`/api/*`) or server actions
-- **Mutations**: Use Next.js server actions with `revalidatePath` for cache invalidation
-- **Search/filters**: URL search params (`useSearchParams`) — keeps state in URL, shareable/bookmarkable
+- **Mutations**: Server actions with `revalidatePath` for cache invalidation
+- **Search/filters**: URL search params (`useSearchParams`) — shareable/bookmarkable
 
-### Validation
+### Validation & Error Handling
 
-- **All form inputs**: Validate with Zod schemas (defined in `src/lib/validations.ts`)
-- **API routes**: Validate request body with Zod before processing
-- **Database**: RLS policies as the last line of defense
-
-### Error Handling
-
-- Use Next.js `error.tsx` boundary files in route segments
-- API routes return proper HTTP status codes with JSON error messages
-- Supabase errors: check `.error` property, never assume success
-- Camera API: wrap all calls in try/catch, log failures, never crash the app
+- All form inputs: Zod schemas in `src/lib/validations.ts`
+- API routes: validate request body with Zod before processing
+- Supabase calls: always check `.error` before using `.data`
+- Use `error.tsx` boundary files in route segments
+- Camera API: wrap in try/catch, log failures, never crash
 
 ---
 
 ## Build Phases
 
-### Phase 1: Foundation ✅ COMPLETE
+### Phases 1-6 + Feature Sessions ✅ ALL COMPLETE
 
-- [x] Initialize Next.js 15 with TypeScript + Tailwind CSS v4
-- [x] Set up Supabase project (remote + local dev)
-- [x] Create database migrations for all tables
-- [x] Implement Supabase Auth (register, login, logout, session refresh)
-- [x] Create `profiles` trigger (auto-create profile on signup)
-- [x] Set up middleware for session management
-- [x] Create RLS policies for all tables
-- [x] Set up seed data (3 clubs, 12 players, 5 matches)
-- [x] Build root layout with Navbar + Footer + LanguageContext
-- [x] Deploy skeleton to Vercel with env vars configured
+- **Phase 1:** Foundation (Next.js, Supabase, Auth, RLS, seed data, Vercel deployment)
+- **Phase 2:** Public Pages (player directory, profiles, matches, clubs, about, SEO)
+- **Phase 3:** Scout Features (dashboard, shortlist, contact requests, comparison tool)
+- **Phase 4:** Admin Panel + Transfers (player CRUD, transfer system, contact request management)
+- **Phase 4.5:** Database Migrations (platform_id, player_club_history, transfer_requests, RLS updates)
+- **Phase 5:** Audit & Bug Fixes (TypeScript/lint clean, loading states, error handling, mobile responsive)
+- **Phase 6:** Site Redesign (landing page, auth protection, route groups, dark platform theme, AuthProvider)
+- **Feature Sessions:** PlayerCard redesign, view tracking, comparison enhancements (overlay radar, stat diffs, shareable URLs), advanced filters (weight, stat ranges), PDF export, similar players section
 
-### Phase 2: Public Pages ✅ COMPLETE
+### Phase 6.5: Chat System ← CURRENT
 
-- [x] Home page: hero, platform stats, featured players, recent matches
-- [x] Player directory: server-side filtered list with search, position/age/club/foot filters
-- [x] Player profile: full stats, radar chart, season history, videos, scouting report
-- [x] Match library: filterable match list
-- [x] Match detail: score, report, player stats table, video embed
-- [x] Club listing + club detail with squad
-- [x] About page
-- [x] 404 page
-- [x] SEO: dynamic metadata, Open Graph images, structured data for player pages
+- [x] Database: conversations, messages, conversation_blocks tables + RLS + indexes
+- [x] Enable Supabase Realtime on messages table
+- [x] Supabase Storage bucket: chat-attachments (private)
+- [x] API: create/list conversations, send/load messages, mark read, file upload
+- [x] Anti-spam: rate limits + block check
+- [ ] Scout inbox + admin inbox pages
+- [ ] Conversation thread: real-time messages, auto-scroll, date dividers, read indicators
+- [ ] Chat input: text + file attach + player reference embed
+- [ ] File attachments: upload, display images inline, docs as downloads
+- [ ] Player reference: search modal, embedded player card in message
+- [ ] "Message Academy" button on player profiles and club pages
+- [ ] Block/unblock system for academy admins
+- [ ] Remove old contact request UI (keep table for historical data)
+- [ ] Update navigation: Requests → Messages
+- [ ] Empty states, loading states, error handling
+- [ ] Global unread badge in navigation
+- [ ] Mobile responsive
+- [ ] i18n: all chat strings bilingual
 
-### Phase 3: Scout Features ✅ COMPLETE
+### Phase 7: Camera Integration (blocked on Starlive)
 
-- [x] Scout registration + login flow (no approval needed)
-- [x] Scout dashboard (home, activity feed)
-- [x] Shortlist: add/remove players, private notes
-- [x] Contact request: form on player profile → sends to academy admin (active players only)
-- [x] Contact disabled message for free_agent players
-- [x] Request status tracking (pending/approved/rejected)
-- [x] Player comparison tool (side-by-side stats)
-
-### Phase 4: Academy Admin Panel + Transfers ✅ COMPLETE
-
-- [x] Admin layout with sidebar navigation
-- [x] Player management: list, add new, edit profile (scoped to own club, profile fields only)
-- [x] Player registration form with auto-generated platform_id
-- [x] Release player button with confirmation
-- [x] Incoming contact requests: view, approve, reject
-- [x] Basic stats dashboard (how many scouts viewed your players)
-- [x] Transfer system: search players by platform_id or name
-- [x] Transfer system: send transfer request for active players at other clubs
-- [x] Transfer system: claim free agent players directly
-- [x] Transfer system: incoming transfer requests — accept or decline
-- [x] Transfer system: outgoing transfer requests — view status
-
-### Phase 4.5: Database Migration ✅ COMPLETE
-
-- [x] Add players.platform_id (unique, format GFP-XXXXX)
-- [x] Add players.parent_guardian_contact (nullable)
-- [x] Change players.status to only allow 'active' | 'free_agent'
-- [x] Create player_club_history table
-- [x] Create transfer_requests table
-- [x] Update RLS: remove club admin INSERT/UPDATE on matches, match_player_stats, player_season_stats, player_skills, player_videos
-- [x] Update seed data with platform_id, status, and player_club_history rows
-
-### Phase 5: Audit & Bug Fixes ✅ COMPLETE
-
-- [x] Run `npm run build` — fix all TypeScript errors
-- [x] Run `npm run lint` — fix all lint warnings
-- [x] Fix race condition: all action buttons must have disabled/loading state while processing (use `useTransition` or local state). Affects: shortlist add/remove, contact request send, admin approve/reject, transfer actions, player edit/add forms
-- [x] Fix slow rendering: identify unnecessary `'use client'` components, add missing `loading.tsx` files in route segments, add Suspense boundaries for independent data fetches
-- [x] Verify all API routes have auth validation
-- [x] Verify all Supabase `.from()` calls check `.error` before using `.data`
-- [x] Mobile responsive check on all pages
-
-### Phase 6: Site Redesign ✅ COMPLETE
-
-Transform the site from a developer project into a professional product.
-
-**6a. Landing Page (public)**
-- [x] New landing page: professional, hrmony.com-style, clean layout
-- [x] Hero section: headline, subtitle, background image, two CTAs (Register as Scout / Register Your Academy)
-- [x] "What We Do" section with feature icons
-- [x] "Our Services" cards: Player Database, Verified Camera Stats, Highlight Reels, Scout Contact System, Academy Management
-- [x] "For Scouts" section with benefits and CTA
-- [x] "For Academies" section with benefits and CTA
-- [x] Partners section (Starlive/Pixellot logos when approved)
-- [x] Professional footer with register CTAs
-- [x] All landing page content bilingual (English/Georgian)
-- [x] Use real market numbers: 37,600+ youth players, €100M+ in recent Georgian transfers
-
-**6b. Auth Protection**
-- [x] Move all player/match/club browsing behind authentication
-- [x] Update middleware: redirect unauthenticated users from `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` to `/login`
-- [x] Create `(platform)/` route group with auth guard layout
-- [x] Keep `/`, `/about`, `/login`, `/register` public
-- [x] Professional login and register page design
-
-**6c. Platform UI Polish**
-- [x] Redesign platform navigation (Transfermarkt-style, data-dense)
-- [x] Replace letter-initial player cards with proper silhouette fallback images
-- [x] Improve player profile layout
-- [x] Improve admin panel design
-- [x] Consistent dark theme color scheme across all platform pages
-- [x] Mobile responsive on all platform pages
-
-### Phase 7: Camera Integration
-
-Connect Starlive/Pixellot camera data to the platform.
-
-- [ ] Pixellot API client with authentication (via Starlive credentials)
-- [ ] Webhook endpoint to receive match completion events
-- [ ] Data sync: transform Pixellot stats → our schema
-- [ ] Player matching logic (jersey number + club)
-- [ ] Display verified camera stats on player profiles and match pages
-- [ ] "Verified by Pixellot" badge on all camera-generated data
-- [ ] Auto-generated highlight clips on player profiles
-- [ ] Manual sync trigger for admin (in case webhook fails)
+- [ ] Pixellot API client + webhook endpoint
+- [ ] Data sync + player matching (jersey number + club)
+- [ ] "Verified by Pixellot" badge on camera data
+- [ ] Highlight clips + manual sync trigger
 
 ### Phase 8: Polish & Launch
 
 - [ ] Performance optimization (lazy loading, image optimization, caching)
 - [x] Error boundaries and loading states on all pages
-- [ ] Email notifications (contact request received, request status update, transfer request received)
-- [ ] Analytics (basic page views, popular players, scout activity)
+- [ ] Email notifications (messages, transfers, contact requests)
+- [ ] Analytics dashboard (page views, popular players, scout activity)
 - [ ] Academy admin invitation flow
+- [ ] Subscription/payment system
 - [ ] Production deployment + custom domain
 
 ---
@@ -536,60 +433,56 @@ PIXELLOT_WEBHOOK_SECRET=
 NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 ```
 
-**Security rules:**
-
-- `NEXT_PUBLIC_*` vars are exposed to the browser — only Supabase URL and anon key should be public
-- `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS — use ONLY in API routes and server actions, NEVER in client components
-- `PIXELLOT_*` vars are server-only — used in `/api/camera/*` routes only
+**Security:** `NEXT_PUBLIC_*` exposed to browser (only Supabase URL/anon key). `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS — server-only. `PIXELLOT_*` server-only in `/api/camera/*`.
 
 ---
 
 ## Critical Rules — Do NOT
 
 ### Architecture
+- No separate backend — Next.js API routes only
+- No ORM — Supabase client with generated types
+- No state management libraries — Context + hooks + URL params
+- No CSS/component libraries — Tailwind + custom globals.css
 
-- **Do not create a separate backend** (Express, Fastify, etc.) — Next.js API routes handle server-side logic
-- **Do not use an ORM** (Prisma, Drizzle) — use Supabase client directly with generated types
-- **Do not install state management libraries** (Redux, Zustand, Jotai) — React Context + hooks + URL params are sufficient
-- **Do not add CSS frameworks or component libraries** (Chakra, MUI, shadcn) — use Tailwind + custom components in `globals.css`
+### Data & Permissions
+- No manual stats entry — camera API only
+- No club admin access to matches/stats/videos — camera-only tables
+- No exposing service role key to client
+- No skipping RLS policies
+- No showing parent_guardian_contact publicly
+- No deleting player data on club change — set free_agent, preserve history
+- No hardcoded demo data in components
 
-### Data and Permissions
-
-- **Do not allow manual stats entry by anyone** — all stats come from Pixellot camera API only
-- **Do not let club admins add/edit matches** — matches come from camera system
-- **Do not let club admins edit player stats, skills, or videos** — camera data only
-- **Do not expose service role key to client** — only use in server-side code
-- **Do not skip RLS policies** — every table must have policies
-- **Do not show parent_guardian_contact to scouts or publicly** — internal use only
-- **Do not delete player data when they leave a club** — set status to free_agent, preserve history
-- **Do not hardcode demo data in components** — all data comes from Supabase queries (seed.sql for dev)
+### Chat (Phase 6.5)
+- No contact request system once chat is live — chat replaces it entirely
+- No messages in blocked conversations
+- No file uploads over 10MB
+- Allowed file types only: jpg, png, gif, webp, pdf, doc, docx
 
 ### Design
-
-- **Do not make the landing page look like a developer project** — must be professional, hrmony.com-style
-- **Do not show player counts or demo data on the landing page** — use market statistics instead
-- **Do not allow unauthenticated access to platform pages** — `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin` all require login
-- **Do not use letter initials as player photo fallbacks** — use proper silhouette images per position
+- No developer-looking landing page — professional, hrmony.com-style
+- No placeholder data on landing page — use market statistics
+- No unauthenticated platform access
+- No letter initials for player photos — use silhouette images
 
 ### i18n
-
-- **Do not hardcode strings** — every user-facing string uses `t('key')` from `useLang()`
-- **Do not add English text without adding Georgian** — both translations must exist
-- **Do not translate slugs** — URLs are always English
+- No hardcoded strings — use `t()` with both en/ka translations
+- No English without Georgian — both must exist
+- No translated slugs — URLs always English
 
 ### Code Quality
+- No `any` type — proper TypeScript types always
+- No skipping Supabase error checks — always check `.error`
+- No `useEffect` for server-fetchable data
+- No action buttons without disabled/loading state
+- No `.js`/`.jsx` files
 
-- **Do not use `any` type** — always define proper TypeScript types
-- **Do not skip error handling on Supabase calls** — always check `.error` before using `.data`
-- **Do not use `useEffect` for data that can be fetched in server components** — prefer server-side data fetching
-- **Do not create files without the `.ts` or `.tsx` extension** — no `.js`/`.jsx`
-- **Do not submit forms or trigger actions without disabling the button during processing** — always use `useTransition` or loading state to prevent race conditions
+### Scope (not yet)
+- No subscription/payment system yet
+- No mobile app — responsive web only
+- No AI-powered scouting recommendations
+- No auto-expiry cron for transfer requests
 
-### Scope
-
-- **Do not build payment/subscription system** — not in MVP scope
-- **Do not build a mobile app** — responsive web only
-- **Do not build real-time chat between scouts and academies** — contact requests are async
-- **Do not build AI-powered scouting recommendations** — future feature, not MVP
+### Auth Guards
 - **Do not bypass platform admin auth guards** — `platform_admin` role exists with full `/platform/*` admin routes; always use `getPlatformAdminContext()` for authorization
-- **Do not build auto-expiry cron for transfer requests** — will add later
