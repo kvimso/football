@@ -448,10 +448,10 @@ This phase is deferred until after launch — the platform works correctly for b
 - [x] Security headers configured in `next.config.ts`
 
 ### Phase B (TypeScript)
-- [ ] All Realtime subscriptions filtered to user's conversations
-- [ ] No unsafe type casts (role cast, unvalidated payloads)
-- [ ] No SSR warnings from `useLayoutEffect`
-- [ ] All action result checks use proper narrowing
+- [x] All Realtime subscriptions filtered to user's conversations
+- [x] No unsafe type casts (role cast, unvalidated payloads)
+- [x] No SSR warnings from `useLayoutEffect`
+- [x] All action result checks use proper narrowing
 
 ### Phase C (Performance)
 - [ ] Player view counts use indexed/materialized aggregation

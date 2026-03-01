@@ -95,6 +95,16 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
     [router, searchParams]
   )
 
+  const clearParams = useCallback(
+    (...keys: string[]) => {
+      const params = new URLSearchParams(searchParams.toString())
+      for (const key of keys) params.delete(key)
+      params.delete('page')
+      router.push(`/players?${params.toString()}`)
+    },
+    [router, searchParams]
+  )
+
   const toggleMultiParam = useCallback(
     (key: string, value: string, currentValues: string[]) => {
       const next = currentValues.includes(value)
@@ -408,7 +418,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           {(ageMin || ageMax) && (
             <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.filterAge')}: {ageMin || '?'}&ndash;{ageMax || '?'}
-              <button onClick={() => { updateParam('age_min', ''); updateParam('age_max', '') }} className="ml-0.5 text-foreground-muted/50 hover:text-foreground transition-colors">&times;</button>
+              <button onClick={() => clearParams('age_min', 'age_max')} className="ml-0.5 text-foreground-muted/50 hover:text-foreground transition-colors">&times;</button>
             </span>
           )}
           {/* Foot tag */}
@@ -422,14 +432,14 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           {(heightMin || heightMax) && (
             <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.height')}: {heightMin || '?'}&ndash;{heightMax || '?'} {t('players.cm')}
-              <button onClick={() => { updateParam('height_min', ''); updateParam('height_max', '') }} className="ml-0.5 text-foreground-muted/50 hover:text-foreground transition-colors">&times;</button>
+              <button onClick={() => clearParams('height_min', 'height_max')} className="ml-0.5 text-foreground-muted/50 hover:text-foreground transition-colors">&times;</button>
             </span>
           )}
           {/* Weight tag */}
           {(weightMin || weightMax) && (
             <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.weight')}: {weightMin || '?'}&ndash;{weightMax || '?'} {t('players.kg')}
-              <button onClick={() => { updateParam('weight_min', ''); updateParam('weight_max', '') }} className="ml-0.5 text-foreground-muted/50 hover:text-foreground transition-colors">&times;</button>
+              <button onClick={() => clearParams('weight_min', 'weight_max')} className="ml-0.5 text-foreground-muted/50 hover:text-foreground transition-colors">&times;</button>
             </span>
           )}
           {/* Stat filter tags */}

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
 
   if (insertError) {
     console.error('[conversations/POST] Insert error:', insertError.message)
-    return NextResponse.json({ error: insertError.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   // Insert system message (non-critical — don't fail if this errors)
@@ -126,8 +126,11 @@ export async function GET() {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
 
-  const role = profile.role as 'scout' | 'academy_admin'
-  const { conversations, error } = await fetchConversations(supabase, user.id, role)
+  if (profile.role !== 'scout' && profile.role !== 'academy_admin') {
+    return NextResponse.json({ error: 'errors.unauthorized' }, { status: 403 })
+  }
+
+  const { conversations, error } = await fetchConversations(supabase, user.id, profile.role)
 
   if (error) {
     return NextResponse.json({ error }, { status: 500 })
