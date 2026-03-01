@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createConversationSchema } from '@/lib/validations'
 import { CHAT_LIMITS } from '@/lib/constants'
+import { fetchConversations } from '@/lib/chat-queries'
 
 // POST: Create or get existing conversation (scout only)
 export async function POST(request: NextRequest) {
@@ -28,7 +29,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate input
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'errors.invalidInput' }, { status: 400 })
+  }
+
   const parsed = createConversationSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: 'errors.invalidInput' }, { status: 400 })
@@ -98,7 +105,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ conversation: { id: conversation.id } }, { status: 201 })
 }
 
-// GET: List user's conversations with metadata
+// GET: List user's conversations with metadata (delegates to shared query)
 export async function GET() {
   const supabase = await createClient()
 
@@ -108,10 +115,10 @@ export async function GET() {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
 
-  // Get user profile for role-based query
+  // Get user profile for role
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('role, club_id')
+    .select('role')
     .eq('id', user.id)
     .single()
 
@@ -119,72 +126,12 @@ export async function GET() {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
 
-  // Fetch conversations (RLS filters to user's own)
-  const { data: conversations, error: convError } = await supabase
-    .from('conversations')
-    .select(`
-      id, scout_id, club_id, last_message_at, created_at,
-      club:clubs!conversations_club_id_fkey ( id, name, name_ka, logo_url ),
-      scout:profiles!conversations_scout_id_fkey ( id, full_name, email, organization, role )
-    `)
-    .order('last_message_at', { ascending: false })
+  const role = profile.role as 'scout' | 'academy_admin'
+  const { conversations, error } = await fetchConversations(supabase, user.id, role)
 
-  if (convError) {
-    console.error('[conversations/GET] Fetch error:', convError.message)
-    return NextResponse.json({ error: convError.message }, { status: 500 })
+  if (error) {
+    return NextResponse.json({ error }, { status: 500 })
   }
 
-  // For each conversation, get last message and unread count
-  const conversationsWithMeta = await Promise.all(
-    (conversations ?? []).map(async (conv) => {
-      // Last message
-      const { data: lastMessages } = await supabase
-        .from('messages')
-        .select('content, message_type, created_at, sender_id')
-        .eq('conversation_id', conv.id)
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false })
-        .limit(1)
-
-      const lastMessage = lastMessages?.[0] ?? null
-
-      // Unread count (messages not sent by me, not yet read)
-      const { count: unreadCount } = await supabase
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .eq('conversation_id', conv.id)
-        .neq('sender_id', user.id)
-        .is('read_at', null)
-        .is('deleted_at', null)
-
-      // Block status
-      const { data: blocks } = await supabase
-        .from('conversation_blocks')
-        .select('blocked_by')
-        .eq('conversation_id', conv.id)
-        .limit(1)
-
-      const isBlocked = (blocks?.length ?? 0) > 0
-
-      // Determine "other party" based on user role
-      const club = Array.isArray(conv.club) ? conv.club[0] : conv.club
-      const scout = Array.isArray(conv.scout) ? conv.scout[0] : conv.scout
-
-      const otherParty = profile.role === 'scout'
-        ? { id: club?.id ?? '', full_name: club?.name ?? '', organization: null, role: 'academy_admin' }
-        : { id: scout?.id ?? '', full_name: scout?.full_name ?? '', organization: scout?.organization ?? null, role: 'scout' }
-
-      return {
-        id: conv.id,
-        club: club ? { id: club.id, name: club.name, name_ka: club.name_ka, logo_url: club.logo_url } : null,
-        other_party: otherParty,
-        last_message: lastMessage,
-        unread_count: unreadCount ?? 0,
-        is_blocked: isBlocked,
-        created_at: conv.created_at,
-      }
-    })
-  )
-
-  return NextResponse.json({ conversations: conversationsWithMeta })
+  return NextResponse.json({ conversations })
 }

@@ -55,34 +55,43 @@ export function Navbar() {
 
   useEffect(() => {
     if (!user || userRole === 'platform_admin') return
+    let cancelled = false
     const supabase = createClient()
 
     // Initial fetch
     supabase.rpc('get_total_unread_count').then(({ data, error }) => {
-      if (!error && data != null) setUnreadCount(Number(data))
+      if (!error && data != null && !cancelled) setUnreadCount(Number(data))
     })
 
-    // Realtime subscription for live updates
+    // Realtime subscription — deferred to survive React StrictMode double-mount
     let debounceTimer: NodeJS.Timeout
-    const channel = supabase
-      .channel('navbar-unread')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'messages',
-      }, () => {
-        clearTimeout(debounceTimer)
-        debounceTimer = setTimeout(() => {
-          supabase.rpc('get_total_unread_count').then(({ data, error }) => {
-            if (!error && data != null) setUnreadCount(Number(data))
-          })
-        }, 500)
-      })
-      .subscribe()
+    let activeChannel: ReturnType<typeof supabase.channel> | null = null
+
+    const timer = setTimeout(() => {
+      if (cancelled) return
+      activeChannel = supabase
+        .channel('navbar-unread')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+        }, () => {
+          clearTimeout(debounceTimer)
+          debounceTimer = setTimeout(() => {
+            if (cancelled) return
+            supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+              if (!error && data != null && !cancelled) setUnreadCount(Number(data))
+            })
+          }, 500)
+        })
+        .subscribe()
+    }, 0)
 
     return () => {
+      cancelled = true
+      clearTimeout(timer)
       clearTimeout(debounceTimer)
-      supabase.removeChannel(channel)
+      if (activeChannel) supabase.removeChannel(activeChannel)
     }
   }, [user, userRole])
 

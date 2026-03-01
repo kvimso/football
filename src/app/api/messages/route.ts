@@ -14,7 +14,12 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate input
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'errors.invalidInput' }, { status: 400 })
+  }
   const parsed = sendMessageSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json(
@@ -133,7 +138,7 @@ export async function GET(request: NextRequest) {
       )
     `)
     .eq('conversation_id', conversation_id)
-    .is('deleted_at', null)
+
     .order('created_at', { ascending: false })
     .limit(limit + 1) // fetch one extra to determine has_more
 

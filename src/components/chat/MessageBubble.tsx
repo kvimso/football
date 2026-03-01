@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { formatBubbleTime, formatFileSize, isImageType, linkifyMessage, isEmojiOnly } from '@/lib/chat-utils'
 import { PlayerRefCard } from '@/components/chat/PlayerRefCard'

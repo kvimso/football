@@ -104,13 +104,6 @@ export function formatBubbleTime(dateStr: string, lang: Lang): string {
 }
 
 /**
- * Check if a file_url is a storage path (not a full URL).
- */
-export function isStoragePath(url: string): boolean {
-  return !url.startsWith('http')
-}
-
-/**
  * Format file size for display: "1.2 MB", "450 KB"
  */
 export function formatFileSize(bytes: number): string {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { uuidSchema } from '@/lib/validations'
 
 const blockActionSchema = z.object({
   action: z.enum(['block', 'unblock']),
@@ -14,8 +15,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
   const { conversationId } = await context.params
   const supabase = await createClient()
 
-  // Validate conversationId is UUID-like
-  if (!conversationId || conversationId.length < 32) {
+  // Validate conversationId is a UUID
+  if (!uuidSchema.safeParse(conversationId).success) {
     return NextResponse.json({ error: 'errors.invalidInput' }, { status: 400 })
   }
 
@@ -40,7 +41,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   // Validate request body
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'errors.invalidInput' }, { status: 400 })
+  }
+
   const parsed = blockActionSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: 'errors.invalidInput' }, { status: 400 })

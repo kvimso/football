@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { uuidSchema } from '@/lib/validations'
 
 // PATCH: Mark all unread messages as read in a conversation
 export async function PATCH(
@@ -9,8 +10,7 @@ export async function PATCH(
   const { conversationId } = await params
 
   // Validate UUID format
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  if (!uuidRegex.test(conversationId)) {
+  if (!uuidSchema.safeParse(conversationId).success) {
     return NextResponse.json({ error: 'errors.invalidId' }, { status: 400 })
   }
 

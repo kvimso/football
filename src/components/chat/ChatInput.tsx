@@ -43,6 +43,13 @@ export function ChatInput({
     return () => clearTimeout(timer)
   }, [error])
 
+  // Cleanup pasted preview on dismiss and unmount
+  useEffect(() => {
+    return () => {
+      if (pastedPreview) URL.revokeObjectURL(pastedPreview.previewUrl)
+    }
+  }, [pastedPreview])
+
   const charCount = text.length
   const showCharCount = charCount >= 4500
   const isOverLimit = charCount > CHAT_LIMITS.MAX_MESSAGE_LENGTH
@@ -89,22 +96,8 @@ export function ChatInput({
     el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`
   }, [])
 
-  const handleFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    // Reset file input
-    e.target.value = ''
-
-    if (file.size > CHAT_LIMITS.MAX_FILE_SIZE_BYTES) {
-      setError(t('errors.fileTooLarge'))
-      return
-    }
-
-    if (!ALLOWED_CHAT_FILE_EXTENSIONS.some(ext => file.name.toLowerCase().endsWith(ext))) {
-      setError(t('errors.fileTypeNotAllowed'))
-      return
-    }
-
+  // Shared file upload + send logic
+  const uploadAndSendFile = useCallback(async (file: File) => {
     setIsUploading(true)
     setError(null)
 
@@ -128,6 +121,25 @@ export function ChatInput({
       setIsUploading(false)
     }
   }, [conversationId, onSendFile, t])
+
+  const handleFileSelect = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    // Reset file input
+    e.target.value = ''
+
+    if (file.size > CHAT_LIMITS.MAX_FILE_SIZE_BYTES) {
+      setError(t('errors.fileTooLarge'))
+      return
+    }
+
+    if (!ALLOWED_CHAT_FILE_EXTENSIONS.some(ext => file.name.toLowerCase().endsWith(ext))) {
+      setError(t('errors.fileTypeNotAllowed'))
+      return
+    }
+
+    await uploadAndSendFile(file)
+  }, [uploadAndSendFile, t])
 
   const handlePlayerSelect = useCallback(async (player: PlayerSearchResult) => {
     try {
@@ -163,39 +175,11 @@ export function ChatInput({
 
   const handleSendPastedImage = useCallback(async () => {
     if (!pastedPreview) return
-    setIsUploading(true)
-    setError(null)
-
-    try {
-      const formData = new FormData()
-      formData.append('file', pastedPreview.file)
-      formData.append('conversation_id', conversationId)
-
-      const res = await fetch('/api/chat-upload', { method: 'POST', body: formData })
-      if (!res.ok) {
-        const data = await res.json()
-        setError(t(data.error ?? 'chat.failedToSend'))
-        return
-      }
-
-      const { storage_path, file_name, file_type, file_size_bytes } = await res.json()
-      await onSendFile({ storage_path, file_name, file_type, file_size_bytes })
-    } catch {
-      setError(t('chat.failedToSend'))
-    } finally {
-      URL.revokeObjectURL(pastedPreview.previewUrl)
-      setPastedPreview(null)
-      setIsUploading(false)
-    }
-  }, [pastedPreview, conversationId, onSendFile, t])
-
-  // Cleanup pasted preview on unmount
-  useEffect(() => {
-    return () => {
-      if (pastedPreview) URL.revokeObjectURL(pastedPreview.previewUrl)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    URL.revokeObjectURL(pastedPreview.previewUrl)
+    const file = pastedPreview.file
+    setPastedPreview(null)
+    await uploadAndSendFile(file)
+  }, [pastedPreview, uploadAndSendFile])
 
   // Blocked state
   if (isBlocked) {

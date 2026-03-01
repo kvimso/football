@@ -72,6 +72,22 @@ export const sendMessageSchema = z.object({
   { message: 'Missing required fields for message type' }
 )
 
+// Validate Realtime payload from Supabase (untrusted data)
+export const realtimeMessageSchema = z.object({
+  id: z.string().uuid(),
+  conversation_id: z.string().uuid(),
+  sender_id: z.string().uuid().nullable(),
+  content: z.string().nullable(),
+  message_type: z.enum(['text', 'file', 'player_ref', 'system']),
+  file_url: z.string().nullable(),
+  file_name: z.string().nullable(),
+  file_size_bytes: z.number().nullable(),
+  file_type: z.string().nullable(),
+  referenced_player_id: z.string().uuid().nullable(),
+  read_at: z.string().nullable(),
+  created_at: z.string(),
+})
+
 export const loadMessagesSchema = z.object({
   conversation_id: z.string().uuid(),
   before: z.string().uuid().optional(),

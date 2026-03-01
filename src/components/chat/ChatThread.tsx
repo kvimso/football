@@ -6,10 +6,11 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
 import { groupMessagesByDate, isSameTimeGroup } from '@/lib/chat-utils'
+import { realtimeMessageSchema } from '@/lib/validations'
 import { DateDivider } from '@/components/chat/DateDivider'
 import { MessageBubble } from '@/components/chat/MessageBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
-import type { ConversationDetail, MessageWithSender, MessageType } from '@/lib/types'
+import type { ConversationDetail, MessageWithSender, MessageType, UserRole } from '@/lib/types'
 
 interface ChatThreadProps {
   conversation: ConversationDetail
@@ -140,100 +141,123 @@ export function ChatThread({
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [conversation.id])
 
-  // Realtime subscription
+  // Realtime subscription — deferred to survive React StrictMode double-mount
+  const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null)
   useEffect(() => {
+    let cancelled = false
     const supabase = createClient()
-    const channel = supabase
-      .channel(`thread-${conversation.id}`)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-        filter: `conversation_id=eq.${conversation.id}`,
-      }, (payload) => {
-        const newMsg = payload.new as Record<string, unknown>
-        // Don't add if it's our own optimistic message (already in state)
-        setMessages(prev => {
-          // Check if already exists (by real ID or close match for optimistic)
-          if (prev.some(m => m.id === newMsg.id)) return prev
 
-          // Check if this is our own message that we sent optimistically
-          if (newMsg.sender_id === userId) {
-            // Replace temp message with real one if exists
-            const tempIdx = prev.findIndex(m =>
-              m.id.startsWith('temp-') &&
-              m.sender_id === userId &&
-              Math.abs(new Date(m.created_at).getTime() - new Date(newMsg.created_at as string).getTime()) < 5000
-            )
-            if (tempIdx !== -1) {
-              const updated = [...prev]
-              updated[tempIdx] = {
-                ...updated[tempIdx],
-                id: newMsg.id as string,
-                _status: 'sent',
+    // Defer subscription so StrictMode's synchronous cleanup cancels before it runs
+    const timer = setTimeout(() => {
+      if (cancelled) return
+
+      const channel = supabase
+        .channel(`thread-${conversation.id}`)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversation.id}`,
+        }, (payload) => {
+          // Validate Realtime payload with Zod
+          const result = realtimeMessageSchema.safeParse(payload.new)
+          if (!result.success) {
+            console.warn('Malformed realtime message:', result.error)
+            return
+          }
+          const newMsg = result.data
+
+          // Don't add if it's our own optimistic message (already in state)
+          setMessages(prev => {
+            // Check if already exists (by real ID)
+            if (prev.some(m => m.id === newMsg.id)) return prev
+
+            // Check if this is our own message that we sent optimistically
+            if (newMsg.sender_id === userId) {
+              // Replace temp message with real one if exists
+              const tempIdx = prev.findIndex(m =>
+                m.id.startsWith('temp-') &&
+                m.sender_id === userId &&
+                Math.abs(new Date(m.created_at).getTime() - new Date(newMsg.created_at).getTime()) < 5000
+              )
+              if (tempIdx !== -1) {
+                const updated = [...prev]
+                updated[tempIdx] = {
+                  ...updated[tempIdx],
+                  id: newMsg.id,
+                  _status: 'sent',
+                }
+                return updated
               }
-              return updated
             }
-          }
 
-          // New message from other party
-          const realtimeMsg: MessageWithSender = {
-            id: newMsg.id as string,
-            conversation_id: newMsg.conversation_id as string,
-            sender_id: newMsg.sender_id as string | null,
-            content: newMsg.content as string | null,
-            message_type: newMsg.message_type as MessageType,
-            file_url: newMsg.file_url as string | null,
-            file_name: newMsg.file_name as string | null,
-            file_type: newMsg.file_type as string | null,
-            file_size_bytes: newMsg.file_size_bytes as number | null,
-            referenced_player_id: newMsg.referenced_player_id as string | null,
-            read_at: newMsg.read_at as string | null,
-            created_at: newMsg.created_at as string,
-            sender: null, // Will be populated on next load, but we can show without name briefly
-            referenced_player: null,
-          }
+            // New message from other party
+            const realtimeMsg: MessageWithSender = {
+              id: newMsg.id,
+              conversation_id: newMsg.conversation_id,
+              sender_id: newMsg.sender_id,
+              content: newMsg.content,
+              message_type: newMsg.message_type as MessageType,
+              file_url: newMsg.file_url,
+              file_name: newMsg.file_name,
+              file_type: newMsg.file_type,
+              file_size_bytes: newMsg.file_size_bytes,
+              referenced_player_id: newMsg.referenced_player_id,
+              read_at: newMsg.read_at,
+              created_at: newMsg.created_at,
+              sender: null, // Will be populated on next load
+              referenced_player: null,
+            }
 
-          // Announce to screen readers (incoming messages only)
-          if (realtimeMsg.sender_id !== userId) {
-            const content = realtimeMsg.content?.slice(0, 100) ?? ''
-            setLastAnnouncement(content)
-          }
+            // Announce to screen readers (incoming messages only)
+            if (realtimeMsg.sender_id !== userId) {
+              const content = realtimeMsg.content?.slice(0, 100) ?? ''
+              setLastAnnouncement(content)
+            }
 
-          if (isAtBottomRef.current) {
-            setTimeout(() => scrollToBottom(), 50)
-          } else {
-            setNewMessageCount(c => c + 1)
-          }
+            if (isAtBottomRef.current) {
+              setTimeout(() => scrollToBottom(), 50)
+            } else {
+              setNewMessageCount(c => c + 1)
+            }
 
-          return [...prev, realtimeMsg]
+            return [...prev, realtimeMsg]
+          })
+
+          // Mark as read if visible
+          if (document.visibilityState === 'visible' && newMsg.sender_id !== userId) {
+            fetch(`/api/messages/${conversation.id}/read`, { method: 'PATCH' })
+          }
+        })
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversation.id}`,
+        }, (payload) => {
+          const updated = payload.new as Record<string, unknown>
+          setMessages(prev => prev.map(m =>
+            m.id === updated.id ? { ...m, read_at: updated.read_at as string | null } : m
+          ))
+        })
+        .subscribe((status) => {
+          if (cancelled) return
+          if (status === 'SUBSCRIBED') setConnectionStatus('connected')
+          else if (status === 'CHANNEL_ERROR') setConnectionStatus('reconnecting')
+          else if (status === 'TIMED_OUT') setConnectionStatus('disconnected')
+          else if (status === 'CLOSED') setConnectionStatus('disconnected')
         })
 
-        // Mark as read if visible
-        if (document.visibilityState === 'visible' && newMsg.sender_id !== userId) {
-          fetch(`/api/messages/${conversation.id}/read`, { method: 'PATCH' })
-        }
-      })
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'messages',
-        filter: `conversation_id=eq.${conversation.id}`,
-      }, (payload) => {
-        const updated = payload.new as Record<string, unknown>
-        setMessages(prev => prev.map(m =>
-          m.id === updated.id ? { ...m, read_at: updated.read_at as string | null } : m
-        ))
-      })
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') setConnectionStatus('connected')
-        else if (status === 'CHANNEL_ERROR') setConnectionStatus('reconnecting')
-        else if (status === 'TIMED_OUT') setConnectionStatus('disconnected')
-        else if (status === 'CLOSED') setConnectionStatus('disconnected')
-      })
+      channelRef.current = channel
+    }, 0)
 
     return () => {
-      supabase.removeChannel(channel)
+      cancelled = true
+      clearTimeout(timer)
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current)
+        channelRef.current = null
+      }
     }
   }, [conversation.id, userId, scrollToBottom])
 
@@ -264,22 +288,33 @@ export function ChatThread({
     }
   }, [messages, hasMore, isLoadingMore, conversation.id])
 
-  // Send text message (optimistic)
-  const sendTextMessage = useCallback(async (content: string) => {
+  // Unified send message helper (optimistic update + POST)
+  const sendMessage = useCallback(async (
+    type: MessageType,
+    payload: {
+      content?: string
+      file_url?: string
+      file_name?: string
+      file_type?: string
+      file_size_bytes?: number
+      referenced_player_id?: string
+    }
+  ) => {
+    const tempId = `temp-${Date.now()}`
     const optimistic: MessageWithSender = {
-      id: `temp-${Date.now()}`,
+      id: tempId,
       conversation_id: conversation.id,
       sender_id: userId,
-      content,
-      message_type: 'text',
-      file_url: null,
-      file_name: null,
-      file_type: null,
-      file_size_bytes: null,
-      referenced_player_id: null,
+      content: payload.content ?? null,
+      message_type: type,
+      file_url: payload.file_url ?? null,
+      file_name: payload.file_name ?? null,
+      file_type: payload.file_type ?? null,
+      file_size_bytes: payload.file_size_bytes ?? null,
+      referenced_player_id: payload.referenced_player_id ?? null,
       read_at: null,
       created_at: new Date().toISOString(),
-      sender: { id: userId, full_name: t('chat.you'), role: userRole },
+      sender: { id: userId, full_name: t('chat.you'), role: userRole as UserRole },
       referenced_player: null,
       _status: 'sending',
     }
@@ -293,136 +328,51 @@ export function ChatThread({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           conversation_id: conversation.id,
-          content,
-          message_type: 'text',
+          message_type: type,
+          content: payload.content,
+          file_url: payload.file_url,
+          file_name: payload.file_name,
+          file_type: payload.file_type,
+          file_size_bytes: payload.file_size_bytes,
+          referenced_player_id: payload.referenced_player_id,
         }),
       })
 
       if (!res.ok) {
         const err = await res.json()
         setMessages(prev => prev.map(m =>
-          m.id === optimistic.id ? { ...m, _status: 'failed' as const, _error: err.error } : m
+          m.id === tempId ? { ...m, _status: 'failed' as const, _error: err.error } : m
         ))
         return
       }
 
       const { message } = await res.json()
       setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, id: message.id, _status: 'sent' as const } : m
+        m.id === tempId ? { ...m, id: message.id, _status: 'sent' as const } : m
       ))
     } catch {
       setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, _status: 'failed' as const } : m
+        m.id === tempId ? { ...m, _status: 'failed' as const } : m
       ))
     }
   }, [conversation.id, userId, userRole, scrollToBottom, t])
 
-  // Send file message
+  const sendTextMessage = useCallback(async (content: string) => {
+    await sendMessage('text', { content })
+  }, [sendMessage])
+
   const sendFileMessage = useCallback(async (data: { storage_path: string; file_name: string; file_type: string; file_size_bytes: number }) => {
-    const optimistic: MessageWithSender = {
-      id: `temp-${Date.now()}`,
-      conversation_id: conversation.id,
-      sender_id: userId,
-      content: null,
-      message_type: 'file',
+    await sendMessage('file', {
       file_url: data.storage_path,
       file_name: data.file_name,
       file_type: data.file_type,
       file_size_bytes: data.file_size_bytes,
-      referenced_player_id: null,
-      read_at: null,
-      created_at: new Date().toISOString(),
-      sender: { id: userId, full_name: t('chat.you'), role: userRole },
-      referenced_player: null,
-      _status: 'sending',
-    }
+    })
+  }, [sendMessage])
 
-    setMessages(prev => [...prev, optimistic])
-    scrollToBottom()
-
-    try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversation_id: conversation.id,
-          message_type: 'file',
-          file_url: data.storage_path,
-          file_name: data.file_name,
-          file_type: data.file_type,
-          file_size_bytes: data.file_size_bytes,
-        }),
-      })
-
-      if (!res.ok) {
-        setMessages(prev => prev.map(m =>
-          m.id === optimistic.id ? { ...m, _status: 'failed' as const } : m
-        ))
-        return
-      }
-
-      const { message } = await res.json()
-      setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, id: message.id, _status: 'sent' as const } : m
-      ))
-    } catch {
-      setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, _status: 'failed' as const } : m
-      ))
-    }
-  }, [conversation.id, userId, userRole, scrollToBottom, t])
-
-  // Send player ref message
   const sendPlayerRefMessage = useCallback(async (playerId: string) => {
-    const optimistic: MessageWithSender = {
-      id: `temp-${Date.now()}`,
-      conversation_id: conversation.id,
-      sender_id: userId,
-      content: null,
-      message_type: 'player_ref',
-      file_url: null,
-      file_name: null,
-      file_type: null,
-      file_size_bytes: null,
-      referenced_player_id: playerId,
-      read_at: null,
-      created_at: new Date().toISOString(),
-      sender: { id: userId, full_name: t('chat.you'), role: userRole },
-      referenced_player: null, // Will appear as loading until Realtime brings full data
-      _status: 'sending',
-    }
-
-    setMessages(prev => [...prev, optimistic])
-    scrollToBottom()
-
-    try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversation_id: conversation.id,
-          message_type: 'player_ref',
-          referenced_player_id: playerId,
-        }),
-      })
-
-      if (!res.ok) {
-        setMessages(prev => prev.map(m =>
-          m.id === optimistic.id ? { ...m, _status: 'failed' as const } : m
-        ))
-        return
-      }
-
-      const { message } = await res.json()
-      setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, id: message.id, _status: 'sent' as const } : m
-      ))
-    } catch {
-      setMessages(prev => prev.map(m =>
-        m.id === optimistic.id ? { ...m, _status: 'failed' as const } : m
-      ))
-    }
-  }, [conversation.id, userId, userRole, scrollToBottom, t])
+    await sendMessage('player_ref', { referenced_player_id: playerId })
+  }, [sendMessage])
 
   // Retry failed message
   const retryMessage = useCallback(async (failedMsg: MessageWithSender) => {

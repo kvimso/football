@@ -25,6 +25,31 @@ const POSITION_CHIP_COLORS: Record<string, string> = {
   ST: 'bg-pos-st text-white border-pos-st',
 }
 
+interface FilterSelectProps {
+  value: string
+  onChange: (value: string) => void
+  placeholder: string
+  options: { value: string; label: string }[]
+  className?: string
+}
+
+function FilterSelect({ value, onChange, placeholder, options, className }: FilterSelectProps) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors w-auto ${className ?? ''}`}
+    >
+      <option value="">{placeholder}</option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 export function FilterPanel({ clubs }: FilterPanelProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -92,9 +117,6 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
     router.push('/players')
   }
 
-  const selectClasses =
-    'rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors'
-
   return (
     <div className="space-y-4">
       {/* Search bar with icon */}
@@ -156,68 +178,39 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
 
       {/* Other filters row */}
       <div className="flex flex-wrap gap-2">
-        {/* Age min */}
-        <select
+        <FilterSelect
           value={ageMin}
-          onChange={(e) => updateParam('age_min', e.target.value)}
-          className={`${selectClasses} w-auto`}
-        >
-          <option value="">{t('players.ageMin')}</option>
-          {AGE_OPTIONS.map((age) => (
-            <option key={age} value={age}>
-              {age}
-            </option>
-          ))}
-        </select>
-
-        {/* Age max */}
-        <select
+          onChange={(v) => updateParam('age_min', v)}
+          placeholder={t('players.ageMin')}
+          options={AGE_OPTIONS.map(age => ({ value: String(age), label: String(age) }))}
+        />
+        <FilterSelect
           value={ageMax}
-          onChange={(e) => updateParam('age_max', e.target.value)}
-          className={`${selectClasses} w-auto`}
-        >
-          <option value="">{t('players.ageMax')}</option>
-          {AGE_OPTIONS.map((age) => (
-            <option key={age} value={age}>
-              {age}
-            </option>
-          ))}
-        </select>
-
-        {/* Preferred foot */}
-        <select
+          onChange={(v) => updateParam('age_max', v)}
+          placeholder={t('players.ageMax')}
+          options={AGE_OPTIONS.map(age => ({ value: String(age), label: String(age) }))}
+        />
+        <FilterSelect
           value={foot}
-          onChange={(e) => updateParam('foot', e.target.value)}
-          className={`${selectClasses} w-auto`}
-        >
-          <option value="">{t('players.allFeet')}</option>
-          {PREFERRED_FEET.map((f) => (
-            <option key={f} value={f}>
-              {t('foot.' + f)}
-            </option>
-          ))}
-        </select>
-
-        {/* Status */}
-        <select
+          onChange={(v) => updateParam('foot', v)}
+          placeholder={t('players.allFeet')}
+          options={PREFERRED_FEET.map(f => ({ value: f, label: t('foot.' + f) }))}
+        />
+        <FilterSelect
           value={status}
-          onChange={(e) => updateParam('status', e.target.value)}
-          className={`${selectClasses} w-auto`}
-        >
-          <option value="">{t('players.allStatuses')}</option>
-          <option value="active">{t('players.statusActive')}</option>
-          <option value="free_agent">{t('players.statusFreeAgent')}</option>
-        </select>
-
-        {/* Sort */}
-        <select
+          onChange={(v) => updateParam('status', v)}
+          placeholder={t('players.allStatuses')}
+          options={[
+            { value: 'active', label: t('players.statusActive') },
+            { value: 'free_agent', label: t('players.statusFreeAgent') },
+          ]}
+        />
+        <FilterSelect
           value={sort}
-          onChange={(e) => updateParam('sort', e.target.value)}
-          className={`${selectClasses} w-auto`}
-        >
-          <option value="">{t('players.sortName')}</option>
-          <option value="most_viewed">{t('players.sortMostViewed')}</option>
-        </select>
+          onChange={(v) => updateParam('sort', v)}
+          placeholder={t('players.sortName')}
+          options={[{ value: 'most_viewed', label: t('players.sortMostViewed') }]}
+        />
 
         {/* Advanced filters toggle */}
         <button
@@ -247,109 +240,54 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
       {/* Advanced filters — height, weight, stat ranges */}
       {advancedOpen && (
         <div className="flex flex-wrap gap-2 rounded-lg border border-border/50 bg-background-secondary/50 p-3">
-          <select
+          <FilterSelect
             value={heightMin}
-            onChange={(e) => updateParam('height_min', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.heightMin')}</option>
-            {HEIGHT_OPTIONS.map((h) => (
-              <option key={h} value={h}>
-                {h} {t('players.cm')}
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('height_min', v)}
+            placeholder={t('players.heightMin')}
+            options={HEIGHT_OPTIONS.map(h => ({ value: String(h), label: `${h} ${t('players.cm')}` }))}
+          />
+          <FilterSelect
             value={heightMax}
-            onChange={(e) => updateParam('height_max', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.heightMax')}</option>
-            {HEIGHT_OPTIONS.map((h) => (
-              <option key={h} value={h}>
-                {h} {t('players.cm')}
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('height_max', v)}
+            placeholder={t('players.heightMax')}
+            options={HEIGHT_OPTIONS.map(h => ({ value: String(h), label: `${h} ${t('players.cm')}` }))}
+          />
+          <FilterSelect
             value={weightMin}
-            onChange={(e) => updateParam('weight_min', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.weightMin')}</option>
-            {WEIGHT_OPTIONS.map((w) => (
-              <option key={w} value={w}>
-                {w} {t('players.kg')}
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('weight_min', v)}
+            placeholder={t('players.weightMin')}
+            options={WEIGHT_OPTIONS.map(w => ({ value: String(w), label: `${w} ${t('players.kg')}` }))}
+          />
+          <FilterSelect
             value={weightMax}
-            onChange={(e) => updateParam('weight_max', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.weightMax')}</option>
-            {WEIGHT_OPTIONS.map((w) => (
-              <option key={w} value={w}>
-                {w} {t('players.kg')}
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('weight_max', v)}
+            placeholder={t('players.weightMax')}
+            options={WEIGHT_OPTIONS.map(w => ({ value: String(w), label: `${w} ${t('players.kg')}` }))}
+          />
+          <FilterSelect
             value={goalsMin}
-            onChange={(e) => updateParam('goals_min', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.goalsMin')}</option>
-            {STAT_FILTER_OPTIONS.goals.map((v) => (
-              <option key={v} value={v}>
-                {v}+
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('goals_min', v)}
+            placeholder={t('players.goalsMin')}
+            options={STAT_FILTER_OPTIONS.goals.map(v => ({ value: String(v), label: `${v}+` }))}
+          />
+          <FilterSelect
             value={assistsMin}
-            onChange={(e) => updateParam('assists_min', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.assistsMin')}</option>
-            {STAT_FILTER_OPTIONS.assists.map((v) => (
-              <option key={v} value={v}>
-                {v}+
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('assists_min', v)}
+            placeholder={t('players.assistsMin')}
+            options={STAT_FILTER_OPTIONS.assists.map(v => ({ value: String(v), label: `${v}+` }))}
+          />
+          <FilterSelect
             value={matchesMin}
-            onChange={(e) => updateParam('matches_min', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.matchesMin')}</option>
-            {STAT_FILTER_OPTIONS.matches.map((v) => (
-              <option key={v} value={v}>
-                {v}+
-              </option>
-            ))}
-          </select>
-
-          <select
+            onChange={(v) => updateParam('matches_min', v)}
+            placeholder={t('players.matchesMin')}
+            options={STAT_FILTER_OPTIONS.matches.map(v => ({ value: String(v), label: `${v}+` }))}
+          />
+          <FilterSelect
             value={passAccMin}
-            onChange={(e) => updateParam('pass_acc_min', e.target.value)}
-            className={`${selectClasses} w-auto`}
-          >
-            <option value="">{t('players.passAccuracyMin')}</option>
-            {STAT_FILTER_OPTIONS.passAccuracy.map((v) => (
-              <option key={v} value={v}>
-                {v}%+
-              </option>
-            ))}
-          </select>
+            onChange={(v) => updateParam('pass_acc_min', v)}
+            placeholder={t('players.passAccuracyMin')}
+            options={STAT_FILTER_OPTIONS.passAccuracy.map(v => ({ value: String(v), label: `${v}%+` }))}
+          />
         </div>
       )}
     </div>

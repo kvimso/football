@@ -14,7 +14,7 @@ export type ActionResult<T = void> =
 export interface MessageSender {
   id: string
   full_name: string | null
-  role: string | null
+  role: UserRole | null
 }
 
 export interface ReferencedPlayer {
@@ -51,9 +51,41 @@ export interface ConversationDetail {
   scout_id: string
   club_id: string
   club: { id: string; name: string; name_ka: string | null; logo_url: string | null }
-  other_party: { id: string; full_name: string; organization: string | null; role: string }
+  other_party: { id: string; full_name: string; organization: string | null; role: UserRole }
   is_blocked: boolean
   blocked_by_me: boolean
+  created_at: string
+}
+
+// Chat inbox types (used by ChatInbox component and chat-queries)
+export interface ConversationClub {
+  id: string
+  name: string
+  name_ka: string
+  logo_url: string | null
+}
+
+export interface ConversationParty {
+  id: string
+  full_name: string
+  organization: string | null
+  role: string
+}
+
+export interface ConversationLastMessage {
+  content: string | null
+  message_type: string
+  created_at: string
+  sender_id: string
+}
+
+export interface ConversationItem {
+  id: string
+  club: ConversationClub | null
+  other_party: ConversationParty
+  last_message: ConversationLastMessage | null
+  unread_count: number
+  is_blocked: boolean
   created_at: string
 }
 

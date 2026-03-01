@@ -7,38 +7,8 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
 import { formatMessageTime, truncateMessage } from '@/lib/chat-utils'
+import type { ConversationItem } from '@/lib/types'
 import type { Lang } from '@/lib/translations'
-
-interface ConversationClub {
-  id: string
-  name: string
-  name_ka: string
-  logo_url: string | null
-}
-
-interface ConversationParty {
-  id: string
-  full_name: string
-  organization: string | null
-  role: string
-}
-
-interface ConversationLastMessage {
-  content: string | null
-  message_type: string
-  created_at: string
-  sender_id: string
-}
-
-export interface ConversationItem {
-  id: string
-  club: ConversationClub | null
-  other_party: ConversationParty
-  last_message: ConversationLastMessage | null
-  unread_count: number
-  is_blocked: boolean
-  created_at: string
-}
 
 interface ChatInboxProps {
   conversations: ConversationItem[]
@@ -58,14 +28,17 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
     setLiveConversations(conversations)
   }, [conversations])
 
-  // Realtime inbox updates
+  // Realtime inbox updates — deferred to survive React StrictMode double-mount
   useEffect(() => {
+    let cancelled = false
     const supabase = createClient()
     let debounceTimer: NodeJS.Timeout
+    let activeChannel: ReturnType<typeof supabase.channel> | null = null
 
     const refetchConversations = () => {
       clearTimeout(debounceTimer)
       debounceTimer = setTimeout(async () => {
+        if (cancelled) return
         try {
           const res = await fetch('/api/conversations')
           if (res.ok) {
@@ -78,23 +51,28 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
       }, 1500)
     }
 
-    const channel = supabase
-      .channel('inbox-updates')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'messages',
-      }, refetchConversations)
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'conversations',
-      }, refetchConversations)
-      .subscribe()
+    const timer = setTimeout(() => {
+      if (cancelled) return
+      activeChannel = supabase
+        .channel('inbox-updates')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+        }, refetchConversations)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'conversations',
+        }, refetchConversations)
+        .subscribe()
+    }, 0)
 
     return () => {
+      cancelled = true
+      clearTimeout(timer)
       clearTimeout(debounceTimer)
-      supabase.removeChannel(channel)
+      if (activeChannel) supabase.removeChannel(activeChannel)
     }
   }, [])
 
@@ -217,7 +195,7 @@ function getLastMessagePreview(
   conv: ConversationItem,
   userId: string,
   t: (key: string) => string,
-  lang: Lang,
+  _lang: Lang,
 ): string {
   if (!conv.last_message) return ''
 

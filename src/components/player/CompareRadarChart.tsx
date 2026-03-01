@@ -91,9 +91,9 @@ export function CompareRadarChart({ skills1, skills2, labels, player1Name, playe
         {/* Player 2 polygon (blue) */}
         <polygon
           points={toPolygon(skills2, RADIUS)}
-          fill="#3b82f6"
+          fill="var(--pos-def)"
           fillOpacity={0.15}
-          stroke="#3b82f6"
+          stroke="var(--pos-def)"
           strokeWidth={2}
         />
 
@@ -104,7 +104,7 @@ export function CompareRadarChart({ skills1, skills2, labels, player1Name, playe
 
         {/* Player 2 data points */}
         {p2Points.map(([x, y], i) => (
-          <circle key={`p2-${i}`} cx={x} cy={y} r={3} fill="#3b82f6" />
+          <circle key={`p2-${i}`} cx={x} cy={y} r={3} fill="var(--pos-def)" />
         ))}
 
         {/* Labels */}
@@ -132,7 +132,7 @@ export function CompareRadarChart({ skills1, skills2, labels, player1Name, playe
           <span>{player1Name}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#3b82f6]" />
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--pos-def)]" />
           <span>{player2Name}</span>
         </div>
       </div>
