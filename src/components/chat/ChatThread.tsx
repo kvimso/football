@@ -38,6 +38,8 @@ export function ChatThread({
   const [blockedByMe, setBlockedByMe] = useState(conversation.blocked_by_me)
   const [blockConfirming, setBlockConfirming] = useState(false)
   const [blockLoading, setBlockLoading] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
@@ -103,6 +105,19 @@ export function ChatThread({
     const timer = setTimeout(() => setBlockConfirming(false), 3000)
     return () => clearTimeout(timer)
   }, [blockConfirming])
+
+  // Close menu on click outside
+  useEffect(() => {
+    if (!menuOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+        setBlockConfirming(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [menuOpen])
 
   // Scroll to bottom helper
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
@@ -402,25 +417,25 @@ export function ChatThread({
           </svg>
         </Link>
 
-        <div className="flex flex-1 items-center justify-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/10">
             {userRole === 'scout' && conversation.club.logo_url ? (
               <Image
                 src={conversation.club.logo_url}
                 alt={displayName}
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
+                width={48}
+                height={48}
+                className="h-12 w-12 rounded-full object-cover"
               />
             ) : (
-              <span className="text-base font-bold text-accent">
+              <span className="text-lg font-bold text-accent">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             )}
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-base font-bold text-foreground">{displayName}</h2>
-            <span className="text-xs text-foreground-muted">
+            <h2 className="truncate text-sm font-bold leading-tight text-foreground">{displayName}</h2>
+            <span className="block text-[11px] leading-tight text-foreground-muted">
               {isBlocked
                 ? t('chat.blocked')
                 : userRole === 'scout'
@@ -432,28 +447,45 @@ export function ChatThread({
         </div>
 
         {userRole === 'academy_admin' && (
-          <button
-            onClick={handleBlockAction}
-            disabled={blockLoading}
-            aria-label={isBlocked && blockedByMe ? t('aria.unblockScout') : t('aria.blockScout')}
-            className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
-              blockConfirming
-                ? 'border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                : isBlocked && blockedByMe
-                  ? 'border-border text-foreground-muted hover:text-foreground hover:bg-background-secondary'
-                  : 'border-border text-foreground-muted hover:text-foreground hover:bg-background-secondary'
-            }`}
-          >
-            {blockLoading ? (
-              <span className="h-3 w-3 animate-spin rounded-full border border-foreground-muted border-t-transparent inline-block" />
-            ) : blockConfirming ? (
-              t('chat.confirmBlock')
-            ) : isBlocked && blockedByMe ? (
-              t('chat.unblock')
-            ) : (
-              t('chat.block')
+          <div ref={menuRef} className="relative shrink-0">
+            <button
+              onClick={() => { setMenuOpen(prev => !prev); setBlockConfirming(false) }}
+              aria-label={t('aria.chatOptions')}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
+            >
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="5" r="1.5" />
+                <circle cx="12" cy="12" r="1.5" />
+                <circle cx="12" cy="19" r="1.5" />
+              </svg>
+            </button>
+
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-1 z-20 min-w-[160px] overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+                <button
+                  onClick={() => { handleBlockAction(); if (!blockedByMe) return; setMenuOpen(false) }}
+                  disabled={blockLoading}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-background-secondary disabled:opacity-50"
+                >
+                  {blockLoading ? (
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border border-foreground-muted border-t-transparent" />
+                  ) : (
+                    <svg className="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                  )}
+                  <span className={blockConfirming ? 'text-red-400 font-medium' : isBlocked && blockedByMe ? 'text-foreground' : 'text-red-400'}>
+                    {blockConfirming
+                      ? t('chat.confirmBlock')
+                      : isBlocked && blockedByMe
+                        ? t('chat.unblock')
+                        : t('chat.block')
+                    }
+                  </span>
+                </button>
+              </div>
             )}
-          </button>
+          </div>
         )}
       </div>
 
