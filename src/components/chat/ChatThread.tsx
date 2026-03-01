@@ -404,9 +404,9 @@ export function ChatThread({
   const dateGroups = groupMessagesByDate(messages)
 
   return (
-    <div className="flex h-[calc(100dvh-11rem)] flex-col">
+    <div className="mx-auto flex h-[calc(100dvh-11rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
       {/* Thread Header */}
-      <div className="flex items-center gap-3 border-b border-border bg-background px-4 py-3">
+      <div className="flex items-center gap-3 bg-background-secondary/50 px-4 py-3">
         <Link
           href={backPath}
           aria-label={t('aria.goBack')}
@@ -507,7 +507,7 @@ export function ChatThread({
         onScroll={handleScroll}
         role="log"
         aria-live="polite"
-        className="flex-1 overflow-y-auto px-4 py-3"
+        className="flex-1 overflow-y-auto bg-background px-4 py-3"
       >
         {/* Load older */}
         {hasMore && (
