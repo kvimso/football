@@ -7,7 +7,7 @@ import type { Lang } from '@/lib/translations'
  * - This week: weekday name
  * - Older: "Mar 1" / "1 მარ"
  */
-export function formatMessageTime(dateStr: string, lang: Lang): string {
+export function formatMessageTime(dateStr: string, lang: Lang, t: (key: string) => string): string {
   const date = new Date(dateStr)
   const now = new Date()
 
@@ -23,7 +23,7 @@ export function formatMessageTime(dateStr: string, lang: Lang): string {
     })
   }
   if (diffDays === 1) {
-    return lang === 'ka' ? 'გუშინ' : 'Yesterday'
+    return t('chat.yesterday')
   }
   if (diffDays < 7) {
     return date.toLocaleDateString(lang === 'ka' ? 'ka-GE' : 'en-US', { weekday: 'long' })
@@ -45,15 +45,15 @@ export function truncateMessage(text: string, maxLen: number = 60): string {
 /**
  * Format date divider label: "Today", "Yesterday", "March 1, 2026"
  */
-export function formatDateDivider(dateStr: string, lang: Lang): string {
+export function formatDateDivider(dateStr: string, lang: Lang, t: (key: string) => string): string {
   const date = new Date(dateStr)
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const messageDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
   const diffDays = Math.floor((today.getTime() - messageDay.getTime()) / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return lang === 'ka' ? 'დღეს' : 'Today'
-  if (diffDays === 1) return lang === 'ka' ? 'გუშინ' : 'Yesterday'
+  if (diffDays === 0) return t('chat.today')
+  if (diffDays === 1) return t('chat.yesterday')
 
   return date.toLocaleDateString(lang === 'ka' ? 'ka-GE' : 'en-US', {
     month: 'long',

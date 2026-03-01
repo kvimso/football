@@ -512,7 +512,7 @@ export function ChatThread({
         <div className="space-y-1">
           {dateGroups.map((group) => (
             <div key={group.date}>
-              <DateDivider date={group.messages[0].created_at} lang={lang} />
+              <DateDivider date={group.messages[0].created_at} lang={lang} t={t} />
               {group.messages.map((msg, idx) => {
                 const prevMsg = idx > 0 ? group.messages[idx - 1] : null
                 const isMine = msg.sender_id === userId

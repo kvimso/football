@@ -106,7 +106,7 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
 
           {!isSearching && query.length > 0 && results.length === 0 && (
             <div className="py-8 text-center text-sm text-foreground-muted">
-              {t('common.noResults') ?? 'No players found'}
+              {t('common.noResults')}
             </div>
           )}
 

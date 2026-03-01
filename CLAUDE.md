@@ -391,11 +391,11 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 - [x] "Message Academy" button on player profiles and club pages
 - [x] Block/unblock system for academy admins
 - [x] Remove old contact request UI (keep table for historical data)
-- [ ] Update navigation: Requests → Messages
+- [x] Update navigation: Requests → Messages
 - [x] Empty states, loading states, error handling
-- [ ] Global unread badge in navigation
-- [ ] Mobile responsive
-- [ ] i18n: all chat strings bilingual
+- [x] Global unread badge in navigation
+- [x] Mobile responsive
+- [x] i18n: all chat strings bilingual
 
 ### Phase 7: Camera Integration (blocked on Starlive)
 

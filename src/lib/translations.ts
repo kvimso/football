@@ -30,6 +30,7 @@ export const translations: Record<Lang, NestedStrings> = {
       unknown: 'Unknown',
       unknownScout: 'Unknown Scout',
       unknownClub: 'the club',
+      noResults: 'No results found',
     },
     roles: {
       scout: 'Scout',
@@ -450,6 +451,8 @@ export const translations: Record<Lang, NestedStrings> = {
       messageAcademyLoading: 'Opening conversation...',
       threadError: 'Could not load conversation',
       backToMessages: 'Back to messages',
+      unnamedFile: 'File',
+      unnamedImage: 'Image',
     },
     admin: {
       noClub: 'No club assigned to your account. Contact platform administrator.',
@@ -687,6 +690,7 @@ export const translations: Record<Lang, NestedStrings> = {
       unknown: 'უცნობი',
       unknownScout: 'უცნობი სკაუტი',
       unknownClub: 'კლუბი',
+      noResults: 'შედეგები ვერ მოიძებნა',
     },
     roles: {
       scout: 'სკაუტი',
@@ -1107,6 +1111,8 @@ export const translations: Record<Lang, NestedStrings> = {
       messageAcademyLoading: 'საუბრის გახსნა...',
       threadError: 'საუბრის ჩატვირთვა ვერ მოხერხდა',
       backToMessages: 'შეტყობინებებზე დაბრუნება',
+      unnamedFile: 'ფაილი',
+      unnamedImage: 'სურათი',
     },
     admin: {
       noClub: 'თქვენს ანგარიშს კლუბი არ აქვს მინიჭებული. დაუკავშირდით პლატფორმის ადმინისტრატორს.',

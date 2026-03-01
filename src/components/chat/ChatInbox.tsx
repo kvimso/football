@@ -100,8 +100,8 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
 
         const lastMessagePreview = getLastMessagePreview(conv, userId, t, lang)
         const timestamp = conv.last_message?.created_at
-          ? formatMessageTime(conv.last_message.created_at, lang)
-          : formatMessageTime(conv.created_at, lang)
+          ? formatMessageTime(conv.last_message.created_at, lang, t)
+          : formatMessageTime(conv.created_at, lang, t)
 
         return (
           <Link

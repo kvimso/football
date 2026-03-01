@@ -84,7 +84,7 @@ export function MessageBubble({
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={message.file_url ?? ''}
-                      alt={message.file_name ?? 'Image'}
+                      alt={message.file_name ?? t('chat.unnamedImage')}
                       className="max-h-[300px] max-w-[300px] rounded-xl object-cover"
                       loading="lazy"
                     />
@@ -110,7 +110,7 @@ export function MessageBubble({
                   </svg>
                   <div className="min-w-0 flex-1">
                     <p className={`truncate text-sm font-medium ${isMine ? 'text-white' : 'text-foreground'}`}>
-                      {message.file_name ?? 'File'}
+                      {message.file_name ?? t('chat.unnamedFile')}
                     </p>
                     <p className={`text-xs ${isMine ? 'text-white/60' : 'text-foreground-muted'}`}>
                       {message.file_size_bytes ? formatFileSize(message.file_size_bytes) : ''}
@@ -188,7 +188,7 @@ export function MessageBubble({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={message.file_url}
-            alt={message.file_name ?? 'Image'}
+            alt={message.file_name ?? t('chat.unnamedImage')}
             className="max-h-[90vh] max-w-[90vw] object-contain"
           />
         </div>

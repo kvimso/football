@@ -56,9 +56,34 @@ export function Navbar() {
   useEffect(() => {
     if (!user || userRole === 'platform_admin') return
     const supabase = createClient()
+
+    // Initial fetch
     supabase.rpc('get_total_unread_count').then(({ data, error }) => {
       if (!error && data != null) setUnreadCount(Number(data))
     })
+
+    // Realtime subscription for live updates
+    let debounceTimer: NodeJS.Timeout
+    const channel = supabase
+      .channel('navbar-unread')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'messages',
+      }, () => {
+        clearTimeout(debounceTimer)
+        debounceTimer = setTimeout(() => {
+          supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+            if (!error && data != null) setUnreadCount(Number(data))
+          })
+        }, 500)
+      })
+      .subscribe()
+
+    return () => {
+      clearTimeout(debounceTimer)
+      supabase.removeChannel(channel)
+    }
   }, [user, userRole])
 
   async function handleLogout() {
@@ -182,6 +207,11 @@ export function Navbar() {
             {user && (
               <NavLink href={dashboardHref} onClick={() => setMenuOpen(false)}>
                 {dashboardLabel}
+                {unreadCount > 0 && (
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
               </NavLink>
             )}
           </div>
