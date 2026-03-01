@@ -471,9 +471,9 @@ This phase is deferred until after launch — the platform works correctly for b
 - [x] Error strings use translation keys everywhere
 
 ### Phase F (Architecture)
-- [ ] Transfer accept is atomic (database transaction)
-- [ ] Self-transfer CHECK constraint in place
-- [ ] Admin dashboard split into manageable sub-components
+- [x] Transfer accept is atomic (database transaction)
+- [x] Self-transfer CHECK constraint in place
+- [x] Admin dashboard split into manageable sub-components
 
 ---
 
