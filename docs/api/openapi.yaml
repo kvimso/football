@@ -1,0 +1,543 @@
+openapi: 3.0.3
+info:
+  title: Georgian Football Talent Platform API
+  description: |
+    REST API for the Georgian Football Talent Platform. Provides programmatic access to
+    player scouting data, club information, match statistics, shortlists, contact requests,
+    and transfer operations.
+
+    ## Authentication
+    All endpoints require authentication via one of:
+    - **Bearer token**: `Authorization: Bearer <supabase-access-token>`
+    - **Cookie-based session**: Automatically used by browser clients
+
+    Obtain a Bearer token by authenticating with Supabase Auth
+    (`POST /auth/v1/token?grant_type=password`).
+
+    ## Response Format
+    All endpoints return a consistent JSON envelope:
+    ```json
+    {
+      "data": <response payload or null>,
+      "meta": <pagination/metadata or null>,
+      "error": <error message string or null>
+    }
+    ```
+
+    ## Error Codes
+    Error strings use translation keys (e.g., `errors.notAuthenticated`) for i18n support.
+    Common errors:
+    - `errors.notAuthenticated` (401)
+    - `errors.unauthorized` (403)
+    - `errors.invalidInput` (400)
+    - `errors.serverError` (500)
+    - `errors.playerNotFound` (404)
+    - `errors.clubNotFound` (404)
+    - `errors.matchNotFound` (404)
+  version: 1.0.0
+  contact:
+    name: Georgian Football Platform
+servers:
+  - url: /api
+    description: Relative API base path
+
+security:
+  - BearerAuth: []
+  - CookieAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase access token
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+
+  schemas:
+    Club:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        name_ka: { type: string }
+        slug: { type: string }
+        logo_url: { type: string, nullable: true }
+        city: { type: string, nullable: true }
+        region: { type: string, nullable: true }
+
+    PlayerSummary:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        name: { type: string }
+        name_ka: { type: string }
+        platform_id: { type: string, nullable: true }
+        position: { type: string, enum: [GK, DEF, MID, ATT, WNG, ST] }
+        date_of_birth: { type: string, format: date }
+        height_cm: { type: integer, nullable: true }
+        weight_kg: { type: integer, nullable: true }
+        preferred_foot: { type: string, enum: [Left, Right, Both], nullable: true }
+        is_featured: { type: boolean }
+        photo_url: { type: string, nullable: true }
+        status: { type: string, enum: [active, free_agent] }
+        club: { $ref: '#/components/schemas/Club' }
+        latest_season_stats:
+          type: object
+          nullable: true
+          properties:
+            season: { type: string }
+            goals: { type: integer }
+            assists: { type: integer }
+            matches_played: { type: integer }
+            pass_accuracy: { type: number, nullable: true }
+
+    PlayerDetail:
+      allOf:
+        - $ref: '#/components/schemas/PlayerSummary'
+        - type: object
+          properties:
+            age: { type: integer }
+            nationality: { type: string, nullable: true }
+            jersey_number: { type: integer, nullable: true }
+            scouting_report: { type: string, nullable: true }
+            scouting_report_ka: { type: string, nullable: true }
+            skills:
+              type: object
+              nullable: true
+              properties:
+                pace: { type: integer }
+                shooting: { type: integer }
+                passing: { type: integer }
+                dribbling: { type: integer }
+                defending: { type: integer }
+                physical: { type: integer }
+            season_stats:
+              type: array
+              items:
+                type: object
+                properties:
+                  season: { type: string }
+                  matches_played: { type: integer }
+                  goals: { type: integer }
+                  assists: { type: integer }
+                  minutes_played: { type: integer, nullable: true }
+                  pass_accuracy: { type: number, nullable: true }
+                  tackles: { type: integer, nullable: true }
+                  interceptions: { type: integer, nullable: true }
+            match_stats:
+              type: array
+              items:
+                type: object
+            club_history:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: string }
+                  joined_at: { type: string, format: date }
+                  left_at: { type: string, format: date, nullable: true }
+                  club: { $ref: '#/components/schemas/Club' }
+            views:
+              type: object
+              properties:
+                total: { type: integer }
+                weekly: { type: integer }
+            similar_players:
+              type: array
+              items: { $ref: '#/components/schemas/PlayerSummary' }
+
+    PaginationMeta:
+      type: object
+      properties:
+        total: { type: integer }
+        page: { type: integer }
+        per_page: { type: integer }
+        total_pages: { type: integer }
+
+    ErrorResponse:
+      type: object
+      properties:
+        data: { type: "null" }
+        meta: { type: "null" }
+        error: { type: string }
+
+paths:
+  /players:
+    get:
+      summary: Player directory with filters
+      tags: [Players]
+      parameters:
+        - name: position
+          in: query
+          schema: { type: string }
+          description: Comma-separated position codes (GK,DEF,MID,ATT,WNG,ST)
+        - name: status
+          in: query
+          schema: { type: string, enum: [active, free_agent] }
+        - name: club
+          in: query
+          schema: { type: string }
+          description: Comma-separated club UUIDs
+        - name: foot
+          in: query
+          schema: { type: string, enum: [Left, Right, Both] }
+        - name: q
+          in: query
+          schema: { type: string }
+          description: Name search (English or Georgian)
+        - name: age_min
+          in: query
+          schema: { type: integer }
+        - name: age_max
+          in: query
+          schema: { type: integer }
+        - name: height_min
+          in: query
+          schema: { type: integer }
+        - name: height_max
+          in: query
+          schema: { type: integer }
+        - name: weight_min
+          in: query
+          schema: { type: integer }
+        - name: weight_max
+          in: query
+          schema: { type: integer }
+        - name: goals_min
+          in: query
+          schema: { type: integer }
+          description: Minimum goals in latest season
+        - name: assists_min
+          in: query
+          schema: { type: integer }
+        - name: matches_min
+          in: query
+          schema: { type: integer }
+        - name: pass_acc_min
+          in: query
+          schema: { type: integer }
+        - name: sort
+          in: query
+          schema: { type: string, enum: [most_viewed] }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 24, minimum: 1, maximum: 100 }
+      responses:
+        '200':
+          description: Player list with pagination
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/PlayerSummary' }
+                  meta: { $ref: '#/components/schemas/PaginationMeta' }
+                  error: { type: "null" }
+        '401': { description: Not authenticated, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+
+  /players/{id}:
+    get:
+      summary: Full player profile with stats
+      description: Accepts UUID (player ID) or slug string
+      tags: [Players]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+          description: Player UUID or slug
+      responses:
+        '200':
+          description: Full player profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/PlayerDetail' }
+                  meta: { type: "null" }
+                  error: { type: "null" }
+        '404': { description: Player not found }
+
+  /shortlist:
+    get:
+      summary: List shortlisted players
+      tags: [Shortlist]
+      responses:
+        '200':
+          description: Shortlist items with player details
+    post:
+      summary: Add player to shortlist
+      tags: [Shortlist]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [player_id]
+              properties:
+                player_id: { type: string, format: uuid }
+      responses:
+        '200': { description: Player added }
+        '409': { description: Already shortlisted }
+    delete:
+      summary: Remove player from shortlist
+      tags: [Shortlist]
+      parameters:
+        - name: player_id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Player removed }
+    patch:
+      summary: Update shortlist notes
+      tags: [Shortlist]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [player_id, notes]
+              properties:
+                player_id: { type: string, format: uuid }
+                notes: { type: string, maxLength: 2000 }
+      responses:
+        '200': { description: Notes updated }
+
+  /clubs:
+    get:
+      summary: Club listing with player counts
+      tags: [Clubs]
+      responses:
+        '200':
+          description: All clubs
+
+  /clubs/{slug}:
+    get:
+      summary: Club detail with squad
+      tags: [Clubs]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Club detail with active players }
+        '404': { description: Club not found }
+
+  /matches:
+    get:
+      summary: Match listing with filters
+      tags: [Matches]
+      parameters:
+        - name: competition
+          in: query
+          schema: { type: string }
+        - name: club
+          in: query
+          schema: { type: string, format: uuid }
+          description: Filter matches involving this club
+        - name: date_from
+          in: query
+          schema: { type: string, format: date }
+        - name: date_to
+          in: query
+          schema: { type: string, format: date }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 100, maximum: 200 }
+      responses:
+        '200': { description: Match list }
+
+  /matches/{slug}:
+    get:
+      summary: Match detail with player stats
+      tags: [Matches]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Full match detail }
+        '404': { description: Match not found }
+
+  /contact-requests:
+    get:
+      summary: List contact requests
+      description: Scouts see their sent requests; academy admins see requests for their club's players
+      tags: [Contact Requests]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, approved, rejected] }
+      responses:
+        '200': { description: Contact request list }
+    post:
+      summary: Send a contact request (scout only)
+      tags: [Contact Requests]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [player_id, message]
+              properties:
+                player_id: { type: string, format: uuid }
+                message: { type: string, minLength: 1, maxLength: 2000 }
+      responses:
+        '200': { description: Request created }
+        '400': { description: Player is a free agent or invalid input }
+        '409': { description: Request already pending }
+    patch:
+      summary: Respond to a contact request (academy admin only)
+      tags: [Contact Requests]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [approved, rejected] }
+                response_message: { type: string, maxLength: 500 }
+      responses:
+        '200': { description: Request updated }
+
+  /transfers:
+    get:
+      summary: List transfer requests (academy admin only)
+      tags: [Transfers]
+      parameters:
+        - name: direction
+          in: query
+          schema: { type: string, enum: [incoming, outgoing] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [pending, accepted, declined, expired] }
+      responses:
+        '200': { description: Transfer request list }
+    post:
+      summary: Create transfer request or claim free agent
+      tags: [Transfers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  description: Standard transfer request
+                  required: [player_id]
+                  properties:
+                    player_id: { type: string, format: uuid }
+                - type: object
+                  description: Claim a free agent
+                  required: [player_id, action]
+                  properties:
+                    player_id: { type: string, format: uuid }
+                    action: { type: string, enum: [claim] }
+      responses:
+        '200': { description: Transfer request created or player claimed }
+        '409': { description: Already pending or player no longer available }
+
+  /transfers/{id}:
+    patch:
+      summary: Accept or decline a transfer request
+      tags: [Transfers]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [action]
+              properties:
+                action: { type: string, enum: [accept, decline] }
+      responses:
+        '200': { description: Transfer accepted or declined }
+        '404': { description: Request not found }
+
+  /admin/players:
+    post:
+      summary: Create a new player
+      description: Academy admins create in their own club. Platform admins can specify any club.
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [first_name, last_name, first_name_ka, last_name_ka, date_of_birth, position]
+              properties:
+                first_name: { type: string }
+                last_name: { type: string }
+                first_name_ka: { type: string }
+                last_name_ka: { type: string }
+                date_of_birth: { type: string, format: date, pattern: '^\d{4}-\d{2}-\d{2}$' }
+                position: { type: string, enum: [GK, DEF, MID, ATT, WNG, ST] }
+                preferred_foot: { type: string, enum: [Left, Right, Both] }
+                height_cm: { type: integer, minimum: 100, maximum: 220 }
+                weight_kg: { type: integer, minimum: 30, maximum: 150 }
+                parent_guardian_contact: { type: string, maxLength: 200 }
+                club_id: { type: string, format: uuid, description: Platform admin only }
+                status: { type: string, enum: [active, free_agent], description: Platform admin only }
+      responses:
+        '200': { description: Player created, returns id and slug }
+    put:
+      summary: Update a player
+      tags: [Admin]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [first_name, last_name, first_name_ka, last_name_ka, date_of_birth, position]
+              properties:
+                first_name: { type: string }
+                last_name: { type: string }
+                first_name_ka: { type: string }
+                last_name_ka: { type: string }
+                date_of_birth: { type: string, format: date }
+                position: { type: string, enum: [GK, DEF, MID, ATT, WNG, ST] }
+                preferred_foot: { type: string, enum: [Left, Right, Both] }
+                height_cm: { type: integer }
+                weight_kg: { type: integer }
+                parent_guardian_contact: { type: string }
+                club_id: { type: string, format: uuid, description: Platform admin only }
+                status: { type: string, enum: [active, free_agent], description: Platform admin only }
+      responses:
+        '200': { description: Player updated }
+        '404': { description: Player not found }

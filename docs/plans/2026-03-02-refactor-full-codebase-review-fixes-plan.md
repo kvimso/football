@@ -1,7 +1,7 @@
 ---
 title: Full Codebase Review Fixes
 type: refactor
-status: active
+status: completed
 date: 2026-03-02
 ---
 
@@ -420,20 +420,18 @@ The platform has 7 of ~37 capabilities accessible via API (all in chat domain). 
 
 ### Priority API Routes to Create:
 
-| Priority | Route | Purpose |
-|----------|-------|---------|
-| 1 | `GET /api/players` | Player directory with full filter support |
-| 2 | `GET /api/players/[slug]` | Full player profile with stats |
-| 3 | `GET/POST/DELETE/PATCH /api/shortlist` | Shortlist CRUD |
-| 4 | `GET /api/clubs`, `GET /api/clubs/[slug]` | Club listing + detail |
-| 5 | `GET /api/matches`, `GET /api/matches/[slug]` | Match listing + detail |
-| 6 | Bearer token auth support | Modify server client to accept Authorization header |
-| 7 | `POST/PATCH /api/contact-requests` | Contact request send/respond |
-| 8 | `POST/PATCH /api/transfers/*` | Transfer operations |
-| 9 | `POST/PUT /api/admin/players` | Admin player management |
-| 10 | OpenAPI specification | Document all endpoints |
-
-This phase is deferred until after launch — the platform works correctly for browser-based users.
+| Priority | Route | Purpose | Status |
+|----------|-------|---------|--------|
+| 1 | `GET /api/players` | Player directory with full filter support | Done |
+| 2 | `GET /api/players/[id]` | Full player profile with stats (accepts UUID or slug) | Done |
+| 3 | `GET/POST/DELETE/PATCH /api/shortlist` | Shortlist CRUD | Done |
+| 4 | `GET /api/clubs`, `GET /api/clubs/[slug]` | Club listing + detail | Done |
+| 5 | `GET /api/matches`, `GET /api/matches/[slug]` | Match listing + detail | Done |
+| 6 | Bearer token auth support | `createApiClient(request)` in server.ts | Done |
+| 7 | `GET/POST/PATCH /api/contact-requests` | Contact request list/send/respond | Done |
+| 8 | `GET/POST /api/transfers`, `PATCH /api/transfers/[id]` | Transfer operations + free agent claim | Done |
+| 9 | `POST/PUT /api/admin/players` | Admin player management | Done |
+| 10 | OpenAPI specification | `docs/api/openapi.yaml` | Done |
 
 ---
 
