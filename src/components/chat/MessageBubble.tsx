@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
-import { formatBubbleTime, formatFileSize, isImageType } from '@/lib/chat-utils'
+import { useState, useEffect } from 'react'
+import { formatBubbleTime, formatFileSize, isImageType, linkifyMessage, isEmojiOnly } from '@/lib/chat-utils'
 import { PlayerRefCard } from '@/components/chat/PlayerRefCard'
 import type { MessageWithSender } from '@/lib/types'
 import type { Lang } from '@/lib/translations'
@@ -15,6 +15,7 @@ interface MessageBubbleProps {
   lang: Lang
   t: (key: string) => string
   onRetry?: () => void
+  isNew?: boolean
 }
 
 export function MessageBubble({
@@ -25,8 +26,19 @@ export function MessageBubble({
   lang,
   t,
   onRetry,
+  isNew,
 }: MessageBubbleProps) {
   const [imageExpanded, setImageExpanded] = useState(false)
+
+  // Escape key to close fullscreen image
+  useEffect(() => {
+    if (!imageExpanded) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setImageExpanded(false)
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [imageExpanded])
 
   // System messages are always centered
   if (message.message_type === 'system') {
@@ -43,7 +55,7 @@ export function MessageBubble({
   const time = formatBubbleTime(message.created_at, lang)
 
   return (
-    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'} ${isNew ? 'animate-chat-fade-in' : ''}`}>
       <div className={`max-w-[75%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
         {/* Sender name for received messages */}
         {!isMine && showSenderName && (
@@ -67,11 +79,28 @@ export function MessageBubble({
               : 'rounded-bl-md bg-background-secondary text-foreground'
           }`}
         >
-          {message.message_type === 'text' && (
-            <div className="px-3 py-2">
-              <p className="whitespace-pre-wrap break-words text-sm">{message.content}</p>
-            </div>
-          )}
+          {message.message_type === 'text' && (() => {
+            const emojiOnly = message.content ? isEmojiOnly(message.content) : false
+            return (
+              <div className="px-3 py-2">
+                <p className={`whitespace-pre-wrap break-words ${emojiOnly ? 'text-2xl leading-relaxed' : 'text-sm'}`}>
+                  {message.content ? (emojiOnly ? message.content : linkifyMessage(message.content).map((part, i) =>
+                    typeof part === 'string' ? part : (
+                      <a
+                        key={i}
+                        href={part.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:opacity-80"
+                      >
+                        {part.url}
+                      </a>
+                    )
+                  )) : null}
+                </p>
+              </div>
+            )
+          })()}
 
           {message.message_type === 'file' && (
             <div className="p-2">
@@ -101,6 +130,7 @@ export function MessageBubble({
                   target="_blank"
                   rel="noopener noreferrer"
                   download={message.file_name ?? undefined}
+                  aria-label={t('aria.downloadFile')}
                   className={`flex items-center gap-2 rounded-xl px-3 py-2 ${
                     isMine ? 'bg-white/10 hover:bg-white/20' : 'bg-background hover:bg-background/80'
                   } transition-colors`}
@@ -145,6 +175,7 @@ export function MessageBubble({
                 {onRetry && (
                   <button
                     onClick={onRetry}
+                    aria-label={t('aria.retrySend')}
                     className="text-[11px] font-medium text-accent hover:underline"
                   >
                     {t('chat.retry')}
@@ -180,6 +211,7 @@ export function MessageBubble({
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300"
             onClick={() => setImageExpanded(false)}
+            aria-label={t('aria.closeImage')}
           >
             <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />

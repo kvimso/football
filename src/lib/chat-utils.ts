@@ -125,3 +125,55 @@ export function formatFileSize(bytes: number): string {
 export function isImageType(mimeType: string | null): boolean {
   return !!mimeType && mimeType.startsWith('image/')
 }
+
+/**
+ * Parse a message string and return an array of text parts and link parts.
+ * Only matches URLs with http:// or https:// protocol (never javascript:).
+ * Strips trailing punctuation from URLs.
+ */
+const URL_REGEX = /https?:\/\/[^\s<>"{}|\\^`[\]]+/gi
+
+export type MessagePart = string | { type: 'link'; url: string }
+
+export function linkifyMessage(content: string): MessagePart[] {
+  const parts: MessagePart[] = []
+  let lastIndex = 0
+
+  // Reset regex state
+  URL_REGEX.lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = URL_REGEX.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(content.slice(lastIndex, match.index))
+    }
+    // Strip trailing punctuation that's likely not part of the URL
+    let url = match[0]
+    while (/[.,;:!?)}\]>]$/.test(url)) url = url.slice(0, -1)
+    parts.push({ type: 'link', url })
+    lastIndex = match.index + url.length
+    // Adjust regex lastIndex since we may have shortened the match
+    URL_REGEX.lastIndex = lastIndex
+  }
+
+  if (lastIndex < content.length) parts.push(content.slice(lastIndex))
+  URL_REGEX.lastIndex = 0
+
+  return parts.length > 0 ? parts : [content]
+}
+
+/**
+ * Check if a message contains only emoji characters (1-6 emoji, no text).
+ * Used to render emoji-only messages at a larger font size.
+ */
+const EMOJI_ONLY_REGEX = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}\s]+$/u
+
+export function isEmojiOnly(text: string): boolean {
+  if (!text || text.length > 30) return false
+  const trimmed = text.trim()
+  if (!trimmed) return false
+  // Count actual emoji (not whitespace)
+  const emojiMatches = trimmed.match(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu)
+  if (!emojiMatches || emojiMatches.length > 6) return false
+  return EMOJI_ONLY_REGEX.test(trimmed)
+}

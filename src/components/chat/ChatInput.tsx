@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, type KeyboardEvent, type ChangeEvent } from 'react'
+import { useState, useRef, useCallback, useEffect, type KeyboardEvent, type ChangeEvent } from 'react'
 import { PlayerSearchModal } from '@/components/chat/PlayerSearchModal'
 import { CHAT_LIMITS, ALLOWED_CHAT_FILE_EXTENSIONS } from '@/lib/constants'
 import type { PlayerSearchResult } from '@/lib/types'
@@ -32,8 +32,16 @@ export function ChatInput({
   const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPlayerSearch, setShowPlayerSearch] = useState(false)
+  const [pastedPreview, setPastedPreview] = useState<{ file: File; previewUrl: string } | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Auto-dismiss errors after 5 seconds
+  useEffect(() => {
+    if (!error) return
+    const timer = setTimeout(() => setError(null), 5000)
+    return () => clearTimeout(timer)
+  }, [error])
 
   const charCount = text.length
   const showCharCount = charCount >= 4500
@@ -129,6 +137,66 @@ export function ChatInput({
     }
   }, [onSendPlayerRef, t])
 
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items
+    if (!items) return
+
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault()
+        const file = item.getAsFile()
+        if (!file) return
+
+        if (file.size > CHAT_LIMITS.MAX_FILE_SIZE_BYTES) {
+          setError(t('errors.fileTooLarge'))
+          return
+        }
+
+        const previewUrl = URL.createObjectURL(file)
+        const ext = file.type.split('/')[1] || 'png'
+        const namedFile = new File([file], `pasted-image-${Date.now()}.${ext}`, { type: file.type })
+        setPastedPreview({ file: namedFile, previewUrl })
+        return
+      }
+    }
+  }, [t])
+
+  const handleSendPastedImage = useCallback(async () => {
+    if (!pastedPreview) return
+    setIsUploading(true)
+    setError(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', pastedPreview.file)
+      formData.append('conversation_id', conversationId)
+
+      const res = await fetch('/api/chat-upload', { method: 'POST', body: formData })
+      if (!res.ok) {
+        const data = await res.json()
+        setError(t(data.error ?? 'chat.failedToSend'))
+        return
+      }
+
+      const { storage_path, file_name, file_type, file_size_bytes } = await res.json()
+      await onSendFile({ storage_path, file_name, file_type, file_size_bytes })
+    } catch {
+      setError(t('chat.failedToSend'))
+    } finally {
+      URL.revokeObjectURL(pastedPreview.previewUrl)
+      setPastedPreview(null)
+      setIsUploading(false)
+    }
+  }, [pastedPreview, conversationId, onSendFile, t])
+
+  // Cleanup pasted preview on unmount
+  useEffect(() => {
+    return () => {
+      if (pastedPreview) URL.revokeObjectURL(pastedPreview.previewUrl)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Blocked state
   if (isBlocked) {
     return (
@@ -148,8 +216,17 @@ export function ChatInput({
       <div className="border-t border-border bg-background px-3 py-2">
         {/* Error */}
         {error && (
-          <div className="mb-2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400">
-            {error}
+          <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-400 animate-slide-in-down">
+            <span>{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="shrink-0 hover:text-red-300"
+              aria-label={t('common.dismiss')}
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
 
@@ -161,13 +238,42 @@ export function ChatInput({
           </div>
         )}
 
+        {/* Pasted image preview */}
+        {pastedPreview && (
+          <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-background-secondary px-3 py-2 animate-slide-in-down">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={pastedPreview.previewUrl}
+              alt={t('chat.pastedImage')}
+              className="h-16 w-16 rounded-lg object-cover"
+            />
+            <div className="flex-1 text-xs text-foreground-muted">{t('chat.pastedImageReady')}</div>
+            <button
+              onClick={() => {
+                URL.revokeObjectURL(pastedPreview.previewUrl)
+                setPastedPreview(null)
+              }}
+              className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-500/10"
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              onClick={handleSendPastedImage}
+              disabled={isUploading}
+              className="rounded bg-accent px-3 py-1 text-xs text-white hover:bg-accent/90 disabled:opacity-50"
+            >
+              {t('common.send')}
+            </button>
+          </div>
+        )}
+
         <div className="flex items-end gap-2">
           {/* Attach button */}
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground disabled:opacity-50"
-            title={t('chat.attachFile')}
+            aria-label={t('aria.attachFile')}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
@@ -190,6 +296,7 @@ export function ChatInput({
               value={text}
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               placeholder={t('chat.typeMessage')}
               rows={1}
               disabled={isSending}
@@ -201,7 +308,7 @@ export function ChatInput({
           <button
             onClick={() => setShowPlayerSearch(true)}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
-            title={t('chat.addPlayerRef')}
+            aria-label={t('aria.addPlayerRef')}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -213,7 +320,7 @@ export function ChatInput({
             onClick={handleSend}
             disabled={!canSend}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-colors hover:bg-accent-hover disabled:opacity-40 disabled:hover:bg-accent"
-            title={t('chat.send')}
+            aria-label={t('aria.sendMessage')}
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />

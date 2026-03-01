@@ -31,6 +31,8 @@ export function ChatThread({
   const [hasMore, setHasMore] = useState(hasMoreInitial)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [newMessageCount, setNewMessageCount] = useState(0)
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'reconnecting' | 'disconnected'>('connected')
+  const [lastAnnouncement, setLastAnnouncement] = useState<string | null>(null)
   const [isBlocked, setIsBlocked] = useState(conversation.is_blocked)
   const [blockedByMe, setBlockedByMe] = useState(conversation.blocked_by_me)
   const [blockConfirming, setBlockConfirming] = useState(false)
@@ -38,6 +40,10 @@ export function ChatThread({
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
+  const initialMessageIdsRef = useRef<Set<string>>(new Set(initialMessages.map(m => m.id)))
+  const firstUnreadIdRef = useRef<string | null>(
+    initialMessages.find(m => m.sender_id !== userId && !m.read_at)?.id ?? null
+  )
 
   const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
   const displayName = lang === 'ka' && conversation.club.name_ka
@@ -188,6 +194,12 @@ export function ChatThread({
             referenced_player: null,
           }
 
+          // Announce to screen readers (incoming messages only)
+          if (realtimeMsg.sender_id !== userId) {
+            const content = realtimeMsg.content?.slice(0, 100) ?? ''
+            setLastAnnouncement(content)
+          }
+
           if (isAtBottomRef.current) {
             setTimeout(() => scrollToBottom(), 50)
           } else {
@@ -213,7 +225,12 @@ export function ChatThread({
           m.id === updated.id ? { ...m, read_at: updated.read_at as string | null } : m
         ))
       })
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') setConnectionStatus('connected')
+        else if (status === 'CHANNEL_ERROR') setConnectionStatus('reconnecting')
+        else if (status === 'TIMED_OUT') setConnectionStatus('disconnected')
+        else if (status === 'CLOSED') setConnectionStatus('disconnected')
+      })
 
     return () => {
       supabase.removeChannel(channel)
@@ -426,6 +443,7 @@ export function ChatThread({
       <div className="flex items-center gap-3 border-b border-border bg-background px-4 py-3">
         <Link
           href={backPath}
+          aria-label={t('aria.goBack')}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -461,6 +479,7 @@ export function ChatThread({
           <button
             onClick={handleBlockAction}
             disabled={blockLoading}
+            aria-label={isBlocked && blockedByMe ? t('aria.unblockScout') : t('aria.blockScout')}
             className={`shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
               blockConfirming
                 ? 'border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20'
@@ -482,10 +501,24 @@ export function ChatThread({
         )}
       </div>
 
+      {/* Connection status banner */}
+      {connectionStatus !== 'connected' && (
+        <div className={`flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium animate-slide-in-down ${
+          connectionStatus === 'reconnecting'
+            ? 'bg-yellow-500/10 text-yellow-400'
+            : 'bg-red-500/10 text-red-400'
+        }`}>
+          <span className="h-2 w-2 rounded-full animate-pulse bg-current" />
+          {connectionStatus === 'reconnecting' ? t('chat.reconnecting') : t('chat.connectionLost')}
+        </div>
+      )}
+
       {/* Message List */}
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
+        role="log"
+        aria-live="polite"
         className="flex-1 overflow-y-auto px-4 py-3"
       >
         {/* Load older */}
@@ -494,6 +527,7 @@ export function ChatThread({
             <button
               onClick={loadOlder}
               disabled={isLoadingMore}
+              aria-label={t('aria.loadOlder')}
               className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-secondary disabled:opacity-50"
             >
               {isLoadingMore ? (
@@ -520,18 +554,31 @@ export function ChatThread({
                 const showTimestamp = !prevMsg ||
                   prevMsg.sender_id !== msg.sender_id ||
                   !isSameTimeGroup(prevMsg.created_at, msg.created_at)
+                const isNew = !initialMessageIdsRef.current.has(msg.id)
 
                 return (
-                  <MessageBubble
-                    key={msg.id}
-                    message={msg}
-                    isMine={isMine}
-                    showSenderName={showSenderName}
-                    showTimestamp={showTimestamp}
-                    lang={lang}
-                    t={t}
-                    onRetry={msg._status === 'failed' ? () => retryMessage(msg) : undefined}
-                  />
+                  <div key={msg.id}>
+                    {/* Unread separator */}
+                    {msg.id === firstUnreadIdRef.current && (
+                      <div className="flex items-center gap-3 px-4 py-2 animate-slide-in-down">
+                        <div className="h-px flex-1 bg-accent/50" />
+                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-accent">
+                          {t('chat.newMessages')}
+                        </span>
+                        <div className="h-px flex-1 bg-accent/50" />
+                      </div>
+                    )}
+                    <MessageBubble
+                      message={msg}
+                      isMine={isMine}
+                      showSenderName={showSenderName}
+                      showTimestamp={showTimestamp}
+                      lang={lang}
+                      t={t}
+                      onRetry={msg._status === 'failed' ? () => retryMessage(msg) : undefined}
+                      isNew={isNew}
+                    />
+                  </div>
                 )
               })}
             </div>
@@ -546,6 +593,7 @@ export function ChatThread({
         <div className="absolute bottom-20 left-1/2 z-10 -translate-x-1/2">
           <button
             onClick={() => scrollToBottom()}
+            aria-label={t('aria.scrollToLatest')}
             className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white shadow-lg transition-transform hover:scale-105"
           >
             {newMessageCount} {t('chat.newMessages')}
@@ -567,6 +615,11 @@ export function ChatThread({
         lang={lang}
         t={t}
       />
+
+      {/* Screen reader announcement for new messages */}
+      <div className="sr-only" aria-live="polite" aria-atomic="false">
+        {lastAnnouncement}
+      </div>
     </div>
   )
 }

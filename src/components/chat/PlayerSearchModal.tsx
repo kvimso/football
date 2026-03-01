@@ -29,6 +29,16 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
     }
   }, [isOpen])
 
+  // Escape key to close modal
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   const doSearch = useDebouncedCallback(async (q: string) => {
     if (q.trim().length < 1) {
       setResults([])
@@ -66,13 +76,16 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('chat.addPlayerRef')}
         className="w-full max-w-md rounded-xl border border-border bg-background shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="text-sm font-semibold text-foreground">{t('chat.addPlayerRef')}</h3>
-          <button onClick={onClose} className="text-foreground-muted hover:text-foreground">
+          <button onClick={onClose} aria-label={t('aria.closeModal')} className="text-foreground-muted hover:text-foreground">
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>

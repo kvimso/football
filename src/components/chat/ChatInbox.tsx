@@ -1,8 +1,10 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
 import { formatMessageTime, truncateMessage } from '@/lib/chat-utils'
 import type { Lang } from '@/lib/translations'
@@ -49,6 +51,52 @@ interface ChatInboxProps {
 export function ChatInbox({ conversations, userId, userRole, basePath, error }: ChatInboxProps) {
   const { t, lang } = useLang()
   const router = useRouter()
+  const [liveConversations, setLiveConversations] = useState(conversations)
+
+  // Sync with server-side props
+  useEffect(() => {
+    setLiveConversations(conversations)
+  }, [conversations])
+
+  // Realtime inbox updates
+  useEffect(() => {
+    const supabase = createClient()
+    let debounceTimer: NodeJS.Timeout
+
+    const refetchConversations = () => {
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/conversations')
+          if (res.ok) {
+            const data = await res.json()
+            setLiveConversations(data.conversations)
+          }
+        } catch {
+          // Silently fail — stale data persists until next event
+        }
+      }, 1500)
+    }
+
+    const channel = supabase
+      .channel('inbox-updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'messages',
+      }, refetchConversations)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'conversations',
+      }, refetchConversations)
+      .subscribe()
+
+    return () => {
+      clearTimeout(debounceTimer)
+      supabase.removeChannel(channel)
+    }
+  }, [])
 
   if (error) {
     return (
@@ -68,7 +116,7 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
     )
   }
 
-  if (conversations.length === 0) {
+  if (liveConversations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <svg className="h-16 w-16 text-foreground-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -88,8 +136,8 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
   }
 
   return (
-    <div className="space-y-2">
-      {conversations.map((conv) => {
+    <div className="space-y-2" role="list">
+      {liveConversations.map((conv) => {
         const displayName = userRole === 'scout'
           ? (lang === 'ka' && conv.club?.name_ka ? conv.club.name_ka : conv.club?.name ?? conv.other_party.full_name)
           : conv.other_party.full_name
@@ -107,6 +155,7 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
           <Link
             key={conv.id}
             href={`${basePath}/${conv.id}`}
+            role="listitem"
             className={`card flex items-center gap-3 p-4 transition-colors hover:bg-background-secondary ${
               conv.is_blocked ? 'opacity-60' : ''
             }`}
