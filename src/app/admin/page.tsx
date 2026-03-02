@@ -12,6 +12,7 @@ export default async function AdminDashboardPage() {
   const supabase = await createClient()
   const { t } = await getServerT()
 
+  // Layout already enforces auth + role — getUser() here is for data access only
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 

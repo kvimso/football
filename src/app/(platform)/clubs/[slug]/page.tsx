@@ -1,10 +1,11 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { unwrapRelation } from '@/lib/utils'
+import { unwrapRelation, normalizeToArray } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { ClubDetailClient } from '@/components/club/ClubDetailClient'
@@ -16,14 +17,21 @@ interface ClubPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
-  const { slug } = await params
+const getClub = cache(async (slug: string) => {
   const supabase = await createClient()
-  const { data: club, error } = await supabase
+  return supabase
     .from('clubs')
-    .select('name, city')
+    .select(`
+      id, name, name_ka, slug, logo_url, city, region,
+      description, description_ka, website
+    `)
     .eq('slug', slug)
     .single()
+})
+
+export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { data: club, error } = await getClub(slug)
 
   if (error || !club) return { title: 'Club Not Found' }
 
@@ -38,21 +46,30 @@ export default async function ClubPage({ params }: ClubPageProps) {
   const supabase = await createClient()
   const { t } = await getServerT()
 
-  const { data: club, error } = await supabase
-    .from('clubs')
-    .select(`
-      id, name, name_ka, slug, logo_url, city, region,
-      description, description_ka, website
-    `)
-    .eq('slug', slug)
-    .single()
+  const { data: club, error } = await getClub(slug)
 
   if (error || !club) notFound()
 
   trackPageView({ pageType: 'club', entityId: club.id, entitySlug: club.slug })
 
-  // Fetch user + role for MessageAcademyButton
-  const { data: { user } } = await supabase.auth.getUser()
+  // Fetch user/role and players in parallel
+  const [authResult, playersResult] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from('players')
+      .select(`
+        slug, name, name_ka, position, date_of_birth, height_cm,
+        preferred_foot, is_featured, photo_url, status,
+        club:clubs!players_club_id_fkey ( name, name_ka ),
+        season_stats:player_season_stats ( season, goals, assists, matches_played )
+      `)
+      .eq('club_id', club.id)
+      .eq('status', 'active')
+      .order('position')
+      .order('name'),
+  ])
+
+  const { data: { user } } = authResult
   let userRole: string | null = null
   if (user) {
     const { data: profile } = await supabase
@@ -63,24 +80,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
     userRole = profile?.role ?? null
   }
 
-  // Fetch players for this club
-  const { data: players, error: playersError } = await supabase
-    .from('players')
-    .select(`
-      slug, name, name_ka, position, date_of_birth, height_cm,
-      preferred_foot, is_featured, photo_url, status,
-      club:clubs!players_club_id_fkey ( name, name_ka ),
-      season_stats:player_season_stats ( season, goals, assists, matches_played )
-    `)
-    .eq('club_id', club.id)
-    .eq('status', 'active')
-    .order('position')
-    .order('name')
-
+  const { data: players, error: playersError } = playersResult
   if (playersError) console.error('Failed to fetch club players:', playersError.message)
 
   const playerCards = (players ?? []).map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    const statsArr = normalizeToArray(p.season_stats)
     return {
       ...p,
       position: p.position as Position,

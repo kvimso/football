@@ -1,5 +1,6 @@
 import type { createClient } from '@/lib/supabase/server'
 import type { ConversationItem, ConversationDetail, MessageWithSender, UserRole } from '@/lib/types'
+import { uuidSchema } from '@/lib/validations'
 
 export interface FetchConversationsResult {
   conversations: ConversationItem[]
@@ -70,8 +71,7 @@ export async function fetchConversationById(
   userId: string,
   role: 'scout' | 'academy_admin',
 ): Promise<ConversationDetail | null> {
-  const { safeParse } = await import('zod').then(m => ({ safeParse: m.z.string().uuid().safeParse }))
-  if (!safeParse(conversationId).success) return null
+  if (!uuidSchema.safeParse(conversationId).success) return null
 
   const { data: conv, error } = await supabase
     .from('conversations')

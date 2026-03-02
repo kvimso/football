@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -28,12 +28,10 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
     setLiveConversations(conversations)
   }, [conversations])
 
-  // Realtime inbox updates — deferred to survive React StrictMode double-mount
-  // Subscribe only to user's conversations + new conversation inserts
-  const conversationIdsRef = useRef<string[]>(conversations.map(c => c.id))
-  useEffect(() => {
-    conversationIdsRef.current = liveConversations.map(c => c.id)
-  }, [liveConversations])
+  // Realtime inbox updates — re-subscribes when conversation list changes
+  // so new conversations receive real-time message updates
+  const conversationIds = liveConversations.map(c => c.id)
+  const idsKey = conversationIds.join(',')
 
   useEffect(() => {
     let cancelled = false
@@ -59,16 +57,15 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
 
     const timer = setTimeout(() => {
       if (cancelled) return
-      const ids = conversationIdsRef.current
-      const channelBuilder = supabase.channel('inbox-updates')
+      const channelBuilder = supabase.channel(`inbox-updates-${Date.now()}`)
 
-      // Only subscribe to messages in user's conversations
-      if (ids.length > 0) {
+      // Subscribe to messages in user's conversations
+      if (conversationIds.length > 0) {
         channelBuilder.on('postgres_changes', {
           event: '*',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=in.(${ids.join(',')})`,
+          filter: `conversation_id=in.(${conversationIds.join(',')})`,
         }, refetchConversations)
       }
 
@@ -88,7 +85,8 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
       clearTimeout(debounceTimer)
       if (activeChannel) supabase.removeChannel(activeChannel)
     }
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey])
 
   if (error) {
     return (

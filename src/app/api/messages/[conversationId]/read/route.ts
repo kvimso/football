@@ -40,7 +40,7 @@ export async function PATCH(
 
   if (rpcError) {
     console.error('[messages/read/PATCH] RPC error:', rpcError.message)
-    return NextResponse.json({ error: rpcError.message }, { status: 500 })
+    return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
   }
 
   return NextResponse.json({ success: true })

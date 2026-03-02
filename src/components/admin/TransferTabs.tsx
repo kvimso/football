@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { useLang } from '@/hooks/useLang'
 import { TransferCard } from './TransferCard'
+import type { TransferStatus } from '@/lib/types'
 
 interface TransferItem {
   id: string
-  status: string
+  status: TransferStatus
   requested_at: string | null
   playerName: string
   position: string | null

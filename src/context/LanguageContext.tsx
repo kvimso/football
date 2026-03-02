@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useState, useCallback, useMemo, type ReactNode } from 'react'
 import { translations, getNestedValue, type Lang } from '@/lib/translations'
 
 export type { Lang }
@@ -35,8 +35,10 @@ export function LanguageProvider({ children, initialLang = 'en' }: { children: R
     [lang]
   )
 
+  const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t])
+
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   )

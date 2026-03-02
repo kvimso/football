@@ -1,13 +1,14 @@
 import { NextRequest } from 'next/server'
 import { createApiClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError, authenticateRequest, parseIntParam } from '@/lib/api-utils'
+import { uuidSchema } from '@/lib/validations'
 import { unwrapRelation } from '@/lib/utils'
 
 // GET /api/matches — Match listing with filters
 export async function GET(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   const { searchParams } = new URL(request.url)
   const competition = searchParams.get('competition')
@@ -29,6 +30,9 @@ export async function GET(request: NextRequest) {
   if (competition) query = query.eq('competition', competition)
 
   if (club) {
+    if (!uuidSchema.safeParse(club).success) {
+      return apiError('errors.invalidInput', 400)
+    }
     query = query.or(`home_club_id.eq.${club},away_club_id.eq.${club}`)
   }
 

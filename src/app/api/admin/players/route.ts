@@ -10,20 +10,21 @@ import { recordClubJoin, recordClubDeparture } from '@/lib/transfer-helpers'
 // Academy admin: creates in own club. Platform admin: creates in any club.
 export async function POST(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { profile } = auth
 
   let body: unknown
   try { body = await request.json() } catch {
     return apiError('errors.invalidInput', 400)
   }
 
-  if (profile!.role === 'platform_admin') {
+  if (profile.role === 'platform_admin') {
     return handlePlatformCreate(body)
   }
 
-  if (profile!.role === 'academy_admin' && profile!.club_id) {
-    return handleAdminCreate(supabase, body, profile!.club_id!)
+  if (profile.role === 'academy_admin' && profile.club_id) {
+    return handleAdminCreate(supabase, body, profile.club_id)
   }
 
   return apiError('errors.unauthorized', 403)
@@ -33,8 +34,9 @@ export async function POST(request: NextRequest) {
 // Academy admin: own club only. Platform admin: any player.
 export async function PUT(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { profile } = auth
 
   const { searchParams } = new URL(request.url)
   const playerId = searchParams.get('id')
@@ -47,12 +49,12 @@ export async function PUT(request: NextRequest) {
     return apiError('errors.invalidInput', 400)
   }
 
-  if (profile!.role === 'platform_admin') {
+  if (profile.role === 'platform_admin') {
     return handlePlatformUpdate(playerId, body)
   }
 
-  if (profile!.role === 'academy_admin' && profile!.club_id) {
-    return handleAdminUpdate(supabase, playerId, body, profile!.club_id!)
+  if (profile.role === 'academy_admin' && profile.club_id) {
+    return handleAdminUpdate(supabase, playerId, body, profile.club_id)
   }
 
   return apiError('errors.unauthorized', 403)

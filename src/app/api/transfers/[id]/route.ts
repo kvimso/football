@@ -19,10 +19,11 @@ export async function PATCH(
   if (!uuidSchema.safeParse(id).success) return apiError('errors.invalidInput', 400)
 
   const supabase = await createApiClient(request)
-  const { profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { profile } = auth
 
-  if (profile!.role !== 'academy_admin' || !profile!.club_id) {
+  if (profile.role !== 'academy_admin' || !profile.club_id) {
     return apiError('errors.unauthorized', 403)
   }
 
@@ -42,7 +43,7 @@ export async function PATCH(
     .single()
 
   if (!transferRequest) return apiError('errors.requestNotFound', 404)
-  if (transferRequest.from_club_id !== profile!.club_id) return apiError('errors.unauthorized', 403)
+  if (transferRequest.from_club_id !== profile.club_id) return apiError('errors.unauthorized', 403)
   if (transferRequest.status !== 'pending') return apiError('errors.requestNoLongerPending', 400)
 
   if (parsed.data.action === 'accept') {

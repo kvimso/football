@@ -58,6 +58,7 @@ export function Navbar() {
   useEffect(() => {
     if (!user || userRole === 'platform_admin') return
     let cancelled = false
+    let interval: ReturnType<typeof setInterval> | null = null
     const supabase = createClient()
 
     const fetchUnread = () => {
@@ -66,15 +67,35 @@ export function Navbar() {
       })
     }
 
-    // Initial fetch
-    fetchUnread()
+    const startPolling = () => {
+      if (interval) return
+      fetchUnread()
+      interval = setInterval(fetchUnread, 30_000)
+    }
 
-    // Poll every 30s instead of subscribing to all messages globally
-    const interval = setInterval(fetchUnread, 30_000)
+    const stopPolling = () => {
+      if (interval) {
+        clearInterval(interval)
+        interval = null
+      }
+    }
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        stopPolling()
+      } else {
+        startPolling()
+      }
+    }
+
+    // Initial start
+    startPolling()
+    document.addEventListener('visibilitychange', handleVisibility)
 
     return () => {
       cancelled = true
-      clearInterval(interval)
+      stopPolling()
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [user, userRole])
 

@@ -1,11 +1,18 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from '@/lib/database.types'
 import { todayDateString } from '@/lib/utils'
+import { z } from 'zod'
+
+const transferRpcResultSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+}).nullable()
 
 /**
  * Record a player joining a club in the club history table.
  */
 export async function recordClubJoin(
-  client: SupabaseClient,
+  client: SupabaseClient<Database>,
   playerId: string,
   clubId: string,
 ): Promise<void> {
@@ -24,7 +31,7 @@ export async function recordClubJoin(
  * Record a player departing a club by closing the open history record.
  */
 export async function recordClubDeparture(
-  client: SupabaseClient,
+  client: SupabaseClient<Database>,
   playerId: string,
   clubId: string,
 ): Promise<void> {
@@ -44,10 +51,11 @@ export async function recordClubDeparture(
  * Uses a PL/pgSQL function for atomicity — all 5 operations run in one transaction.
  */
 export async function executeTransferAccept(
-  client: SupabaseClient,
+  client: SupabaseClient<Database>,
   requestId: string,
 ): Promise<{ error?: string }> {
-  const { data, error } = await client.rpc('accept_transfer_request', {
+  // RPC not in generated types — cast to untyped client for this call
+  const { data, error } = await (client as SupabaseClient).rpc('accept_transfer_request', {
     p_request_id: requestId,
   })
 
@@ -56,7 +64,12 @@ export async function executeTransferAccept(
     return { error: 'errors.serverError' }
   }
 
-  const result = data as { error?: string; success?: boolean } | null
+  const parsed = transferRpcResultSchema.safeParse(data)
+  if (!parsed.success) {
+    console.error('[transfer-helpers] Invalid RPC response:', parsed.error)
+    return { error: 'errors.serverError' }
+  }
+  const result = parsed.data
   if (result?.error) return { error: result.error }
 
   return {}
@@ -67,7 +80,7 @@ export async function executeTransferAccept(
  * Caller is responsible for auth checks before calling this.
  */
 export async function executeTransferDecline(
-  client: SupabaseClient,
+  client: SupabaseClient<Database>,
   requestId: string,
 ): Promise<{ error?: string }> {
   const { error: reqErr } = await client

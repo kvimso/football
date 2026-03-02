@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { SupabaseClient } from '@supabase/supabase-js'
+import { SupabaseClient, User } from '@supabase/supabase-js'
 import { Database } from '@/lib/database.types'
 
 /** Standard API success response */
@@ -12,11 +12,17 @@ export function apiError(message: string, status: number) {
   return NextResponse.json({ data: null, meta: null, error: message }, { status })
 }
 
+type AuthProfile = { role: string; club_id: string | null; full_name: string | null }
+
+export type AuthResult =
+  | { ok: true; user: User; profile: AuthProfile }
+  | { ok: false; error: NextResponse }
+
 /** Authenticate a request and return user + profile, or an error response */
-export async function authenticateRequest(supabase: SupabaseClient<Database>) {
+export async function authenticateRequest(supabase: SupabaseClient<Database>): Promise<AuthResult> {
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {
-    return { user: null, profile: null, error: apiError('errors.notAuthenticated', 401) }
+    return { ok: false, error: apiError('errors.notAuthenticated', 401) }
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -26,10 +32,10 @@ export async function authenticateRequest(supabase: SupabaseClient<Database>) {
     .single()
 
   if (profileError || !profile) {
-    return { user: null, profile: null, error: apiError('errors.profileNotFound', 403) }
+    return { ok: false, error: apiError('errors.profileNotFound', 403) }
   }
 
-  return { user, profile, error: null }
+  return { ok: true, user, profile }
 }
 
 /** Parse a numeric query param with min/max/default */
