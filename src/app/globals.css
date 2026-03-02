@@ -157,22 +157,6 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-/* ── Enhanced card with position-colored top border ── */
-.card-enhanced {
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-  transition: background-color 150ms, transform 150ms, box-shadow 150ms;
-}
-.card-enhanced:hover {
-  background-color: var(--card-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
 /* ── Filter chip pills ── */
 .filter-chip {
   display: inline-flex;

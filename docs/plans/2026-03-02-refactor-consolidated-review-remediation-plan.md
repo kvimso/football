@@ -1,7 +1,7 @@
 ---
 title: "Consolidated Code Review Remediation — 29 Findings"
 type: refactor
-status: active
+status: completed
 date: 2026-03-02
 ---
 
@@ -598,7 +598,7 @@ if (!uuidSchema.safeParse(id).success) return ...
 
 **Effort:** 2 min
 
-- [ ] All 4 dead files deleted
+- [x] All 4 dead files deleted
 
 ---
 
@@ -610,8 +610,8 @@ if (!uuidSchema.safeParse(id).success) return ...
 
 **Effort:** 10 min
 
-- [ ] All dead code removed
-- [ ] `npm run build` still passes
+- [x] All dead code removed
+- [x] `npm run build` still passes
 
 ---
 
@@ -637,7 +637,7 @@ Empty state renders `noActivityLabel` twice. Remove the second `<p>` or use a di
 
 **Effort:** 2 min
 
-- [ ] Empty state shows one label, not duplicate
+- [x] Empty state shows one label, not duplicate
 
 ---
 
@@ -651,7 +651,7 @@ type TransferStatus = 'pending' | 'accepted' | 'declined' | 'expired'
 
 **Effort:** 10 min
 
-- [ ] Transfer status uses union type
+- [x] Transfer status uses union type
 
 ---
 
@@ -673,8 +673,8 @@ useEffect(() => {
 
 **Effort:** 10 min
 
-- [ ] Polling pauses when tab is hidden
-- [ ] Polling resumes when tab becomes visible
+- [x] Polling pauses when tab is hidden
+- [x] Polling resumes when tab becomes visible
 
 ---
 
@@ -686,7 +686,7 @@ When a new conversation is created, the Realtime channel filter doesn't include 
 
 **Effort:** 15 min
 
-- [ ] New conversations receive real-time updates without page refresh
+- [x] New conversations receive real-time updates without page refresh
 
 ---
 
@@ -776,15 +776,15 @@ Phase D: Cleanup & Polish (9 items)     ≈ 58 min
 - [x] All UUID validation uses shared uuidSchema
 
 ### Cleanup (Phase D)
-- [ ] Dead files deleted (4 files)
-- [ ] Dead code removed
-- [ ] Duplicate labels fixed
-- [ ] Transfer status uses union type
-- [ ] Navbar polling is visibility-aware
+- [x] Dead files deleted (4 files)
+- [x] Dead code removed
+- [x] Duplicate labels fixed
+- [x] Transfer status uses union type
+- [x] Navbar polling is visibility-aware
 
 ### Global
-- [ ] `npm run build` passes with zero errors at every phase
-- [ ] Each todo file renamed from `pending` → `complete` after fix
+- [x] `npm run build` passes with zero errors at every phase
+- [x] Each todo file renamed from `pending` → `complete` after fix
 
 ---
 

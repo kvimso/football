@@ -12,7 +12,6 @@ import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { ShortlistButton } from '@/components/player/ShortlistButton'
 import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
-import { trackPageView } from '@/lib/analytics'
 import { trackPlayerView } from '@/app/actions/player-views'
 import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
@@ -74,7 +73,6 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
   if (error || !player) notFound()
 
-  void trackPageView({ pageType: 'player', entityId: player.id, entitySlug: player.slug })
   void trackPlayerView(player.id)
 
   const age = calculateAge(player.date_of_birth)

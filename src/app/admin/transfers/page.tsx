@@ -4,6 +4,7 @@ import { getServerT } from '@/lib/server-translations'
 import { unwrapRelation } from '@/lib/utils'
 import { TransferSearch } from '@/components/admin/TransferSearch'
 import { TransferTabs } from '@/components/admin/TransferTabs'
+import type { TransferStatus } from '@/lib/types'
 
 export default async function AdminTransfersPage() {
   const supabase = await createClient()
@@ -68,7 +69,7 @@ export default async function AdminTransfersPage() {
         : (lang === 'ka' ? fromClub?.name_ka : fromClub?.name) ?? ''
       return {
         id: r.id,
-        status: r.status,
+        status: r.status as TransferStatus,
         requested_at: r.requested_at,
         playerName: (lang === 'ka' ? player?.name_ka : player?.name) ?? '',
         position: player?.position ?? null,

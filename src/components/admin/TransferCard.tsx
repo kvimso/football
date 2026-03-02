@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { POSITION_COLOR_CLASSES, POSITION_LEFT_BORDER_CLASSES } from '@/lib/constants'
 import { TransferActions } from './TransferActions'
 import { format } from 'date-fns'
-import type { Position } from '@/lib/types'
+import type { Position, TransferStatus } from '@/lib/types'
 
 interface TransferCardProps {
   requestId: string
@@ -13,7 +13,7 @@ interface TransferCardProps {
   platformId: string | null
   clubName: string
   direction: 'incoming' | 'outgoing'
-  status: string
+  status: TransferStatus
   requestedAt: string | null
   index: number
   t: (key: string) => string
@@ -48,7 +48,7 @@ export function TransferCard({
   const isPending = status === 'pending'
   const dirArrow = direction === 'incoming' ? '←' : '→'
 
-  const statusConfig: Record<string, { classes: string; icon: string }> = {
+  const statusConfig: Partial<Record<TransferStatus, { classes: string; icon: string }>> = {
     accepted: { classes: 'bg-accent/10 text-accent', icon: '✓' },
     declined: { classes: 'bg-red-500/10 text-red-400', icon: '✗' },
     expired: { classes: 'bg-foreground-muted/10 text-foreground-muted', icon: '⏱' },
