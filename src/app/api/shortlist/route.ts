@@ -17,8 +17,8 @@ const updateNotesSchema = z.object({
 // GET /api/shortlist — List the current user's shortlisted players
 export async function GET(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   const { data: shortlist, error } = await supabase
     .from('shortlists')
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
         season_stats:player_season_stats ( season, goals, assists, matches_played )
       )
     `)
-    .eq('scout_id', user!.id)
+    .eq('scout_id', auth.user.id)
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
 // POST /api/shortlist — Add a player to shortlist
 export async function POST(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   let body: unknown
   try { body = await request.json() } catch {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
   const { error } = await supabase
     .from('shortlists')
-    .insert({ scout_id: user!.id, player_id: parsed.data.player_id })
+    .insert({ scout_id: auth.user.id, player_id: parsed.data.player_id })
 
   if (error) {
     if (error.code === '23505') return apiError('errors.alreadyShortlisted', 409)
@@ -92,8 +92,8 @@ export async function POST(request: NextRequest) {
 // DELETE /api/shortlist — Remove a player from shortlist
 export async function DELETE(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   const { searchParams } = new URL(request.url)
   const playerId = searchParams.get('player_id')
@@ -104,7 +104,7 @@ export async function DELETE(request: NextRequest) {
   const { error } = await supabase
     .from('shortlists')
     .delete()
-    .eq('scout_id', user!.id)
+    .eq('scout_id', auth.user.id)
     .eq('player_id', playerId)
 
   if (error) {
@@ -118,8 +118,8 @@ export async function DELETE(request: NextRequest) {
 // PATCH /api/shortlist — Update notes on a shortlisted player
 export async function PATCH(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   let body: unknown
   try { body = await request.json() } catch {
@@ -132,7 +132,7 @@ export async function PATCH(request: NextRequest) {
   const { error } = await supabase
     .from('shortlists')
     .update({ notes: parsed.data.notes })
-    .eq('scout_id', user!.id)
+    .eq('scout_id', auth.user.id)
     .eq('player_id', parsed.data.player_id)
 
   if (error) {

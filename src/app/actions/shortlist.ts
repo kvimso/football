@@ -16,6 +16,10 @@ export async function addToShortlist(playerId: string) {
   }
   if (!user) return { error: 'errors.notAuthenticated' }
 
+  const { data: profile } = await supabase
+    .from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'scout') return { error: 'errors.unauthorized' }
+
   const { error } = await supabase
     .from('shortlists')
     .insert({ scout_id: user.id, player_id: playerId })
@@ -39,6 +43,10 @@ export async function removeFromShortlist(playerId: string) {
     return { error: 'errors.serverError' }
   }
   if (!user) return { error: 'errors.notAuthenticated' }
+
+  const { data: profile } = await supabase
+    .from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'scout') return { error: 'errors.unauthorized' }
 
   const { error } = await supabase
     .from('shortlists')
@@ -66,6 +74,10 @@ export async function updateShortlistNote(playerId: string, notes: string) {
     return { error: 'errors.serverError' }
   }
   if (!user) return { error: 'errors.notAuthenticated' }
+
+  const { data: profile } = await supabase
+    .from('profiles').select('role').eq('id', user.id).single()
+  if (profile?.role !== 'scout') return { error: 'errors.unauthorized' }
 
   const { error } = await supabase
     .from('shortlists')

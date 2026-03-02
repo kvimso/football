@@ -12,8 +12,8 @@ export async function GET(
 ) {
   const { id } = await params
   const supabase = await createApiClient(request)
-  const { error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   // Determine whether the param is a UUID or slug
   const isUuid = uuidSchema.safeParse(id).success

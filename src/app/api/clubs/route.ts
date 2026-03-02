@@ -5,8 +5,8 @@ import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
 // GET /api/clubs — Club listing with player counts
 export async function GET(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   const { data: clubs, error } = await supabase
     .from('clubs')

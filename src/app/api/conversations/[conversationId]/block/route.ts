@@ -93,7 +93,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     if (insertError) {
       console.error('[block/POST] Insert error:', insertError.message)
-      return NextResponse.json({ error: insertError.message }, { status: 500 })
+      return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, is_blocked: true })
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     if (deleteError) {
       console.error('[block/POST] Delete error:', deleteError.message)
-      return NextResponse.json({ error: deleteError.message }, { status: 500 })
+      return NextResponse.json({ error: 'errors.serverError' }, { status: 500 })
     }
 
     if (!deleted || deleted.length === 0) {
