@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { createApiClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
-import { calculateAge, unwrapRelation } from '@/lib/utils'
+import { calculateAge, unwrapRelation, normalizeToArray } from '@/lib/utils'
 import { uuidSchema } from '@/lib/validations'
 
 // GET /api/players/[id] — Full player profile with stats
@@ -51,9 +51,7 @@ export async function GET(
 
   const club = unwrapRelation(player.club)
   const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats)
-    ? player.season_stats
-    : player.season_stats ? [player.season_stats] : []
+  const seasonStats = normalizeToArray(player.season_stats)
   const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
     ...ms,
     match: unwrapRelation(ms.match),
@@ -62,42 +60,41 @@ export async function GET(
     .map((h) => ({ ...h, club: unwrapRelation(h.club) }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
 
-  // Fetch view counts
-  let totalViews = 0
-  let weeklyViews = 0
-  try {
-    const { data: viewCounts } = await supabase.rpc('get_player_view_counts', {
-      player_ids: [player.id],
-    })
-    if (viewCounts?.[0]) {
-      totalViews = Number(viewCounts[0].total_views)
-      weeklyViews = Number(viewCounts[0].weekly_views)
-    }
-  } catch {
-    // Non-critical
-  }
-
-  // Build similar players
+  // Build similar players date range
   const dob = new Date(player.date_of_birth)
   const dobMinus2 = new Date(dob)
   dobMinus2.setFullYear(dob.getFullYear() - 2)
   const dobPlus2 = new Date(dob)
   dobPlus2.setFullYear(dob.getFullYear() + 2)
 
-  const { data: rawSimilar } = await supabase
-    .from('players')
-    .select(`
-      id, slug, name, name_ka, position, date_of_birth, photo_url, status,
-      club:clubs!players_club_id_fkey ( name, name_ka )
-    `)
-    .eq('position', player.position)
-    .neq('id', player.id)
-    .in('status', ['active', 'free_agent'])
-    .gte('date_of_birth', dobMinus2.toISOString().split('T')[0])
-    .lte('date_of_birth', dobPlus2.toISOString().split('T')[0])
-    .limit(4)
+  // Fetch view counts and similar players in parallel
+  const [viewCountResult, similarResult] = await Promise.all([
+    supabase.rpc('get_player_view_counts', { player_ids: [player.id] }).then(
+      (res) => res,
+      () => ({ data: null, error: { message: 'RPC failed' } }),
+    ),
+    supabase
+      .from('players')
+      .select(`
+        id, slug, name, name_ka, position, date_of_birth, photo_url, status,
+        club:clubs!players_club_id_fkey ( name, name_ka )
+      `)
+      .eq('position', player.position)
+      .neq('id', player.id)
+      .in('status', ['active', 'free_agent'])
+      .gte('date_of_birth', dobMinus2.toISOString().split('T')[0])
+      .lte('date_of_birth', dobPlus2.toISOString().split('T')[0])
+      .limit(4),
+  ])
 
-  const similarPlayers = (rawSimilar ?? []).map((p) => ({
+  let totalViews = 0
+  let weeklyViews = 0
+  if (!viewCountResult.error && viewCountResult.data?.[0]) {
+    totalViews = Number(viewCountResult.data[0].total_views)
+    weeklyViews = Number(viewCountResult.data[0].weekly_views)
+  }
+
+  const similarPlayers = (similarResult.data ?? []).map((p) => ({
     id: p.id,
     slug: p.slug,
     name: p.name,

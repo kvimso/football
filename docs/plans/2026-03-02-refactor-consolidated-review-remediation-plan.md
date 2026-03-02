@@ -463,8 +463,8 @@ export default async function PlayerPage({ params }: Props) {
 
 **Effort:** 15 min (3 files) | **Risk:** Low
 
-- [ ] Each detail page creates entity once with `React.cache()`
-- [ ] Both `generateMetadata` and page component call the cached function
+- [x] Each detail page creates entity once with `React.cache()`
+- [x] Both `generateMetadata` and page component call the cached function
 
 ---
 
@@ -484,8 +484,8 @@ const [viewCountResult, similarResult] = await Promise.all([
 
 **Effort:** 10 min | **Risk:** None
 
-- [ ] Independent queries run in parallel via Promise.all
-- [ ] Response data unchanged
+- [x] Independent queries run in parallel via Promise.all
+- [x] Response data unchanged
 
 ---
 
@@ -507,7 +507,7 @@ Fetches every player ID per club just to count them.
 
 **Effort:** 10 min | **Risk:** None
 
-- [ ] Player counts computed without fetching all player IDs
+- [x] Player counts computed without fetching all player IDs
 
 ---
 
@@ -534,8 +534,8 @@ export function normalizeToArray<T>(value: T | T[] | null | undefined): T[] {
 
 **Effort:** 15 min | **Risk:** None
 
-- [ ] `normalizeToArray` utility in utils.ts
-- [ ] All 6+ occurrences replaced
+- [x] `normalizeToArray` utility in utils.ts
+- [x] All 6+ occurrences replaced
 
 ---
 
@@ -557,7 +557,7 @@ return <AuthContext.Provider value={value}>...</AuthContext.Provider>
 
 **Effort:** 10 min | **Risk:** None
 
-- [ ] Both context providers wrap value in useMemo
+- [x] Both context providers wrap value in useMemo
 
 ---
 
@@ -581,7 +581,7 @@ if (!uuidSchema.safeParse(id).success) return ...
 
 **Effort:** 10 min | **Risk:** None
 
-- [ ] All 3 files use `uuidSchema.safeParse()` instead of inline regex
+- [x] All 3 files use `uuidSchema.safeParse()` instead of inline regex
 
 ---
 
@@ -768,12 +768,12 @@ Phase D: Cleanup & Polish (9 items)     ≈ 58 min
 - [x] RPC results validated with Zod (no raw `as` casts)
 
 ### Performance & Quality (Phase C)
-- [ ] generateMetadata + page share cached queries via React.cache()
-- [ ] Independent queries use Promise.all
-- [ ] Clubs API uses count instead of fetching all player IDs
-- [ ] normalizeToArray utility replaces all duplicated expressions
-- [ ] Context providers use useMemo for value stability
-- [ ] All UUID validation uses shared uuidSchema
+- [x] generateMetadata + page share cached queries via React.cache()
+- [x] Independent queries use Promise.all
+- [x] Clubs API uses count instead of fetching all player IDs
+- [x] normalizeToArray utility replaces all duplicated expressions
+- [x] Context providers use useMemo for value stability
+- [x] All UUID validation uses shared uuidSchema
 
 ### Cleanup (Phase D)
 - [ ] Dead files deleted (4 files)

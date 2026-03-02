@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { createApiClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
+import { normalizeToArray } from '@/lib/utils'
 
 // GET /api/clubs/[slug] — Club detail with squad
 export async function GET(
@@ -43,7 +44,7 @@ export async function GET(
   }
 
   const squad = (players ?? []).map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    const statsArr = normalizeToArray(p.season_stats)
     const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { unwrapRelation, escapePostgrestValue } from '@/lib/utils'
+import { unwrapRelation, normalizeToArray, escapePostgrestValue } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
 import { PlayerCard } from '@/components/player/PlayerCard'
 import { FilterPanel } from '@/components/forms/FilterPanel'
@@ -190,7 +190,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
 
     filteredPlayers = filteredPlayers.filter((p) => {
-      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const statsArr = normalizeToArray(p.season_stats)
       const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
       if (!latest) return false // No stats → excluded when stat filters are active
       if (minGoals && (latest.goals ?? 0) < minGoals) return false
@@ -203,7 +203,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
 
   // Map to card props — pick the latest season stats
   const allCards = filteredPlayers.map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    const statsArr = normalizeToArray(p.season_stats)
     const stats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,

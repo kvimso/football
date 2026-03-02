@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -12,35 +13,9 @@ interface MatchPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: MatchPageProps): Promise<Metadata> {
-  const { slug } = await params
+const getMatch = cache(async (slug: string) => {
   const supabase = await createClient()
-  const { data: match, error } = await supabase
-    .from('matches')
-    .select(`
-      home_score, away_score, competition, match_date,
-      home_club:clubs!matches_home_club_id_fkey ( name ),
-      away_club:clubs!matches_away_club_id_fkey ( name )
-    `)
-    .eq('slug', slug)
-    .single()
-
-  if (error || !match) return { title: 'Match Not Found' }
-  const home = unwrapRelation(match.home_club)
-  const away = unwrapRelation(match.away_club)
-
-  return {
-    title: `${home?.name ?? 'TBD'} ${match.home_score}-${match.away_score} ${away?.name ?? 'TBD'} | Georgian Football Talent Platform`,
-    description: `${match.competition} match on ${match.match_date}. Full stats and report.`,
-  }
-}
-
-export default async function MatchPage({ params }: MatchPageProps) {
-  const { slug } = await params
-  const supabase = await createClient()
-  const { t, lang } = await getServerT()
-
-  const { data: match, error } = await supabase
+  return supabase
     .from('matches')
     .select(`
       id, slug, home_score, away_score, competition, match_date, venue,
@@ -55,6 +30,27 @@ export default async function MatchPage({ params }: MatchPageProps) {
     `)
     .eq('slug', slug)
     .single()
+})
+
+export async function generateMetadata({ params }: MatchPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { data: match, error } = await getMatch(slug)
+
+  if (error || !match) return { title: 'Match Not Found' }
+  const home = unwrapRelation(match.home_club)
+  const away = unwrapRelation(match.away_club)
+
+  return {
+    title: `${home?.name ?? 'TBD'} ${match.home_score}-${match.away_score} ${away?.name ?? 'TBD'} | Georgian Football Talent Platform`,
+    description: `${match.competition} match on ${match.match_date}. Full stats and report.`,
+  }
+}
+
+export default async function MatchPage({ params }: MatchPageProps) {
+  const { slug } = await params
+  const { t, lang } = await getServerT()
+
+  const { data: match, error } = await getMatch(slug)
 
   if (error || !match) notFound()
 

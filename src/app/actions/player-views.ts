@@ -1,12 +1,12 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { uuidSchema } from '@/lib/validations'
 
 export async function trackPlayerView(playerId: string): Promise<void> {
   try {
     // Validate playerId is a valid UUID
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    if (!uuidRegex.test(playerId)) return
+    if (!uuidSchema.safeParse(playerId).success) return
 
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

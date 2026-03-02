@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import PDFDocument from 'pdfkit'
 import { createClient } from '@/lib/supabase/server'
-import { calculateAge, unwrapRelation } from '@/lib/utils'
+import { calculateAge, unwrapRelation, normalizeToArray } from '@/lib/utils'
+import { uuidSchema } from '@/lib/validations'
 import { format } from 'date-fns'
 
 export async function GET(
@@ -11,8 +12,7 @@ export async function GET(
   const { id } = await params
 
   // Validate UUID format
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  if (!uuidRegex.test(id)) {
+  if (!uuidSchema.safeParse(id).success) {
     return NextResponse.json({ error: 'Invalid player ID' }, { status: 400 })
   }
 
@@ -47,7 +47,7 @@ export async function GET(
 
   const club = unwrapRelation(player.club)
   const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
+  const seasonStats = normalizeToArray(player.season_stats)
   const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
     .map((h) => ({ ...h, club: unwrapRelation(h.club) }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())

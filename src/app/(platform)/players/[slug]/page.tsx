@@ -1,10 +1,11 @@
+import { cache } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge, unwrapRelation } from '@/lib/utils'
+import { calculateAge, unwrapRelation, normalizeToArray } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
@@ -22,29 +23,9 @@ interface PlayerPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: PlayerPageProps): Promise<Metadata> {
-  const { slug } = await params
+const getPlayer = cache(async (slug: string) => {
   const supabase = await createClient()
-  const { data: player, error } = await supabase
-    .from('players')
-    .select('name, position')
-    .eq('slug', slug)
-    .single()
-
-  if (error || !player) return { title: 'Player Not Found' }
-
-  return {
-    title: `${player.name} — ${player.position} | Georgian Football Talent Platform`,
-    description: `Scouting profile for ${player.name}. View stats, skills, match history, and scouting reports.`,
-  }
-}
-
-export default async function PlayerPage({ params }: PlayerPageProps) {
-  const { slug } = await params
-  const supabase = await createClient()
-  const { t, lang } = await getServerT()
-
-  const { data: player, error } = await supabase
+  return supabase
     .from('players')
     .select(`
       id, name, name_ka, slug, date_of_birth, nationality, position,
@@ -70,6 +51,26 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     `)
     .eq('slug', slug)
     .single()
+})
+
+export async function generateMetadata({ params }: PlayerPageProps): Promise<Metadata> {
+  const { slug } = await params
+  const { data: player, error } = await getPlayer(slug)
+
+  if (error || !player) return { title: 'Player Not Found' }
+
+  return {
+    title: `${player.name} — ${player.position} | Georgian Football Talent Platform`,
+    description: `Scouting profile for ${player.name}. View stats, skills, match history, and scouting reports.`,
+  }
+}
+
+export default async function PlayerPage({ params }: PlayerPageProps) {
+  const { slug } = await params
+  const supabase = await createClient()
+  const { t, lang } = await getServerT()
+
+  const { data: player, error } = await getPlayer(slug)
 
   if (error || !player) notFound()
 
@@ -79,7 +80,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const age = calculateAge(player.date_of_birth)
   const club = unwrapRelation(player.club)
   const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
+  const seasonStats = normalizeToArray(player.season_stats)
   const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
     ...ms,
     match: unwrapRelation(ms.match),
@@ -172,7 +173,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const similarPlayers = (rawSimilar ?? [])
     .map((p) => {
       const pClub = unwrapRelation(p.club)
-      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const statsArr = normalizeToArray(p.season_stats)
       const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
       return {
         ...p,

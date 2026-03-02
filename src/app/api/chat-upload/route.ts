@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { CHAT_LIMITS, ALLOWED_CHAT_FILE_TYPES, ALLOWED_CHAT_FILE_EXTENSIONS } from '@/lib/constants'
+import { uuidSchema } from '@/lib/validations'
 
 // POST: Upload a file attachment for chat
 export async function POST(request: NextRequest) {
@@ -22,8 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate conversation_id UUID
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  if (!uuidRegex.test(conversationId)) {
+  if (!uuidSchema.safeParse(conversationId).success) {
     return NextResponse.json({ error: 'errors.invalidId' }, { status: 400 })
   }
 

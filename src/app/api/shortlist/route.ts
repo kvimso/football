@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { createApiClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
 import { uuidSchema } from '@/lib/validations'
-import { unwrapRelation } from '@/lib/utils'
+import { unwrapRelation, normalizeToArray } from '@/lib/utils'
 import { z } from 'zod'
 
 const shortlistBodySchema = z.object({
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     const player = unwrapRelation(s.player)
     let latestStats = null
     if (player) {
-      const statsArr = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
+      const statsArr = normalizeToArray(player.season_stats)
       latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     }
     return {
