@@ -8,6 +8,12 @@ This file provides guidance to Claude Code when working on this project. Read th
 
 ---
 
+## Planning Rules
+
+When splitting any task into phases, sessions, or batches — whether via `/workflows:plan`, manual planning, or implementation batches — each phase/session must represent **at least 80-100K tokens of work**. Do not create phases that are too small to justify a separate session. This applies to all planning: skills, manual plans, remediation batches, feature implementation phases.
+
+---
+
 ## Project Overview
 
 **Georgian Football Talent Platform** — a full-stack web app that centralizes Georgian youth football players and connects them with international scouts, agents, and clubs. Built by a single developer (Andria) using Claude Code.
