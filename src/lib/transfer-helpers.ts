@@ -1,6 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/database.types'
 import { todayDateString } from '@/lib/utils'
+import { z } from 'zod'
+
+const transferRpcResultSchema = z.object({
+  success: z.boolean().optional(),
+  error: z.string().optional(),
+}).nullable()
 
 /**
  * Record a player joining a club in the club history table.
@@ -58,7 +64,12 @@ export async function executeTransferAccept(
     return { error: 'errors.serverError' }
   }
 
-  const result = data as { error?: string; success?: boolean } | null
+  const parsed = transferRpcResultSchema.safeParse(data)
+  if (!parsed.success) {
+    console.error('[transfer-helpers] Invalid RPC response:', parsed.error)
+    return { error: 'errors.serverError' }
+  }
+  const result = parsed.data
   if (result?.error) return { error: result.error }
 
   return {}
