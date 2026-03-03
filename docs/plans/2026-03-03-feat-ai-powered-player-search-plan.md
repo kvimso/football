@@ -390,7 +390,7 @@ Commit: `feat: AI search API route with Claude integration`
 
 ### Session 8: Frontend UI (~60-80K tokens)
 
-#### Step 1: Add i18n Translations
+#### Step 1: Add i18n Translations [x]
 
 **File:** `src/lib/translations/players.ts`
 
@@ -415,7 +415,7 @@ Add to both `en` and `ka` objects under a new `aiSearch` namespace:
 
 **Georgian keys:** (corresponding translations for all above)
 
-#### Step 2: Create AISearchBar Component
+#### Step 2: Create AISearchBar Component [x]
 
 **File:** `src/components/player/AISearchBar.tsx`
 
@@ -452,7 +452,7 @@ interface AISearchBarProps {
 
 **Feature flag:** Component checks `process.env.NEXT_PUBLIC_AI_SEARCH_ENABLED`. If false, renders nothing.
 
-#### Step 3: Create AIFilterTags Component
+#### Step 3: Create AIFilterTags Component [x]
 
 **File:** `src/components/player/AIFilterTags.tsx`
 
@@ -480,7 +480,7 @@ interface AIFilterTagsProps {
 - Tags styled with purple/indigo background to distinguish from regular filters
 - Filter-to-label utility function with i18n support
 
-#### Step 4: Integrate into Player Directory Page
+#### Step 4: Integrate into Player Directory Page [x]
 
 **File:** `src/app/(platform)/players/page.tsx` + new client wrapper
 
@@ -510,7 +510,7 @@ const displayPlayers = aiResults !== null ? aiResults : serverPlayers;
 
 **Better approach for re-query:** Add a second endpoint or query param to the existing endpoint that accepts pre-built filters (skips Claude). This avoids needing a client-side Supabase instance for the query.
 
-#### Step 5: Loading & Empty States
+#### Step 5: Loading & Empty States [x]
 
 **Loading (1-3 seconds):**
 - Search button shows spinner
@@ -535,7 +535,7 @@ const displayPlayers = aiResults !== null ? aiResults : serverPlayers;
 - Rate limit (429): "Too many searches. Please wait a moment."
 - Feature disabled: AI search bar hidden entirely
 
-#### Step 6: Accessibility
+#### Step 6: Accessibility [x]
 
 - Search input: `aria-label={t('players.aiSearch.placeholder')}`
 - Results region: `aria-live="polite"` announcing "{count} players found"
@@ -543,13 +543,13 @@ const displayPlayers = aiResults !== null ? aiResults : serverPlayers;
 - History dropdown: keyboard navigable with `role="listbox"`, `role="option"`
 - Loading state: `aria-busy="true"` on results container
 
-#### Step 7: Mobile Responsiveness
+#### Step 7: Mobile Responsiveness [x]
 
 - Search bar: full width, button stacks below input on narrow screens
 - Filter tags: horizontal scroll on mobile (no wrapping)
 - History chips: horizontal scroll, max 2 visible with scroll indicator
 
-#### Step 8: Build + Commit
+#### Step 8: Build + Commit [x]
 
 ```bash
 npm run build

@@ -4,8 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
 import { unwrapRelation, escapePostgrestValue } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
-import { PlayerCard } from '@/components/player/PlayerCard'
-import { FilterPanel } from '@/components/forms/FilterPanel'
+import { PlayerDirectoryClient } from '@/components/player/PlayerDirectoryClient'
 
 const PAGE_SIZE = 24
 
@@ -269,6 +268,59 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     return `/players${qs ? `?${qs}` : ''}`
   }
 
+  // Convert Map to plain object for serialization across server/client boundary
+  const viewCountObj: Record<string, number> = {}
+  for (const [id, count] of viewCountMap) {
+    viewCountObj[id] = count
+  }
+
+  // Build pagination element (server-rendered)
+  const paginationElement = totalPages > 1 ? (
+    <div className="mt-8 flex items-center justify-center gap-2">
+      {page > 1 && (
+        <Link
+          href={pageUrl(page - 1)}
+          className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
+        >
+          &larr;
+        </Link>
+      )}
+      {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+        let p: number
+        if (totalPages <= 7) {
+          p = i + 1
+        } else if (page <= 4) {
+          p = i + 1
+        } else if (page >= totalPages - 3) {
+          p = totalPages - 6 + i
+        } else {
+          p = page - 3 + i
+        }
+        return (
+          <Link
+            key={p}
+            href={pageUrl(p)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              p === page
+                ? 'bg-accent/10 text-accent'
+                : 'text-foreground-muted hover:text-foreground'
+            }`}
+          >
+            {p}
+          </Link>
+        )
+      })}
+      {page < totalPages && (
+        <Link
+          href={pageUrl(page + 1)}
+          className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
+        >
+          &rarr;
+        </Link>
+      )}
+    </div>
+  ) : null
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header */}
@@ -279,82 +331,14 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
         </p>
       </div>
 
-      {/* Filters */}
-      <FilterPanel clubs={clubs ?? []} />
-
-      {/* Results header */}
-      <div className="mt-6 mb-4 flex items-center justify-between">
-        <p className="text-sm text-foreground-muted">
-          <span className="font-semibold text-foreground">{total}</span>{' '}
-          {total !== 1 ? t('players.playerPlural') : t('players.player')} {t('common.found')}
-        </p>
-      </div>
-
-      {/* Player grid */}
-      {playerCards.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {playerCards.map((player) => (
-            <PlayerCard key={player.slug} player={player} viewCount={viewCountMap.get(player.id) ?? 0} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="text-5xl text-foreground-muted/30 mb-4">&#9917;</div>
-          <p className="text-lg font-medium text-foreground-muted">
-            {t('players.noPlayers')}
-          </p>
-          <p className="mt-1 text-sm text-foreground-muted/70">
-            {t('players.noPlayersHint')}
-          </p>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-2">
-          {page > 1 && (
-            <Link
-              href={pageUrl(page - 1)}
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
-            >
-              &larr;
-            </Link>
-          )}
-          {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-            let p: number
-            if (totalPages <= 7) {
-              p = i + 1
-            } else if (page <= 4) {
-              p = i + 1
-            } else if (page >= totalPages - 3) {
-              p = totalPages - 6 + i
-            } else {
-              p = page - 3 + i
-            }
-            return (
-              <Link
-                key={p}
-                href={pageUrl(p)}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-                  p === page
-                    ? 'bg-accent/10 text-accent'
-                    : 'text-foreground-muted hover:text-foreground'
-                }`}
-              >
-                {p}
-              </Link>
-            )
-          })}
-          {page < totalPages && (
-            <Link
-              href={pageUrl(page + 1)}
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
-            >
-              &rarr;
-            </Link>
-          )}
-        </div>
-      )}
+      {/* Client wrapper: AI search + filters + player grid + pagination */}
+      <PlayerDirectoryClient
+        clubs={clubs ?? []}
+        serverPlayers={playerCards}
+        viewCountMap={viewCountObj}
+        pagination={paginationElement}
+        totalCount={total}
+      />
     </div>
   )
 }

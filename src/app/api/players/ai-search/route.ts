@@ -5,10 +5,12 @@ import { parseSearchQuery } from '@/lib/ai-search/service'
 import { escapePostgrestValue } from '@/lib/utils'
 import { AI_SEARCH_LIMITS } from '@/lib/constants'
 import { z } from 'zod'
-import type { AISearchFilters } from '@/lib/ai-search/types'
+import { AISearchFiltersSchema, type AISearchFilters } from '@/lib/ai-search/types'
 
 const RequestSchema = z.object({
   query: z.string().min(1).max(500),
+  /** When provided, skips Claude call and uses these filters directly (for re-queries) */
+  filters: AISearchFiltersSchema.optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -34,22 +36,25 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       return apiError('errors.invalidInput', 400)
     }
-    const { query } = parsed.data
+    const { query, filters: providedFilters } = parsed.data
+    const isRequery = !!providedFilters
 
-    // 4. Rate limit check
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-    const { count: recentCount } = await supabase
-      .from('ai_search_history')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user!.id)
-      .gte('created_at', oneHourAgo)
+    // 4. Rate limit check (skip for re-queries — no Claude call)
+    if (!isRequery) {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+      const { count: recentCount } = await supabase
+        .from('ai_search_history')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user!.id)
+        .gte('created_at', oneHourAgo)
 
-    if (recentCount !== null && recentCount >= AI_SEARCH_LIMITS.MAX_SEARCHES_PER_HOUR) {
-      return apiError('errors.rateLimitSearch', 429)
+      if (recentCount !== null && recentCount >= AI_SEARCH_LIMITS.MAX_SEARCHES_PER_HOUR) {
+        return apiError('errors.rateLimitSearch', 429)
+      }
     }
 
-    // 5. Call Claude API
-    const filters = await parseSearchQuery(query)
+    // 5. Get filters: from Claude API or provided directly
+    const filters = isRequery ? providedFilters : await parseSearchQuery(query)
 
     // 6. Build Supabase query from filters
     let dbQuery = supabase
@@ -243,8 +248,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 9. Save to search history (fire-and-forget)
-    saveSearchHistory(supabase, user!.id, query, filters, filteredPlayers.length)
+    // 9. Save to search history (fire-and-forget, skip for re-queries)
+    if (!isRequery) {
+      saveSearchHistory(supabase, user!.id, query, filters, filteredPlayers.length)
+    }
 
     // 10. Return results
     return apiSuccess({
