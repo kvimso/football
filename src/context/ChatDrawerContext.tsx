@@ -8,10 +8,14 @@ interface ChatDrawerState {
   closeDrawer: () => void
 }
 
+function devWarning(): never {
+  throw new Error('useChatDrawer must be used within ChatDrawerProvider')
+}
+
 const ChatDrawerContext = createContext<ChatDrawerState>({
   isDrawerOpen: false,
-  openDrawer: () => {},
-  closeDrawer: () => {},
+  openDrawer: process.env.NODE_ENV === 'development' ? devWarning : () => {},
+  closeDrawer: process.env.NODE_ENV === 'development' ? devWarning : () => {},
 })
 
 export function useChatDrawer() {

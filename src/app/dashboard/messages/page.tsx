@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { getCachedConversations } from '@/lib/chat-queries'
 import { ChatInbox } from '@/components/chat/ChatInbox'
 import { ChatEmptyState } from '@/components/chat/ChatEmptyState'
-import { fetchConversations } from '@/lib/chat-queries'
 
 export default async function ScoutMessagesPage() {
   const supabase = await createClient()
@@ -12,7 +12,8 @@ export default async function ScoutMessagesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { conversations, error } = await fetchConversations(supabase, user.id, 'scout')
+  // Deduplicated with layout via React.cache — only 1 RPC per request
+  const { conversations, error } = await getCachedConversations(user.id, 'scout')
 
   return (
     <>
@@ -22,7 +23,7 @@ export default async function ScoutMessagesPage() {
         <p className="mt-1 text-sm text-foreground-muted">{t('dashboard.messagesDesc')}</p>
         <div className="mt-4">
           <ChatInbox
-            conversations={conversations}
+            initialConversations={conversations}
             userId={user.id}
             userRole="scout"
             basePath="/dashboard/messages"
@@ -32,8 +33,8 @@ export default async function ScoutMessagesPage() {
       </div>
 
       {/* Desktop: empty state placeholder (sidebar in layout handles the list) */}
-      <div className="hidden lg:flex h-full">
-        <ChatEmptyState />
+      <div className="hidden lg:flex flex-1">
+        <ChatEmptyState userRole="scout" />
       </div>
     </>
   )

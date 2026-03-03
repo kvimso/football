@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
+import { getCachedConversations } from '@/lib/chat-queries'
 import { ChatInbox } from '@/components/chat/ChatInbox'
 import { ChatEmptyState } from '@/components/chat/ChatEmptyState'
-import { fetchConversations } from '@/lib/chat-queries'
 
 export default async function AdminMessagesPage() {
   const supabase = await createClient()
@@ -26,7 +26,8 @@ export default async function AdminMessagesPage() {
     )
   }
 
-  const { conversations, error } = await fetchConversations(supabase, user.id, 'academy_admin')
+  // Deduplicated with layout via React.cache — only 1 RPC per request
+  const { conversations, error } = await getCachedConversations(user.id, 'academy_admin')
 
   return (
     <>
@@ -36,7 +37,7 @@ export default async function AdminMessagesPage() {
         <p className="mt-1 text-sm text-foreground-muted">{t('dashboard.messagesDesc')}</p>
         <div className="mt-4">
           <ChatInbox
-            conversations={conversations}
+            initialConversations={conversations}
             userId={user.id}
             userRole="academy_admin"
             basePath="/admin/messages"
@@ -46,8 +47,8 @@ export default async function AdminMessagesPage() {
       </div>
 
       {/* Desktop: empty state placeholder (sidebar in layout handles the list) */}
-      <div className="hidden lg:flex h-full">
-        <ChatEmptyState />
+      <div className="hidden lg:flex flex-1">
+        <ChatEmptyState userRole="academy_admin" />
       </div>
     </>
   )

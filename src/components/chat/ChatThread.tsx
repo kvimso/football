@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
@@ -123,7 +123,7 @@ export function ChatThread({
 
   // Scroll to bottom helper
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    messagesEndRef.current?.scrollIntoView({ behavior })
+    scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollHeight, behavior })
     setNewMessageCount(0)
   }, [])
 
@@ -133,16 +133,23 @@ export function ChatThread({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Track scroll position
+  // Track scroll position — rAF-throttled with stable deps
+  const newMessageCountRef = useRef(newMessageCount)
+  newMessageCountRef.current = newMessageCount
+  const rafIdRef = useRef<number>(0)
+
   const handleScroll = useCallback(() => {
-    const el = scrollContainerRef.current
-    if (!el) return
-    const threshold = 150
-    isAtBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
-    if (isAtBottomRef.current && newMessageCount > 0) {
-      setNewMessageCount(0)
-    }
-  }, [newMessageCount])
+    cancelAnimationFrame(rafIdRef.current)
+    rafIdRef.current = requestAnimationFrame(() => {
+      const el = scrollContainerRef.current
+      if (!el) return
+      const threshold = 150
+      isAtBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+      if (isAtBottomRef.current && newMessageCountRef.current > 0) {
+        setNewMessageCount(0)
+      }
+    })
+  }, [])
 
   // Mark messages as read
   useEffect(() => {
@@ -410,8 +417,8 @@ export function ChatThread({
     }
   }, [sendTextMessage])
 
-  // Group messages by date
-  const dateGroups = groupMessagesByDate(messages)
+  // Group messages by date (memoized — only recalculates when messages change)
+  const dateGroups = useMemo(() => groupMessagesByDate(messages), [messages])
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-card">

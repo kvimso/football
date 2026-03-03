@@ -54,6 +54,7 @@ export const en = {
     conversationList: 'Conversation list',
     messageThread: 'Message thread',
     switchConversation: 'Switch conversation',
+    emptyStateAdminHint: 'Scouts will message you when interested in your players.',
   },
 }
 
@@ -112,5 +113,6 @@ export const ka = {
     conversationList: 'საუბრების სია',
     messageThread: 'შეტყობინებების თრედი',
     switchConversation: 'საუბრის გადართვა',
+    emptyStateAdminHint: 'სკაუტები მოგწერენ, როცა თქვენი მოთამაშეებით დაინტერესდებიან.',
   },
 }

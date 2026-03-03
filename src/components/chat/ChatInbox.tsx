@@ -1,94 +1,25 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
-import { formatMessageTime, truncateMessage } from '@/lib/chat-utils'
+import { useConversationList } from '@/hooks/useConversationList'
+import { formatMessageTime, getLastMessagePreview } from '@/lib/chat-utils'
 import type { ConversationItem } from '@/lib/types'
-import type { Lang } from '@/lib/translations'
 
 interface ChatInboxProps {
-  conversations: ConversationItem[]
+  initialConversations: ConversationItem[]
   userId: string
   userRole: 'scout' | 'academy_admin'
   basePath: string // '/dashboard/messages' or '/admin/messages'
   error?: string | null
 }
 
-export function ChatInbox({ conversations, userId, userRole, basePath, error }: ChatInboxProps) {
+export function ChatInbox({ initialConversations, userId, userRole, basePath, error }: ChatInboxProps) {
   const { t, lang } = useLang()
   const router = useRouter()
-  const [liveConversations, setLiveConversations] = useState(conversations)
-
-  // Sync with server-side props
-  useEffect(() => {
-    setLiveConversations(conversations)
-  }, [conversations])
-
-  // Realtime inbox updates — deferred to survive React StrictMode double-mount
-  // Subscribe only to user's conversations + new conversation inserts
-  const conversationIdsRef = useRef<string[]>(conversations.map(c => c.id))
-  useEffect(() => {
-    conversationIdsRef.current = liveConversations.map(c => c.id)
-  }, [liveConversations])
-
-  useEffect(() => {
-    let cancelled = false
-    const supabase = createClient()
-    let debounceTimer: NodeJS.Timeout
-    let activeChannel: ReturnType<typeof supabase.channel> | null = null
-
-    const refetchConversations = () => {
-      clearTimeout(debounceTimer)
-      debounceTimer = setTimeout(async () => {
-        if (cancelled) return
-        try {
-          const res = await fetch('/api/conversations')
-          if (res.ok) {
-            const data = await res.json()
-            setLiveConversations(data.conversations)
-          }
-        } catch {
-          // Silently fail — stale data persists until next event
-        }
-      }, 1500)
-    }
-
-    const timer = setTimeout(() => {
-      if (cancelled) return
-      const ids = conversationIdsRef.current
-      const channelBuilder = supabase.channel('inbox-updates')
-
-      // Only subscribe to messages in user's conversations
-      if (ids.length > 0) {
-        channelBuilder.on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=in.(${ids.join(',')})`,
-        }, refetchConversations)
-      }
-
-      // Always listen for new conversations (will refetch full list)
-      channelBuilder.on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'conversations',
-      }, refetchConversations)
-
-      activeChannel = channelBuilder.subscribe()
-    }, 0)
-
-    return () => {
-      cancelled = true
-      clearTimeout(timer)
-      clearTimeout(debounceTimer)
-      if (activeChannel) supabase.removeChannel(activeChannel)
-    }
-  }, [])
+  const { conversations } = useConversationList({ initialConversations, userId })
 
   if (error) {
     return (
@@ -108,7 +39,7 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
     )
   }
 
-  if (liveConversations.length === 0) {
+  if (conversations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <svg className="h-16 w-16 text-foreground-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -129,7 +60,7 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
 
   return (
     <div className="space-y-1.5" role="list">
-      {liveConversations.map((conv) => {
+      {conversations.map((conv) => {
         const rawName = userRole === 'scout'
           ? (lang === 'ka' && conv.club?.name_ka ? conv.club.name_ka : conv.club?.name ?? conv.other_party.full_name)
           : conv.other_party.full_name
@@ -139,7 +70,7 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
           ? null
           : conv.other_party.organization
 
-        const lastMessagePreview = getLastMessagePreview(conv, userId, t, lang)
+        const lastMessagePreview = getLastMessagePreview(conv, userId, t)
         const timestamp = conv.last_message?.created_at
           ? formatMessageTime(conv.last_message.created_at, lang, t)
           : formatMessageTime(conv.created_at, lang, t)
@@ -204,32 +135,4 @@ export function ChatInbox({ conversations, userId, userRole, basePath, error }: 
       })}
     </div>
   )
-}
-
-function getLastMessagePreview(
-  conv: ConversationItem,
-  userId: string,
-  t: (key: string) => string,
-  _lang: Lang,
-): string {
-  if (!conv.last_message) return ''
-
-  const { content, message_type, sender_id } = conv.last_message
-  const isMe = sender_id === userId
-  const prefix = isMe ? `${t('chat.you')}: ` : ''
-
-  switch (message_type) {
-    case 'file':
-      return prefix + t('chat.messagePreviewFile')
-    case 'player_ref':
-      return prefix + t('chat.messagePreviewPlayerRef')
-    case 'system':
-      // System messages use translation keys as content
-      if (content && content.startsWith('chat.')) {
-        return t(content)
-      }
-      return t('chat.messagePreviewSystem')
-    default:
-      return prefix + truncateMessage(content ?? '', 60)
-  }
 }

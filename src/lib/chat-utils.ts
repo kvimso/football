@@ -170,3 +170,33 @@ export function isEmojiOnly(text: string): boolean {
   if (!emojiMatches || emojiMatches.length > 6) return false
   return EMOJI_ONLY_REGEX.test(trimmed)
 }
+
+/**
+ * Generate a short preview string for the last message in a conversation.
+ * Used by ChatSidebar and ChatInbox to show message previews in the list.
+ */
+export function getLastMessagePreview(
+  conv: { last_message: { content: string | null; message_type: string; sender_id: string } | null },
+  userId: string,
+  t: (key: string) => string,
+): string {
+  if (!conv.last_message) return ''
+
+  const { content, message_type, sender_id } = conv.last_message
+  const isMe = sender_id === userId
+  const prefix = isMe ? `${t('chat.you')}: ` : ''
+
+  switch (message_type) {
+    case 'file':
+      return prefix + t('chat.messagePreviewFile')
+    case 'player_ref':
+      return prefix + t('chat.messagePreviewPlayerRef')
+    case 'system':
+      if (content && content.startsWith('chat.')) {
+        return t(content)
+      }
+      return t('chat.messagePreviewSystem')
+    default:
+      return prefix + truncateMessage(content ?? '', 50)
+  }
+}

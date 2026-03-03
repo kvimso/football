@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
-import { formatMessageTime, truncateMessage } from '@/lib/chat-utils'
+import { useConversationList } from '@/hooks/useConversationList'
+import { formatMessageTime, getLastMessagePreview } from '@/lib/chat-utils'
 import type { ConversationItem } from '@/lib/types'
-import type { Lang } from '@/lib/translations'
 
 interface ChatSidebarProps {
   initialConversations: ConversationItem[]
@@ -21,76 +19,12 @@ interface ChatSidebarProps {
 export function ChatSidebar({ initialConversations, userId, userRole, basePath, error }: ChatSidebarProps) {
   const { t, lang } = useLang()
   const pathname = usePathname()
-  const [liveConversations, setLiveConversations] = useState(initialConversations)
+  const { conversations } = useConversationList({ initialConversations, userId })
 
   // Extract active conversation ID from URL
   const activeConversationId = pathname.startsWith(basePath + '/')
     ? pathname.slice(basePath.length + 1).split('/')[0]
     : null
-
-  // Sync with server-side props
-  useEffect(() => {
-    setLiveConversations(initialConversations)
-  }, [initialConversations])
-
-  // Realtime subscription — same pattern as ChatInbox but distinct channel name
-  const conversationIdsRef = useRef<string[]>(initialConversations.map(c => c.id))
-  useEffect(() => {
-    conversationIdsRef.current = liveConversations.map(c => c.id)
-  }, [liveConversations])
-
-  useEffect(() => {
-    let cancelled = false
-    const supabase = createClient()
-    let debounceTimer: NodeJS.Timeout
-    let activeChannel: ReturnType<typeof supabase.channel> | null = null
-
-    const refetchConversations = () => {
-      clearTimeout(debounceTimer)
-      debounceTimer = setTimeout(async () => {
-        if (cancelled) return
-        try {
-          const res = await fetch('/api/conversations')
-          if (res.ok) {
-            const data = await res.json()
-            setLiveConversations(data.conversations)
-          }
-        } catch {
-          // Silently fail — stale data persists until next event
-        }
-      }, 1500)
-    }
-
-    const timer = setTimeout(() => {
-      if (cancelled) return
-      const ids = conversationIdsRef.current
-      const channelBuilder = supabase.channel(`sidebar-${userId}`)
-
-      if (ids.length > 0) {
-        channelBuilder.on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=in.(${ids.join(',')})`,
-        }, refetchConversations)
-      }
-
-      channelBuilder.on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'conversations',
-      }, refetchConversations)
-
-      activeChannel = channelBuilder.subscribe()
-    }, 0)
-
-    return () => {
-      cancelled = true
-      clearTimeout(timer)
-      clearTimeout(debounceTimer)
-      if (activeChannel) supabase.removeChannel(activeChannel)
-    }
-  }, [userId])
 
   if (error) {
     return (
@@ -103,7 +37,7 @@ export function ChatSidebar({ initialConversations, userId, userRole, basePath, 
     )
   }
 
-  if (liveConversations.length === 0) {
+  if (conversations.length === 0) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center p-4 text-center">
         <svg className="h-10 w-10 text-foreground-muted/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -123,14 +57,14 @@ export function ChatSidebar({ initialConversations, userId, userRole, basePath, 
 
       {/* Scrollable list */}
       <div className="flex-1 overflow-y-auto overscroll-contain" role="list" aria-label={t('chat.conversationList')}>
-        {liveConversations.map((conv) => {
+        {conversations.map((conv) => {
           const isActive = conv.id === activeConversationId
           const rawName = userRole === 'scout'
             ? (lang === 'ka' && conv.club?.name_ka ? conv.club.name_ka : conv.club?.name ?? conv.other_party.full_name)
             : conv.other_party.full_name
           const displayName = rawName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
 
-          const lastMessagePreview = getLastMessagePreview(conv, userId, t, lang)
+          const lastMessagePreview = getLastMessagePreview(conv, userId, t)
           const timestamp = conv.last_message?.created_at
             ? formatMessageTime(conv.last_message.created_at, lang, t)
             : formatMessageTime(conv.created_at, lang, t)
@@ -140,6 +74,7 @@ export function ChatSidebar({ initialConversations, userId, userRole, basePath, 
               key={conv.id}
               href={`${basePath}/${conv.id}`}
               role="listitem"
+              aria-current={isActive ? 'page' : undefined}
               className={`flex items-center gap-3 border-l-2 px-3 py-3 transition-colors hover:bg-card-hover ${
                 isActive
                   ? 'border-l-accent bg-accent/5'
@@ -190,31 +125,4 @@ export function ChatSidebar({ initialConversations, userId, userRole, basePath, 
       </div>
     </div>
   )
-}
-
-function getLastMessagePreview(
-  conv: ConversationItem,
-  userId: string,
-  t: (key: string) => string,
-  _lang: Lang,
-): string {
-  if (!conv.last_message) return ''
-
-  const { content, message_type, sender_id } = conv.last_message
-  const isMe = sender_id === userId
-  const prefix = isMe ? `${t('chat.you')}: ` : ''
-
-  switch (message_type) {
-    case 'file':
-      return prefix + t('chat.messagePreviewFile')
-    case 'player_ref':
-      return prefix + t('chat.messagePreviewPlayerRef')
-    case 'system':
-      if (content && content.startsWith('chat.')) {
-        return t(content)
-      }
-      return t('chat.messagePreviewSystem')
-    default:
-      return prefix + truncateMessage(content ?? '', 40)
-  }
 }

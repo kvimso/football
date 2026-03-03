@@ -1,3 +1,5 @@
+import { cache } from 'react'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import type { createClient } from '@/lib/supabase/server'
 import type { ConversationItem, ConversationDetail, MessageWithSender, UserRole } from '@/lib/types'
 
@@ -60,6 +62,18 @@ export async function fetchConversations(
 
   return { conversations, error: null }
 }
+
+/**
+ * Cached version of fetchConversations — deduplicates calls within the same
+ * server request. Use this in server components (layout + page) to avoid
+ * duplicate RPC calls when both need the same conversation list.
+ */
+export const getCachedConversations = cache(
+  async (userId: string, role: 'scout' | 'academy_admin'): Promise<FetchConversationsResult> => {
+    const supabase = await createServerClient()
+    return fetchConversations(supabase, userId, role)
+  }
+)
 
 /**
  * Fetch a single conversation with metadata for the thread header.
