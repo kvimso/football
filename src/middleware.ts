@@ -49,7 +49,50 @@ export async function middleware(request: NextRequest) {
     })
 
     // Refresh the auth session so it doesn't expire
-    await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Role-based routing for authenticated users on role-scoped paths
+    // Prevents layout redirect() calls that trigger React 19 Turbopack dev-mode bug
+    if (user) {
+      const { pathname } = request.nextUrl
+      const roleScopedPath = ['/dashboard', '/admin', '/platform'].find(
+        p => pathname === p || pathname.startsWith(p + '/')
+      )
+
+      if (roleScopedPath) {
+        const ROLE_HOME: Record<string, string> = {
+          scout: '/dashboard',
+          academy_admin: '/admin',
+          platform_admin: '/platform',
+        }
+        const PATH_ALLOWED_ROLES: Record<string, string[]> = {
+          '/dashboard': ['scout'],
+          '/admin': ['academy_admin'],
+          '/platform': ['platform_admin'],
+        }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+
+        const role = profile?.role ?? 'scout'
+        const allowedRoles = PATH_ALLOWED_ROLES[roleScopedPath]
+
+        if (allowedRoles && !allowedRoles.includes(role)) {
+          const destination = ROLE_HOME[role] ?? '/dashboard'
+          const redirectUrl = request.nextUrl.clone()
+          redirectUrl.pathname = destination
+          const redirectResponse = NextResponse.redirect(redirectUrl)
+          // Preserve refreshed auth cookies on the redirect response
+          for (const cookie of supabaseResponse.cookies.getAll()) {
+            redirectResponse.cookies.set(cookie)
+          }
+          return redirectResponse
+        }
+      }
+    }
   } catch (err) {
     console.error('[middleware] Supabase error:', err)
   }

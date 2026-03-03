@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
@@ -10,21 +10,18 @@ export default async function PlatformLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) notFound()
 
-  if (authError) console.error('Failed to get user:', authError.message)
-  if (!user) redirect('/login')
-
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
 
-  if (profileError) console.error('Failed to get profile:', profileError.message)
-
+  // Defense-in-depth role guard (middleware handles role routing normally)
   if (!profile || profile.role !== 'platform_admin') {
-    redirect('/dashboard')
+    notFound()
   }
 
   return (
