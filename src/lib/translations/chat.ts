@@ -48,6 +48,12 @@ export const en = {
     connectionLost: 'Connection lost',
     pastedImage: 'Pasted image',
     pastedImageReady: 'Image ready to send',
+    conversations: 'Conversations',
+    selectConversation: 'Select a conversation to start messaging',
+    browsePlayers: 'Browse Players',
+    conversationList: 'Conversation list',
+    messageThread: 'Message thread',
+    switchConversation: 'Switch conversation',
   },
 }
 
@@ -100,5 +106,11 @@ export const ka = {
     connectionLost: 'კავშირი გაწყდა',
     pastedImage: 'ჩასმული სურათი',
     pastedImageReady: 'სურათი გასაგზავნად მზადაა',
+    conversations: 'საუბრები',
+    selectConversation: 'აირჩიეთ საუბარი შეტყობინების დასაწერად',
+    browsePlayers: 'მოთამაშეების ნახვა',
+    conversationList: 'საუბრების სია',
+    messageThread: 'შეტყობინებების თრედი',
+    switchConversation: 'საუბრის გადართვა',
   },
 }

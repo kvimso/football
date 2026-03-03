@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
+import { useChatDrawer } from '@/context/ChatDrawerContext'
 import { groupMessagesByDate, isSameTimeGroup } from '@/lib/chat-utils'
 import { realtimeMessageSchema, realtimeMessageUpdateSchema } from '@/lib/validations'
 import { DateDivider } from '@/components/chat/DateDivider'
@@ -28,6 +29,7 @@ export function ChatThread({
   userRole,
 }: ChatThreadProps) {
   const { t, lang } = useLang()
+  const { openDrawer } = useChatDrawer()
   const [messages, setMessages] = useState<MessageWithSender[]>(initialMessages)
   const [hasMore, setHasMore] = useState(hasMoreInitial)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -412,18 +414,30 @@ export function ChatThread({
   const dateGroups = groupMessagesByDate(messages)
 
   return (
-    <div className="mx-auto flex h-[calc(100dvh-11rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-card">
       {/* Thread Header */}
       <div className="flex items-center gap-3 bg-background-secondary/50 px-4 py-3">
+        {/* Mobile: back button */}
         <Link
           href={backPath}
           aria-label={t('aria.goBack')}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground lg:hidden"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </Link>
+
+        {/* Mobile: hamburger to open conversation drawer */}
+        <button
+          onClick={openDrawer}
+          aria-label={t('chat.switchConversation')}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground lg:hidden"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
 
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/10">
