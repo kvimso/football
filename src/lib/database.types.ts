@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_search_history: {
+        Row: {
+          created_at: string
+          filters_applied: Json
+          id: string
+          query_text: string
+          result_count: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters_applied?: Json
+          id?: string
+          query_text: string
+          result_count?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters_applied?: Json
+          id?: string
+          query_text?: string
+          result_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_search_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clubs: {
         Row: {
           city: string | null
@@ -380,7 +415,6 @@ export type Database = {
           content: string | null
           conversation_id: string
           created_at: string | null
-
           file_name: string | null
           file_size_bytes: number | null
           file_type: string | null
@@ -395,7 +429,6 @@ export type Database = {
           content?: string | null
           conversation_id: string
           created_at?: string | null
-
           file_name?: string | null
           file_size_bytes?: number | null
           file_type?: string | null
@@ -410,7 +443,6 @@ export type Database = {
           content?: string | null
           conversation_id?: string
           created_at?: string | null
-
           file_name?: string | null
           file_size_bytes?: number | null
           file_type?: string | null
@@ -927,24 +959,24 @@ export type Database = {
       get_conversations_with_metadata: {
         Args: { p_user_id: string }
         Returns: {
-          id: string
-          scout_id: string
           club_id: string
-          last_message_at: string | null
-          created_at: string | null
-          club_name: string | null
-          club_name_ka: string | null
-          club_logo_url: string | null
-          scout_full_name: string | null
-          scout_email: string | null
-          scout_organization: string | null
-          scout_role: string | null
-          last_message_content: string | null
-          last_message_type: string | null
-          last_message_sender_id: string | null
-          last_message_created_at: string | null
-          unread_count: number
+          club_logo_url: string
+          club_name: string
+          club_name_ka: string
+          created_at: string
+          id: string
           is_blocked: boolean
+          last_message_at: string
+          last_message_content: string
+          last_message_created_at: string
+          last_message_sender_id: string
+          last_message_type: string
+          scout_email: string
+          scout_full_name: string
+          scout_id: string
+          scout_organization: string
+          scout_role: string
+          unread_count: number
         }[]
       }
       get_player_view_counts: {

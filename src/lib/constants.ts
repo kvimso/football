@@ -57,6 +57,13 @@ export const STAT_FILTER_OPTIONS = {
 
 export const POPULAR_VIEWS_THRESHOLD = 20
 
+// AI search limits
+export const AI_SEARCH_LIMITS = {
+  MAX_SEARCHES_PER_HOUR: 20,
+  MAX_QUERY_LENGTH: 500,
+  MAX_HISTORY_ENTRIES: 4,
+} as const
+
 // Chat system limits
 export const CHAT_LIMITS = {
   MAX_CONVERSATIONS_PER_DAY: 10,
