@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
 import { useChatDrawer } from '@/context/ChatDrawerContext'
-import { groupMessagesByDate, isSameTimeGroup } from '@/lib/chat-utils'
+import { groupMessagesByDate, isSameTimeGroup, getConversationDisplayName } from '@/lib/chat-utils'
 import { realtimeMessageSchema, realtimeMessageUpdateSchema } from '@/lib/validations'
 import { DateDivider } from '@/components/chat/DateDivider'
 import { MessageBubble } from '@/components/chat/MessageBubble'
@@ -43,7 +43,6 @@ export function ChatThread({
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
   const initialMessageIdsRef = useRef<Set<string>>(new Set(initialMessages.map(m => m.id)))
   const firstUnreadIdRef = useRef<string | null>(
@@ -51,10 +50,7 @@ export function ChatThread({
   )
 
   const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
-  const rawDisplayName = userRole === 'scout'
-    ? (lang === 'ka' && conversation.club.name_ka ? conversation.club.name_ka : conversation.club.name)
-    : conversation.other_party.full_name
-  const displayName = rawDisplayName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
+  const displayName = getConversationDisplayName(conversation.club, conversation.other_party, userRole, lang, t)
 
   // Block/unblock handler
   const handleBlockAction = useCallback(async () => {
@@ -602,7 +598,6 @@ export function ChatThread({
           ))}
         </div>
 
-        <div ref={messagesEndRef} />
       </div>
 
       {/* New messages indicator */}

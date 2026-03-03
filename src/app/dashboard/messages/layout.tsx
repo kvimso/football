@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getCachedUser } from '@/lib/cached-auth'
 import { getCachedConversations } from '@/lib/chat-queries'
 import { ChatMessagesLayout } from '@/components/chat/ChatMessagesLayout'
 
@@ -8,8 +8,7 @@ export default async function MessagesLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user } = await getCachedUser()
   if (!user) redirect('/login')
 
   const { conversations, error } = await getCachedConversations(user.id, 'scout')

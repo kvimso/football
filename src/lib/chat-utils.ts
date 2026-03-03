@@ -1,6 +1,24 @@
 import type { Lang } from '@/lib/translations'
 
 /**
+ * Derive the display name for a conversation partner.
+ * Scouts see the club name (with Georgian variant); admins see the scout name.
+ * Handles both ConversationItem (nullable club) and ConversationDetail (non-null club).
+ */
+export function getConversationDisplayName(
+  club: { name: string; name_ka: string | null } | null | undefined,
+  otherParty: { full_name: string },
+  userRole: 'scout' | 'academy_admin',
+  lang: Lang,
+  t: (key: string) => string,
+): string {
+  const rawName = userRole === 'scout'
+    ? (lang === 'ka' && club?.name_ka ? club.name_ka : club?.name ?? otherParty.full_name)
+    : otherParty.full_name
+  return rawName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
+}
+
+/**
  * Smart timestamp for chat inbox:
  * - Today: "2:45 PM"
  * - Yesterday: "Yesterday" / "გუშინ"
@@ -159,6 +177,7 @@ export function linkifyMessage(content: string): MessagePart[] {
  * Check if a message contains only emoji characters (1-6 emoji, no text).
  * Used to render emoji-only messages at a larger font size.
  */
+// eslint-disable-next-line no-misleading-character-class -- FE0F/200D are intentional emoji modifiers
 const EMOJI_ONLY_REGEX = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}\s]+$/u
 
 export function isEmojiOnly(text: string): boolean {
@@ -179,6 +198,7 @@ export function getLastMessagePreview(
   conv: { last_message: { content: string | null; message_type: string; sender_id: string } | null },
   userId: string,
   t: (key: string) => string,
+  maxLen: number = 50,
 ): string {
   if (!conv.last_message) return ''
 
@@ -197,6 +217,6 @@ export function getLastMessagePreview(
       }
       return t('chat.messagePreviewSystem')
     default:
-      return prefix + truncateMessage(content ?? '', 50)
+      return prefix + truncateMessage(content ?? '', maxLen)
   }
 }

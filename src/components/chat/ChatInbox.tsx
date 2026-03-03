@@ -4,22 +4,20 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
-import { useConversationList } from '@/hooks/useConversationList'
-import { formatMessageTime, getLastMessagePreview } from '@/lib/chat-utils'
-import type { ConversationItem } from '@/lib/types'
+import { useConversations } from '@/context/ConversationListContext'
+import { formatMessageTime, getLastMessagePreview, getConversationDisplayName } from '@/lib/chat-utils'
 
 interface ChatInboxProps {
-  initialConversations: ConversationItem[]
-  userId: string
   userRole: 'scout' | 'academy_admin'
   basePath: string // '/dashboard/messages' or '/admin/messages'
+  userId: string
   error?: string | null
 }
 
-export function ChatInbox({ initialConversations, userId, userRole, basePath, error }: ChatInboxProps) {
+export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps) {
   const { t, lang } = useLang()
   const router = useRouter()
-  const { conversations } = useConversationList({ initialConversations, userId })
+  const conversations = useConversations()
 
   if (error) {
     return (
@@ -61,16 +59,13 @@ export function ChatInbox({ initialConversations, userId, userRole, basePath, er
   return (
     <div className="space-y-1.5" role="list">
       {conversations.map((conv) => {
-        const rawName = userRole === 'scout'
-          ? (lang === 'ka' && conv.club?.name_ka ? conv.club.name_ka : conv.club?.name ?? conv.other_party.full_name)
-          : conv.other_party.full_name
-        const displayName = rawName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
+        const displayName = getConversationDisplayName(conv.club, conv.other_party, userRole, lang, t)
 
         const subtitle = userRole === 'scout'
           ? null
           : conv.other_party.organization
 
-        const lastMessagePreview = getLastMessagePreview(conv, userId, t)
+        const lastMessagePreview = getLastMessagePreview(conv, userId, t, 60)
         const timestamp = conv.last_message?.created_at
           ? formatMessageTime(conv.last_message.created_at, lang, t)
           : formatMessageTime(conv.created_at, lang, t)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { ConversationItem } from '@/lib/types'
 
@@ -11,8 +11,9 @@ interface UseConversationListOptions {
 
 /**
  * Shared hook for realtime conversation list updates.
- * Used by ChatSidebar and ChatInbox to maintain a live conversation list
- * with debounced refetching on Supabase Realtime events.
+ * Owns a single Supabase Realtime subscription (unfiltered on `messages` table).
+ * RLS ensures users only see their own conversations on refetch.
+ * Called once in ChatMessagesLayout; consumers read from ConversationListContext.
  */
 export function useConversationList({ initialConversations, userId }: UseConversationListOptions) {
   const [conversations, setConversations] = useState(initialConversations)
@@ -21,12 +22,6 @@ export function useConversationList({ initialConversations, userId }: UseConvers
   useEffect(() => {
     setConversations(initialConversations)
   }, [initialConversations])
-
-  // Track current conversation IDs for subscription filter (avoids re-subscribing)
-  const conversationIdsRef = useRef<string[]>(initialConversations.map(c => c.id))
-  useEffect(() => {
-    conversationIdsRef.current = conversations.map(c => c.id)
-  }, [conversations])
 
   // Realtime subscription — deferred to survive React StrictMode double-mount
   useEffect(() => {
@@ -53,17 +48,14 @@ export function useConversationList({ initialConversations, userId }: UseConvers
 
     const timer = setTimeout(() => {
       if (cancelled) return
-      const ids = conversationIdsRef.current
       const channelBuilder = supabase.channel(`conversations-${userId}`)
 
-      if (ids.length > 0) {
-        channelBuilder.on('postgres_changes', {
-          event: '*',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=in.(${ids.join(',')})`,
-        }, refetchConversations)
-      }
+      // Unfiltered — RLS restricts server-side; new conversations are caught too
+      channelBuilder.on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'messages',
+      }, refetchConversations)
 
       channelBuilder.on('postgres_changes', {
         event: 'INSERT',

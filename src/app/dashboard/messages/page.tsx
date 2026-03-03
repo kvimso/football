@@ -1,19 +1,14 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { getCachedUser } from '@/lib/cached-auth'
 import { getServerT } from '@/lib/server-translations'
-import { getCachedConversations } from '@/lib/chat-queries'
 import { ChatInbox } from '@/components/chat/ChatInbox'
 import { ChatEmptyState } from '@/components/chat/ChatEmptyState'
 
 export default async function ScoutMessagesPage() {
-  const supabase = await createClient()
   const { t } = await getServerT()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user } = await getCachedUser()
   if (!user) redirect('/login')
-
-  // Deduplicated with layout via React.cache — only 1 RPC per request
-  const { conversations, error } = await getCachedConversations(user.id, 'scout')
 
   return (
     <>
@@ -23,11 +18,9 @@ export default async function ScoutMessagesPage() {
         <p className="mt-1 text-sm text-foreground-muted">{t('dashboard.messagesDesc')}</p>
         <div className="mt-4">
           <ChatInbox
-            initialConversations={conversations}
-            userId={user.id}
             userRole="scout"
             basePath="/dashboard/messages"
-            error={error}
+            userId={user.id}
           />
         </div>
       </div>

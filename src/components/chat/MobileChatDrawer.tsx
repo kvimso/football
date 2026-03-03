@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useChatDrawer } from '@/context/ChatDrawerContext'
