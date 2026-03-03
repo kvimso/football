@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
@@ -10,22 +10,17 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) notFound()
 
-  if (error) console.error('Failed to get user:', error.message)
-  if (!user) redirect('/login')
-
-  // Redirect academy admins to their admin panel
-  const { data: profile, error: profileError } = await supabase
+  // Defense-in-depth role guard (middleware handles role routing normally)
+  const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
 
-  if (profileError) console.error('Failed to fetch profile:', profileError.message)
-
-  if (profile?.role === 'academy_admin') redirect('/admin')
-  if (profile?.role === 'platform_admin') redirect('/platform')
+  if (profile?.role && profile.role !== 'scout') notFound()
 
   return (
     <>

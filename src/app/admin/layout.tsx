@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { unwrapRelation } from '@/lib/utils'
 import { Navbar } from '@/components/layout/Navbar'
@@ -11,25 +11,18 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) notFound()
 
-  if (authError) console.error('Failed to get user:', authError.message)
-  if (!user) redirect('/login')
-
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from('profiles')
     .select('role, club_id, full_name, club:clubs!profiles_club_id_fkey(name, name_ka)')
     .eq('id', user.id)
     .single()
 
-  if (profileError) console.error('Failed to get profile:', profileError.message)
-
+  // Defense-in-depth role guard (middleware handles role routing normally)
   if (!profile || !['academy_admin', 'platform_admin'].includes(profile.role)) {
-    redirect('/dashboard')
-  }
-
-  if (profile.role === 'platform_admin') {
-    redirect('/platform')
+    notFound()
   }
 
   const club = unwrapRelation(profile.club)
