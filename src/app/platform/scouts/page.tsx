@@ -51,7 +51,7 @@ export default async function PlatformScoutsPage() {
                 <th className="pb-3 pr-4 font-medium">{t('platform.scouts.email')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('platform.scouts.organization')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('platform.scouts.registered')}</th>
-                <th className="pb-3 pr-4 font-medium text-center">{t('platform.scouts.shortlists')}</th>
+                <th className="pb-3 pr-4 font-medium text-center">{t('platform.scouts.watchlistCount')}</th>
                 <th className="pb-3 pr-4 font-medium text-center">{t('platform.scouts.requests')}</th>
                 <th className="pb-3 font-medium">{t('admin.common.actions')}</th>
               </tr>

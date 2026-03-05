@@ -78,7 +78,7 @@ export default async function PlatformScoutDetailPage({
       {/* Watched players */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-foreground">
-          {t('platform.scouts.shortlistedPlayers')} ({(watchlistItems ?? []).length})
+          {t('platform.scouts.watchedPlayers')} ({(watchlistItems ?? []).length})
         </h2>
         {(watchlistItems ?? []).length > 0 ? (
           <div className="mt-3 space-y-2">
