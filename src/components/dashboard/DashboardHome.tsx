@@ -6,12 +6,12 @@ import { StarIcon, MessageIcon, ArrowsIcon } from '@/components/ui/Icons'
 
 interface DashboardHomeProps {
   fullName: string
-  shortlistCount: number
+  watchlistCount: number
   messageCount: number
   unreadCount: number
 }
 
-export function DashboardHome({ fullName, shortlistCount, messageCount, unreadCount }: DashboardHomeProps) {
+export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCount }: DashboardHomeProps) {
   const { t } = useLang()
 
   return (
@@ -21,17 +21,17 @@ export function DashboardHome({ fullName, shortlistCount, messageCount, unreadCo
       </h1>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Link href="/dashboard/shortlist" className="card group">
+        <Link href="/dashboard/watchlist" className="card group">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
               <StarIcon className="h-5 w-5 text-accent" />
             </div>
             <div>
-              <div className="text-2xl font-extrabold text-accent">{shortlistCount}</div>
-              <div className="text-sm font-medium text-foreground">{t('dashboard.shortlist')}</div>
+              <div className="text-2xl font-extrabold text-accent">{watchlistCount}</div>
+              <div className="text-sm font-medium text-foreground">{t('dashboard.watchlist')}</div>
             </div>
           </div>
-          <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.shortlistDesc')}</div>
+          <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.watchlistDesc')}</div>
         </Link>
 
         <Link href="/dashboard/messages" className="card group">

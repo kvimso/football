@@ -1,4 +1,4 @@
-// Core translations: nav, common, roles, auth, home, notFound, footer, shortlist, errors, aria
+// Core translations: nav, common, roles, auth, home, notFound, footer, watchlist, errors, aria
 
 export const en = {
   nav: {
@@ -52,7 +52,7 @@ export const en = {
     hasAccount: 'Already have an account?',
     signUpLink: 'Sign up',
     signInLink: 'Sign in',
-    orContinue: 'Scout registration — browse players, create shortlists, and contact academies.',
+    orContinue: 'Scout registration — browse players, build your watchlist, and contact academies.',
     error: 'Something went wrong. Please try again.',
     checkEmail: 'Check your email for a confirmation link.',
   },
@@ -70,9 +70,10 @@ export const en = {
     contact: 'Contact',
     location: 'Tbilisi, Georgia',
   },
-  shortlist: {
-    saved: 'Saved',
-    save: 'Save',
+  watchlist: {
+    watch: 'Watch',
+    watching: 'Watching',
+    unwatch: 'Unwatch',
   },
   errors: {
     unauthorized: 'Unauthorized',
@@ -194,9 +195,10 @@ export const ka = {
     contact: 'კონტაქტი',
     location: 'თბილისი, საქართველო',
   },
-  shortlist: {
-    saved: 'შენახული',
-    save: 'შენახვა',
+  watchlist: {
+    watch: 'თვალყური',
+    watching: 'თვალყურის დევნება',
+    unwatch: 'თვალყურის მოხსნა',
   },
   errors: {
     unauthorized: 'არაავტორიზებული',

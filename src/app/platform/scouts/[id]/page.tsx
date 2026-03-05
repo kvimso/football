@@ -23,15 +23,15 @@ export default async function PlatformScoutDetailPage({
 
   if (error || !scout) notFound()
 
-  // Get shortlisted players and contact requests
-  const [{ data: shortlists }, { data: requests }] = await Promise.all([
+  // Get watched players and contact requests
+  const [{ data: watchlistItems }, { data: requests }] = await Promise.all([
     admin
-      .from('shortlists')
+      .from('watchlist')
       .select(`
         id, notes, created_at,
-        player:players!shortlists_player_id_fkey(id, name, name_ka, position, slug, club:clubs!players_club_id_fkey(name))
+        player:players!watchlist_player_id_fkey(id, name, name_ka, position, slug, club:clubs!players_club_id_fkey(name))
       `)
-      .eq('scout_id', id)
+      .eq('user_id', id)
       .order('created_at', { ascending: false }),
     admin
       .from('contact_requests')
@@ -75,14 +75,14 @@ export default async function PlatformScoutDetailPage({
         </div>
       </div>
 
-      {/* Shortlisted players */}
+      {/* Watched players */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-foreground">
-          {t('platform.scouts.shortlistedPlayers')} ({(shortlists ?? []).length})
+          {t('platform.scouts.shortlistedPlayers')} ({(watchlistItems ?? []).length})
         </h2>
-        {(shortlists ?? []).length > 0 ? (
+        {(watchlistItems ?? []).length > 0 ? (
           <div className="mt-3 space-y-2">
-            {(shortlists ?? []).map((item) => {
+            {(watchlistItems ?? []).map((item) => {
               const player = unwrapRelation(item.player)
               const club = player?.club ? unwrapRelation(player.club) : null
               return (
@@ -106,7 +106,7 @@ export default async function PlatformScoutDetailPage({
             })}
           </div>
         ) : (
-          <p className="mt-3 text-sm text-foreground-muted">{t('dashboard.noShortlist')}</p>
+          <p className="mt-3 text-sm text-foreground-muted">{t('dashboard.noWatchlist')}</p>
         )}
       </div>
 

@@ -39,6 +39,7 @@ interface PlayerDirectoryClientProps {
   clubs: Club[]
   serverPlayers: PlayerCardData[]
   viewCountMap: Record<string, number>
+  watchedPlayerIds: string[]
   /** Pre-rendered pagination from the server component */
   pagination: React.ReactNode
   totalCount: number
@@ -80,6 +81,7 @@ export function PlayerDirectoryClient({
   clubs,
   serverPlayers,
   viewCountMap,
+  watchedPlayerIds,
   pagination,
   totalCount,
 }: PlayerDirectoryClientProps) {
@@ -193,6 +195,7 @@ export function PlayerDirectoryClient({
               key={player.slug}
               player={player}
               viewCount={viewCountMap[player.id] ?? 0}
+              isWatched={watchedPlayerIds.includes(player.id)}
             />
           ))}
         </div>

@@ -1,4 +1,4 @@
-export default function ShortlistLoading() {
+export default function WatchlistLoading() {
   return (
     <div className="animate-pulse">
       <div className="h-7 w-32 rounded bg-background-secondary" />

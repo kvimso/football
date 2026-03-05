@@ -17,11 +17,11 @@ export default async function DashboardPage() {
 
   if (profileError) console.error('Failed to fetch profile:', profileError.message)
 
-  const [shortlistResult, conversationResult, unreadResult] = await Promise.all([
+  const [watchlistResult, conversationResult, unreadResult] = await Promise.all([
     supabase
-      .from('shortlists')
+      .from('watchlist')
       .select('*', { count: 'exact', head: true })
-      .eq('scout_id', user.id),
+      .eq('user_id', user.id),
     supabase
       .from('conversations')
       .select('*', { count: 'exact', head: true })
@@ -29,14 +29,14 @@ export default async function DashboardPage() {
     supabase.rpc('get_total_unread_count'),
   ])
 
-  if (shortlistResult.error) console.error('Failed to fetch shortlist count:', shortlistResult.error.message)
+  if (watchlistResult.error) console.error('Failed to fetch watchlist count:', watchlistResult.error.message)
   if (conversationResult.error) console.error('Failed to fetch conversation count:', conversationResult.error.message)
   if (unreadResult.error) console.error('Failed to fetch unread count:', unreadResult.error.message)
 
   return (
     <DashboardHome
       fullName={profile?.full_name ?? user.email ?? 'Scout'}
-      shortlistCount={shortlistResult.count ?? 0}
+      watchlistCount={watchlistResult.count ?? 0}
       messageCount={conversationResult.count ?? 0}
       unreadCount={Number(unreadResult.data ?? 0)}
     />

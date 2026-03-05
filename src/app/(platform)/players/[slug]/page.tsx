@@ -9,7 +9,7 @@ import type { Position, PlayerStatus } from '@/lib/types'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
-import { ShortlistButton } from '@/components/player/ShortlistButton'
+import { WatchButton } from '@/components/player/WatchButton'
 import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
 import { trackPageView } from '@/lib/analytics'
 import { trackPlayerView } from '@/app/actions/player-views'
@@ -140,15 +140,15 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const { data: { user }, error: authError } = authResult
   if (authError) console.error('Failed to get user:', authError.message)
 
-  let isShortlisted = false
+  let isWatched = false
   let userRole: string | null = null
 
   if (user) {
-    const [shortlistResult, profileResult] = await Promise.all([
+    const [watchlistResult, profileResult] = await Promise.all([
       supabase
-        .from('shortlists')
+        .from('watchlist')
         .select('id')
-        .eq('scout_id', user.id)
+        .eq('user_id', user.id)
         .eq('player_id', player.id)
         .maybeSingle(),
       supabase
@@ -158,8 +158,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         .single(),
     ])
 
-    if (shortlistResult.error) console.error('Failed to check shortlist:', shortlistResult.error.message)
-    isShortlisted = !!shortlistResult.data
+    if (watchlistResult.error) console.error('Failed to check watchlist:', watchlistResult.error.message)
+    isWatched = !!watchlistResult.data
 
     if (profileResult.error) console.error('Failed to fetch profile:', profileResult.error.message)
     userRole = profileResult.data?.role ?? null
@@ -258,7 +258,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             {/* Action buttons */}
             {user && (
               <div className="mt-4 flex flex-wrap gap-3">
-                <ShortlistButton playerId={player.id} isShortlisted={isShortlisted} size="md" />
+                <WatchButton playerId={player.id} isWatched={isWatched} size="md" />
                 {!isFreeAgent && userRole === 'scout' && club?.id && (
                   <MessageAcademyButton clubId={club.id} />
                 )}

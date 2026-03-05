@@ -17,19 +17,19 @@ export default async function PlatformScoutsPage() {
 
   const scoutIds = (scouts ?? []).map((s) => s.id)
 
-  // Get shortlist and request counts per scout
-  const [shortlistCounts, requestCounts] = await Promise.all([
+  // Get watchlist and request counts per scout
+  const [watchlistCounts, requestCounts] = await Promise.all([
     scoutIds.length > 0
-      ? admin.from('shortlists').select('scout_id').in('scout_id', scoutIds)
-      : Promise.resolve({ data: [] as { scout_id: string }[], error: null }),
+      ? admin.from('watchlist').select('user_id').in('user_id', scoutIds)
+      : Promise.resolve({ data: [] as { user_id: string }[], error: null }),
     scoutIds.length > 0
       ? admin.from('contact_requests').select('scout_id').in('scout_id', scoutIds)
       : Promise.resolve({ data: [] as { scout_id: string }[], error: null }),
   ])
 
-  const shortlistMap = new Map<string, number>()
-  for (const s of shortlistCounts.data ?? []) {
-    if (s.scout_id) shortlistMap.set(s.scout_id, (shortlistMap.get(s.scout_id) ?? 0) + 1)
+  const watchlistMap = new Map<string, number>()
+  for (const s of watchlistCounts.data ?? []) {
+    if (s.user_id) watchlistMap.set(s.user_id, (watchlistMap.get(s.user_id) ?? 0) + 1)
   }
   const requestMap = new Map<string, number>()
   for (const r of requestCounts.data ?? []) {
@@ -65,7 +65,7 @@ export default async function PlatformScoutsPage() {
                   <td className="py-3 pr-4 text-foreground-muted">
                     {scout.created_at ? format(new Date(scout.created_at), 'MMM d, yyyy') : '—'}
                   </td>
-                  <td className="py-3 pr-4 text-center text-foreground">{shortlistMap.get(scout.id) ?? 0}</td>
+                  <td className="py-3 pr-4 text-center text-foreground">{watchlistMap.get(scout.id) ?? 0}</td>
                   <td className="py-3 pr-4 text-center text-foreground">{requestMap.get(scout.id) ?? 0}</td>
                   <td className="py-3">
                     <Link href={`/platform/scouts/${scout.id}`} className="text-accent hover:underline">

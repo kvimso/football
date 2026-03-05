@@ -1,15 +1,18 @@
 'use client'
 
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES, POSITION_BORDER_CLASSES, BLUR_DATA_URL, POPULAR_VIEWS_THRESHOLD } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
+import { addToWatchlist, removeFromWatchlist } from '@/app/actions/watchlist'
 import type { Position, PlayerStatus } from '@/lib/types'
 
 interface PlayerCardProps {
   player: {
+    id?: string
     slug: string
     name: string
     name_ka: string
@@ -31,10 +34,13 @@ interface PlayerCardProps {
     } | null
   }
   viewCount?: number
+  isWatched?: boolean
 }
 
-export function PlayerCard({ player, viewCount }: PlayerCardProps) {
+export function PlayerCard({ player, viewCount, isWatched: initialWatched }: PlayerCardProps) {
   const { t, lang } = useLang()
+  const [isWatched, setIsWatched] = useState(initialWatched ?? false)
+  const [isPending, startTransition] = useTransition()
   const age = calculateAge(player.date_of_birth)
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = player.club
@@ -45,6 +51,22 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
   const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
   const borderClass = POSITION_BORDER_CLASSES[player.position] ?? 'border-t-accent'
   const isFreeAgent = player.status === 'free_agent'
+
+  function handleWatch(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!player.id) return
+    const playerId = player.id
+    startTransition(async () => {
+      if (isWatched) {
+        const result = await removeFromWatchlist(playerId)
+        if (!result.error) setIsWatched(false)
+      } else {
+        const result = await addToWatchlist(playerId)
+        if (!result.error) setIsWatched(true)
+      }
+    })
+  }
 
   return (
     <Link href={`/players/${player.slug}`} className={`card group block overflow-hidden !border-t-[3px] ${borderClass}`}>
@@ -88,10 +110,24 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
         )}
       </div>
 
-      {/* Info */}
-      <h3 className="truncate px-1 text-base font-bold text-foreground group-hover:text-accent transition-colors">
-        {displayName}
-      </h3>
+      {/* Info + Watch row */}
+      <div className="flex items-start justify-between gap-1 px-1">
+        <h3 className="truncate text-base font-bold text-foreground group-hover:text-accent transition-colors">
+          {displayName}
+        </h3>
+        {initialWatched !== undefined && (
+          <button
+            onClick={handleWatch}
+            disabled={isPending}
+            className={`shrink-0 text-lg leading-none transition-colors ${
+              isWatched ? 'text-accent' : 'text-foreground-muted/40 hover:text-accent/70'
+            } disabled:opacity-50`}
+            aria-label={isWatched ? t('watchlist.unwatch') : t('watchlist.watch')}
+          >
+            {isWatched ? '★' : '☆'}
+          </button>
+        )}
+      </div>
       <div className="mt-1 flex items-center gap-1.5 px-1 text-xs text-foreground-muted min-w-0">
         {isFreeAgent ? (
           <span className="font-medium text-yellow-400 shrink-0">{t('players.freeAgent')}</span>

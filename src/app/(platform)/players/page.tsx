@@ -268,6 +268,18 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     return `/players${qs ? `?${qs}` : ''}`
   }
 
+  // Fetch user's watchlist IDs (for watch icon on cards)
+  let watchedPlayerIds: string[] = []
+  const { data: { user } } = await supabase.auth.getUser()
+  if (user) {
+    const { data: watchlist, error: wlError } = await supabase
+      .from('watchlist')
+      .select('player_id')
+      .eq('user_id', user.id)
+    if (wlError) console.error('Failed to fetch watchlist:', wlError.message)
+    else watchedPlayerIds = (watchlist ?? []).map(w => w.player_id)
+  }
+
   // Convert Map to plain object for serialization across server/client boundary
   const viewCountObj: Record<string, number> = {}
   for (const [id, count] of viewCountMap) {
@@ -336,6 +348,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
         clubs={clubs ?? []}
         serverPlayers={playerCards}
         viewCountMap={viewCountObj}
+        watchedPlayerIds={watchedPlayerIds}
         pagination={paginationElement}
         totalCount={total}
       />

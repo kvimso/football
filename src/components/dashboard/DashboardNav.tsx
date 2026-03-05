@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/client'
 
 const links = [
   { href: '/dashboard', labelKey: 'dashboard.title' },
-  { href: '/dashboard/shortlist', labelKey: 'dashboard.shortlist' },
+  { href: '/dashboard/watchlist', labelKey: 'dashboard.watchlist' },
   { href: '/dashboard/messages', labelKey: 'dashboard.messages', showUnread: true },
 ]
 
