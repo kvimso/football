@@ -123,6 +123,17 @@ export const en = {
     downloadFile: 'Download file',
     closeModal: 'Close',
   },
+  notifications: {
+    title: 'Notifications',
+    empty: 'No notifications yet',
+    markAllRead: 'Mark all as read',
+    goal: 'Goal',
+    assist: 'Assist',
+    clubChange: 'Transfer',
+    freeAgent: 'Free Agent',
+    newVideo: 'New Video',
+    announcement: 'Announcement',
+  },
 }
 
 export const ka = {
@@ -247,5 +258,16 @@ export const ka = {
     closeImage: 'სურათის დახურვა',
     downloadFile: 'ფაილის ჩამოტვირთვა',
     closeModal: 'დახურვა',
+  },
+  notifications: {
+    title: 'შეტყობინებები',
+    empty: 'შეტყობინებები ჯერ არ არის',
+    markAllRead: 'ყველას წაკითხულად მონიშვნა',
+    goal: 'გოლი',
+    assist: 'ასისტი',
+    clubChange: 'ტრანსფერი',
+    freeAgent: 'თავისუფალი აგენტი',
+    newVideo: 'ახალი ვიდეო',
+    announcement: 'განცხადება',
   },
 }

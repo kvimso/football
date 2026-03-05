@@ -8,6 +8,7 @@ import { recordClubJoin, recordClubDeparture, executeTransferAccept, executeTran
 import { uuidSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { transferRequestReceivedEmail } from '@/lib/email-templates'
+import { notifyFreeAgent, notifyClubChange } from '@/lib/notifications/create'
 
 export async function releasePlayer(playerId: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
@@ -16,7 +17,7 @@ export async function releasePlayer(playerId: string) {
 
   const { data: player } = await supabase
     .from('players')
-    .select('id, club_id')
+    .select('id, club_id, name, slug')
     .eq('id', playerId)
     .single()
 
@@ -38,6 +39,9 @@ export async function releasePlayer(playerId: string) {
   if (!released || released.length === 0) return { error: 'errors.playerNoLongerAtClub' }
 
   await recordClubDeparture(admin, playerId, clubId)
+
+  // Notify watchers (fire-and-forget)
+  notifyFreeAgent(playerId, player.name, player.slug).catch(() => {})
 
   revalidatePath('/admin/players')
   revalidatePath('/admin')
@@ -166,7 +170,7 @@ export async function claimFreeAgent(playerId: string) {
 
   const { data: player } = await supabase
     .from('players')
-    .select('id, club_id, status, name')
+    .select('id, club_id, status, name, slug')
     .eq('id', playerId)
     .single()
 
@@ -193,6 +197,11 @@ export async function claimFreeAgent(playerId: string) {
 
   await recordClubJoin(admin, playerId, clubId)
 
+  // Notify watchers of club change (fire-and-forget)
+  admin.from('clubs').select('name').eq('id', clubId).single().then(({ data: club }) => {
+    notifyClubChange(playerId, player.name, player.slug, club?.name ?? 'a new club', clubId).catch(() => {})
+  })
+
   revalidatePath('/admin')
   revalidatePath('/admin/players')
   revalidatePath('/players')
@@ -217,6 +226,25 @@ export async function acceptTransfer(requestId: string) {
   const admin = createAdminClient()
   const result = await executeTransferAccept(admin, request.id)
   if (result.error) return { error: result.error }
+
+  // Notify watchers of club change (fire-and-forget)
+  if (request.to_club_id) {
+    const toClubId = request.to_club_id
+    Promise.all([
+      admin.from('players').select('name, slug').eq('id', request.player_id).single(),
+      admin.from('clubs').select('name').eq('id', toClubId).single(),
+    ]).then(([playerRes, clubRes]) => {
+      if (playerRes.data) {
+        notifyClubChange(
+          request.player_id,
+          playerRes.data.name,
+          playerRes.data.slug,
+          clubRes.data?.name ?? 'a new club',
+          toClubId
+        ).catch(() => {})
+      }
+    })
+  }
 
   revalidatePath('/admin')
   revalidatePath('/admin/players')

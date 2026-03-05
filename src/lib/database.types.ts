@@ -477,6 +477,60 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          club_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          player_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          club_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          player_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          club_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          player_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_views: {
         Row: {
           entity_id: string | null
@@ -853,45 +907,6 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      shortlists: {
-        Row: {
-          created_at: string | null
-          id: string
-          notes: string | null
-          player_id: string | null
-          scout_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          player_id?: string | null
-          scout_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          player_id?: string | null
-          scout_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "shortlists_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shortlists_scout_id_fkey"
-            columns: ["scout_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
