@@ -1,5 +1,33 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import type { NotificationPayload } from './types'
+
+const MAX_NOTIFICATIONS = 200
+
+/**
+ * Trim notifications beyond MAX per user. Best-effort, errors swallowed.
+ * Gets the created_at of the Nth newest, then deletes everything older.
+ */
+async function trimNotifications(admin: SupabaseClient, userIds: string[]): Promise<void> {
+  for (const userId of [...new Set(userIds)]) {
+    // Get the 200th notification (0-indexed offset 199)
+    const { data } = await admin
+      .from('notifications')
+      .select('created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .range(MAX_NOTIFICATIONS - 1, MAX_NOTIFICATIONS - 1)
+
+    if (!data || data.length === 0) continue
+
+    // Delete everything strictly older than the cutoff
+    await admin
+      .from('notifications')
+      .delete()
+      .eq('user_id', userId)
+      .lt('created_at', data[0].created_at)
+  }
+}
 
 /**
  * Create notifications for all users watching a specific player.
@@ -35,6 +63,9 @@ export async function notifyWatchers(
 
   // Bulk insert — ignore errors silently (notifications are best-effort)
   await admin.from('notifications').insert(notifications)
+
+  // Trim old notifications (fire-and-forget)
+  trimNotifications(admin, watchers.map(w => w.user_id)).catch(() => {})
 }
 
 /**
@@ -53,6 +84,9 @@ export async function createNotification(
     club_id: payload.club_id ?? null,
     link: payload.link ?? null,
   })
+
+  // Trim old notifications (fire-and-forget)
+  trimNotifications(admin, [payload.user_id]).catch(() => {})
 }
 
 // --- Typed notification creators for each event type ---

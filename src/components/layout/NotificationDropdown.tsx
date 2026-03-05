@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
 import { NotificationItem } from './NotificationItem'
 import type { Notification } from '@/lib/notifications/types'
@@ -56,6 +57,16 @@ export function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead,
           ))
         )}
       </div>
+
+      {/* View All link */}
+      {notifications.length > 0 && (
+        <Link
+          href="/dashboard/notifications"
+          className="block border-t border-border px-3 py-2 text-center text-[11px] font-medium text-accent hover:bg-background-secondary transition-colors"
+        >
+          {t('notifications.viewAll')}
+        </Link>
+      )}
     </div>
   )
 }

@@ -11,6 +11,7 @@ const links = [
   { href: '/dashboard', labelKey: 'dashboard.title' },
   { href: '/dashboard/watchlist', labelKey: 'dashboard.watchlist' },
   { href: '/dashboard/messages', labelKey: 'dashboard.messages', showUnread: true },
+  { href: '/dashboard/notifications', labelKey: 'notifications.title' },
 ]
 
 export function DashboardNav() {

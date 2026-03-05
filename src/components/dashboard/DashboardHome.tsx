@@ -2,16 +2,19 @@
 
 import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
+import { timeAgo } from '@/lib/utils'
 import { StarIcon, MessageIcon, ArrowsIcon } from '@/components/ui/Icons'
+import type { Notification } from '@/lib/notifications/types'
 
 interface DashboardHomeProps {
   fullName: string
   watchlistCount: number
   messageCount: number
   unreadCount: number
+  recentNotifications: Notification[]
 }
 
-export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCount }: DashboardHomeProps) {
+export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCount, recentNotifications }: DashboardHomeProps) {
   const { t } = useLang()
 
   return (
@@ -64,6 +67,35 @@ export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCo
           <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.compareDesc')}</div>
         </Link>
       </div>
+
+      {/* Recent notifications */}
+      {recentNotifications.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-semibold text-foreground">{t('notifications.title')}</h2>
+            <Link href="/dashboard/notifications" className="text-xs text-accent hover:underline">
+              {t('notifications.viewAll')}
+            </Link>
+          </div>
+          <div className="rounded-lg border border-border bg-card overflow-hidden divide-y divide-border/50">
+            {recentNotifications.slice(0, 5).map(n => (
+              <Link
+                key={n.id}
+                href={n.link ?? '/dashboard/notifications'}
+                className={`flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className={`text-xs leading-snug truncate ${!n.is_read ? 'text-foreground font-medium' : 'text-foreground-muted'}`}>
+                    {n.title}
+                  </p>
+                </div>
+                <span className="shrink-0 text-[10px] text-foreground-muted/50">{timeAgo(n.created_at)}</span>
+                {!n.is_read && <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Quick links */}
       <div className="mt-8">
