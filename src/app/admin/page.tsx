@@ -7,6 +7,7 @@ import { DashboardStatCards } from '@/components/admin/DashboardStatCards'
 import { DashboardQuickActions } from '@/components/admin/DashboardQuickActions'
 import { DashboardPlayerViews } from '@/components/admin/DashboardPlayerViews'
 import { DashboardScoutActivity } from '@/components/admin/DashboardScoutActivity'
+import { ScoutDemandCard } from '@/components/admin/ScoutDemandCard'
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -54,7 +55,7 @@ export default async function AdminDashboardPage() {
   const admin = createAdminClient()
 
   // Fetch counts, recent requests, and view stats in parallel
-  const [requestsResult, watchlistResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewCountsResult, unreadResult] =
+  const [requestsResult, watchlistResult, recentRequestsResult, pageViewsResult, scoutActivityResult, viewCountsResult, unreadResult, demandThisMonthResult, demandLastMonthResult] =
     await Promise.all([
       playerIds.length > 0
         ? supabase
@@ -107,6 +108,8 @@ export default async function AdminDashboardPage() {
       // Single RPC replaces 4 separate view count queries (10k-row fetch + 3 count queries)
       admin.rpc('get_player_view_counts', { player_ids: playerIds }),
       supabase.rpc('get_total_unread_count'),
+      admin.rpc('get_scout_demand_by_country', { p_club_id: clubId }),
+      admin.rpc('get_scout_demand_last_month', { p_club_id: clubId }),
     ])
 
   if (requestsResult.error) console.error('Failed to fetch request count:', requestsResult.error.message)
@@ -116,6 +119,8 @@ export default async function AdminDashboardPage() {
   if (scoutActivityResult.error) console.error('Failed to fetch scout activity:', scoutActivityResult.error.message)
   if (viewCountsResult.error) console.error('Failed to fetch view counts:', viewCountsResult.error.message)
   if (unreadResult.error) console.error('Failed to fetch unread count:', unreadResult.error.message)
+  if (demandThisMonthResult.error) console.error('Failed to fetch scout demand:', demandThisMonthResult.error.message)
+  if (demandLastMonthResult.error) console.error('Failed to fetch last month demand:', demandLastMonthResult.error.message)
 
   // Build per-player view breakdown from RPC data
   const clubViewCounts = viewCountsResult.data ?? []
@@ -201,6 +206,14 @@ export default async function AdminDashboardPage() {
           views={perPlayerViews}
         />
       </div>
+
+      <ScoutDemandCard
+        title={t('admin.stats.scoutDemandByCountry')}
+        noDataLabel={t('admin.stats.noScoutViews')}
+        trendLabel={t('admin.stats.vsLastMonth')}
+        thisMonth={demandThisMonthResult.data ?? []}
+        lastMonth={demandLastMonthResult.data ?? []}
+      />
 
       <DashboardScoutActivity
         title={t('admin.stats.recentActivity')}

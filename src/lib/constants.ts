@@ -85,6 +85,30 @@ export const ALLOWED_CHAT_FILE_EXTENSIONS = [
   '.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx',
 ] as const
 
+// Scout registration country options (top scouting markets first)
+export const SCOUT_COUNTRIES = [
+  'Georgia', 'United Kingdom', 'Germany', 'Spain', 'France', 'Italy',
+  'Netherlands', 'Portugal', 'Belgium', 'Turkey', 'United States',
+  'Switzerland', 'Austria', 'Denmark', 'Sweden', 'Norway',
+  'Czech Republic', 'Poland', 'Croatia', 'Greece', 'Ukraine',
+  'Russia', 'Israel', 'Japan', 'South Korea', 'China',
+  'Saudi Arabia', 'Qatar', 'UAE', 'Brazil', 'Argentina',
+  'Australia', 'Canada', 'Mexico', 'Other',
+] as const
+
+// Country code mapping for flag emoji display
+export const COUNTRY_FLAGS: Record<string, string> = {
+  'Georgia': '🇬🇪', 'United Kingdom': '🇬🇧', 'Germany': '🇩🇪', 'Spain': '🇪🇸',
+  'France': '🇫🇷', 'Italy': '🇮🇹', 'Netherlands': '🇳🇱', 'Portugal': '🇵🇹',
+  'Belgium': '🇧🇪', 'Turkey': '🇹🇷', 'United States': '🇺🇸', 'Switzerland': '🇨🇭',
+  'Austria': '🇦🇹', 'Denmark': '🇩🇰', 'Sweden': '🇸🇪', 'Norway': '🇳🇴',
+  'Czech Republic': '🇨🇿', 'Poland': '🇵🇱', 'Croatia': '🇭🇷', 'Greece': '🇬🇷',
+  'Ukraine': '🇺🇦', 'Russia': '🇷🇺', 'Israel': '🇮🇱', 'Japan': '🇯🇵',
+  'South Korea': '🇰🇷', 'China': '🇨🇳', 'Saudi Arabia': '🇸🇦', 'Qatar': '🇶🇦',
+  'UAE': '🇦🇪', 'Brazil': '🇧🇷', 'Argentina': '🇦🇷', 'Australia': '🇦🇺',
+  'Canada': '🇨🇦', 'Mexico': '🇲🇽', 'Unknown': '🌍',
+}
+
 // Tiny dark placeholder for next/image blur
 export const BLUR_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='

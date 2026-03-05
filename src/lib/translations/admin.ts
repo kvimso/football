@@ -86,6 +86,11 @@ export const en = {
       mostViewed: 'Most Viewed Player',
       viewsTrend: 'vs last week',
       playerViewBreakdown: 'Player Views',
+      scoutDemandByCountry: 'Scout Interest by Country',
+      noScoutViews: 'No scout views yet',
+      vsLastMonth: 'vs last month',
+      scoutInterest: 'Scout Interest',
+      views: 'views',
     },
     players: {
       title: 'Manage Players',
@@ -359,6 +364,11 @@ export const ka = {
       mostViewed: 'ყველაზე ნანახი მოთამაშე',
       viewsTrend: 'წინა კვირასთან',
       playerViewBreakdown: 'მოთამაშეთა ნახვები',
+      scoutDemandByCountry: 'სკაუტების ინტერესი ქვეყნების მიხედვით',
+      noScoutViews: 'სკაუტების ნახვები ჯერ არ არის',
+      vsLastMonth: 'წინა თვესთან',
+      scoutInterest: 'სკაუტების ინტერესი',
+      views: 'ნახვა',
     },
     players: {
       title: 'მოთამაშეების მართვა',

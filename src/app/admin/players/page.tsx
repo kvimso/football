@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import type { Position } from '@/lib/types'
 import { calculateAge } from '@/lib/utils'
 import { PlayerActionsMenu } from '@/components/admin/PlayerActionsMenu'
+import { PlayerScoutInterest } from '@/components/admin/PlayerScoutInterest'
 
 export default async function AdminPlayersPage() {
   const supabase = await createClient()
@@ -37,6 +39,27 @@ export default async function AdminPlayersPage() {
 
   if (error) console.error('Failed to fetch players:', error.message)
 
+  // Fetch per-player scout demand (this week's views by country)
+  const admin = createAdminClient()
+  const demandMap = new Map<string, { country: string; view_count: number }[]>()
+  if (players && players.length > 0) {
+    const demandResults = await Promise.all(
+      players.map(p => admin.rpc('get_player_scout_demand', { p_player_id: p.id }))
+    )
+    players.forEach((p, i) => {
+      const data = demandResults[i].data
+      if (data && data.length > 0) {
+        demandMap.set(p.id, data)
+      }
+    })
+  }
+
+  const scoutInterestLabels = {
+    scoutInterest: t('admin.stats.scoutInterest'),
+    noInterest: t('admin.stats.noScoutViews'),
+    views: t('admin.stats.views'),
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -56,6 +79,7 @@ export default async function AdminPlayersPage() {
                 <th className="px-4 py-3">{t('admin.players.position')}</th>
                 <th className="hidden px-4 py-3 sm:table-cell">{t('players.age')}</th>
                 <th className="px-4 py-3">{t('admin.players.status')}</th>
+                <th className="hidden px-4 py-3 sm:table-cell">{t('admin.stats.scoutInterest')}</th>
                 <th className="px-4 py-3 text-center">{t('admin.common.actions')}</th>
               </tr>
             </thead>
@@ -85,6 +109,13 @@ export default async function AdminPlayersPage() {
                       }`}>
                         {t(`admin.players.${player.status}`)}
                       </span>
+                    </td>
+                    <td className="hidden px-4 py-3 sm:table-cell">
+                      <PlayerScoutInterest
+                        playerName={displayName}
+                        demand={demandMap.get(player.id) ?? []}
+                        labels={scoutInterestLabels}
+                      />
                     </td>
                     <td className="px-4 py-3 text-center">
                       <PlayerActionsMenu

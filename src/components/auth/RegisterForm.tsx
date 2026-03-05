@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
+import { SCOUT_COUNTRIES } from '@/lib/constants'
 
 export function RegisterForm() {
   const { t } = useLang()
@@ -11,6 +12,7 @@ export function RegisterForm() {
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
   const [organization, setOrganization] = useState('')
+  const [country, setCountry] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -28,6 +30,7 @@ export function RegisterForm() {
         data: {
           full_name: fullName,
           organization,
+          country: country || undefined,
         },
       },
     })
@@ -109,6 +112,23 @@ export function RegisterForm() {
                   placeholder={t('auth.organizationHint')}
                   className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
                 />
+              </div>
+
+              <div>
+                <label htmlFor="country" className="block text-sm font-medium text-foreground-muted">
+                  {t('auth.country')}
+                </label>
+                <select
+                  id="country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                >
+                  <option value="">{t('auth.countryHint')}</option>
+                  {SCOUT_COUNTRIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
             </div>
 

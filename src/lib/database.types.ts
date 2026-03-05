@@ -870,6 +870,7 @@ export type Database = {
       profiles: {
         Row: {
           club_id: string | null
+          country: string | null
           created_at: string | null
           email: string | null
           full_name: string | null
@@ -881,6 +882,7 @@ export type Database = {
         }
         Insert: {
           club_id?: string | null
+          country?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -892,6 +894,7 @@ export type Database = {
         }
         Update: {
           club_id?: string | null
+          country?: string | null
           created_at?: string | null
           email?: string | null
           full_name?: string | null
@@ -1131,6 +1134,13 @@ export type Database = {
           unread_count: number
         }[]
       }
+      get_player_scout_demand: {
+        Args: { p_player_id: string }
+        Returns: {
+          country: string
+          view_count: number
+        }[]
+      }
       get_player_view_counts: {
         Args: { player_ids?: string[] }
         Returns: {
@@ -1138,6 +1148,20 @@ export type Database = {
           prev_week_views: number
           total_views: number
           weekly_views: number
+        }[]
+      }
+      get_scout_demand_by_country: {
+        Args: { p_club_id: string }
+        Returns: {
+          country: string
+          view_count: number
+        }[]
+      }
+      get_scout_demand_last_month: {
+        Args: { p_club_id: string }
+        Returns: {
+          country: string
+          view_count: number
         }[]
       }
       get_total_unread_count: { Args: never; Returns: number }
