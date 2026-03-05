@@ -11,6 +11,7 @@ import { ClubDetailClient } from '@/components/club/ClubDetailClient'
 import { trackPageView } from '@/lib/analytics'
 import { ClubSilhouette } from '@/components/ui/ClubSilhouette'
 import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
+import { ClubAnnouncements } from '@/components/club/ClubAnnouncements'
 
 interface ClubPageProps {
   params: Promise<{ slug: string }>
@@ -79,6 +80,14 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   if (playersError) console.error('Failed to fetch club players:', playersError.message)
 
+  // Fetch recent announcements
+  const { data: announcements } = await supabase
+    .from('academy_announcements')
+    .select('id, content, created_at')
+    .eq('club_id', club.id)
+    .order('created_at', { ascending: false })
+    .limit(5)
+
   const playerCards = (players ?? []).map((p) => {
     const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
     return {
@@ -130,6 +139,13 @@ export default async function ClubPage({ params }: ClubPageProps) {
           )}
         </div>
       </div>
+
+      {/* Announcements */}
+      <ClubAnnouncements
+        announcements={announcements ?? []}
+        title={t('clubs.announcements')}
+        noAnnouncements={t('clubs.noAnnouncements')}
+      />
 
       {/* Squad */}
       <div className="mt-10">

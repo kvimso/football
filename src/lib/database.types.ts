@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      academy_announcements: {
+        Row: {
+          club_id: string
+          content: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          club_id: string
+          content: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          club_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_announcements_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_search_history: {
         Row: {
           created_at: string

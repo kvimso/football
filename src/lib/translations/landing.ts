@@ -99,6 +99,8 @@ export const en = {
     website: 'Website',
     backToClubs: 'Back to Clubs',
     noActivePlayers: 'No active players listed.',
+    announcements: 'Announcements',
+    noAnnouncements: 'No announcements yet.',
   },
   about: {
     title: 'About the Platform',
@@ -225,6 +227,8 @@ export const ka = {
     website: 'ვებგვერდი',
     backToClubs: 'კლუბებზე დაბრუნება',
     noActivePlayers: 'აქტიური მოთამაშეები არ არის.',
+    announcements: 'განცხადებები',
+    noAnnouncements: 'განცხადებები ჯერ არ არის.',
   },
   about: {
     title: 'პლატფორმის შესახებ',
