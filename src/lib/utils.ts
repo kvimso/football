@@ -63,6 +63,15 @@ export function timeAgo(dateStr: string): string {
 }
 
 /**
+ * Normalize a Supabase relation join result to an array.
+ * Handles the common pattern where a join may return T, T[], null, or undefined.
+ */
+export function normalizeToArray<T>(value: T | T[] | null | undefined): T[] {
+  if (value == null) return []
+  return Array.isArray(value) ? value : [value]
+}
+
+/**
  * Calculate age from a date of birth string.
  */
 export function calculateAge(dateOfBirth: string | Date): number {

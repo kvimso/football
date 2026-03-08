@@ -104,7 +104,7 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
               value={query}
               onChange={handleInputChange}
               placeholder={t('chat.searchPlayers')}
-              className="input w-full pl-9"
+              className="w-full rounded-lg border border-border bg-background-secondary py-2 pr-3 pl-9 text-sm text-foreground placeholder:text-foreground-muted focus:border-accent focus:outline-none"
             />
           </div>
         </div>

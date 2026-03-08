@@ -1,4 +1,5 @@
 import { LandingNav } from '@/components/landing/LandingNav'
+import { LandingFooter } from '@/components/landing/LandingFooter'
 
 export default function AuthLayout({
   children,
@@ -6,9 +7,10 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="landing min-h-screen bg-background text-foreground">
+    <div className="landing flex min-h-dvh flex-col bg-background text-foreground">
       <LandingNav />
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
+      <LandingFooter />
     </div>
   )
 }

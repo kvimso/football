@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { CHAT_LIMITS, ALLOWED_CHAT_FILE_TYPES, ALLOWED_CHAT_FILE_EXTENSIONS } from '@/lib/constants'
+import { uuidSchema } from '@/lib/validations'
 
 // POST: Upload a file attachment for chat
 export async function POST(request: NextRequest) {
@@ -22,8 +23,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate conversation_id UUID
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-  if (!uuidRegex.test(conversationId)) {
+  if (!uuidSchema.safeParse(conversationId).success) {
     return NextResponse.json({ error: 'errors.invalidId' }, { status: 400 })
   }
 
@@ -48,10 +48,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'errors.fileTypeNotAllowed' }, { status: 400 })
   }
 
-  // Validate file extension
-  const fileName = file.name.toLowerCase()
-  const hasValidExtension = ALLOWED_CHAT_FILE_EXTENSIONS.some(ext => fileName.endsWith(ext))
-  if (!hasValidExtension) {
+  // Sanitize filename (prevent XSS in rendered filenames, strip null bytes)
+  const safeName = file.name.replace(/[<>"'&\x00]/g, '_').substring(0, 200)
+  const fileName = safeName.toLowerCase()
+
+  // Check ONLY the final extension (prevents double-extension bypass like evil.jpg.svg)
+  const lastDotIndex = fileName.lastIndexOf('.')
+  const ext = lastDotIndex > 0 ? fileName.substring(lastDotIndex) : ''
+  if (!ALLOWED_CHAT_FILE_EXTENSIONS.includes(ext as typeof ALLOWED_CHAT_FILE_EXTENSIONS[number])) {
     return NextResponse.json({ error: 'errors.fileTypeNotAllowed' }, { status: 400 })
   }
 
@@ -68,8 +72,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'errors.rateLimitUploads' }, { status: 429 })
   }
 
-  // Generate unique filename
-  const ext = fileName.substring(fileName.lastIndexOf('.'))
+  // Generate unique filename (reuse ext from validation above)
   const uniqueName = `${crypto.randomUUID()}${ext}`
   const storagePath = `${conversationId}/${uniqueName}`
 
@@ -100,7 +103,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     storage_path: storagePath,
     file_url: signedUrlData.signedUrl,
-    file_name: file.name,
+    file_name: safeName,
     file_type: file.type,
     file_size_bytes: file.size,
   })

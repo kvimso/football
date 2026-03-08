@@ -33,7 +33,7 @@ export async function ClubCard({ club }: ClubCardProps) {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-bold text-foreground group-hover:text-accent transition-colors">
+          <h3 className="line-clamp-2 text-base font-bold text-foreground group-hover:text-accent transition-colors">
             {displayName}
           </h3>
           <div className="mt-0.5 text-xs text-foreground-muted">

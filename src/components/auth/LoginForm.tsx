@@ -39,7 +39,7 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+    <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
           {/* GFT branding */}

@@ -360,31 +360,31 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         {seasonStats.length > 0 && (
           <div className="card lg:col-span-2">
             <h3 className="section-header mb-4">{t('players.seasonStats')}</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('players.seasonStats')}>
+              <table className="w-full min-w-[550px] text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-foreground-muted">
                     <th className="pb-2 pr-4">{t('stats.season')}</th>
-                    <th className="pb-2 pr-4">{t('stats.mp')}</th>
-                    <th className="pb-2 pr-4">{t('stats.g')}</th>
-                    <th className="pb-2 pr-4">{t('stats.a')}</th>
-                    <th className="pb-2 pr-4">{t('stats.min')}</th>
-                    <th className="pb-2 pr-4">{t('stats.passPercent')}</th>
-                    <th className="pb-2 pr-4">{t('stats.tackles')}</th>
-                    <th className="pb-2">{t('stats.int')}</th>
+                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.mp')}</th>
+                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.g')}</th>
+                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.a')}</th>
+                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.min')}</th>
+                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.passPercent')}</th>
+                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.tackles')}</th>
+                    <th className="whitespace-nowrap pb-2">{t('stats.int')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {seasonStats.map((s) => (
                     <tr key={s.season} className="table-row-hover border-b border-border/50">
-                      <td className="py-2 pr-4 font-medium text-foreground">{s.season}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{s.matches_played}</td>
-                      <td className="py-2 pr-4 font-semibold text-foreground">{s.goals}</td>
-                      <td className="py-2 pr-4 font-semibold text-foreground">{s.assists}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{s.minutes_played}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{s.pass_accuracy ? `${s.pass_accuracy}%` : '-'}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{s.tackles}</td>
-                      <td className="py-2 text-foreground-muted">{s.interceptions}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 font-medium text-foreground">{s.season}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{s.matches_played}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">{s.goals}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">{s.assists}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{s.minutes_played}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{s.pass_accuracy ? `${s.pass_accuracy}%` : '-'}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{s.tackles}</td>
+                      <td className="whitespace-nowrap py-2 text-foreground-muted">{s.interceptions}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -398,19 +398,19 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       {matchStats.length > 0 && (
         <div className="mt-6 card">
           <h3 className="section-header mb-4">{t('players.matchHistory')}</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={t('players.matchHistory')}>
+            <table className="w-full min-w-[700px] text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                  <th className="pb-2 pr-4">{t('stats.match')}</th>
-                  <th className="pb-2 pr-4">{t('stats.date')}</th>
-                  <th className="pb-2 pr-4">{t('stats.min')}</th>
-                  <th className="pb-2 pr-4">{t('stats.g')}</th>
-                  <th className="pb-2 pr-4">{t('stats.a')}</th>
-                  <th className="pb-2 pr-4">{t('stats.rating')}</th>
-                  <th className="pb-2 pr-4">{t('stats.passPercent')}</th>
-                  <th className="pb-2 pr-4">{t('stats.dist')}</th>
-                  <th className="pb-2">{t('stats.speed')}</th>
+                  <th className="min-w-[180px] max-w-[220px] pb-2 pr-4">{t('stats.match')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.date')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.min')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.g')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.a')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.rating')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.passPercent')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.dist')}</th>
+                  <th className="whitespace-nowrap pb-2">{t('stats.speed')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -425,27 +425,27 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                     : t('stats.match')
                   return (
                     <tr key={i} className="table-row-hover border-b border-border/50">
-                      <td className="py-2 pr-4">
+                      <td className="min-w-[180px] max-w-[220px] py-2 pr-4">
                         {m?.slug ? (
                           <Link href={`/matches/${m.slug}`} className="text-accent hover:underline">
                             {matchLabel}
                           </Link>
                         ) : matchLabel}
                       </td>
-                      <td className="py-2 pr-4 text-foreground-muted">{m?.match_date ? format(new Date(m.match_date), 'MMM d, yyyy') : '-'}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ms.minutes_played ?? '-'}</td>
-                      <td className="py-2 pr-4 font-semibold text-foreground">{ms.goals}</td>
-                      <td className="py-2 pr-4 font-semibold text-foreground">{ms.assists}</td>
-                      <td className="py-2 pr-4">
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{m?.match_date ? format(new Date(m.match_date), 'MMM d, yyyy') : '-'}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{ms.minutes_played ?? '-'}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">{ms.goals}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">{ms.assists}</td>
+                      <td className="whitespace-nowrap py-2 pr-4">
                         {ms.rating ? (
                           <span className={`font-bold ${Number(ms.rating) >= 7.5 ? 'text-accent' : Number(ms.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}>
                             {ms.rating}
                           </span>
                         ) : '-'}
                       </td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ms.pass_accuracy ? `${ms.pass_accuracy}%` : '-'}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ms.distance_km ? `${ms.distance_km}km` : '-'}</td>
-                      <td className="py-2 text-foreground-muted">{ms.top_speed_kmh ? `${ms.top_speed_kmh}km/h` : '-'}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{ms.pass_accuracy ? `${ms.pass_accuracy}%` : '-'}</td>
+                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">{ms.distance_km ? `${ms.distance_km}km` : '-'}</td>
+                      <td className="whitespace-nowrap py-2 text-foreground-muted">{ms.top_speed_kmh ? `${ms.top_speed_kmh}km/h` : '-'}</td>
                     </tr>
                   )
                 })}

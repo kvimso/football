@@ -4,11 +4,7 @@ export type PreferredFoot = 'Left' | 'Right' | 'Both'
 export type PlayerStatus = 'active' | 'free_agent'
 export type UserRole = 'scout' | 'academy_admin' | 'platform_admin'
 export type MessageType = 'text' | 'file' | 'player_ref' | 'system'
-
-// Server action result type (discriminated union)
-export type ActionResult<T = void> =
-  | ({ success: true } & (T extends void ? object : { data: T }))
-  | { error: string }
+export type TransferStatus = 'pending' | 'accepted' | 'declined' | 'expired'
 
 // Chat thread types
 export interface MessageSender {

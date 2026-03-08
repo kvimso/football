@@ -17,13 +17,14 @@ const updateRequestSchema = z.object({
 // GET /api/contact-requests — List contact requests for the current user
 export async function GET(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { user, profile } = auth
 
   const { searchParams } = new URL(request.url)
   const statusFilter = searchParams.get('status')
 
-  if (profile!.role === 'scout') {
+  if (profile.role === 'scout') {
     // Scouts see their own sent requests
     let query = supabase
       .from('contact_requests')
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
         id, message, status, response_message, created_at, responded_at,
         player:players!contact_requests_player_id_fkey ( id, name, name_ka, slug, position )
       `)
-      .eq('scout_id', user!.id)
+      .eq('scout_id', user.id)
       .order('created_at', { ascending: false })
 
     if (statusFilter) query = query.eq('status', statusFilter)
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
     return apiSuccess(data, { total: data?.length ?? 0 })
   }
 
-  if (profile!.role === 'academy_admin' && profile!.club_id) {
+  if (profile.role === 'academy_admin' && profile.club_id) {
     // Academy admins see requests for their club's players
     let query = supabase
       .from('contact_requests')
@@ -71,10 +72,11 @@ export async function GET(request: NextRequest) {
 // POST /api/contact-requests — Scout sends a contact request for a player
 export async function POST(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { user, profile } = auth
 
-  if (profile!.role !== 'scout') {
+  if (profile.role !== 'scout') {
     return apiError('errors.unauthorized', 403)
   }
 
@@ -101,7 +103,7 @@ export async function POST(request: NextRequest) {
   const { data: existing } = await supabase
     .from('contact_requests')
     .select('id')
-    .eq('scout_id', user!.id)
+    .eq('scout_id', user.id)
     .eq('player_id', parsed.data.player_id)
     .eq('status', 'pending')
     .maybeSingle()
@@ -111,7 +113,7 @@ export async function POST(request: NextRequest) {
   const { data: newRequest, error: insertError } = await supabase
     .from('contact_requests')
     .insert({
-      scout_id: user!.id,
+      scout_id: user.id,
       player_id: parsed.data.player_id,
       message: parsed.data.message,
     })
@@ -129,10 +131,11 @@ export async function POST(request: NextRequest) {
 // PATCH /api/contact-requests — Academy admin responds to a request
 export async function PATCH(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { user, profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { user, profile } = auth
 
-  if (profile!.role !== 'academy_admin') {
+  if (profile.role !== 'academy_admin') {
     return apiError('errors.unauthorized', 403)
   }
 
@@ -150,13 +153,27 @@ export async function PATCH(request: NextRequest) {
   const parsed = updateRequestSchema.safeParse(body)
   if (!parsed.success) return apiError('errors.invalidInput', 400)
 
+  // Ownership check: verify the contact request is for a player at the admin's club
+  const { data: existingRequest } = await supabase
+    .from('contact_requests')
+    .select('id, player:players!contact_requests_player_id_fkey(club_id)')
+    .eq('id', requestId)
+    .single()
+
+  if (!existingRequest) return apiError('errors.requestNotFound', 404)
+
+  const playerClubId = (existingRequest.player as { club_id: string | null } | null)?.club_id
+  if (playerClubId !== profile.club_id) {
+    return apiError('errors.unauthorized', 403)
+  }
+
   const { error: updateError } = await supabase
     .from('contact_requests')
     .update({
       status: parsed.data.status,
       response_message: parsed.data.response_message?.trim() || null,
       responded_at: new Date().toISOString(),
-      responded_by: user!.id,
+      responded_by: user.id,
     })
     .eq('id', requestId)
 

@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useAuth } from '@/context/AuthContext'
+import { LanguageToggle } from '@/components/ui/LanguageToggle'
 
 export function LandingNav() {
-  const { t, lang, setLang } = useLang()
-  const router = useRouter()
+  const { t } = useLang()
   const pathname = usePathname()
   const { user } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -40,16 +40,7 @@ export function LandingNav() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              const newLang = lang === 'en' ? 'ka' : 'en'
-              setLang(newLang)
-              router.refresh()
-            }}
-            className="rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground-muted hover:text-foreground transition-colors"
-          >
-            {lang === 'en' ? 'ქარ' : 'ENG'}
-          </button>
+          <LanguageToggle />
 
           {user ? (
             <Link href="/players" className="btn-primary text-sm">

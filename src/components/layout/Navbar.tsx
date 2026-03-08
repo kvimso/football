@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useAuth } from '@/context/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { NotificationBell } from './NotificationBell'
+import { LanguageToggle } from '@/components/ui/LanguageToggle'
 
 const NAV_ICONS: Record<string, string> = {
   '/players': 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
@@ -47,14 +48,12 @@ const ROLE_TRANSLATION_KEYS: Record<string, string> = {
 }
 
 export function Navbar() {
-  const { t, lang, setLang } = useLang()
+  const { t } = useLang()
   const { user, userRole, signOut } = useAuth()
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [langMenuOpen, setLangMenuOpen] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
-  const langMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!user || userRole === 'platform_admin') return
@@ -78,16 +77,6 @@ export function Navbar() {
       clearInterval(interval)
     }
   }, [user, userRole])
-
-  // Close lang menu on click outside
-  useEffect(() => {
-    if (!langMenuOpen) return
-    const handler = (e: MouseEvent) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) setLangMenuOpen(false)
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [langMenuOpen])
 
   async function handleLogout() {
     if (loggingOut) return
@@ -125,37 +114,7 @@ export function Navbar() {
 
         {/* Right side actions */}
         <div className="flex items-center justify-end gap-2.5">
-          {/* Language dropdown */}
-          <div ref={langMenuRef} className="relative">
-            <button
-              onClick={() => setLangMenuOpen(prev => !prev)}
-              className="flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
-            >
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5a17.92 17.92 0 0 1-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-              </svg>
-              {lang.toUpperCase()}
-              <svg className={`h-3 w-3 transition-transform ${langMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-              </svg>
-            </button>
-            {langMenuOpen && (
-              <div className="absolute right-0 top-full mt-1 z-50 min-w-[100px] overflow-hidden rounded-xl border border-border bg-card shadow-lg">
-                <button
-                  onClick={() => { setLang('en'); setLangMenuOpen(false); router.refresh() }}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-background-secondary ${lang === 'en' ? 'font-semibold text-accent' : 'text-foreground-muted'}`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => { setLang('ka'); setLangMenuOpen(false); router.refresh() }}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-background-secondary ${lang === 'ka' ? 'font-semibold text-accent' : 'text-foreground-muted'}`}
-                >
-                  ქართული
-                </button>
-              </div>
-            )}
-          </div>
+          <LanguageToggle />
 
           {user ? (
             <>

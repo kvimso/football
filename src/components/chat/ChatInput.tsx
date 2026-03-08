@@ -9,8 +9,8 @@ import type { Lang } from '@/lib/translations'
 interface ChatInputProps {
   conversationId: string
   onSendText: (content: string) => Promise<void>
-  onSendFile: (data: { storage_path: string; file_name: string; file_type: string; file_size_bytes: number }) => Promise<void>
-  onSendPlayerRef: (playerId: string) => Promise<void>
+  onSendFile: (data: { storage_path: string; file_url: string; file_name: string; file_type: string; file_size_bytes: number }) => Promise<void>
+  onSendPlayerRef: (player: PlayerSearchResult) => Promise<void>
   isBlocked: boolean
   blockedByMe: boolean
   lang: Lang
@@ -113,8 +113,8 @@ export function ChatInput({
         return
       }
 
-      const { storage_path, file_name, file_type, file_size_bytes } = await res.json()
-      await onSendFile({ storage_path, file_name, file_type, file_size_bytes })
+      const { storage_path, file_url, file_name, file_type, file_size_bytes } = await res.json()
+      await onSendFile({ storage_path, file_url, file_name, file_type, file_size_bytes })
     } catch {
       setError(t('chat.failedToSend'))
     } finally {
@@ -143,7 +143,7 @@ export function ChatInput({
 
   const handlePlayerSelect = useCallback(async (player: PlayerSearchResult) => {
     try {
-      await onSendPlayerRef(player.id)
+      await onSendPlayerRef(player)
     } catch {
       setError(t('chat.failedToSend'))
     }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { flushSync } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
@@ -11,7 +12,7 @@ import { realtimeMessageSchema, realtimeMessageUpdateSchema } from '@/lib/valida
 import { DateDivider } from '@/components/chat/DateDivider'
 import { MessageBubble } from '@/components/chat/MessageBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
-import type { ConversationDetail, MessageWithSender, MessageType, UserRole } from '@/lib/types'
+import type { ConversationDetail, MessageWithSender, MessageType, UserRole, ReferencedPlayer, PlayerSearchResult } from '@/lib/types'
 
 interface ChatThreadProps {
   conversation: ConversationDetail
@@ -48,6 +49,11 @@ export function ChatThread({
   const firstUnreadIdRef = useRef<string | null>(
     initialMessages.find(m => m.sender_id !== userId && !m.read_at)?.id ?? null
   )
+
+  // Keep last non-zero count visible during fade-out animation
+  const displayCountRef = useRef(0)
+  if (newMessageCount > 0) displayCountRef.current = newMessageCount
+  const displayCount = displayCountRef.current
 
   const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
   const displayName = getConversationDisplayName(conversation.club, conversation.other_party, userRole, lang, t)
@@ -117,11 +123,21 @@ export function ChatThread({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
-  // Scroll to bottom helper
+  // Scroll to bottom helper — uses scrollTo on container (not scrollIntoView which can scroll parent containers)
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    scrollContainerRef.current?.scrollTo({ top: scrollContainerRef.current.scrollHeight, behavior })
+    const el = scrollContainerRef.current
+    if (!el) return
+    if (behavior === 'instant') {
+      el.scrollTop = el.scrollHeight
+    } else {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    }
     setNewMessageCount(0)
   }, [])
+
+  // Ref to hold latest scrollToBottom — avoids it in effect dependency arrays
+  const scrollToBottomRef = useRef(scrollToBottom)
+  scrollToBottomRef.current = scrollToBottom
 
   // Scroll to bottom on initial mount
   useEffect(() => {
@@ -129,22 +145,29 @@ export function ChatThread({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Track scroll position — rAF-throttled with stable deps
-  const newMessageCountRef = useRef(newMessageCount)
-  newMessageCountRef.current = newMessageCount
-  const rafIdRef = useRef<number>(0)
+  // Track scroll position — rAF-throttled, stable callback (no deps)
+  const scrollRafRef = useRef<number | null>(null)
 
   const handleScroll = useCallback(() => {
-    cancelAnimationFrame(rafIdRef.current)
-    rafIdRef.current = requestAnimationFrame(() => {
+    if (scrollRafRef.current !== null) return
+    scrollRafRef.current = requestAnimationFrame(() => {
+      scrollRafRef.current = null
       const el = scrollContainerRef.current
       if (!el) return
       const threshold = 150
-      isAtBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
-      if (isAtBottomRef.current && newMessageCountRef.current > 0) {
+      const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+      isAtBottomRef.current = atBottom
+      if (atBottom) {
         setNewMessageCount(0)
       }
     })
+  }, [])
+
+  // Cleanup rAF on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollRafRef.current !== null) cancelAnimationFrame(scrollRafRef.current)
+    }
   }, [])
 
   // Mark messages as read
@@ -164,6 +187,8 @@ export function ChatThread({
 
   // Realtime subscription — deferred to survive React StrictMode double-mount
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null)
+  const wasAddedRef = useRef(false)
+
   useEffect(() => {
     let cancelled = false
     const supabase = createClient()
@@ -188,10 +213,13 @@ export function ChatThread({
           }
           const newMsg = result.data
 
-          // Don't add if it's our own optimistic message (already in state)
+          // Pure state updater — no side effects inside
           setMessages(prev => {
             // Check if already exists (by real ID)
-            if (prev.some(m => m.id === newMsg.id)) return prev
+            if (prev.some(m => m.id === newMsg.id)) {
+              wasAddedRef.current = false
+              return prev
+            }
 
             // Check if this is our own message that we sent optimistically
             if (newMsg.sender_id === userId) {
@@ -202,17 +230,28 @@ export function ChatThread({
                 Math.abs(new Date(m.created_at).getTime() - new Date(newMsg.created_at).getTime()) < 5000
               )
               if (tempIdx !== -1) {
+                wasAddedRef.current = true
                 const updated = [...prev]
                 updated[tempIdx] = {
                   ...updated[tempIdx],
                   id: newMsg.id,
+                  content: newMsg.content ?? updated[tempIdx].content,
+                  file_url: newMsg.file_url ?? updated[tempIdx].file_url,
+                  file_name: newMsg.file_name ?? updated[tempIdx].file_name,
+                  file_type: newMsg.file_type ?? updated[tempIdx].file_type,
+                  file_size_bytes: newMsg.file_size_bytes ?? updated[tempIdx].file_size_bytes,
+                  created_at: newMsg.created_at,
                   _status: 'sent',
                 }
                 return updated
               }
+              // Own message but no temp found — POST response already handled it
+              wasAddedRef.current = false
+              return prev
             }
 
             // New message from other party
+            wasAddedRef.current = true
             const realtimeMsg: MessageWithSender = {
               id: newMsg.id,
               conversation_id: newMsg.conversation_id,
@@ -230,20 +269,19 @@ export function ChatThread({
               referenced_player: null,
             }
 
-            // Announce to screen readers (incoming messages only)
-            if (realtimeMsg.sender_id !== userId) {
-              const content = realtimeMsg.content?.slice(0, 100) ?? ''
-              setLastAnnouncement(content)
-            }
+            return [...prev, realtimeMsg]
+          })
+
+          // Side effects OUTSIDE the updater — only when message was actually added
+          if (wasAddedRef.current && newMsg.sender_id !== userId) {
+            setLastAnnouncement(newMsg.content?.slice(0, 100) ?? '')
 
             if (isAtBottomRef.current) {
-              setTimeout(() => scrollToBottom(), 50)
+              requestAnimationFrame(() => scrollToBottomRef.current('instant'))
             } else {
               setNewMessageCount(c => c + 1)
             }
-
-            return [...prev, realtimeMsg]
-          })
+          }
 
           // Mark as read if visible
           if (document.visibilityState === 'visible' && newMsg.sender_id !== userId) {
@@ -285,7 +323,7 @@ export function ChatThread({
         channelRef.current = null
       }
     }
-  }, [conversation.id, userId, scrollToBottom])
+  }, [conversation.id, userId])
 
   // Load older messages — use ref to avoid recreating callback on every message change
   const messagesRef = useRef(messages)
@@ -323,10 +361,12 @@ export function ChatThread({
     payload: {
       content?: string
       file_url?: string
+      storage_path?: string
       file_name?: string
       file_type?: string
       file_size_bytes?: number
       referenced_player_id?: string
+      referenced_player?: ReferencedPlayer
     }
   ) => {
     const tempId = `temp-${Date.now()}`
@@ -344,12 +384,14 @@ export function ChatThread({
       read_at: null,
       created_at: new Date().toISOString(),
       sender: { id: userId, full_name: t('chat.you'), role: userRole as UserRole },
-      referenced_player: null,
+      referenced_player: payload.referenced_player ?? null,
       _status: 'sending',
     }
 
-    setMessages(prev => [...prev, optimistic])
-    scrollToBottom()
+    flushSync(() => {
+      setMessages(prev => [...prev, optimistic])
+    })
+    scrollToBottom('instant')
 
     try {
       const res = await fetch('/api/messages', {
@@ -359,7 +401,7 @@ export function ChatThread({
           conversation_id: conversation.id,
           message_type: type,
           content: payload.content,
-          file_url: payload.file_url,
+          file_url: payload.storage_path ?? payload.file_url,
           file_name: payload.file_name,
           file_type: payload.file_type,
           file_size_bytes: payload.file_size_bytes,
@@ -390,17 +432,30 @@ export function ChatThread({
     await sendMessage('text', { content })
   }, [sendMessage])
 
-  const sendFileMessage = useCallback(async (data: { storage_path: string; file_name: string; file_type: string; file_size_bytes: number }) => {
+  const sendFileMessage = useCallback(async (data: { storage_path: string; file_url: string; file_name: string; file_type: string; file_size_bytes: number }) => {
     await sendMessage('file', {
-      file_url: data.storage_path,
+      file_url: data.file_url,
+      storage_path: data.storage_path,
       file_name: data.file_name,
       file_type: data.file_type,
       file_size_bytes: data.file_size_bytes,
     })
   }, [sendMessage])
 
-  const sendPlayerRefMessage = useCallback(async (playerId: string) => {
-    await sendMessage('player_ref', { referenced_player_id: playerId })
+  const sendPlayerRefMessage = useCallback(async (player: PlayerSearchResult) => {
+    const refPlayer: ReferencedPlayer = {
+      id: player.id,
+      name: player.name,
+      name_ka: player.name_ka,
+      position: player.position,
+      photo_url: player.photo_url,
+      slug: player.slug,
+      club: player.club_name ? { name: player.club_name, name_ka: player.club_name_ka } : null,
+    }
+    await sendMessage('player_ref', {
+      referenced_player_id: player.id,
+      referenced_player: refPlayer,
+    })
   }, [sendMessage])
 
   // Retry failed message
@@ -600,21 +655,27 @@ export function ChatThread({
 
       </div>
 
-      {/* New messages indicator */}
-      {newMessageCount > 0 && (
-        <div className="absolute bottom-20 left-1/2 z-10 -translate-x-1/2">
-          <button
-            onClick={() => scrollToBottom()}
-            aria-label={t('aria.scrollToLatest')}
-            className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white shadow-lg transition-transform hover:scale-105"
-          >
-            {newMessageCount} {t('chat.newMessages')}
-            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-            </svg>
-          </button>
-        </div>
-      )}
+      {/* New messages pill — always rendered, transitions in/out */}
+      <div
+        className={`absolute bottom-20 left-1/2 z-10 -translate-x-1/2 transition-[opacity,transform] duration-200 ease-out ${
+          newMessageCount > 0
+            ? 'translate-y-0 opacity-100'
+            : 'translate-y-2 opacity-0 pointer-events-none'
+        }`}
+        aria-hidden={newMessageCount === 0}
+      >
+        <button
+          onClick={() => scrollToBottom()}
+          aria-label={t('aria.scrollToLatest')}
+          tabIndex={newMessageCount > 0 ? 0 : -1}
+          className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white shadow-lg transition-transform hover:scale-105"
+        >
+          {displayCount > 99 ? '99+' : displayCount} {t('chat.newMessages')}
+          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+          </svg>
+        </button>
+      </div>
 
       {/* Chat Input */}
       <ChatInput

@@ -9,8 +9,8 @@ const PAGE_SIZE = 24
 // GET /api/players — Player directory with full filter support
 export async function GET(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   const { searchParams } = new URL(request.url)
   const position = searchParams.get('position')

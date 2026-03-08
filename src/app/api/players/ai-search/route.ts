@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
   try {
     // 1. Auth
     const supabase = await createApiClient(request)
-    const { user, error: authResponse } = await authenticateRequest(supabase)
-    if (authResponse) return authResponse
+    const auth = await authenticateRequest(supabase)
+    if (!auth.ok) return auth.error
+    const { user } = auth
 
     // 2. Feature flag check
     if (process.env.NEXT_PUBLIC_AI_SEARCH_ENABLED !== 'true') {
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
       const { count: recentCount } = await supabase
         .from('ai_search_history')
         .select('id', { count: 'exact', head: true })
-        .eq('user_id', user!.id)
+        .eq('user_id', user.id)
         .gte('created_at', oneHourAgo)
 
       if (recentCount !== null && recentCount >= AI_SEARCH_LIMITS.MAX_SEARCHES_PER_HOUR) {
@@ -250,7 +251,7 @@ export async function POST(request: NextRequest) {
 
     // 9. Save to search history (fire-and-forget, skip for re-queries)
     if (!isRequery) {
-      saveSearchHistory(supabase, user!.id, query, filters, filteredPlayers.length)
+      saveSearchHistory(supabase, user.id, query, filters, filteredPlayers.length)
     }
 
     // 10. Return results

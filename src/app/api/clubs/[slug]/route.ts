@@ -9,8 +9,8 @@ export async function GET(
 ) {
   const { slug } = await params
   const supabase = await createApiClient(request)
-  const { error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
 
   const { data: club, error } = await supabase
     .from('clubs')

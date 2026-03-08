@@ -19,10 +19,11 @@ const claimFreeAgentSchema = z.object({
 // GET /api/transfers — List transfer requests for the current user's club
 export async function GET(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { profile } = auth
 
-  if (profile!.role !== 'academy_admin' || !profile!.club_id) {
+  if (profile.role !== 'academy_admin' || !profile.club_id) {
     return apiError('errors.unauthorized', 403)
   }
 
@@ -41,11 +42,11 @@ export async function GET(request: NextRequest) {
     .order('requested_at', { ascending: false })
 
   if (direction === 'incoming') {
-    query = query.eq('from_club_id', profile!.club_id)
+    query = query.eq('from_club_id', profile.club_id)
   } else if (direction === 'outgoing') {
-    query = query.eq('to_club_id', profile!.club_id)
+    query = query.eq('to_club_id', profile.club_id)
   } else {
-    query = query.or(`from_club_id.eq.${profile!.club_id},to_club_id.eq.${profile!.club_id}`)
+    query = query.or(`from_club_id.eq.${profile.club_id},to_club_id.eq.${profile.club_id}`)
   }
 
   const validStatuses = ['pending', 'accepted', 'declined', 'expired'] as const
@@ -76,10 +77,11 @@ export async function GET(request: NextRequest) {
 // POST /api/transfers — Create a transfer request or claim a free agent
 export async function POST(request: NextRequest) {
   const supabase = await createApiClient(request)
-  const { profile, error: authResponse } = await authenticateRequest(supabase)
-  if (authResponse) return authResponse
+  const auth = await authenticateRequest(supabase)
+  if (!auth.ok) return auth.error
+  const { profile } = auth
 
-  if (profile!.role !== 'academy_admin' || !profile!.club_id) {
+  if (profile.role !== 'academy_admin' || !profile.club_id) {
     return apiError('errors.unauthorized', 403)
   }
 
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
   // Check if this is a free agent claim
   const claimParsed = claimFreeAgentSchema.safeParse(body)
   if (claimParsed.success) {
-    return handleClaimFreeAgent(supabase, claimParsed.data.player_id, profile!.club_id!)
+    return handleClaimFreeAgent(supabase, claimParsed.data.player_id, profile.club_id)
   }
 
   // Otherwise it's a standard transfer request
@@ -106,14 +108,14 @@ export async function POST(request: NextRequest) {
 
   if (playerError || !player) return apiError('errors.playerNotFound', 404)
   if (!player.club_id) return apiError('errors.playerNotFoundOrFreeAgent', 400)
-  if (player.club_id === profile!.club_id) return apiError('errors.playerAlreadyAtClub', 400)
+  if (player.club_id === profile.club_id) return apiError('errors.playerAlreadyAtClub', 400)
 
   // Check for existing pending request
   const { data: existing } = await supabase
     .from('transfer_requests')
     .select('id')
     .eq('player_id', parsed.data.player_id)
-    .eq('to_club_id', profile!.club_id!)
+    .eq('to_club_id', profile.club_id)
     .eq('status', 'pending')
     .maybeSingle()
 
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
     .insert({
       player_id: parsed.data.player_id,
       from_club_id: player.club_id,
-      to_club_id: profile!.club_id!,
+      to_club_id: profile.club_id,
     })
     .select('id, status, requested_at')
     .single()

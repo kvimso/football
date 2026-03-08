@@ -281,6 +281,40 @@ html:lang(ka) {
   --font-sans: var(--font-noto-georgian), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* ── Themed scrollbars ── */
+/* Dark platform: thin emerald scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(16, 185, 129, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Landing page light theme: gray scrollbars */
+.landing ::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+}
+.landing ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.5);
+}
+
+/* Firefox: thin scrollbar support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
+}
+.landing * {
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
 /* Georgian script doesn't benefit from tight letter-spacing — it looks cramped */
 html:lang(ka) h1,
 html:lang(ka) h2,

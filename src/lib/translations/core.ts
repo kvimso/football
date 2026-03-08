@@ -12,6 +12,7 @@ export const en = {
     admin: 'Admin',
     logout: 'Logout',
     contact: 'Contact',
+    switchLanguage: 'Switch language',
   },
   common: {
     loading: 'Loading...',
@@ -155,6 +156,7 @@ export const ka = {
     admin: 'ადმინი',
     logout: 'გასვლა',
     contact: 'კონტაქტი',
+    switchLanguage: 'ენის შეცვლა',
   },
   common: {
     loading: 'იტვირთება...',

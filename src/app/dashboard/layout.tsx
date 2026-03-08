@@ -1,6 +1,7 @@
-import { redirect } from 'next/navigation'
-import { getCachedUser } from '@/lib/cached-auth'
+import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
 import { DashboardNav } from '@/components/dashboard/DashboardNav'
 
 export default async function DashboardLayout({
@@ -8,28 +9,27 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, supabase } = await getCachedUser()
-  if (!user) redirect('/login')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) notFound()
 
-  // Redirect academy admins to their admin panel
-  const { data: profile, error: profileError } = await supabase
+  // Defense-in-depth: middleware handles role routing, but guard here too
+  const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
     .single()
 
-  if (profileError) console.error('Failed to fetch profile:', profileError.message)
-
-  if (profile?.role === 'academy_admin') redirect('/admin')
-  if (profile?.role === 'platform_admin') redirect('/platform')
+  if (profile?.role !== 'scout') notFound()
 
   return (
     <>
       <Navbar />
-      <div className="mx-auto flex h-[calc(100dvh-3.5rem)] max-w-7xl flex-col px-4 pt-8">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col px-4 pt-8">
         <DashboardNav />
         <div className="mt-6 min-h-0 flex-1">{children}</div>
       </div>
+      <Footer />
     </>
   )
 }

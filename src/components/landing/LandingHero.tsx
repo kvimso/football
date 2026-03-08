@@ -55,6 +55,24 @@ export async function LandingHero() {
                 {t('landing.registerAcademy')}
               </Link>
             </div>
+
+            {/* Mobile stat bar — visible below lg only */}
+            <div className="mt-8 flex items-center justify-center gap-4 text-center lg:hidden">
+              <div>
+                <div className="text-lg font-bold text-accent">{t('landing.statsYouthPlayers')}</div>
+                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">{t('landing.statsYouthPlayersLabel')}</div>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div>
+                <div className="text-lg font-bold text-accent">{t('landing.statsTransferValue')}</div>
+                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">{t('landing.statsTransferValueLabel')}</div>
+              </div>
+              <div className="h-8 w-px bg-border" />
+              <div>
+                <div className="text-lg font-bold text-accent">{t('landing.statsAcademies')}</div>
+                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">{t('landing.statsAcademiesLabel')}</div>
+              </div>
+            </div>
           </div>
 
           {/* Right — mock player card */}

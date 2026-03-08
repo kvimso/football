@@ -36,7 +36,7 @@ export function MatchCard({ match }: MatchCardProps) {
 
       {/* Score line */}
       <div className="flex items-center justify-between gap-3">
-        <span className="flex-1 truncate text-sm font-semibold text-foreground text-left">
+        <span className="flex-1 line-clamp-1 sm:line-clamp-2 text-sm font-semibold text-foreground text-left">
           {homeName}
         </span>
         <div className="flex items-center gap-2 rounded-lg bg-background px-4 py-1.5">
@@ -48,7 +48,7 @@ export function MatchCard({ match }: MatchCardProps) {
             {match.away_score ?? '-'}
           </span>
         </div>
-        <span className="flex-1 truncate text-right text-sm font-semibold text-foreground">
+        <span className="flex-1 line-clamp-1 sm:line-clamp-2 text-right text-sm font-semibold text-foreground">
           {awayName}
         </span>
       </div>
