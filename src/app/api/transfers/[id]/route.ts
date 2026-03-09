@@ -11,10 +11,7 @@ const updateTransferSchema = z.object({
 })
 
 // PATCH /api/transfers/[id] — Accept or decline a transfer request
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   if (!uuidSchema.safeParse(id).success) return apiError('errors.invalidInput', 400)
 
@@ -28,7 +25,9 @@ export async function PATCH(
   }
 
   let body: unknown
-  try { body = await request.json() } catch {
+  try {
+    body = await request.json()
+  } catch {
     return apiError('errors.invalidInput', 400)
   }
 

@@ -18,7 +18,10 @@ export async function ForAcademies() {
       <div className="mx-auto max-w-7xl px-4">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left — decorative formation diagram */}
-          <div className="hidden lg:flex items-center justify-center order-2 lg:order-1" aria-hidden="true">
+          <div
+            className="hidden lg:flex items-center justify-center order-2 lg:order-1"
+            aria-hidden="true"
+          >
             <div className="relative h-72 w-full max-w-sm">
               {/* Shield / crest shape */}
               <div className="absolute inset-4 rounded-xl border-2 border-accent/10" />

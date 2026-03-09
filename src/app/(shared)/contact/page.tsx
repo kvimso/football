@@ -14,7 +14,9 @@ export default async function ContactPage() {
   let userEmail: string | undefined
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     userEmail = user?.email ?? undefined
   } catch {
     // Auth check failed — show default form

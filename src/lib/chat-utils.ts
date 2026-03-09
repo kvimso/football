@@ -10,11 +10,14 @@ export function getConversationDisplayName(
   otherParty: { full_name: string },
   userRole: 'scout' | 'academy_admin',
   lang: Lang,
-  t: (key: string) => string,
+  t: (key: string) => string
 ): string {
-  const rawName = userRole === 'scout'
-    ? (lang === 'ka' && club?.name_ka ? club.name_ka : club?.name ?? otherParty.full_name)
-    : otherParty.full_name
+  const rawName =
+    userRole === 'scout'
+      ? lang === 'ka' && club?.name_ka
+        ? club.name_ka
+        : (club?.name ?? otherParty.full_name)
+      : otherParty.full_name
   return rawName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
 }
 
@@ -177,8 +180,9 @@ export function linkifyMessage(content: string): MessagePart[] {
  * Check if a message contains only emoji characters (1-6 emoji, no text).
  * Used to render emoji-only messages at a larger font size.
  */
-// eslint-disable-next-line no-misleading-character-class -- FE0F/200D are intentional emoji modifiers
-const EMOJI_ONLY_REGEX = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}\s]+$/u
+const EMOJI_ONLY_REGEX =
+  // eslint-disable-next-line no-misleading-character-class -- FE0F/200D are intentional emoji modifiers
+  /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\u{FE0F}\u{200D}\u{20E3}\s]+$/u
 
 export function isEmojiOnly(text: string): boolean {
   if (!text || text.length > 30) return false
@@ -195,10 +199,12 @@ export function isEmojiOnly(text: string): boolean {
  * Used by ChatSidebar and ChatInbox to show message previews in the list.
  */
 export function getLastMessagePreview(
-  conv: { last_message: { content: string | null; message_type: string; sender_id: string } | null },
+  conv: {
+    last_message: { content: string | null; message_type: string; sender_id: string } | null
+  },
   userId: string,
   t: (key: string) => string,
-  maxLen: number = 50,
+  maxLen: number = 50
 ): string {
   if (!conv.last_message) return ''
 

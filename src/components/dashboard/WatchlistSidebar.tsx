@@ -20,8 +20,17 @@ interface Props {
 }
 
 export function WatchlistSidebar({
-  folders, folderCounts, totalCount, activeFolder, allTags, activeTags,
-  onSelectFolder, onSelectTag, onFolderCreated, onFolderDeleted, onFolderRenamed,
+  folders,
+  folderCounts,
+  totalCount,
+  activeFolder,
+  allTags,
+  activeTags,
+  onSelectFolder,
+  onSelectTag,
+  onFolderCreated,
+  onFolderDeleted,
+  onFolderRenamed,
 }: Props) {
   const { t } = useLang()
   const [isPending, startTransition] = useTransition()
@@ -35,7 +44,11 @@ export function WatchlistSidebar({
     startTransition(async () => {
       const result = await createFolder(newFolderName.trim())
       if (result.success && result.folderId) {
-        onFolderCreated({ id: result.folderId, name: newFolderName.trim(), created_at: new Date().toISOString() })
+        onFolderCreated({
+          id: result.folderId,
+          name: newFolderName.trim(),
+          created_at: new Date().toISOString(),
+        })
         setNewFolderName('')
         setShowNewFolder(false)
       }
@@ -104,7 +117,9 @@ export function WatchlistSidebar({
           <button
             onClick={() => onSelectFolder(null)}
             className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
-              !activeFolder ? 'bg-accent/10 text-accent font-medium' : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+              !activeFolder
+                ? 'bg-accent/10 text-accent font-medium'
+                : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
             }`}
           >
             <span>{t('dashboard.allPlayers')}</span>
@@ -127,10 +142,17 @@ export function WatchlistSidebar({
                     className="flex-1 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-accent"
                     autoFocus
                   />
-                  <button onClick={() => handleRename(folder.id)} disabled={isPending} className="text-xs text-accent">
+                  <button
+                    onClick={() => handleRename(folder.id)}
+                    disabled={isPending}
+                    className="text-xs text-accent"
+                  >
                     &#10003;
                   </button>
-                  <button onClick={() => setRenamingId(null)} className="text-xs text-foreground-muted">
+                  <button
+                    onClick={() => setRenamingId(null)}
+                    className="text-xs text-foreground-muted"
+                  >
                     &#10005;
                   </button>
                 </div>
@@ -139,7 +161,9 @@ export function WatchlistSidebar({
                   <button
                     onClick={() => onSelectFolder(activeFolder === folder.id ? null : folder.id)}
                     className={`flex flex-1 items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
-                      activeFolder === folder.id ? 'bg-accent/10 text-accent font-medium' : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+                      activeFolder === folder.id
+                        ? 'bg-accent/10 text-accent font-medium'
+                        : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
                     }`}
                   >
                     <span className="truncate">{folder.name}</span>
@@ -147,12 +171,25 @@ export function WatchlistSidebar({
                   </button>
                   <div className="hidden group-hover:flex items-center gap-0.5 pr-1">
                     <button
-                      onClick={() => { setRenamingId(folder.id); setRenameText(folder.name) }}
+                      onClick={() => {
+                        setRenamingId(folder.id)
+                        setRenameText(folder.name)
+                      }}
                       className="rounded p-0.5 text-foreground-muted/50 hover:text-foreground"
                       title={t('dashboard.renameFolder')}
                     >
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
+                      <svg
+                        className="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z"
+                        />
                       </svg>
                     </button>
                     <button
@@ -160,8 +197,18 @@ export function WatchlistSidebar({
                       className="rounded p-0.5 text-foreground-muted/50 hover:text-red-400"
                       title={t('dashboard.deleteFolder')}
                     >
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      <svg
+                        className="h-3 w-3"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -174,7 +221,9 @@ export function WatchlistSidebar({
           <button
             onClick={() => onSelectFolder(activeFolder === '__unfoldered' ? null : '__unfoldered')}
             className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
-              activeFolder === '__unfoldered' ? 'bg-accent/10 text-accent font-medium' : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+              activeFolder === '__unfoldered'
+                ? 'bg-accent/10 text-accent font-medium'
+                : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
             }`}
           >
             <span className="italic">{t('dashboard.unfoldered')}</span>
@@ -189,7 +238,7 @@ export function WatchlistSidebar({
             {t('dashboard.tags')}
           </h3>
           <div className="flex flex-wrap gap-1">
-            {allTags.map(tag => (
+            {allTags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => onSelectTag(tag)}

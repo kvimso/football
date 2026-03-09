@@ -42,16 +42,10 @@ export async function LandingHero() {
               {t('landing.heroSubtitle')}
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start sm:justify-center">
-              <Link
-                href="/register"
-                className="btn-primary px-8 py-3.5 text-base font-semibold"
-              >
+              <Link href="/register" className="btn-primary px-8 py-3.5 text-base font-semibold">
                 {t('landing.registerScout')}
               </Link>
-              <Link
-                href="/login"
-                className="btn-secondary px-8 py-3.5 text-base font-semibold"
-              >
+              <Link href="/login" className="btn-secondary px-8 py-3.5 text-base font-semibold">
                 {t('landing.registerAcademy')}
               </Link>
             </div>
@@ -59,18 +53,28 @@ export async function LandingHero() {
             {/* Mobile stat bar — visible below lg only */}
             <div className="mt-8 flex items-center justify-center gap-4 text-center lg:hidden">
               <div>
-                <div className="text-lg font-bold text-accent">{t('landing.statsYouthPlayers')}</div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">{t('landing.statsYouthPlayersLabel')}</div>
+                <div className="text-lg font-bold text-accent">
+                  {t('landing.statsYouthPlayers')}
+                </div>
+                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
+                  {t('landing.statsYouthPlayersLabel')}
+                </div>
               </div>
               <div className="h-8 w-px bg-border" />
               <div>
-                <div className="text-lg font-bold text-accent">{t('landing.statsTransferValue')}</div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">{t('landing.statsTransferValueLabel')}</div>
+                <div className="text-lg font-bold text-accent">
+                  {t('landing.statsTransferValue')}
+                </div>
+                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
+                  {t('landing.statsTransferValueLabel')}
+                </div>
               </div>
               <div className="h-8 w-px bg-border" />
               <div>
                 <div className="text-lg font-bold text-accent">{t('landing.statsAcademies')}</div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">{t('landing.statsAcademiesLabel')}</div>
+                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
+                  {t('landing.statsAcademiesLabel')}
+                </div>
               </div>
             </div>
           </div>
@@ -97,9 +101,7 @@ export async function LandingHero() {
 
                   {/* Name & info */}
                   <div className="mt-4 text-center">
-                    <div className="text-lg font-bold">
-                      {t('landing.mockPlayerName')}
-                    </div>
+                    <div className="text-lg font-bold">{t('landing.mockPlayerName')}</div>
                     <div className="mt-1 flex items-center justify-center gap-2 text-sm text-foreground-muted">
                       <span className="inline-block h-2 w-2 rounded-full bg-pos-mid" />
                       <span>{t('landing.mockPosition')}</span>
@@ -136,7 +138,11 @@ export async function LandingHero() {
                   {/* Verified badge */}
                   <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
                     <svg className="h-3 w-3 text-accent" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.403 12.652a3 3 0 010-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                      <path
+                        fillRule="evenodd"
+                        d="M16.403 12.652a3 3 0 010-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>{t('landing.verifiedStats')}</span>
                   </div>

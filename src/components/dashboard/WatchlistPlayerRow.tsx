@@ -25,8 +25,15 @@ interface Props {
 }
 
 export function WatchlistPlayerRow({
-  item, tags, folderIds, folders,
-  onRemove, onTagAdded, onTagRemoved, onFolderAssigned, onFolderUnassigned,
+  item,
+  tags,
+  folderIds,
+  folders,
+  onRemove,
+  onTagAdded,
+  onTagRemoved,
+  onFolderAssigned,
+  onFolderUnassigned,
 }: Props) {
   const { t, lang } = useLang()
   const [isPending, startTransition] = useTransition()
@@ -98,7 +105,13 @@ export function WatchlistPlayerRow({
         {/* Photo */}
         <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-background border border-border">
           {player.photo_url ? (
-            <Image src={player.photo_url} alt={player.name} fill className="rounded-lg object-cover" sizes="44px" />
+            <Image
+              src={player.photo_url}
+              alt={player.name}
+              fill
+              className="rounded-lg object-cover"
+              sizes="44px"
+            />
           ) : (
             <PlayerSilhouette size="sm" className="text-foreground-muted/30" />
           )}
@@ -107,17 +120,24 @@ export function WatchlistPlayerRow({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent transition-colors truncate">
+            <Link
+              href={`/players/${player.slug}`}
+              className="font-medium text-foreground hover:text-accent transition-colors truncate"
+            >
               {displayName}
             </Link>
-            <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}>
+            <span
+              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}
+            >
               {player.position}
             </span>
           </div>
           <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
             {clubName && <span>{clubName}</span>}
             {clubName && <span>&middot;</span>}
-            <span>{age} {t('players.years')}</span>
+            <span>
+              {age} {t('players.years')}
+            </span>
           </div>
         </div>
 
@@ -131,23 +151,41 @@ export function WatchlistPlayerRow({
                 className="rounded p-1 text-foreground-muted/50 hover:text-foreground transition-colors"
                 title={t('dashboard.assignToFolder')}
               >
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                <svg
+                  className="h-3.5 w-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"
+                  />
                 </svg>
               </button>
               {showFolderMenu && (
                 <div className="absolute right-0 top-full mt-1 z-20 min-w-[140px] rounded-lg border border-border bg-card shadow-lg py-1">
-                  {folders.map(folder => (
+                  {folders.map((folder) => (
                     <button
                       key={folder.id}
                       onClick={() => handleToggleFolder(folder.id)}
                       disabled={isPending}
                       className="flex w-full items-center gap-2 px-3 py-1.5 text-xs text-foreground-muted hover:bg-background-secondary hover:text-foreground"
                     >
-                      <span className={`h-3 w-3 rounded border ${folderIds.includes(folder.id) ? 'bg-accent border-accent' : 'border-border'}`}>
+                      <span
+                        className={`h-3 w-3 rounded border ${folderIds.includes(folder.id) ? 'bg-accent border-accent' : 'border-border'}`}
+                      >
                         {folderIds.includes(folder.id) && (
                           <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
-                            <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                            <path
+                              d="M2.5 6L5 8.5L9.5 3.5"
+                              stroke="currentColor"
+                              strokeWidth={1.5}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
                           </svg>
                         )}
                       </span>
@@ -166,7 +204,13 @@ export function WatchlistPlayerRow({
             className="rounded p-1 text-foreground-muted/50 hover:text-red-400 transition-colors disabled:opacity-50"
             title={t('dashboard.removeFromWatchlist')}
           >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <svg
+              className="h-3.5 w-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
@@ -175,8 +219,11 @@ export function WatchlistPlayerRow({
 
       {/* Tags row */}
       <div className="mt-2 flex flex-wrap items-center gap-1">
-        {tags.map(tag => (
-          <span key={tag.id} className="inline-flex items-center gap-0.5 rounded-full bg-background-secondary px-2 py-0.5 text-[11px] text-foreground-muted">
+        {tags.map((tag) => (
+          <span
+            key={tag.id}
+            className="inline-flex items-center gap-0.5 rounded-full bg-background-secondary px-2 py-0.5 text-[11px] text-foreground-muted"
+          >
             #{tag.tag}
             <button
               onClick={() => handleRemoveTag(tag.id)}
@@ -195,14 +242,21 @@ export function WatchlistPlayerRow({
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleAddTag()
-                if (e.key === 'Escape') { setShowTagInput(false); setTagInput('') }
+                if (e.key === 'Escape') {
+                  setShowTagInput(false)
+                  setTagInput('')
+                }
               }}
               placeholder={t('dashboard.tagPlaceholder')}
               className="w-28 rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-foreground outline-none focus:border-accent"
               maxLength={30}
               autoFocus
             />
-            <button onClick={handleAddTag} disabled={isPending || !tagInput.trim()} className="text-[11px] text-accent">
+            <button
+              onClick={handleAddTag}
+              disabled={isPending || !tagInput.trim()}
+              className="text-[11px] text-accent"
+            >
               &#10003;
             </button>
           </div>
@@ -232,19 +286,31 @@ export function WatchlistPlayerRow({
               placeholder={t('dashboard.notesPlaceholder')}
               autoFocus
             />
-            <button onClick={handleSaveNote} disabled={isPending} className="text-xs text-accent hover:underline">
+            <button
+              onClick={handleSaveNote}
+              disabled={isPending}
+              className="text-xs text-accent hover:underline"
+            >
               {t('dashboard.saveNote')}
             </button>
-            <button onClick={() => setEditingNote(false)} className="text-xs text-foreground-muted hover:underline">
+            <button
+              onClick={() => setEditingNote(false)}
+              className="text-xs text-foreground-muted hover:underline"
+            >
               {t('common.cancel')}
             </button>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             {item.notes ? (
-              <span className="text-xs text-foreground-muted/70 italic truncate">&quot;{item.notes}&quot;</span>
+              <span className="text-xs text-foreground-muted/70 italic truncate">
+                &quot;{item.notes}&quot;
+              </span>
             ) : null}
-            <button onClick={() => setEditingNote(true)} className="shrink-0 text-xs text-foreground-muted/50 hover:text-accent">
+            <button
+              onClick={() => setEditingNote(true)}
+              className="shrink-0 text-xs text-foreground-muted/50 hover:text-accent"
+            >
               {item.notes ? t('dashboard.editNote') : t('dashboard.addNote')}
             </button>
           </div>

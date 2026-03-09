@@ -22,7 +22,14 @@ function getPoint(index: number, value: number, maxRadius: number): [number, num
 }
 
 export function RadarChart({ skills, labels }: RadarChartProps) {
-  const values = [skills.pace ?? 0, skills.shooting ?? 0, skills.passing ?? 0, skills.dribbling ?? 0, skills.defending ?? 0, skills.physical ?? 0]
+  const values = [
+    skills.pace ?? 0,
+    skills.shooting ?? 0,
+    skills.passing ?? 0,
+    skills.dribbling ?? 0,
+    skills.defending ?? 0,
+    skills.physical ?? 0,
+  ]
 
   // Build polygon for player stats
   const points = values.map((v, i) => getPoint(i, v, RADIUS))

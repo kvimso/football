@@ -50,7 +50,9 @@ export function PlayerForm({ player }: PlayerFormProps) {
       last_name_ka: String(form.get('last_name_ka') ?? ''),
       date_of_birth: String(form.get('date_of_birth') ?? ''),
       position: String(form.get('position') ?? '') as Position,
-      preferred_foot: (String(form.get('preferred_foot') ?? '') || undefined) as PreferredFoot | undefined,
+      preferred_foot: (String(form.get('preferred_foot') ?? '') || undefined) as
+        | PreferredFoot
+        | undefined,
       height_cm: form.get('height_cm') ? Number(form.get('height_cm')) : undefined,
       weight_kg: form.get('weight_kg') ? Number(form.get('weight_kg')) : undefined,
       parent_guardian_contact: String(form.get('parent_guardian_contact') ?? '') || undefined,
@@ -119,7 +121,10 @@ export function PlayerForm({ player }: PlayerFormProps) {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="first_name_ka" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="first_name_ka"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.firstNameKa')}
             </label>
             <input
@@ -132,7 +137,10 @@ export function PlayerForm({ player }: PlayerFormProps) {
             />
           </div>
           <div>
-            <label htmlFor="last_name_ka" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="last_name_ka"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.lastNameKa')}
             </label>
             <input
@@ -151,7 +159,10 @@ export function PlayerForm({ player }: PlayerFormProps) {
       <div className="card space-y-4 p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <label htmlFor="date_of_birth" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="date_of_birth"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.dateOfBirth')}
             </label>
             <input
@@ -183,7 +194,10 @@ export function PlayerForm({ player }: PlayerFormProps) {
             </select>
           </div>
           <div>
-            <label htmlFor="preferred_foot" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="preferred_foot"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.preferredFoot')}
             </label>
             <select
@@ -237,7 +251,10 @@ export function PlayerForm({ player }: PlayerFormProps) {
       {/* Parent/guardian contact */}
       <div className="card space-y-4 p-4">
         <div>
-          <label htmlFor="parent_guardian_contact" className="block text-sm font-medium text-foreground-muted">
+          <label
+            htmlFor="parent_guardian_contact"
+            className="block text-sm font-medium text-foreground-muted"
+          >
             {t('admin.players.parentGuardianContact')}
           </label>
           <input
@@ -256,11 +273,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
 
       {/* Actions */}
       <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={saving}
-          className="btn-primary text-sm disabled:opacity-50"
-        >
+        <button type="submit" disabled={saving} className="btn-primary text-sm disabled:opacity-50">
           {saving ? t('common.loading') : t('admin.common.save')}
         </button>
         <button

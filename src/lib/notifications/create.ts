@@ -48,7 +48,7 @@ export async function notifyWatchers(
 
   if (error || !watchers || watchers.length === 0) return
 
-  const notifications = watchers.map(w => {
+  const notifications = watchers.map((w) => {
     const payload = buildPayload(w.user_id)
     return {
       user_id: w.user_id,
@@ -65,15 +65,16 @@ export async function notifyWatchers(
   await admin.from('notifications').insert(notifications)
 
   // Trim old notifications (fire-and-forget)
-  trimNotifications(admin, watchers.map(w => w.user_id)).catch(() => {})
+  trimNotifications(
+    admin,
+    watchers.map((w) => w.user_id)
+  ).catch(() => {})
 }
 
 /**
  * Create a single notification for a specific user.
  */
-export async function createNotification(
-  payload: NotificationPayload
-): Promise<void> {
+export async function createNotification(payload: NotificationPayload): Promise<void> {
   const admin = createAdminClient()
   await admin.from('notifications').insert({
     user_id: payload.user_id,

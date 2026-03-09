@@ -3,10 +3,7 @@ import { createApiClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
 
 // GET /api/clubs/[slug] — Club detail with squad
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const supabase = await createApiClient(request)
   const auth = await authenticateRequest(supabase)
@@ -14,10 +11,12 @@ export async function GET(
 
   const { data: club, error } = await supabase
     .from('clubs')
-    .select(`
+    .select(
+      `
       id, name, name_ka, slug, logo_url, city, region,
       description, description_ka, website
-    `)
+    `
+    )
     .eq('slug', slug)
     .single()
 
@@ -28,11 +27,13 @@ export async function GET(
   // Fetch active players
   const { data: players, error: playersError } = await supabase
     .from('players')
-    .select(`
+    .select(
+      `
       id, slug, name, name_ka, position, date_of_birth, height_cm,
       preferred_foot, photo_url, status, platform_id,
       season_stats:player_season_stats ( season, goals, assists, matches_played )
-    `)
+    `
+    )
     .eq('club_id', club.id)
     .eq('status', 'active')
     .order('position')
@@ -43,8 +44,13 @@ export async function GET(
   }
 
   const squad = (players ?? []).map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
-    const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
+    const statsArr = Array.isArray(p.season_stats)
+      ? p.season_stats
+      : p.season_stats
+        ? [p.season_stats]
+        : []
+    const latestStats =
+      statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,
       season_stats: undefined,

@@ -36,11 +36,13 @@ export default async function RootLayout({
   // Check auth server-side so AuthProvider hydrates with correct state (no flash)
   let initialUser: { id: string; email?: string } | null = null
   let initialRole: UserRole | null = null
-  const hasAuthCookie = cookieStore.getAll().some(c => c.name.startsWith('sb-'))
+  const hasAuthCookie = cookieStore.getAll().some((c) => c.name.startsWith('sb-'))
   if (hasAuthCookie) {
     try {
       const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
       if (user) {
         initialUser = { id: user.id, email: user.email ?? undefined }
         const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
@@ -53,9 +55,7 @@ export default async function RootLayout({
 
   return (
     <html lang={lang}>
-      <body
-        className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
-      >
+      <body className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}>
         <LanguageProvider initialLang={lang as 'en' | 'ka'}>
           <AuthProvider initialUser={initialUser} initialRole={initialRole}>
             {children}

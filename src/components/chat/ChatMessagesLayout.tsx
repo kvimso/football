@@ -35,7 +35,10 @@ export function ChatMessagesLayout({
             h-full fills the flex-1 area from parent layout (no magic number needed) */}
         <div className="flex h-full overflow-hidden rounded-lg border border-border">
           {/* Desktop sidebar — hidden below lg */}
-          <nav aria-label={t('chat.conversationList')} className="hidden lg:flex w-80 shrink-0 flex-col border-r border-border bg-background">
+          <nav
+            aria-label={t('chat.conversationList')}
+            className="hidden lg:flex w-80 shrink-0 flex-col border-r border-border bg-background"
+          >
             <ChatSidebar userRole={userRole} basePath={basePath} userId={userId} error={error} />
           </nav>
 
@@ -45,7 +48,11 @@ export function ChatMessagesLayout({
           </MobileChatDrawer>
 
           {/* Thread pane / empty state */}
-          <div role="region" aria-label={t('chat.messageThread')} className="flex-1 min-w-0 flex flex-col">
+          <div
+            role="region"
+            aria-label={t('chat.messageThread')}
+            className="flex-1 min-w-0 flex flex-col"
+          >
             {children}
           </div>
         </div>

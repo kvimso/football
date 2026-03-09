@@ -27,11 +27,7 @@ export default async function AdminMessagesPage() {
         <h1 className="text-2xl font-bold text-foreground">{t('chat.messages')}</h1>
         <p className="mt-1 text-sm text-foreground-muted">{t('dashboard.messagesDesc')}</p>
         <div className="mt-4">
-          <ChatInbox
-            userRole="academy_admin"
-            basePath="/admin/messages"
-            userId={user.id}
-          />
+          <ChatInbox userRole="academy_admin" basePath="/admin/messages" userId={user.id} />
         </div>
       </div>
 

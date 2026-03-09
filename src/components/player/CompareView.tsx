@@ -20,8 +20,24 @@ interface PlayerData {
   preferred_foot: string | null
   jersey_number: number | null
   club: { name: string; name_ka: string } | null
-  skills: { pace: number | null; shooting: number | null; passing: number | null; dribbling: number | null; defending: number | null; physical: number | null } | null
-  season_stats: { season: string; matches_played: number | null; goals: number | null; assists: number | null; minutes_played: number | null; pass_accuracy: number | null; tackles: number | null; interceptions: number | null } | null
+  skills: {
+    pace: number | null
+    shooting: number | null
+    passing: number | null
+    dribbling: number | null
+    defending: number | null
+    physical: number | null
+  } | null
+  season_stats: {
+    season: string
+    matches_played: number | null
+    goals: number | null
+    assists: number | null
+    minutes_played: number | null
+    pass_accuracy: number | null
+    tackles: number | null
+    interceptions: number | null
+  } | null
 }
 
 interface CompareViewProps {
@@ -55,12 +71,18 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
     return p.club ? (lang === 'ka' ? p.club.name_ka : p.club.name) : '-'
   }
 
-  const radarLabels = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(k => t('skills.' + k))
+  const radarLabels = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(
+    (k) => t('skills.' + k)
+  )
   const bothSelected = player1 && player2
 
   // Build display labels from loaded player data
-  const p1Label = player1 ? `${lang === 'ka' ? player1.name_ka : player1.name} (${player1.position})` : ''
-  const p2Label = player2 ? `${lang === 'ka' ? player2.name_ka : player2.name} (${player2.position})` : ''
+  const p1Label = player1
+    ? `${lang === 'ka' ? player1.name_ka : player1.name} (${player1.position})`
+    : ''
+  const p2Label = player2
+    ? `${lang === 'ka' ? player2.name_ka : player2.name} (${player2.position})`
+    : ''
 
   return (
     <div>
@@ -91,7 +113,9 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
           {/* Overlay radar chart */}
           {player1.skills && player2.skills ? (
             <div className="card text-center">
-              <h3 className="mb-4 font-semibold text-foreground">{t('compare.skillsComparison')}</h3>
+              <h3 className="mb-4 font-semibold text-foreground">
+                {t('compare.skillsComparison')}
+              </h3>
               <CompareRadarChart
                 skills1={player1.skills}
                 skills2={player2.skills}
@@ -124,34 +148,136 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
                 </tr>
               </thead>
               <tbody>
-                <CompareRow label={t('compare.position')} v1={player1.position} v2={player2.position} />
-                <CompareRow label={t('compare.age')} v1={calculateAge(player1.date_of_birth)} v2={calculateAge(player2.date_of_birth)} showDiff />
-                <CompareRow label={t('compare.club')} v1={getClubName(player1)} v2={getClubName(player2)} />
-                <CompareRow label={t('compare.height')} v1={player1.height_cm ?? '-'} v2={player2.height_cm ?? '-'} suffix="cm" showDiff />
-                <CompareRow label={t('compare.weight')} v1={player1.weight_kg ?? '-'} v2={player2.weight_kg ?? '-'} suffix="kg" showDiff />
-                <CompareRow label={t('compare.foot')} v1={player1.preferred_foot ?? '-'} v2={player2.preferred_foot ?? '-'} />
+                <CompareRow
+                  label={t('compare.position')}
+                  v1={player1.position}
+                  v2={player2.position}
+                />
+                <CompareRow
+                  label={t('compare.age')}
+                  v1={calculateAge(player1.date_of_birth)}
+                  v2={calculateAge(player2.date_of_birth)}
+                  showDiff
+                />
+                <CompareRow
+                  label={t('compare.club')}
+                  v1={getClubName(player1)}
+                  v2={getClubName(player2)}
+                />
+                <CompareRow
+                  label={t('compare.height')}
+                  v1={player1.height_cm ?? '-'}
+                  v2={player2.height_cm ?? '-'}
+                  suffix="cm"
+                  showDiff
+                />
+                <CompareRow
+                  label={t('compare.weight')}
+                  v1={player1.weight_kg ?? '-'}
+                  v2={player2.weight_kg ?? '-'}
+                  suffix="kg"
+                  showDiff
+                />
+                <CompareRow
+                  label={t('compare.foot')}
+                  v1={player1.preferred_foot ?? '-'}
+                  v2={player2.preferred_foot ?? '-'}
+                />
 
                 {/* Skills */}
                 {player1.skills && player2.skills && (
                   <>
-                    <CompareRow label={t('compare.pace')} v1={player1.skills.pace ?? 0} v2={player2.skills.pace ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.shooting')} v1={player1.skills.shooting ?? 0} v2={player2.skills.shooting ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.passing')} v1={player1.skills.passing ?? 0} v2={player2.skills.passing ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.dribbling')} v1={player1.skills.dribbling ?? 0} v2={player2.skills.dribbling ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.defending')} v1={player1.skills.defending ?? 0} v2={player2.skills.defending ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.physical')} v1={player1.skills.physical ?? 0} v2={player2.skills.physical ?? 0} highlight showDiff />
+                    <CompareRow
+                      label={t('compare.pace')}
+                      v1={player1.skills.pace ?? 0}
+                      v2={player2.skills.pace ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.shooting')}
+                      v1={player1.skills.shooting ?? 0}
+                      v2={player2.skills.shooting ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.passing')}
+                      v1={player1.skills.passing ?? 0}
+                      v2={player2.skills.passing ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.dribbling')}
+                      v1={player1.skills.dribbling ?? 0}
+                      v2={player2.skills.dribbling ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.defending')}
+                      v1={player1.skills.defending ?? 0}
+                      v2={player2.skills.defending ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.physical')}
+                      v1={player1.skills.physical ?? 0}
+                      v2={player2.skills.physical ?? 0}
+                      highlight
+                      showDiff
+                    />
                   </>
                 )}
 
                 {/* Season stats */}
                 {player1.season_stats && player2.season_stats && (
                   <>
-                    <CompareRow label={t('compare.matches')} v1={player1.season_stats.matches_played ?? 0} v2={player2.season_stats.matches_played ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.goals')} v1={player1.season_stats.goals ?? 0} v2={player2.season_stats.goals ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.assists')} v1={player1.season_stats.assists ?? 0} v2={player2.season_stats.assists ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.minutes')} v1={player1.season_stats.minutes_played ?? 0} v2={player2.season_stats.minutes_played ?? 0} highlight showDiff />
-                    <CompareRow label={t('compare.passPercent')} v1={player1.season_stats.pass_accuracy ?? '-'} v2={player2.season_stats.pass_accuracy ?? '-'} suffix="%" highlight showDiff />
-                    <CompareRow label={t('compare.tackles')} v1={player1.season_stats.tackles ?? 0} v2={player2.season_stats.tackles ?? 0} highlight showDiff />
+                    <CompareRow
+                      label={t('compare.matches')}
+                      v1={player1.season_stats.matches_played ?? 0}
+                      v2={player2.season_stats.matches_played ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.goals')}
+                      v1={player1.season_stats.goals ?? 0}
+                      v2={player2.season_stats.goals ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.assists')}
+                      v1={player1.season_stats.assists ?? 0}
+                      v2={player2.season_stats.assists ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.minutes')}
+                      v1={player1.season_stats.minutes_played ?? 0}
+                      v2={player2.season_stats.minutes_played ?? 0}
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.passPercent')}
+                      v1={player1.season_stats.pass_accuracy ?? '-'}
+                      v2={player2.season_stats.pass_accuracy ?? '-'}
+                      suffix="%"
+                      highlight
+                      showDiff
+                    />
+                    <CompareRow
+                      label={t('compare.tackles')}
+                      v1={player1.season_stats.tackles ?? 0}
+                      v2={player2.season_stats.tackles ?? 0}
+                      highlight
+                      showDiff
+                    />
                   </>
                 )}
               </tbody>
@@ -161,7 +287,9 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="text-5xl text-foreground-muted/30 mb-4">&#8644;</div>
-          <p className="text-lg font-medium text-foreground-muted">{t('dashboard.selectPlayers')}</p>
+          <p className="text-lg font-medium text-foreground-muted">
+            {t('dashboard.selectPlayers')}
+          </p>
         </div>
       )}
     </div>
@@ -184,15 +312,31 @@ function CopyLinkButton({ t }: { t: (key: string) => string }) {
     >
       {copied ? (
         <>
-          <svg className="h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-4 w-4 text-accent"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
           {t('compare.copied')}
         </>
       ) : (
         <>
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.343 8.52" />
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.343 8.52"
+            />
           </svg>
           {t('compare.copyLink')}
         </>
@@ -201,7 +345,14 @@ function CopyLinkButton({ t }: { t: (key: string) => string }) {
   )
 }
 
-function CompareRow({ label, v1, v2, highlight = false, showDiff = false, suffix = '' }: {
+function CompareRow({
+  label,
+  v1,
+  v2,
+  highlight = false,
+  showDiff = false,
+  suffix = '',
+}: {
   label: string
   v1: string | number
   v2: string | number

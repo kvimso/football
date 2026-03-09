@@ -35,9 +35,7 @@ export async function WhatWeDo() {
                 <feature.icon className="h-6 w-6 text-accent" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{feature.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
-                {feature.desc}
-              </p>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{feature.desc}</p>
             </div>
           ))}
         </div>

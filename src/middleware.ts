@@ -13,13 +13,20 @@ export async function middleware(request: NextRequest) {
   }
 
   // Skip Supabase call if no auth cookies — anonymous users don't need session refresh
-  const hasAuthCookie = request.cookies.getAll().some(c => c.name.startsWith('sb-'))
+  const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith('sb-'))
 
   // Redirect unauthenticated users away from protected paths
   if (!hasAuthCookie) {
-    const protectedPrefixes = ['/players', '/matches', '/clubs', '/dashboard', '/admin', '/platform']
+    const protectedPrefixes = [
+      '/players',
+      '/matches',
+      '/clubs',
+      '/dashboard',
+      '/admin',
+      '/platform',
+    ]
     const { pathname } = request.nextUrl
-    if (protectedPrefixes.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+    if (protectedPrefixes.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
       const loginUrl = request.nextUrl.clone()
       loginUrl.pathname = '/login'
       loginUrl.searchParams.set('redirect', pathname)
@@ -37,9 +44,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -49,14 +54,16 @@ export async function middleware(request: NextRequest) {
     })
 
     // Refresh the auth session so it doesn't expire
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
     // Role-based routing for authenticated users on role-scoped paths
     // Prevents layout redirect() calls that trigger React 19 Turbopack dev-mode bug
     if (user) {
       const { pathname } = request.nextUrl
       const roleScopedPath = ['/dashboard', '/admin', '/platform'].find(
-        p => pathname === p || pathname.startsWith(p + '/')
+        (p) => pathname === p || pathname.startsWith(p + '/')
       )
 
       if (roleScopedPath) {
@@ -101,7 +108,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }

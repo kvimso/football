@@ -27,19 +27,41 @@ function getPoint(index: number, value: number, maxRadius: number): [number, num
 }
 
 function toPolygon(skills: SkillSet, maxRadius: number): string {
-  const values = [skills.pace ?? 0, skills.shooting ?? 0, skills.passing ?? 0, skills.dribbling ?? 0, skills.defending ?? 0, skills.physical ?? 0]
-  return values.map((v, i) => {
-    const [x, y] = getPoint(i, v, maxRadius)
-    return `${x},${y}`
-  }).join(' ')
+  const values = [
+    skills.pace ?? 0,
+    skills.shooting ?? 0,
+    skills.passing ?? 0,
+    skills.dribbling ?? 0,
+    skills.defending ?? 0,
+    skills.physical ?? 0,
+  ]
+  return values
+    .map((v, i) => {
+      const [x, y] = getPoint(i, v, maxRadius)
+      return `${x},${y}`
+    })
+    .join(' ')
 }
 
 function getDataPoints(skills: SkillSet, maxRadius: number): [number, number][] {
-  const values = [skills.pace ?? 0, skills.shooting ?? 0, skills.passing ?? 0, skills.dribbling ?? 0, skills.defending ?? 0, skills.physical ?? 0]
+  const values = [
+    skills.pace ?? 0,
+    skills.shooting ?? 0,
+    skills.passing ?? 0,
+    skills.dribbling ?? 0,
+    skills.defending ?? 0,
+    skills.physical ?? 0,
+  ]
   return values.map((v, i) => getPoint(i, v, maxRadius))
 }
 
-export function CompareRadarChart({ skills1, skills2, labels, player1Name, player2Name }: CompareRadarChartProps) {
+export function CompareRadarChart({
+  skills1,
+  skills2,
+  labels,
+  player1Name,
+  player2Name,
+}: CompareRadarChartProps) {
   const p1Points = getDataPoints(skills1, RADIUS)
   const p2Points = getDataPoints(skills2, RADIUS)
 

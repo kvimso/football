@@ -4,10 +4,7 @@ import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
 import { unwrapRelation } from '@/lib/utils'
 
 // GET /api/matches/[slug] — Match detail with player stats
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const supabase = await createApiClient(request)
   const auth = await authenticateRequest(supabase)
@@ -15,7 +12,8 @@ export async function GET(
 
   const { data: match, error } = await supabase
     .from('matches')
-    .select(`
+    .select(
+      `
       id, slug, home_score, away_score, competition, match_date, venue,
       video_url, highlights_url, match_report, match_report_ka,
       home_club:clubs!matches_home_club_id_fkey ( id, name, name_ka, slug ),
@@ -25,7 +23,8 @@ export async function GET(
         tackles, interceptions, distance_km, sprints, top_speed_kmh, rating,
         player:players!match_player_stats_player_id_fkey ( id, name, name_ka, slug, position, club_id )
       )
-    `)
+    `
+    )
     .eq('slug', slug)
     .single()
 

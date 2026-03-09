@@ -12,7 +12,10 @@ export async function addTag(watchlistId: string, tag: string) {
   if (!uuidSchema.safeParse(watchlistId).success) return { error: 'errors.invalidId' }
   if (!tagSchema.safeParse(tag).success) return { error: 'errors.invalidInput' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   // Check tag limit per watchlist entry
@@ -44,7 +47,10 @@ export async function addTag(watchlistId: string, tag: string) {
 export async function removeTag(tagId: string) {
   if (!uuidSchema.safeParse(tagId).success) return { error: 'errors.invalidId' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase

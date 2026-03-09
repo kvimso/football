@@ -54,13 +54,11 @@ export async function createPlayer(data: PlayerFormInput) {
 
   // Insert player_club_history row
   if (newPlayer) {
-    const { error: historyError } = await supabase
-      .from('player_club_history')
-      .insert({
-        player_id: newPlayer.id,
-        club_id: clubId,
-        joined_at: todayDateString(),
-      })
+    const { error: historyError } = await supabase.from('player_club_history').insert({
+      player_id: newPlayer.id,
+      club_id: clubId,
+      joined_at: todayDateString(),
+    })
 
     if (historyError) console.error('Failed to insert club history:', historyError.message)
   }
@@ -70,10 +68,7 @@ export async function createPlayer(data: PlayerFormInput) {
   return { success: true, slug: finalSlug }
 }
 
-export async function updatePlayer(
-  playerId: string,
-  data: PlayerFormInput,
-) {
+export async function updatePlayer(playerId: string, data: PlayerFormInput) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
   if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized' }
 
@@ -119,4 +114,3 @@ export async function updatePlayer(
   revalidatePath('/players')
   return { success: true }
 }
-

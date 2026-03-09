@@ -10,7 +10,9 @@ export default async function ScoutConversationPage({
 }) {
   const { conversationId } = await params
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
 

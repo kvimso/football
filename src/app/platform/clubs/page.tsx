@@ -52,8 +52,12 @@ export default async function PlatformClubsPage() {
               <tr className="border-b border-border text-left text-foreground-muted">
                 <th className="pb-3 pr-4 font-medium">{t('platform.clubs.name')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('platform.clubs.city')}</th>
-                <th className="pb-3 pr-4 font-medium text-center">{t('platform.clubs.playerCount')}</th>
-                <th className="pb-3 pr-4 font-medium text-center">{t('platform.clubs.adminCount')}</th>
+                <th className="pb-3 pr-4 font-medium text-center">
+                  {t('platform.clubs.playerCount')}
+                </th>
+                <th className="pb-3 pr-4 font-medium text-center">
+                  {t('platform.clubs.adminCount')}
+                </th>
                 <th className="pb-3 font-medium">{t('admin.common.actions')}</th>
               </tr>
             </thead>
@@ -65,8 +69,12 @@ export default async function PlatformClubsPage() {
                     <p className="text-xs text-foreground-muted">{club.name_ka}</p>
                   </td>
                   <td className="py-3 pr-4 text-foreground-muted">{club.city ?? '—'}</td>
-                  <td className="py-3 pr-4 text-center text-foreground">{playerCountMap.get(club.id) ?? 0}</td>
-                  <td className="py-3 pr-4 text-center text-foreground">{adminCountMap.get(club.id) ?? 0}</td>
+                  <td className="py-3 pr-4 text-center text-foreground">
+                    {playerCountMap.get(club.id) ?? 0}
+                  </td>
+                  <td className="py-3 pr-4 text-center text-foreground">
+                    {adminCountMap.get(club.id) ?? 0}
+                  </td>
                   <td className="py-3">
                     <Link
                       href={`/platform/clubs/${club.id}/edit`}

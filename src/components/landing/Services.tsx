@@ -38,9 +38,7 @@ export async function Services() {
                 <service.icon className="h-5 w-5 text-accent" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{service.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
-                {service.desc}
-              </p>
+              <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{service.desc}</p>
             </div>
           ))}
         </div>

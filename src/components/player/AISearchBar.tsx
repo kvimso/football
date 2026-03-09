@@ -30,22 +30,6 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
   const inputRef = useRef<HTMLInputElement>(null)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // Fetch search history on mount
-  useEffect(() => {
-    fetchHistory()
-  }, [])
-
-  // Close history dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setShowHistory(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
   const fetchHistory = useCallback(async () => {
     try {
       const res = await fetch('/api/players/ai-search/history')
@@ -58,56 +42,75 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
     }
   }, [])
 
-  const handleSearch = useCallback(async (searchQuery?: string) => {
-    const q = (searchQuery ?? query).trim()
-    if (!q || isSearching) return
+  // Fetch search history on mount
+  useEffect(() => {
+    fetchHistory()
+  }, [fetchHistory])
 
-    // Abort any pending search
-    abortRef.current?.abort()
-    const controller = new AbortController()
-    abortRef.current = controller
+  // Close history dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowHistory(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
-    setIsSearching(true)
-    setError(null)
+  const handleSearch = useCallback(
+    async (searchQuery?: string) => {
+      const q = (searchQuery ?? query).trim()
+      if (!q || isSearching) return
 
-    try {
-      const timeoutId = setTimeout(() => controller.abort(), AI_SEARCH_TIMEOUT)
+      // Abort any pending search
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
 
-      const res = await fetch('/api/players/ai-search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q }),
-        signal: controller.signal,
-      })
+      setIsSearching(true)
+      setError(null)
 
-      clearTimeout(timeoutId)
+      try {
+        const timeoutId = setTimeout(() => controller.abort(), AI_SEARCH_TIMEOUT)
 
-      if (!res.ok) {
-        if (res.status === 429) {
-          setError(t('aiSearch.rateLimit'))
-        } else if (res.status === 503) {
-          setError(t('aiSearch.error'))
+        const res = await fetch('/api/players/ai-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: q }),
+          signal: controller.signal,
+        })
+
+        clearTimeout(timeoutId)
+
+        if (!res.ok) {
+          if (res.status === 429) {
+            setError(t('aiSearch.rateLimit'))
+          } else if (res.status === 503) {
+            setError(t('aiSearch.error'))
+          } else {
+            setError(t('aiSearch.error'))
+          }
+          return
+        }
+
+        const data = await res.json()
+        onSearchResults(data.data.players, data.data.filters_applied)
+
+        // Refresh history after successful search
+        fetchHistory()
+      } catch (err) {
+        if ((err as Error).name === 'AbortError') {
+          setError(t('aiSearch.timeout'))
         } else {
           setError(t('aiSearch.error'))
         }
-        return
+      } finally {
+        setIsSearching(false)
       }
-
-      const data = await res.json()
-      onSearchResults(data.data.players, data.data.filters_applied)
-
-      // Refresh history after successful search
-      fetchHistory()
-    } catch (err) {
-      if ((err as Error).name === 'AbortError') {
-        setError(t('aiSearch.timeout'))
-      } else {
-        setError(t('aiSearch.error'))
-      }
-    } finally {
-      setIsSearching(false)
-    }
-  }, [query, isSearching, onSearchResults, fetchHistory, t])
+    },
+    [query, isSearching, onSearchResults, fetchHistory, t]
+  )
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isSearching) {
@@ -170,7 +173,13 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
               className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted/50 hover:text-foreground transition-colors"
               aria-label={t('aiSearch.clear')}
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
             </button>
@@ -184,15 +193,36 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
           {isSearching ? (
             <>
               <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               {t('aiSearch.searching')}
             </>
           ) : (
             <>
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                />
               </svg>
               {t('aiSearch.button')}
             </>
@@ -202,9 +232,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
 
       {/* Analyzing text */}
       {isSearching && (
-        <p className="mt-2 text-xs text-purple-400/70 animate-pulse">
-          {t('aiSearch.analyzing')}
-        </p>
+        <p className="mt-2 text-xs text-purple-400/70 animate-pulse">{t('aiSearch.analyzing')}</p>
       )}
 
       {/* Error message */}
@@ -212,7 +240,10 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
         <div className="mt-2 flex items-center gap-2 text-xs text-red-400">
           <span>{error}</span>
           <button
-            onClick={() => { setError(null); handleSearch() }}
+            onClick={() => {
+              setError(null)
+              handleSearch()
+            }}
             className="underline hover:text-red-300 transition-colors"
           >
             {t('aiSearch.retry')}
@@ -235,8 +266,18 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
                 onClick={() => handleHistoryClick(entry.query_text)}
                 className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-foreground-muted hover:bg-white/[0.06] hover:text-foreground transition-colors text-left"
               >
-                <svg className="h-3.5 w-3.5 shrink-0 text-foreground-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                <svg
+                  className="h-3.5 w-3.5 shrink-0 text-foreground-muted/40"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
                 </svg>
                 <span className="truncate flex-1">{entry.query_text}</span>
                 <span className="shrink-0 text-[10px] text-foreground-muted/40">
@@ -257,8 +298,18 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
               onClick={() => handleHistoryClick(entry.query_text)}
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-xs text-foreground-muted hover:bg-white/[0.08] hover:text-foreground transition-colors"
             >
-              <svg className="h-3 w-3 text-purple-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              <svg
+                className="h-3 w-3 text-purple-400/50"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
               </svg>
               <span className="max-w-[200px] truncate">{entry.query_text}</span>
             </button>

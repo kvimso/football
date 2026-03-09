@@ -27,18 +27,22 @@ export default async function PlatformScoutDetailPage({
   const [{ data: watchlistItems }, { data: requests }] = await Promise.all([
     admin
       .from('watchlist')
-      .select(`
+      .select(
+        `
         id, notes, created_at,
         player:players!watchlist_player_id_fkey(id, name, name_ka, position, slug, club:clubs!players_club_id_fkey(name))
-      `)
+      `
+      )
       .eq('user_id', id)
       .order('created_at', { ascending: false }),
     admin
       .from('contact_requests')
-      .select(`
+      .select(
+        `
         id, message, status, created_at,
         player:players!contact_requests_player_id_fkey(id, name, name_ka, slug, club:clubs!players_club_id_fkey(name))
-      `)
+      `
+      )
       .eq('scout_id', id)
       .order('created_at', { ascending: false }),
   ])
@@ -64,7 +68,9 @@ export default async function PlatformScoutDetailPage({
           </div>
           <div>
             <p className="text-xs text-foreground-muted">{t('platform.scouts.organization')}</p>
-            <p className="mt-0.5 text-sm font-medium text-foreground">{scout.organization ?? '—'}</p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">
+              {scout.organization ?? '—'}
+            </p>
           </div>
           <div>
             <p className="text-xs text-foreground-muted">{t('platform.scouts.registered')}</p>
@@ -88,7 +94,10 @@ export default async function PlatformScoutDetailPage({
               return (
                 <div key={item.id} className="card flex items-center justify-between p-3">
                   <div>
-                    <Link href={`/players/${player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
+                    <Link
+                      href={`/players/${player?.slug ?? ''}`}
+                      className="text-sm font-medium text-accent hover:underline"
+                    >
                       {player?.name ?? t('common.unknown')}
                     </Link>
                     <p className="text-xs text-foreground-muted">
@@ -123,27 +132,33 @@ export default async function PlatformScoutDetailPage({
               return (
                 <div key={req.id} className="card flex items-center justify-between p-3">
                   <div className="min-w-0 flex-1">
-                    <Link href={`/players/${player?.slug ?? ''}`} className="text-sm font-medium text-accent hover:underline">
+                    <Link
+                      href={`/players/${player?.slug ?? ''}`}
+                      className="text-sm font-medium text-accent hover:underline"
+                    >
                       {player?.name ?? t('common.unknown')}
                     </Link>
                     {club?.name && (
                       <span className="ml-2 text-xs text-foreground-muted">({club.name})</span>
                     )}
                     <p className="mt-0.5 truncate text-xs text-foreground-muted">
-                      {req.message?.slice(0, 80)}{(req.message?.length ?? 0) > 80 ? '...' : ''}
+                      {req.message?.slice(0, 80)}
+                      {(req.message?.length ?? 0) > 80 ? '...' : ''}
                     </p>
                   </div>
                   <div className="ml-3 flex items-center gap-3">
                     <span className="text-xs text-foreground-muted">
                       {req.created_at ? format(new Date(req.created_at), 'MMM d') : ''}
                     </span>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      req.status === 'approved'
-                        ? 'bg-green-500/10 text-green-400'
-                        : req.status === 'rejected'
-                          ? 'bg-red-500/10 text-red-400'
-                          : 'bg-yellow-500/10 text-yellow-400'
-                    }`}>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        req.status === 'approved'
+                          ? 'bg-green-500/10 text-green-400'
+                          : req.status === 'rejected'
+                            ? 'bg-red-500/10 text-red-400'
+                            : 'bg-yellow-500/10 text-yellow-400'
+                      }`}
+                    >
                       {t(`admin.requests.${req.status}`)}
                     </span>
                   </div>

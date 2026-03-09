@@ -58,7 +58,9 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
       last_name_ka: String(form.get('last_name_ka') ?? ''),
       date_of_birth: String(form.get('date_of_birth') ?? ''),
       position: String(form.get('position') ?? '') as Position,
-      preferred_foot: (String(form.get('preferred_foot') ?? '') || undefined) as PreferredFoot | undefined,
+      preferred_foot: (String(form.get('preferred_foot') ?? '') || undefined) as
+        | PreferredFoot
+        | undefined,
       height_cm: form.get('height_cm') ? Number(form.get('height_cm')) : undefined,
       weight_kg: form.get('weight_kg') ? Number(form.get('weight_kg')) : undefined,
       parent_guardian_contact: String(form.get('parent_guardian_contact') ?? '') || undefined,
@@ -88,7 +90,8 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
     }
   }
 
-  const inputClass = 'mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none'
+  const inputClass =
+    'mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,7 +116,9 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
             >
               <option value="">{t('platform.players.noClub')}</option>
               {clubs.map((club) => (
-                <option key={club.id} value={club.id}>{club.name}</option>
+                <option key={club.id} value={club.id}>
+                  {club.name}
+                </option>
               ))}
             </select>
           </div>
@@ -141,27 +146,61 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
             <label htmlFor="first_name" className="block text-sm font-medium text-foreground-muted">
               {t('admin.players.firstName')}
             </label>
-            <input type="text" id="first_name" name="first_name" required defaultValue={nameParts.first} className={inputClass} />
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              required
+              defaultValue={nameParts.first}
+              className={inputClass}
+            />
           </div>
           <div>
             <label htmlFor="last_name" className="block text-sm font-medium text-foreground-muted">
               {t('admin.players.lastName')}
             </label>
-            <input type="text" id="last_name" name="last_name" required defaultValue={nameParts.last} className={inputClass} />
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              required
+              defaultValue={nameParts.last}
+              className={inputClass}
+            />
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="first_name_ka" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="first_name_ka"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.firstNameKa')}
             </label>
-            <input type="text" id="first_name_ka" name="first_name_ka" required defaultValue={nameKaParts.first} className={inputClass} />
+            <input
+              type="text"
+              id="first_name_ka"
+              name="first_name_ka"
+              required
+              defaultValue={nameKaParts.first}
+              className={inputClass}
+            />
           </div>
           <div>
-            <label htmlFor="last_name_ka" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="last_name_ka"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.lastNameKa')}
             </label>
-            <input type="text" id="last_name_ka" name="last_name_ka" required defaultValue={nameKaParts.last} className={inputClass} />
+            <input
+              type="text"
+              id="last_name_ka"
+              name="last_name_ka"
+              required
+              defaultValue={nameKaParts.last}
+              className={inputClass}
+            />
           </div>
         </div>
       </div>
@@ -170,30 +209,58 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
       <div className="card space-y-4 p-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <label htmlFor="date_of_birth" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="date_of_birth"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.dateOfBirth')}
             </label>
-            <input type="date" id="date_of_birth" name="date_of_birth" required defaultValue={player?.date_of_birth ?? ''} className={inputClass} />
+            <input
+              type="date"
+              id="date_of_birth"
+              name="date_of_birth"
+              required
+              defaultValue={player?.date_of_birth ?? ''}
+              className={inputClass}
+            />
           </div>
           <div>
             <label htmlFor="position" className="block text-sm font-medium text-foreground-muted">
               {t('admin.players.position')}
             </label>
-            <select id="position" name="position" required defaultValue={player?.position ?? ''} className={inputClass}>
+            <select
+              id="position"
+              name="position"
+              required
+              defaultValue={player?.position ?? ''}
+              className={inputClass}
+            >
               <option value="">{t('players.allPositions')}</option>
               {POSITIONS.map((pos) => (
-                <option key={pos} value={pos}>{t(`positions.${pos}`)}</option>
+                <option key={pos} value={pos}>
+                  {t(`positions.${pos}`)}
+                </option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="preferred_foot" className="block text-sm font-medium text-foreground-muted">
+            <label
+              htmlFor="preferred_foot"
+              className="block text-sm font-medium text-foreground-muted"
+            >
               {t('admin.players.preferredFoot')}
             </label>
-            <select id="preferred_foot" name="preferred_foot" defaultValue={player?.preferred_foot ?? ''} className={inputClass}>
+            <select
+              id="preferred_foot"
+              name="preferred_foot"
+              defaultValue={player?.preferred_foot ?? ''}
+              className={inputClass}
+            >
               <option value="">{t('players.allFeet')}</option>
               {PREFERRED_FEET.map((foot) => (
-                <option key={foot} value={foot}>{t('foot.' + foot)}</option>
+                <option key={foot} value={foot}>
+                  {t('foot.' + foot)}
+                </option>
               ))}
             </select>
           </div>
@@ -204,13 +271,29 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
             <label htmlFor="height_cm" className="block text-sm font-medium text-foreground-muted">
               {t('admin.players.height')}
             </label>
-            <input type="number" id="height_cm" name="height_cm" min={100} max={220} defaultValue={player?.height_cm ?? ''} className={inputClass} />
+            <input
+              type="number"
+              id="height_cm"
+              name="height_cm"
+              min={100}
+              max={220}
+              defaultValue={player?.height_cm ?? ''}
+              className={inputClass}
+            />
           </div>
           <div>
             <label htmlFor="weight_kg" className="block text-sm font-medium text-foreground-muted">
               {t('admin.players.weight')}
             </label>
-            <input type="number" id="weight_kg" name="weight_kg" min={30} max={150} defaultValue={player?.weight_kg ?? ''} className={inputClass} />
+            <input
+              type="number"
+              id="weight_kg"
+              name="weight_kg"
+              min={30}
+              max={150}
+              defaultValue={player?.weight_kg ?? ''}
+              className={inputClass}
+            />
           </div>
         </div>
       </div>
@@ -218,7 +301,10 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
       {/* Parent/guardian contact */}
       <div className="card space-y-4 p-4">
         <div>
-          <label htmlFor="parent_guardian_contact" className="block text-sm font-medium text-foreground-muted">
+          <label
+            htmlFor="parent_guardian_contact"
+            className="block text-sm font-medium text-foreground-muted"
+          >
             {t('admin.players.parentGuardianContact')}
           </label>
           <input

@@ -17,11 +17,7 @@ export default async function ScoutMessagesPage() {
         <h1 className="text-2xl font-bold text-foreground">{t('chat.messages')}</h1>
         <p className="mt-1 text-sm text-foreground-muted">{t('dashboard.messagesDesc')}</p>
         <div className="mt-4">
-          <ChatInbox
-            userRole="scout"
-            basePath="/dashboard/messages"
-            userId={user.id}
-          />
+          <ChatInbox userRole="scout" basePath="/dashboard/messages" userId={user.id} />
         </div>
       </div>
 

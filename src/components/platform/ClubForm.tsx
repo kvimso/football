@@ -40,9 +40,7 @@ export function ClubForm({ club }: ClubFormProps) {
       website: String(formData.get('website') ?? ''),
     }
 
-    const result = club
-      ? await updateClub(club.id, data)
-      : await createClub(data)
+    const result = club ? await updateClub(club.id, data) : await createClub(data)
 
     setSaving(false)
 
@@ -64,7 +62,9 @@ export function ClubForm({ club }: ClubFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.name')}</label>
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {t('platform.clubs.name')}
+          </label>
           <input
             name="name"
             type="text"
@@ -74,7 +74,9 @@ export function ClubForm({ club }: ClubFormProps) {
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.nameKa')}</label>
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {t('platform.clubs.nameKa')}
+          </label>
           <input
             name="name_ka"
             type="text"
@@ -87,16 +89,15 @@ export function ClubForm({ club }: ClubFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.city')}</label>
-          <input
-            name="city"
-            type="text"
-            defaultValue={club?.city ?? ''}
-            className="input w-full"
-          />
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {t('platform.clubs.city')}
+          </label>
+          <input name="city" type="text" defaultValue={club?.city ?? ''} className="input w-full" />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.region')}</label>
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {t('platform.clubs.region')}
+          </label>
           <input
             name="region"
             type="text"
@@ -107,7 +108,9 @@ export function ClubForm({ club }: ClubFormProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.description')}</label>
+        <label className="mb-1 block text-sm font-medium text-foreground">
+          {t('platform.clubs.description')}
+        </label>
         <textarea
           name="description"
           rows={3}
@@ -117,7 +120,9 @@ export function ClubForm({ club }: ClubFormProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.descriptionKa')}</label>
+        <label className="mb-1 block text-sm font-medium text-foreground">
+          {t('platform.clubs.descriptionKa')}
+        </label>
         <textarea
           name="description_ka"
           rows={3}
@@ -127,7 +132,9 @@ export function ClubForm({ club }: ClubFormProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-foreground">{t('platform.clubs.website')}</label>
+        <label className="mb-1 block text-sm font-medium text-foreground">
+          {t('platform.clubs.website')}
+        </label>
         <input
           name="website"
           type="url"

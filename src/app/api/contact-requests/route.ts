@@ -28,10 +28,12 @@ export async function GET(request: NextRequest) {
     // Scouts see their own sent requests
     let query = supabase
       .from('contact_requests')
-      .select(`
+      .select(
+        `
         id, message, status, response_message, created_at, responded_at,
         player:players!contact_requests_player_id_fkey ( id, name, name_ka, slug, position )
-      `)
+      `
+      )
       .eq('scout_id', user.id)
       .order('created_at', { ascending: false })
 
@@ -49,11 +51,13 @@ export async function GET(request: NextRequest) {
     // Academy admins see requests for their club's players
     let query = supabase
       .from('contact_requests')
-      .select(`
+      .select(
+        `
         id, message, status, response_message, created_at, responded_at,
         player:players!contact_requests_player_id_fkey ( id, name, name_ka, slug, position ),
         scout:profiles!contact_requests_scout_id_fkey ( id, full_name )
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
 
     if (statusFilter) query = query.eq('status', statusFilter)
@@ -81,7 +85,9 @@ export async function POST(request: NextRequest) {
   }
 
   let body: unknown
-  try { body = await request.json() } catch {
+  try {
+    body = await request.json()
+  } catch {
     return apiError('errors.invalidInput', 400)
   }
 
@@ -146,7 +152,9 @@ export async function PATCH(request: NextRequest) {
   }
 
   let body: unknown
-  try { body = await request.json() } catch {
+  try {
+    body = await request.json()
+  } catch {
     return apiError('errors.invalidInput', 400)
   }
 

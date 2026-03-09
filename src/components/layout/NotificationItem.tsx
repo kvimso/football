@@ -42,33 +42,48 @@ interface Props {
   onMarkRead: (id: string) => void
 }
 
-export function NotificationItem({ id, type, title, body, link, isRead, createdAt, onMarkRead }: Props) {
+export function NotificationItem({
+  id,
+  type,
+  title,
+  body,
+  link,
+  isRead,
+  createdAt,
+  onMarkRead,
+}: Props) {
   const icon = TYPE_ICONS[type]
 
   const content = (
-    <div className={`flex items-start gap-2.5 px-3 py-2.5 transition-colors hover:bg-background-secondary ${!isRead ? 'bg-accent/5' : ''}`}>
+    <div
+      className={`flex items-start gap-2.5 px-3 py-2.5 transition-colors hover:bg-background-secondary ${!isRead ? 'bg-accent/5' : ''}`}
+    >
       {/* Type icon */}
       <div className={`mt-0.5 shrink-0 ${icon.color}`}>
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.5}
+        >
           <path strokeLinecap="round" strokeLinejoin="round" d={icon.path} />
         </svg>
       </div>
 
       {/* Content */}
       <div className="min-w-0 flex-1">
-        <p className={`text-xs leading-snug ${!isRead ? 'text-foreground font-medium' : 'text-foreground-muted'}`}>
+        <p
+          className={`text-xs leading-snug ${!isRead ? 'text-foreground font-medium' : 'text-foreground-muted'}`}
+        >
           {title}
         </p>
-        {body && (
-          <p className="mt-0.5 text-[11px] text-foreground-muted/70 truncate">{body}</p>
-        )}
+        {body && <p className="mt-0.5 text-[11px] text-foreground-muted/70 truncate">{body}</p>}
         <p className="mt-0.5 text-[10px] text-foreground-muted/50">{timeAgo(createdAt)}</p>
       </div>
 
       {/* Unread dot */}
-      {!isRead && (
-        <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-accent" />
-      )}
+      {!isRead && <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-accent" />}
     </div>
   )
 

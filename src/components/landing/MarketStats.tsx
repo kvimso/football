@@ -24,9 +24,7 @@ export async function MarketStats() {
                   {stat.label}
                 </div>
               </div>
-              {i < stats.length - 1 && (
-                <div className="hidden sm:block h-12 w-px bg-border" />
-              )}
+              {i < stats.length - 1 && <div className="hidden sm:block h-12 w-px bg-border" />}
             </div>
           ))}
         </div>

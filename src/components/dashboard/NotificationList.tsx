@@ -35,7 +35,14 @@ const TYPE_ICONS: Record<NotificationType, { path: string; color: string }> = {
   },
 }
 
-const ALL_TYPES: NotificationType[] = ['goal', 'assist', 'club_change', 'free_agent', 'new_video', 'announcement']
+const ALL_TYPES: NotificationType[] = [
+  'goal',
+  'assist',
+  'club_change',
+  'free_agent',
+  'new_video',
+  'announcement',
+]
 const TYPE_KEYS: Record<NotificationType, string> = {
   goal: 'notifications.goal',
   assist: 'notifications.assist',
@@ -63,14 +70,20 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
-  const fetchPage = useCallback(async (newPage: number, filters?: NotificationFilters) => {
-    setLoading(true)
-    const result = await getNotificationsPage(newPage, filters ?? { type: typeFilter, readStatus: readFilter })
-    setNotifications(result.notifications)
-    setTotal(result.total)
-    setPage(newPage)
-    setLoading(false)
-  }, [typeFilter, readFilter])
+  const fetchPage = useCallback(
+    async (newPage: number, filters?: NotificationFilters) => {
+      setLoading(true)
+      const result = await getNotificationsPage(
+        newPage,
+        filters ?? { type: typeFilter, readStatus: readFilter }
+      )
+      setNotifications(result.notifications)
+      setTotal(result.total)
+      setPage(newPage)
+      setLoading(false)
+    },
+    [typeFilter, readFilter]
+  )
 
   const handleTypeChange = (type: NotificationType | undefined) => {
     setTypeFilter(type)
@@ -84,15 +97,15 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
 
   const handleMarkRead = async (id: string) => {
     await markAsRead(id)
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)))
   }
 
   const handleMarkAllRead = async () => {
     await markAllAsRead()
-    setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
+    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
   }
 
-  const hasUnread = notifications.some(n => !n.is_read)
+  const hasUnread = notifications.some((n) => !n.is_read)
 
   return (
     <div>
@@ -111,12 +124,16 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
         {/* Type filter */}
         <select
           value={typeFilter ?? ''}
-          onChange={(e) => handleTypeChange(e.target.value ? e.target.value as NotificationType : undefined)}
+          onChange={(e) =>
+            handleTypeChange(e.target.value ? (e.target.value as NotificationType) : undefined)
+          }
           className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
         >
           <option value="">{t('notifications.allTypes')}</option>
-          {ALL_TYPES.map(type => (
-            <option key={type} value={type}>{t(TYPE_KEYS[type])}</option>
+          {ALL_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {t(TYPE_KEYS[type])}
+            </option>
           ))}
         </select>
 
@@ -148,44 +165,63 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
             <p className="text-sm text-foreground-muted">{t('notifications.empty')}</p>
           </div>
         ) : (
-          notifications.map(n => {
+          notifications.map((n) => {
             const icon = TYPE_ICONS[n.type]
             const content = (
-              <div className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}>
+              <div
+                className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}
+              >
                 <div className={`mt-0.5 shrink-0 ${icon.color}`}>
-                  <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <svg
+                    className="h-4.5 w-4.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" d={icon.path} />
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
-                    <p className={`text-sm leading-snug ${!n.is_read ? 'text-foreground font-medium' : 'text-foreground-muted'}`}>
+                    <p
+                      className={`text-sm leading-snug ${!n.is_read ? 'text-foreground font-medium' : 'text-foreground-muted'}`}
+                    >
                       {n.title}
                     </p>
-                    <span className="shrink-0 text-[10px] text-foreground-muted/50">{timeAgo(n.created_at)}</span>
+                    <span className="shrink-0 text-[10px] text-foreground-muted/50">
+                      {timeAgo(n.created_at)}
+                    </span>
                   </div>
-                  {n.body && (
-                    <p className="mt-0.5 text-xs text-foreground-muted/70">{n.body}</p>
-                  )}
-                  <span className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full ${icon.color} bg-current/10`}>
+                  {n.body && <p className="mt-0.5 text-xs text-foreground-muted/70">{n.body}</p>}
+                  <span
+                    className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full ${icon.color} bg-current/10`}
+                  >
                     {t(TYPE_KEYS[n.type])}
                   </span>
                 </div>
-                {!n.is_read && (
-                  <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />
-                )}
+                {!n.is_read && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />}
               </div>
             )
 
             if (n.link) {
               return (
-                <Link key={n.id} href={n.link} onClick={() => !n.is_read && handleMarkRead(n.id)} className="block">
+                <Link
+                  key={n.id}
+                  href={n.link}
+                  onClick={() => !n.is_read && handleMarkRead(n.id)}
+                  className="block"
+                >
                   {content}
                 </Link>
               )
             }
             return (
-              <button key={n.id} onClick={() => !n.is_read && handleMarkRead(n.id)} className="block w-full text-left">
+              <button
+                key={n.id}
+                onClick={() => !n.is_read && handleMarkRead(n.id)}
+                className="block w-full text-left"
+              >
                 {content}
               </button>
             )

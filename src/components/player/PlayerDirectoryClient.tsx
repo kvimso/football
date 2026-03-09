@@ -71,7 +71,8 @@ function mapAIPlayerToCard(p: Record<string, unknown>): PlayerCardData {
       ? {
           goals: typeof latestStats.goals === 'number' ? latestStats.goals : null,
           assists: typeof latestStats.assists === 'number' ? latestStats.assists : null,
-          matches_played: typeof latestStats.matches_played === 'number' ? latestStats.matches_played : null,
+          matches_played:
+            typeof latestStats.matches_played === 'number' ? latestStats.matches_played : null,
         }
       : null,
   }
@@ -174,8 +175,7 @@ export function PlayerDirectoryClient({
       <div className="mt-6 mb-4 flex items-center justify-between">
         <p className="text-sm text-foreground-muted" aria-live="polite">
           <span className="font-semibold text-foreground">{displayCount}</span>{' '}
-          {displayCount !== 1 ? t('players.playerPlural') : t('players.player')}{' '}
-          {t('common.found')}
+          {displayCount !== 1 ? t('players.playerPlural') : t('players.player')} {t('common.found')}
         </p>
         {isAIActive && (
           <button
@@ -203,12 +203,8 @@ export function PlayerDirectoryClient({
         /* AI empty state */
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="text-5xl text-purple-400/20 mb-4">&#128269;</div>
-          <p className="text-lg font-medium text-foreground-muted">
-            {t('aiSearch.noResults')}
-          </p>
-          <p className="mt-1 text-sm text-foreground-muted/70">
-            {t('aiSearch.noResultsHint')}
-          </p>
+          <p className="text-lg font-medium text-foreground-muted">{t('aiSearch.noResults')}</p>
+          <p className="mt-1 text-sm text-foreground-muted/70">{t('aiSearch.noResultsHint')}</p>
           <button
             onClick={handleClearSearch}
             className="mt-4 rounded-lg border border-purple-500/20 bg-purple-500/10 px-4 py-2 text-sm font-medium text-purple-300 hover:bg-purple-500/20 transition-colors"
@@ -220,12 +216,8 @@ export function PlayerDirectoryClient({
         /* Normal empty state */
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="text-5xl text-foreground-muted/30 mb-4">&#9917;</div>
-          <p className="text-lg font-medium text-foreground-muted">
-            {t('players.noPlayers')}
-          </p>
-          <p className="mt-1 text-sm text-foreground-muted/70">
-            {t('players.noPlayersHint')}
-          </p>
+          <p className="text-lg font-medium text-foreground-muted">{t('players.noPlayers')}</p>
+          <p className="mt-1 text-sm text-foreground-muted/70">{t('players.noPlayersHint')}</p>
         </div>
       )}
 

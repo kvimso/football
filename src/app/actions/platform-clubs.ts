@@ -19,26 +19,20 @@ export async function createClub(data: ClubFormInput) {
   const slug = generateSlug(parsed.data.name)
 
   // Check for duplicate slug
-  const { data: existing } = await admin
-    .from('clubs')
-    .select('id')
-    .eq('slug', slug)
-    .maybeSingle()
+  const { data: existing } = await admin.from('clubs').select('id').eq('slug', slug).maybeSingle()
 
   const finalSlug = existing ? `${slug}-${Date.now().toString(36)}` : slug
 
-  const { error: insertError } = await admin
-    .from('clubs')
-    .insert({
-      name: parsed.data.name,
-      name_ka: parsed.data.name_ka,
-      slug: finalSlug,
-      city: parsed.data.city || null,
-      region: parsed.data.region || null,
-      description: parsed.data.description || null,
-      description_ka: parsed.data.description_ka || null,
-      website: parsed.data.website || null,
-    })
+  const { error: insertError } = await admin.from('clubs').insert({
+    name: parsed.data.name,
+    name_ka: parsed.data.name_ka,
+    slug: finalSlug,
+    city: parsed.data.city || null,
+    region: parsed.data.region || null,
+    description: parsed.data.description || null,
+    description_ka: parsed.data.description_ka || null,
+    website: parsed.data.website || null,
+  })
 
   if (insertError) {
     console.error('[platform-clubs] Create error:', insertError.message)
@@ -98,10 +92,7 @@ export async function deleteClub(clubId: string) {
     return { error: t('platform.clubs.cannotDeleteWithPlayers') }
   }
 
-  const { error: deleteError } = await admin
-    .from('clubs')
-    .delete()
-    .eq('id', clubId)
+  const { error: deleteError } = await admin.from('clubs').delete().eq('id', clubId)
 
   if (deleteError) {
     console.error('[platform-clubs] Delete error:', deleteError.message)

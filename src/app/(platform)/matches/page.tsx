@@ -26,16 +26,20 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
 
   if (compError) console.error('Failed to fetch competitions:', compError.message)
 
-  const competitions = [...new Set((allMatches ?? []).map((m) => m.competition).filter(Boolean))] as string[]
+  const competitions = [
+    ...new Set((allMatches ?? []).map((m) => m.competition).filter(Boolean)),
+  ] as string[]
 
   // Query 2: Fetch filtered matches
   let query = supabase
     .from('matches')
-    .select(`
+    .select(
+      `
       slug, home_score, away_score, competition, match_date,
       home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
       away_club:clubs!matches_away_club_id_fkey ( name, name_ka )
-    `)
+    `
+    )
     .order('match_date', { ascending: false })
     .limit(200)
 
@@ -57,15 +61,15 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">{t('matches.title')}</h1>
-        <p className="mt-1 text-foreground-muted">
-          {t('matches.subtitle')}
-        </p>
+        <p className="mt-1 text-foreground-muted">{t('matches.subtitle')}</p>
       </div>
 
       <MatchFilters competitions={competitions} />
 
       <p className="mt-6 mb-4 text-sm text-foreground-muted">
-        {matchCards.length} {matchCards.length !== 1 ? t('matches.matchPlural') : t('matches.match')} {t('common.found')}
+        {matchCards.length}{' '}
+        {matchCards.length !== 1 ? t('matches.matchPlural') : t('matches.match')}{' '}
+        {t('common.found')}
       </p>
 
       {matchCards.length > 0 ? (

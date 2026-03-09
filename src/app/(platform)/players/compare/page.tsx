@@ -23,9 +23,10 @@ export async function generateMetadata({ searchParams }: ComparePageProps): Prom
     supabase.from('players').select('name').eq('slug', params.p2).single(),
   ])
 
-  const title = p1 && p2
-    ? `${p1.name} vs ${p2.name} | Compare Players`
-    : 'Compare Players | Georgian Football Talent Platform'
+  const title =
+    p1 && p2
+      ? `${p1.name} vs ${p2.name} | Compare Players`
+      : 'Compare Players | Georgian Football Talent Platform'
 
   return {
     title,
@@ -36,13 +37,15 @@ export async function generateMetadata({ searchParams }: ComparePageProps): Prom
 async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, slug: string) {
   const { data, error } = await supabase
     .from('players')
-    .select(`
+    .select(
+      `
       name, name_ka, slug, position, date_of_birth, height_cm, weight_kg,
       preferred_foot, jersey_number,
       club:clubs!players_club_id_fkey ( name, name_ka ),
       skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
       season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, tackles, interceptions )
-    `)
+    `
+    )
     .eq('slug', slug)
     .single()
 

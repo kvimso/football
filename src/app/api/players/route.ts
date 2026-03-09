@@ -136,7 +136,11 @@ export async function GET(request: NextRequest) {
     const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
 
     filteredPlayers = filteredPlayers.filter((p) => {
-      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const statsArr = Array.isArray(p.season_stats)
+        ? p.season_stats
+        : p.season_stats
+          ? [p.season_stats]
+          : []
       const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
       if (!latest) return false
       if (minGoals && (latest.goals ?? 0) < minGoals) return false
@@ -149,8 +153,13 @@ export async function GET(request: NextRequest) {
 
   // Map results
   const allPlayers = filteredPlayers.map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
-    const latestStats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
+    const statsArr = Array.isArray(p.season_stats)
+      ? p.season_stats
+      : p.season_stats
+        ? [p.season_stats]
+        : []
+    const latestStats =
+      statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       id: p.id,
       slug: p.slug,

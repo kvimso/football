@@ -20,11 +20,8 @@ export function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead,
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
         <h3 className="text-xs font-semibold text-foreground">{t('notifications.title')}</h3>
-        {notifications.some(n => !n.is_read) && (
-          <button
-            onClick={onMarkAllRead}
-            className="text-[11px] text-accent hover:underline"
-          >
+        {notifications.some((n) => !n.is_read) && (
+          <button onClick={onMarkAllRead} className="text-[11px] text-accent hover:underline">
             {t('notifications.markAllRead')}
           </button>
         )}
@@ -42,7 +39,7 @@ export function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead,
             <p className="text-xs text-foreground-muted">{t('notifications.empty')}</p>
           </div>
         ) : (
-          notifications.map(n => (
+          notifications.map((n) => (
             <NotificationItem
               key={n.id}
               id={n.id}

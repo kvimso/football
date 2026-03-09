@@ -36,15 +36,13 @@ export function ReleasePlayerButton({ playerId, playerName }: ReleasePlayerButto
   return (
     <>
       <button
-      onClick={handleRelease}
-      disabled={loading}
-      className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
-    >
-      {loading ? t('common.loading') : t('admin.transfers.release')}
-    </button>
-      {errorMsg && (
-        <span className="text-xs text-red-400">{errorMsg}</span>
-      )}
+        onClick={handleRelease}
+        disabled={loading}
+        className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
+      >
+        {loading ? t('common.loading') : t('admin.transfers.release')}
+      </button>
+      {errorMsg && <span className="text-xs text-red-400">{errorMsg}</span>}
     </>
   )
 }

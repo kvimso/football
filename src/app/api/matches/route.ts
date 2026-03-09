@@ -19,11 +19,13 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('matches')
-    .select(`
+    .select(
+      `
       id, slug, home_score, away_score, competition, match_date, venue,
       home_club:clubs!matches_home_club_id_fkey ( id, name, name_ka, slug ),
       away_club:clubs!matches_away_club_id_fkey ( id, name, name_ka, slug )
-    `)
+    `
+    )
     .order('match_date', { ascending: false })
     .limit(limit)
 

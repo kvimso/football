@@ -3,7 +3,11 @@
 import { contactMessageSchema } from '@/lib/validations'
 import { createClient } from '@/lib/supabase/server'
 
-export async function submitContactMessage(formData: { name: string; email: string; message: string }) {
+export async function submitContactMessage(formData: {
+  name: string
+  email: string
+  message: string
+}) {
   const parsed = contactMessageSchema.safeParse(formData)
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }

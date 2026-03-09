@@ -2,7 +2,8 @@
 export const en = {
   landing: {
     heroTitle: 'The Gateway to Georgian Football Talent',
-    heroSubtitle: 'A centralized scouting platform connecting international scouts and agents with Georgia\'s brightest youth football prospects. Powered by verified camera data.',
+    heroSubtitle:
+      "A centralized scouting platform connecting international scouts and agents with Georgia's brightest youth football prospects. Powered by verified camera data.",
     registerScout: 'Register as Scout',
     registerAcademy: 'Register Your Academy',
     statsYouthPlayers: '37,600+',
@@ -12,25 +13,34 @@ export const en = {
     statsAcademies: '200+',
     statsAcademiesLabel: 'Football Academies',
     whatWeDoTitle: 'What We Do',
-    whatWeDoSubtitle: 'We bridge the gap between Georgian football academies and the international scouting community.',
+    whatWeDoSubtitle:
+      'We bridge the gap between Georgian football academies and the international scouting community.',
     feature1Title: 'Centralized Scouting',
-    feature1Desc: 'One platform for all Georgian youth player data — profiles, stats, career history, and contact information.',
+    feature1Desc:
+      'One platform for all Georgian youth player data — profiles, stats, career history, and contact information.',
     feature2Title: 'Verified Camera Stats',
-    feature2Desc: 'Automated match statistics from Pixellot cameras installed at partner academies. No manual data entry.',
+    feature2Desc:
+      'Automated match statistics from Pixellot cameras installed at partner academies. No manual data entry.',
     feature3Title: 'Direct Academy Contact',
-    feature3Desc: 'Send contact requests directly to academy administrators. Track request status in your dashboard.',
+    feature3Desc:
+      'Send contact requests directly to academy administrators. Track request status in your dashboard.',
     servicesTitle: 'Our Services',
     servicesSubtitle: 'Everything scouts and academies need in one platform.',
     service1Title: 'Player Database',
-    service1Desc: 'Comprehensive profiles with physical attributes, position, preferred foot, career history, and current club affiliation.',
+    service1Desc:
+      'Comprehensive profiles with physical attributes, position, preferred foot, career history, and current club affiliation.',
     service2Title: 'Verified Camera Stats',
-    service2Desc: 'Match statistics captured automatically by Pixellot cameras — goals, assists, pass accuracy, distance covered, and more.',
+    service2Desc:
+      'Match statistics captured automatically by Pixellot cameras — goals, assists, pass accuracy, distance covered, and more.',
     service3Title: 'Highlight Reels',
-    service3Desc: 'Auto-generated highlight clips from match footage, linked to individual player profiles.',
+    service3Desc:
+      'Auto-generated highlight clips from match footage, linked to individual player profiles.',
     service4Title: 'Scout Contact System',
-    service4Desc: 'Send contact requests to academies, track responses, and manage your scouting pipeline from one dashboard.',
+    service4Desc:
+      'Send contact requests to academies, track responses, and manage your scouting pipeline from one dashboard.',
     service5Title: 'Academy Management',
-    service5Desc: 'Register players, manage your squad, handle transfer requests, and respond to scout inquiries.',
+    service5Desc:
+      'Register players, manage your squad, handle transfer requests, and respond to scout inquiries.',
     forScoutsTitle: 'For Scouts & Agents',
     forScoutsSubtitle: 'Discover the next Kvaratskhelia before anyone else.',
     scoutBenefit1: 'Browse all registered Georgian youth players in one place',
@@ -45,12 +55,13 @@ export const en = {
     academyBenefit2: 'Receive verified statistics from camera systems',
     academyBenefit3: 'Get notified when scouts are interested in your players',
     academyBenefit4: 'Handle transfer requests from other clubs',
-    academyBenefit5: 'Build your academy\'s international reputation',
+    academyBenefit5: "Build your academy's international reputation",
     academyCta: 'Register Your Academy',
     partnersTitle: 'Our Partners',
     partnersSubtitle: 'Powered by industry-leading camera technology.',
     poweredBy: 'Powered by Pixellot',
-    pixellotDesc: 'AI-powered sports camera technology providing automated match footage and player statistics at partner academies across Georgia.',
+    pixellotDesc:
+      'AI-powered sports camera technology providing automated match footage and player statistics at partner academies across Georgia.',
     footerTagline: 'Connecting Georgian football talent with the world.',
     footerPlatform: 'Platform',
     footerForScouts: 'For Scouts',
@@ -106,13 +117,17 @@ export const en = {
     title: 'About the Platform',
     subtitle: 'Connecting Georgian football talent with the world',
     mission: 'Our Mission',
-    missionText: 'Georgian football talent is booming. Kvaratskhelia, Mamardashvili, and many more have proven Georgian players belong at the highest level. Yet with 37,000+ registered youth players, there is no centralized platform for international scouts to discover the next generation.',
+    missionText:
+      'Georgian football talent is booming. Kvaratskhelia, Mamardashvili, and many more have proven Georgian players belong at the highest level. Yet with 37,000+ registered youth players, there is no centralized platform for international scouts to discover the next generation.',
     what: 'What We Do',
-    whatText: 'We provide a bilingual scouting platform where academies manage player profiles with statistics and video footage, while scouts can search, filter, compare, and contact players — all in one place.',
+    whatText:
+      'We provide a bilingual scouting platform where academies manage player profiles with statistics and video footage, while scouts can search, filter, compare, and contact players — all in one place.',
     forScouts: 'For Scouts & Agents',
-    forScoutsText: 'Browse detailed player profiles, watch match highlights, compare stats, add players to your watchlist, and send contact requests directly to academies.',
+    forScoutsText:
+      'Browse detailed player profiles, watch match highlights, compare stats, add players to your watchlist, and send contact requests directly to academies.',
     forAcademies: 'For Academies',
-    forAcademiesText: 'Manage your player roster, upload match data, showcase your talent to international scouts, and handle contact requests — all from a simple admin panel.',
+    forAcademiesText:
+      'Manage your player roster, upload match data, showcase your talent to international scouts, and handle contact requests — all from a simple admin panel.',
   },
   contact: {
     title: 'Contact Us',
@@ -123,14 +138,15 @@ export const en = {
     messagePlaceholder: 'Tell us how we can help...',
     send: 'Send Message',
     sent: 'Message Sent',
-    sentDesc: 'Thank you for reaching out. We\'ll get back to you soon.',
+    sentDesc: "Thank you for reaching out. We'll get back to you soon.",
   },
 }
 
 export const ka = {
   landing: {
     heroTitle: 'ქართული ფეხბურთის ტალანტის კარიბჭე',
-    heroSubtitle: 'ცენტრალიზებული სკაუტინგის პლატფორმა, რომელიც აკავშირებს საერთაშორისო სკაუტებსა და აგენტებს საქართველოს ყველაზე ნიჭიერ ახალგაზრდა ფეხბურთელებთან. დამოწმებული კამერის მონაცემებით.',
+    heroSubtitle:
+      'ცენტრალიზებული სკაუტინგის პლატფორმა, რომელიც აკავშირებს საერთაშორისო სკაუტებსა და აგენტებს საქართველოს ყველაზე ნიჭიერ ახალგაზრდა ფეხბურთელებთან. დამოწმებული კამერის მონაცემებით.',
     registerScout: 'დარეგისტრირდი სკაუტად',
     registerAcademy: 'დაარეგისტრირე აკადემია',
     statsYouthPlayers: '37,600+',
@@ -140,25 +156,34 @@ export const ka = {
     statsAcademies: '200+',
     statsAcademiesLabel: 'ფეხბურთის აკადემია',
     whatWeDoTitle: 'რას ვაკეთებთ',
-    whatWeDoSubtitle: 'ჩვენ ვაკავშირებთ ქართულ ფეხბურთის აკადემიებს საერთაშორისო სკაუტინგის საზოგადოებასთან.',
+    whatWeDoSubtitle:
+      'ჩვენ ვაკავშირებთ ქართულ ფეხბურთის აკადემიებს საერთაშორისო სკაუტინგის საზოგადოებასთან.',
     feature1Title: 'ცენტრალიზებული სკაუტინგი',
-    feature1Desc: 'ერთი პლატფორმა ყველა ქართველი ახალგაზრდა მოთამაშის მონაცემებისთვის — პროფილები, სტატისტიკა, კარიერის ისტორია და საკონტაქტო ინფორმაცია.',
+    feature1Desc:
+      'ერთი პლატფორმა ყველა ქართველი ახალგაზრდა მოთამაშის მონაცემებისთვის — პროფილები, სტატისტიკა, კარიერის ისტორია და საკონტაქტო ინფორმაცია.',
     feature2Title: 'დამოწმებული კამერის სტატისტიკა',
-    feature2Desc: 'მატჩის ავტომატური სტატისტიკა Pixellot კამერებიდან პარტნიორ აკადემიებში. ხელით მონაცემების შეყვანა არ არის.',
+    feature2Desc:
+      'მატჩის ავტომატური სტატისტიკა Pixellot კამერებიდან პარტნიორ აკადემიებში. ხელით მონაცემების შეყვანა არ არის.',
     feature3Title: 'პირდაპირი კონტაქტი აკადემიასთან',
-    feature3Desc: 'გაგზავნეთ საკონტაქტო მოთხოვნები პირდაპირ აკადემიის ადმინისტრატორებთან. თვალყური ადევნეთ მოთხოვნის სტატუსს.',
+    feature3Desc:
+      'გაგზავნეთ საკონტაქტო მოთხოვნები პირდაპირ აკადემიის ადმინისტრატორებთან. თვალყური ადევნეთ მოთხოვნის სტატუსს.',
     servicesTitle: 'ჩვენი სერვისები',
     servicesSubtitle: 'ყველაფერი, რაც სკაუტებსა და აკადემიებს სჭირდებათ ერთ პლატფორმაზე.',
     service1Title: 'მოთამაშეთა ბაზა',
-    service1Desc: 'სრული პროფილები ფიზიკური მახასიათებლებით, პოზიცია, სასურველი ფეხი, კარიერის ისტორია და მიმდინარე კლუბი.',
+    service1Desc:
+      'სრული პროფილები ფიზიკური მახასიათებლებით, პოზიცია, სასურველი ფეხი, კარიერის ისტორია და მიმდინარე კლუბი.',
     service2Title: 'დამოწმებული კამერის სტატისტიკა',
-    service2Desc: 'მატჩის სტატისტიკა ავტომატურად Pixellot კამერებიდან — გოლები, ასისტები, პასების სიზუსტე, გავლილი მანძილი.',
+    service2Desc:
+      'მატჩის სტატისტიკა ავტომატურად Pixellot კამერებიდან — გოლები, ასისტები, პასების სიზუსტე, გავლილი მანძილი.',
     service3Title: 'ჰაილაითების რგოლები',
-    service3Desc: 'ავტომატურად გენერირებული ჰაილაითების კლიპები მატჩის კადრებიდან, მიბმული თითოეული მოთამაშის პროფილთან.',
+    service3Desc:
+      'ავტომატურად გენერირებული ჰაილაითების კლიპები მატჩის კადრებიდან, მიბმული თითოეული მოთამაშის პროფილთან.',
     service4Title: 'სკაუტის საკონტაქტო სისტემა',
-    service4Desc: 'გაგზავნეთ მოთხოვნები აკადემიებს, თვალყური ადევნეთ პასუხებს და მართეთ სკაუტინგი ერთი პანელიდან.',
+    service4Desc:
+      'გაგზავნეთ მოთხოვნები აკადემიებს, თვალყური ადევნეთ პასუხებს და მართეთ სკაუტინგი ერთი პანელიდან.',
     service5Title: 'აკადემიის მართვა',
-    service5Desc: 'დაარეგისტრირეთ მოთამაშეები, მართეთ შემადგენლობა, მართეთ ტრანსფერის მოთხოვნები და უპასუხეთ სკაუტებს.',
+    service5Desc:
+      'დაარეგისტრირეთ მოთამაშეები, მართეთ შემადგენლობა, მართეთ ტრანსფერის მოთხოვნები და უპასუხეთ სკაუტებს.',
     forScoutsTitle: 'სკაუტებისა და აგენტებისთვის',
     forScoutsSubtitle: 'აღმოაჩინეთ შემდეგი კვარაცხელია ყველაზე ადრე.',
     scoutBenefit1: 'დაათვალიერეთ ყველა რეგისტრირებული ქართველი ახალგაზრდა მოთამაშე ერთ ადგილას',
@@ -178,7 +203,8 @@ export const ka = {
     partnersTitle: 'ჩვენი პარტნიორები',
     partnersSubtitle: 'მხარდაჭერილია ინდუსტრიის წამყვანი კამერის ტექნოლოგიით.',
     poweredBy: 'Pixellot-ის მხარდაჭერით',
-    pixellotDesc: 'AI-ზე დაფუძნებული სპორტული კამერის ტექნოლოგია, რომელიც უზრუნველყოფს ავტომატურ მატჩის კადრებს და მოთამაშეთა სტატისტიკას პარტნიორ აკადემიებში საქართველოში.',
+    pixellotDesc:
+      'AI-ზე დაფუძნებული სპორტული კამერის ტექნოლოგია, რომელიც უზრუნველყოფს ავტომატურ მატჩის კადრებს და მოთამაშეთა სტატისტიკას პარტნიორ აკადემიებში საქართველოში.',
     footerTagline: 'ქართული ფეხბურთის ტალანტის მსოფლიოსთან დაკავშირება.',
     footerPlatform: 'პლატფორმა',
     footerForScouts: 'სკაუტებისთვის',
@@ -234,13 +260,17 @@ export const ka = {
     title: 'პლატფორმის შესახებ',
     subtitle: 'ქართული ფეხბურთის ტალანტების მსოფლიოსთან დაკავშირება',
     mission: 'ჩვენი მისია',
-    missionText: 'ქართული ფეხბურთის ტალანტი აყვავებულია. კვარაცხელიამ, მამარდაშვილმა და ბევრმა სხვამ დაამტკიცა, რომ ქართველი მოთამაშეები უმაღლეს დონეზე არიან. მიუხედავად 37,000+ რეგისტრირებული ახალგაზრდა მოთამაშისა, არ არსებობს ცენტრალიზებული პლატფორმა საერთაშორისო სკაუტებისთვის.',
+    missionText:
+      'ქართული ფეხბურთის ტალანტი აყვავებულია. კვარაცხელიამ, მამარდაშვილმა და ბევრმა სხვამ დაამტკიცა, რომ ქართველი მოთამაშეები უმაღლეს დონეზე არიან. მიუხედავად 37,000+ რეგისტრირებული ახალგაზრდა მოთამაშისა, არ არსებობს ცენტრალიზებული პლატფორმა საერთაშორისო სკაუტებისთვის.',
     what: 'რას ვაკეთებთ',
-    whatText: 'ჩვენ გთავაზობთ ორენოვან სკაუტინგის პლატფორმას, სადაც აკადემიები მართავენ მოთამაშეთა პროფილებს სტატისტიკითა და ვიდეო მასალით, ხოლო სკაუტებს შეუძლიათ ძიება, ფილტრაცია, შედარება და კონტაქტი.',
+    whatText:
+      'ჩვენ გთავაზობთ ორენოვან სკაუტინგის პლატფორმას, სადაც აკადემიები მართავენ მოთამაშეთა პროფილებს სტატისტიკითა და ვიდეო მასალით, ხოლო სკაუტებს შეუძლიათ ძიება, ფილტრაცია, შედარება და კონტაქტი.',
     forScouts: 'სკაუტებისა და აგენტებისთვის',
-    forScoutsText: 'დაათვალიერეთ დეტალური მოთამაშეთა პროფილები, ნახეთ მატჩების ჰაილაითები, შეადარეთ სტატისტიკა, შეინახეთ მოთამაშეები და გაგზავნეთ მოთხოვნები აკადემიებს.',
+    forScoutsText:
+      'დაათვალიერეთ დეტალური მოთამაშეთა პროფილები, ნახეთ მატჩების ჰაილაითები, შეადარეთ სტატისტიკა, შეინახეთ მოთამაშეები და გაგზავნეთ მოთხოვნები აკადემიებს.',
     forAcademies: 'აკადემიებისთვის',
-    forAcademiesText: 'მართეთ თქვენი შემადგენლობა, ატვირთეთ მატჩების მონაცემები, წარადგინეთ ტალანტი საერთაშორისო სკაუტებისთვის და მართეთ კონტაქტის მოთხოვნები ადმინ პანელიდან.',
+    forAcademiesText:
+      'მართეთ თქვენი შემადგენლობა, ატვირთეთ მატჩების მონაცემები, წარადგინეთ ტალანტი საერთაშორისო სკაუტებისთვის და მართეთ კონტაქტის მოთხოვნები ადმინ პანელიდან.',
   },
   contact: {
     title: 'დაგვიკავშირდით',

@@ -12,7 +12,14 @@ import { realtimeMessageSchema, realtimeMessageUpdateSchema } from '@/lib/valida
 import { DateDivider } from '@/components/chat/DateDivider'
 import { MessageBubble } from '@/components/chat/MessageBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
-import type { ConversationDetail, MessageWithSender, MessageType, UserRole, ReferencedPlayer, PlayerSearchResult } from '@/lib/types'
+import type {
+  ConversationDetail,
+  MessageWithSender,
+  MessageType,
+  UserRole,
+  ReferencedPlayer,
+  PlayerSearchResult,
+} from '@/lib/types'
 
 interface ChatThreadProps {
   conversation: ConversationDetail
@@ -35,7 +42,9 @@ export function ChatThread({
   const [hasMore, setHasMore] = useState(hasMoreInitial)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [newMessageCount, setNewMessageCount] = useState(0)
-  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'reconnecting' | 'disconnected'>('connected')
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connected' | 'reconnecting' | 'disconnected'
+  >('connected')
   const [lastAnnouncement, setLastAnnouncement] = useState<string | null>(null)
   const [isBlocked, setIsBlocked] = useState(conversation.is_blocked)
   const [blockedByMe, setBlockedByMe] = useState(conversation.blocked_by_me)
@@ -45,9 +54,9 @@ export function ChatThread({
   const menuRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const isAtBottomRef = useRef(true)
-  const initialMessageIdsRef = useRef<Set<string>>(new Set(initialMessages.map(m => m.id)))
+  const initialMessageIdsRef = useRef<Set<string>>(new Set(initialMessages.map((m) => m.id)))
   const firstUnreadIdRef = useRef<string | null>(
-    initialMessages.find(m => m.sender_id !== userId && !m.read_at)?.id ?? null
+    initialMessages.find((m) => m.sender_id !== userId && !m.read_at)?.id ?? null
   )
 
   // Keep last non-zero count visible during fade-out animation
@@ -56,7 +65,13 @@ export function ChatThread({
   const displayCount = displayCountRef.current
 
   const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
-  const displayName = getConversationDisplayName(conversation.club, conversation.other_party, userRole, lang, t)
+  const displayName = getConversationDisplayName(
+    conversation.club,
+    conversation.other_party,
+    userRole,
+    lang,
+    t
+  )
 
   // Block/unblock handler
   const handleBlockAction = useCallback(async () => {
@@ -199,111 +214,122 @@ export function ChatThread({
 
       const channel = supabase
         .channel(`thread-${conversation.id}`)
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversation.id}`,
-        }, (payload) => {
-          // Validate Realtime payload with Zod
-          const result = realtimeMessageSchema.safeParse(payload.new)
-          if (!result.success) {
-            console.warn('Malformed realtime message:', result.error)
-            return
-          }
-          const newMsg = result.data
-
-          // Pure state updater — no side effects inside
-          setMessages(prev => {
-            // Check if already exists (by real ID)
-            if (prev.some(m => m.id === newMsg.id)) {
-              wasAddedRef.current = false
-              return prev
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `conversation_id=eq.${conversation.id}`,
+          },
+          (payload) => {
+            // Validate Realtime payload with Zod
+            const result = realtimeMessageSchema.safeParse(payload.new)
+            if (!result.success) {
+              console.warn('Malformed realtime message:', result.error)
+              return
             }
+            const newMsg = result.data
 
-            // Check if this is our own message that we sent optimistically
-            if (newMsg.sender_id === userId) {
-              // Replace temp message with real one if exists
-              const tempIdx = prev.findIndex(m =>
-                m.id.startsWith('temp-') &&
-                m.sender_id === userId &&
-                Math.abs(new Date(m.created_at).getTime() - new Date(newMsg.created_at).getTime()) < 5000
-              )
-              if (tempIdx !== -1) {
-                wasAddedRef.current = true
-                const updated = [...prev]
-                updated[tempIdx] = {
-                  ...updated[tempIdx],
-                  id: newMsg.id,
-                  content: newMsg.content ?? updated[tempIdx].content,
-                  file_url: newMsg.file_url ?? updated[tempIdx].file_url,
-                  file_name: newMsg.file_name ?? updated[tempIdx].file_name,
-                  file_type: newMsg.file_type ?? updated[tempIdx].file_type,
-                  file_size_bytes: newMsg.file_size_bytes ?? updated[tempIdx].file_size_bytes,
-                  created_at: newMsg.created_at,
-                  _status: 'sent',
-                }
-                return updated
+            // Pure state updater — no side effects inside
+            setMessages((prev) => {
+              // Check if already exists (by real ID)
+              if (prev.some((m) => m.id === newMsg.id)) {
+                wasAddedRef.current = false
+                return prev
               }
-              // Own message but no temp found — POST response already handled it
-              wasAddedRef.current = false
-              return prev
+
+              // Check if this is our own message that we sent optimistically
+              if (newMsg.sender_id === userId) {
+                // Replace temp message with real one if exists
+                const tempIdx = prev.findIndex(
+                  (m) =>
+                    m.id.startsWith('temp-') &&
+                    m.sender_id === userId &&
+                    Math.abs(
+                      new Date(m.created_at).getTime() - new Date(newMsg.created_at).getTime()
+                    ) < 5000
+                )
+                if (tempIdx !== -1) {
+                  wasAddedRef.current = true
+                  const updated = [...prev]
+                  updated[tempIdx] = {
+                    ...updated[tempIdx],
+                    id: newMsg.id,
+                    content: newMsg.content ?? updated[tempIdx].content,
+                    file_url: newMsg.file_url ?? updated[tempIdx].file_url,
+                    file_name: newMsg.file_name ?? updated[tempIdx].file_name,
+                    file_type: newMsg.file_type ?? updated[tempIdx].file_type,
+                    file_size_bytes: newMsg.file_size_bytes ?? updated[tempIdx].file_size_bytes,
+                    created_at: newMsg.created_at,
+                    _status: 'sent',
+                  }
+                  return updated
+                }
+                // Own message but no temp found — POST response already handled it
+                wasAddedRef.current = false
+                return prev
+              }
+
+              // New message from other party
+              wasAddedRef.current = true
+              const realtimeMsg: MessageWithSender = {
+                id: newMsg.id,
+                conversation_id: newMsg.conversation_id,
+                sender_id: newMsg.sender_id,
+                content: newMsg.content,
+                message_type: newMsg.message_type as MessageType,
+                file_url: newMsg.file_url,
+                file_name: newMsg.file_name,
+                file_type: newMsg.file_type,
+                file_size_bytes: newMsg.file_size_bytes,
+                referenced_player_id: newMsg.referenced_player_id,
+                read_at: newMsg.read_at,
+                created_at: newMsg.created_at,
+                sender: null, // Will be populated on next load
+                referenced_player: null,
+              }
+
+              return [...prev, realtimeMsg]
+            })
+
+            // Side effects OUTSIDE the updater — only when message was actually added
+            if (wasAddedRef.current && newMsg.sender_id !== userId) {
+              setLastAnnouncement(newMsg.content?.slice(0, 100) ?? '')
+
+              if (isAtBottomRef.current) {
+                requestAnimationFrame(() => scrollToBottomRef.current('instant'))
+              } else {
+                setNewMessageCount((c) => c + 1)
+              }
             }
 
-            // New message from other party
-            wasAddedRef.current = true
-            const realtimeMsg: MessageWithSender = {
-              id: newMsg.id,
-              conversation_id: newMsg.conversation_id,
-              sender_id: newMsg.sender_id,
-              content: newMsg.content,
-              message_type: newMsg.message_type as MessageType,
-              file_url: newMsg.file_url,
-              file_name: newMsg.file_name,
-              file_type: newMsg.file_type,
-              file_size_bytes: newMsg.file_size_bytes,
-              referenced_player_id: newMsg.referenced_player_id,
-              read_at: newMsg.read_at,
-              created_at: newMsg.created_at,
-              sender: null, // Will be populated on next load
-              referenced_player: null,
-            }
-
-            return [...prev, realtimeMsg]
-          })
-
-          // Side effects OUTSIDE the updater — only when message was actually added
-          if (wasAddedRef.current && newMsg.sender_id !== userId) {
-            setLastAnnouncement(newMsg.content?.slice(0, 100) ?? '')
-
-            if (isAtBottomRef.current) {
-              requestAnimationFrame(() => scrollToBottomRef.current('instant'))
-            } else {
-              setNewMessageCount(c => c + 1)
+            // Mark as read if visible
+            if (document.visibilityState === 'visible' && newMsg.sender_id !== userId) {
+              fetch(`/api/messages/${conversation.id}/read`, { method: 'PATCH' })
             }
           }
-
-          // Mark as read if visible
-          if (document.visibilityState === 'visible' && newMsg.sender_id !== userId) {
-            fetch(`/api/messages/${conversation.id}/read`, { method: 'PATCH' })
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `conversation_id=eq.${conversation.id}`,
+          },
+          (payload) => {
+            const result = realtimeMessageUpdateSchema.safeParse(payload.new)
+            if (!result.success) {
+              console.warn('Malformed realtime update:', result.error)
+              return
+            }
+            const updated = result.data
+            setMessages((prev) =>
+              prev.map((m) => (m.id === updated.id ? { ...m, read_at: updated.read_at } : m))
+            )
           }
-        })
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversation.id}`,
-        }, (payload) => {
-          const result = realtimeMessageUpdateSchema.safeParse(payload.new)
-          if (!result.success) {
-            console.warn('Malformed realtime update:', result.error)
-            return
-          }
-          const updated = result.data
-          setMessages(prev => prev.map(m =>
-            m.id === updated.id ? { ...m, read_at: updated.read_at } : m
-          ))
-        })
+        )
         .subscribe((status) => {
           if (cancelled) return
           if (status === 'SUBSCRIBED') setConnectionStatus('connected')
@@ -343,7 +369,7 @@ export function ChatThread({
       const prevHeight = el?.scrollHeight ?? 0
 
       const normalized: MessageWithSender[] = (data.messages as MessageWithSender[]).reverse()
-      setMessages(prev => [...normalized, ...prev])
+      setMessages((prev) => [...normalized, ...prev])
       setHasMore(data.has_more)
 
       // Restore scroll position
@@ -356,117 +382,142 @@ export function ChatThread({
   }, [hasMore, isLoadingMore, conversation.id])
 
   // Unified send message helper (optimistic update + POST)
-  const sendMessage = useCallback(async (
-    type: MessageType,
-    payload: {
-      content?: string
-      file_url?: string
-      storage_path?: string
-      file_name?: string
-      file_type?: string
-      file_size_bytes?: number
-      referenced_player_id?: string
-      referenced_player?: ReferencedPlayer
-    }
-  ) => {
-    const tempId = `temp-${Date.now()}`
-    const optimistic: MessageWithSender = {
-      id: tempId,
-      conversation_id: conversation.id,
-      sender_id: userId,
-      content: payload.content ?? null,
-      message_type: type,
-      file_url: payload.file_url ?? null,
-      file_name: payload.file_name ?? null,
-      file_type: payload.file_type ?? null,
-      file_size_bytes: payload.file_size_bytes ?? null,
-      referenced_player_id: payload.referenced_player_id ?? null,
-      read_at: null,
-      created_at: new Date().toISOString(),
-      sender: { id: userId, full_name: t('chat.you'), role: userRole as UserRole },
-      referenced_player: payload.referenced_player ?? null,
-      _status: 'sending',
-    }
-
-    flushSync(() => {
-      setMessages(prev => [...prev, optimistic])
-    })
-    scrollToBottom('instant')
-
-    try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversation_id: conversation.id,
-          message_type: type,
-          content: payload.content,
-          file_url: payload.storage_path ?? payload.file_url,
-          file_name: payload.file_name,
-          file_type: payload.file_type,
-          file_size_bytes: payload.file_size_bytes,
-          referenced_player_id: payload.referenced_player_id,
-        }),
-      })
-
-      if (!res.ok) {
-        const err = await res.json()
-        setMessages(prev => prev.map(m =>
-          m.id === tempId ? { ...m, _status: 'failed' as const, _error: err.error } : m
-        ))
-        return
+  const sendMessage = useCallback(
+    async (
+      type: MessageType,
+      payload: {
+        content?: string
+        file_url?: string
+        storage_path?: string
+        file_name?: string
+        file_type?: string
+        file_size_bytes?: number
+        referenced_player_id?: string
+        referenced_player?: ReferencedPlayer
+      }
+    ) => {
+      const tempId = `temp-${Date.now()}`
+      const optimistic: MessageWithSender = {
+        id: tempId,
+        conversation_id: conversation.id,
+        sender_id: userId,
+        content: payload.content ?? null,
+        message_type: type,
+        file_url: payload.file_url ?? null,
+        file_name: payload.file_name ?? null,
+        file_type: payload.file_type ?? null,
+        file_size_bytes: payload.file_size_bytes ?? null,
+        referenced_player_id: payload.referenced_player_id ?? null,
+        read_at: null,
+        created_at: new Date().toISOString(),
+        sender: { id: userId, full_name: t('chat.you'), role: userRole as UserRole },
+        referenced_player: payload.referenced_player ?? null,
+        _status: 'sending',
       }
 
-      const { message } = await res.json()
-      setMessages(prev => prev.map(m =>
-        m.id === tempId ? { ...m, id: message.id, _status: 'sent' as const } : m
-      ))
-    } catch {
-      setMessages(prev => prev.map(m =>
-        m.id === tempId ? { ...m, _status: 'failed' as const } : m
-      ))
-    }
-  }, [conversation.id, userId, userRole, scrollToBottom, t])
+      flushSync(() => {
+        setMessages((prev) => [...prev, optimistic])
+      })
+      scrollToBottom('instant')
 
-  const sendTextMessage = useCallback(async (content: string) => {
-    await sendMessage('text', { content })
-  }, [sendMessage])
+      try {
+        const res = await fetch('/api/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            conversation_id: conversation.id,
+            message_type: type,
+            content: payload.content,
+            file_url: payload.storage_path ?? payload.file_url,
+            file_name: payload.file_name,
+            file_type: payload.file_type,
+            file_size_bytes: payload.file_size_bytes,
+            referenced_player_id: payload.referenced_player_id,
+          }),
+        })
 
-  const sendFileMessage = useCallback(async (data: { storage_path: string; file_url: string; file_name: string; file_type: string; file_size_bytes: number }) => {
-    await sendMessage('file', {
-      file_url: data.file_url,
-      storage_path: data.storage_path,
-      file_name: data.file_name,
-      file_type: data.file_type,
-      file_size_bytes: data.file_size_bytes,
-    })
-  }, [sendMessage])
+        if (!res.ok) {
+          const err = await res.json()
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === tempId ? { ...m, _status: 'failed' as const, _error: err.error } : m
+            )
+          )
+          return
+        }
 
-  const sendPlayerRefMessage = useCallback(async (player: PlayerSearchResult) => {
-    const refPlayer: ReferencedPlayer = {
-      id: player.id,
-      name: player.name,
-      name_ka: player.name_ka,
-      position: player.position,
-      photo_url: player.photo_url,
-      slug: player.slug,
-      club: player.club_name ? { name: player.club_name, name_ka: player.club_name_ka } : null,
-    }
-    await sendMessage('player_ref', {
-      referenced_player_id: player.id,
-      referenced_player: refPlayer,
-    })
-  }, [sendMessage])
+        const { message } = await res.json()
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === tempId ? { ...m, id: message.id, _status: 'sent' as const } : m
+          )
+        )
+      } catch {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === tempId ? { ...m, _status: 'failed' as const } : m))
+        )
+      }
+    },
+    [conversation.id, userId, userRole, scrollToBottom, t]
+  )
+
+  const sendTextMessage = useCallback(
+    async (content: string) => {
+      await sendMessage('text', { content })
+    },
+    [sendMessage]
+  )
+
+  const sendFileMessage = useCallback(
+    async (data: {
+      storage_path: string
+      file_url: string
+      file_name: string
+      file_type: string
+      file_size_bytes: number
+    }) => {
+      await sendMessage('file', {
+        file_url: data.file_url,
+        storage_path: data.storage_path,
+        file_name: data.file_name,
+        file_type: data.file_type,
+        file_size_bytes: data.file_size_bytes,
+      })
+    },
+    [sendMessage]
+  )
+
+  const sendPlayerRefMessage = useCallback(
+    async (player: PlayerSearchResult) => {
+      const refPlayer: ReferencedPlayer = {
+        id: player.id,
+        name: player.name,
+        name_ka: player.name_ka,
+        position: player.position,
+        photo_url: player.photo_url,
+        slug: player.slug,
+        club: player.club_name ? { name: player.club_name, name_ka: player.club_name_ka } : null,
+      }
+      await sendMessage('player_ref', {
+        referenced_player_id: player.id,
+        referenced_player: refPlayer,
+      })
+    },
+    [sendMessage]
+  )
 
   // Retry failed message
-  const retryMessage = useCallback(async (failedMsg: MessageWithSender) => {
-    // Remove the failed message and resend
-    setMessages(prev => prev.filter(m => m.id !== failedMsg.id))
+  const retryMessage = useCallback(
+    async (failedMsg: MessageWithSender) => {
+      // Remove the failed message and resend
+      setMessages((prev) => prev.filter((m) => m.id !== failedMsg.id))
 
-    if (failedMsg.message_type === 'text' && failedMsg.content) {
-      await sendTextMessage(failedMsg.content)
-    }
-  }, [sendTextMessage])
+      if (failedMsg.message_type === 'text' && failedMsg.content) {
+        await sendTextMessage(failedMsg.content)
+      }
+    },
+    [sendTextMessage]
+  )
 
   // Group messages by date (memoized — only recalculates when messages change)
   const dateGroups = useMemo(() => groupMessagesByDate(messages), [messages])
@@ -481,7 +532,13 @@ export function ChatThread({
           aria-label={t('aria.goBack')}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground lg:hidden"
         >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
           </svg>
         </Link>
@@ -492,8 +549,18 @@ export function ChatThread({
           aria-label={t('chat.switchConversation')}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground lg:hidden"
         >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
           </svg>
         </button>
 
@@ -514,14 +581,15 @@ export function ChatThread({
             )}
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-bold leading-tight text-foreground">{displayName}</h2>
+            <h2 className="truncate text-sm font-bold leading-tight text-foreground">
+              {displayName}
+            </h2>
             <span className="block text-[11px] leading-tight text-foreground-muted">
               {isBlocked
                 ? t('chat.blocked')
                 : userRole === 'scout'
                   ? t('roles.admin')
-                  : t('roles.scout')
-              }
+                  : t('roles.scout')}
             </span>
           </div>
         </div>
@@ -529,7 +597,10 @@ export function ChatThread({
         {userRole === 'academy_admin' && (
           <div ref={menuRef} className="relative shrink-0">
             <button
-              onClick={() => { setMenuOpen(prev => !prev); setBlockConfirming(false) }}
+              onClick={() => {
+                setMenuOpen((prev) => !prev)
+                setBlockConfirming(false)
+              }}
               aria-label={t('aria.chatOptions')}
               className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
             >
@@ -543,24 +614,45 @@ export function ChatThread({
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 z-20 min-w-[160px] overflow-hidden rounded-xl border border-border bg-card shadow-lg">
                 <button
-                  onClick={() => { handleBlockAction(); if (!blockedByMe) return; setMenuOpen(false) }}
+                  onClick={() => {
+                    handleBlockAction()
+                    if (!blockedByMe) return
+                    setMenuOpen(false)
+                  }}
                   disabled={blockLoading}
                   className="flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-background-secondary disabled:opacity-50"
                 >
                   {blockLoading ? (
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border border-foreground-muted border-t-transparent" />
                   ) : (
-                    <svg className="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                    <svg
+                      className="h-4 w-4 text-red-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+                      />
                     </svg>
                   )}
-                  <span className={blockConfirming ? 'text-red-400 font-medium' : isBlocked && blockedByMe ? 'text-foreground' : 'text-red-400'}>
+                  <span
+                    className={
+                      blockConfirming
+                        ? 'text-red-400 font-medium'
+                        : isBlocked && blockedByMe
+                          ? 'text-foreground'
+                          : 'text-red-400'
+                    }
+                  >
                     {blockConfirming
                       ? t('chat.confirmBlock')
                       : isBlocked && blockedByMe
                         ? t('chat.unblock')
-                        : t('chat.block')
-                    }
+                        : t('chat.block')}
                   </span>
                 </button>
               </div>
@@ -571,11 +663,13 @@ export function ChatThread({
 
       {/* Connection status banner */}
       {connectionStatus !== 'connected' && (
-        <div className={`flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium animate-slide-in-down ${
-          connectionStatus === 'reconnecting'
-            ? 'bg-yellow-500/10 text-yellow-400'
-            : 'bg-red-500/10 text-red-400'
-        }`}>
+        <div
+          className={`flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium animate-slide-in-down ${
+            connectionStatus === 'reconnecting'
+              ? 'bg-yellow-500/10 text-yellow-400'
+              : 'bg-red-500/10 text-red-400'
+          }`}
+        >
           <span className="h-2 w-2 rounded-full animate-pulse bg-current" />
           {connectionStatus === 'reconnecting' ? t('chat.reconnecting') : t('chat.connectionLost')}
         </div>
@@ -619,7 +713,8 @@ export function ChatThread({
                 const prevMsg = idx > 0 ? group.messages[idx - 1] : null
                 const isMine = msg.sender_id === userId
                 const showSenderName = !isMine && (!prevMsg || prevMsg.sender_id !== msg.sender_id)
-                const showTimestamp = !prevMsg ||
+                const showTimestamp =
+                  !prevMsg ||
                   prevMsg.sender_id !== msg.sender_id ||
                   !isSameTimeGroup(prevMsg.created_at, msg.created_at)
                 const isNew = !initialMessageIdsRef.current.has(msg.id)
@@ -652,7 +747,6 @@ export function ChatThread({
             </div>
           ))}
         </div>
-
       </div>
 
       {/* New messages pill — always rendered, transitions in/out */}
@@ -671,8 +765,18 @@ export function ChatThread({
           className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white shadow-lg transition-transform hover:scale-105"
         >
           {displayCount > 99 ? '99+' : displayCount} {t('chat.newMessages')}
-          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
+          <svg
+            className="h-3 w-3"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+            />
           </svg>
         </button>
       </div>

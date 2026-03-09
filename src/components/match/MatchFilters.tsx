@@ -32,7 +32,9 @@ export function MatchFilters({ competitions }: MatchFiltersProps) {
       >
         <option value="">{t('matches.allCompetitions')}</option>
         {competitions.map((c) => (
-          <option key={c} value={c}>{c}</option>
+          <option key={c} value={c}>
+            {c}
+          </option>
         ))}
       </select>
     </div>

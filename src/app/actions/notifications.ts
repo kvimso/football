@@ -3,11 +3,20 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Notification, NotificationType } from '@/lib/notifications/types'
 
-const VALID_TYPES: NotificationType[] = ['goal', 'assist', 'club_change', 'free_agent', 'new_video', 'announcement']
+const VALID_TYPES: NotificationType[] = [
+  'goal',
+  'assist',
+  'club_change',
+  'free_agent',
+  'new_video',
+  'announcement',
+]
 
 export async function getUnreadCount(): Promise<number> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return 0
 
   const { count, error } = await supabase
@@ -22,7 +31,9 @@ export async function getUnreadCount(): Promise<number> {
 
 export async function getRecentNotifications(limit = 20): Promise<Notification[]> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return []
 
   const { data, error } = await supabase
@@ -38,7 +49,9 @@ export async function getRecentNotifications(limit = 20): Promise<Notification[]
 
 export async function markAsRead(notificationId: string): Promise<{ error?: string }> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
 
   const { error } = await supabase
@@ -68,15 +81,14 @@ export async function getNotificationsPage(
   filters?: NotificationFilters
 ): Promise<NotificationsPage> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return { notifications: [], total: 0 }
 
-  const offset = Math.max(0, (page - 1)) * PAGE_SIZE
+  const offset = Math.max(0, page - 1) * PAGE_SIZE
 
-  let query = supabase
-    .from('notifications')
-    .select('*', { count: 'exact' })
-    .eq('user_id', user.id)
+  let query = supabase.from('notifications').select('*', { count: 'exact' }).eq('user_id', user.id)
 
   if (filters?.type && VALID_TYPES.includes(filters.type)) {
     query = query.eq('type', filters.type)
@@ -97,7 +109,9 @@ export async function getNotificationsPage(
 
 export async function markAllAsRead(): Promise<{ error?: string }> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
 
   const { error } = await supabase

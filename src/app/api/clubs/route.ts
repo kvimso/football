@@ -10,10 +10,12 @@ export async function GET(request: NextRequest) {
 
   const { data: clubs, error } = await supabase
     .from('clubs')
-    .select(`
+    .select(
+      `
       id, name, name_ka, slug, logo_url, city, region, description, description_ka, website,
       player_count:players(count)
-    `)
+    `
+    )
     .order('name')
 
   if (error) {

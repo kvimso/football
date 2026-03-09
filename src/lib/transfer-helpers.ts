@@ -3,10 +3,12 @@ import type { Database } from '@/lib/database.types'
 import { todayDateString } from '@/lib/utils'
 import { z } from 'zod'
 
-const transferRpcResultSchema = z.object({
-  success: z.boolean().optional(),
-  error: z.string().optional(),
-}).nullable()
+const transferRpcResultSchema = z
+  .object({
+    success: z.boolean().optional(),
+    error: z.string().optional(),
+  })
+  .nullable()
 
 /**
  * Record a player joining a club in the club history table.
@@ -14,15 +16,13 @@ const transferRpcResultSchema = z.object({
 export async function recordClubJoin(
   client: SupabaseClient<Database>,
   playerId: string,
-  clubId: string,
+  clubId: string
 ): Promise<void> {
-  const { error } = await client
-    .from('player_club_history')
-    .insert({
-      player_id: playerId,
-      club_id: clubId,
-      joined_at: todayDateString(),
-    })
+  const { error } = await client.from('player_club_history').insert({
+    player_id: playerId,
+    club_id: clubId,
+    joined_at: todayDateString(),
+  })
 
   if (error) console.error('[transfer-helpers] Failed to insert club history:', error.message)
 }
@@ -33,7 +33,7 @@ export async function recordClubJoin(
 export async function recordClubDeparture(
   client: SupabaseClient<Database>,
   playerId: string,
-  clubId: string,
+  clubId: string
 ): Promise<void> {
   const { error } = await client
     .from('player_club_history')
@@ -52,7 +52,7 @@ export async function recordClubDeparture(
  */
 export async function executeTransferAccept(
   client: SupabaseClient<Database>,
-  requestId: string,
+  requestId: string
 ): Promise<{ error?: string }> {
   // RPC not in generated types — cast to untyped client for this call
   const { data, error } = await (client as SupabaseClient).rpc('accept_transfer_request', {
@@ -81,7 +81,7 @@ export async function executeTransferAccept(
  */
 export async function executeTransferDecline(
   client: SupabaseClient<Database>,
-  requestId: string,
+  requestId: string
 ): Promise<{ error?: string }> {
   const { error: reqErr } = await client
     .from('transfer_requests')

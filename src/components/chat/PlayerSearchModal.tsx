@@ -60,21 +60,30 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
     }
   }, 300)
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
-    setQuery(val)
-    doSearch(val)
-  }, [doSearch])
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value
+      setQuery(val)
+      doSearch(val)
+    },
+    [doSearch]
+  )
 
-  const handleSelect = useCallback((player: PlayerSearchResult) => {
-    onSelect(player)
-    onClose()
-  }, [onSelect, onClose])
+  const handleSelect = useCallback(
+    (player: PlayerSearchResult) => {
+      onSelect(player)
+      onClose()
+    },
+    [onSelect, onClose]
+  )
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
@@ -85,8 +94,18 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="text-sm font-semibold text-foreground">{t('chat.addPlayerRef')}</h3>
-          <button onClick={onClose} aria-label={t('aria.closeModal')} className="text-foreground-muted hover:text-foreground">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <button
+            onClick={onClose}
+            aria-label={t('aria.closeModal')}
+            className="text-foreground-muted hover:text-foreground"
+          >
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
@@ -95,8 +114,18 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
         {/* Search input */}
         <div className="border-b border-border px-4 py-3">
           <div className="relative">
-            <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            <svg
+              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-muted"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
             </svg>
             <input
               ref={inputRef}
@@ -131,8 +160,11 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
 
           {results.map((player) => {
             const displayName = lang === 'ka' && player.name_ka ? player.name_ka : player.name
-            const clubName = lang === 'ka' && player.club_name_ka ? player.club_name_ka : player.club_name
-            const posClass = player.position ? POSITION_COLOR_CLASSES[player.position as Position] : ''
+            const clubName =
+              lang === 'ka' && player.club_name_ka ? player.club_name_ka : player.club_name
+            const posClass = player.position
+              ? POSITION_COLOR_CLASSES[player.position as Position]
+              : ''
 
             return (
               <button
@@ -150,23 +182,35 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
-                    <svg className="h-4 w-4 text-foreground-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    <svg
+                      className="h-4 w-4 text-foreground-muted"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                      />
                     </svg>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-medium text-foreground">{displayName}</span>
+                    <span className="truncate text-sm font-medium text-foreground">
+                      {displayName}
+                    </span>
                     {player.position && (
-                      <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${posClass}`}>
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${posClass}`}
+                      >
                         {player.position}
                       </span>
                     )}
                   </div>
-                  {clubName && (
-                    <p className="truncate text-xs text-foreground-muted">{clubName}</p>
-                  )}
+                  {clubName && <p className="truncate text-xs text-foreground-muted">{clubName}</p>}
                 </div>
               </button>
             )

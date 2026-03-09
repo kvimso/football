@@ -51,24 +51,37 @@ export default async function PlatformScoutsPage() {
                 <th className="pb-3 pr-4 font-medium">{t('platform.scouts.email')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('platform.scouts.organization')}</th>
                 <th className="pb-3 pr-4 font-medium">{t('platform.scouts.registered')}</th>
-                <th className="pb-3 pr-4 font-medium text-center">{t('platform.scouts.watchlistCount')}</th>
-                <th className="pb-3 pr-4 font-medium text-center">{t('platform.scouts.requests')}</th>
+                <th className="pb-3 pr-4 font-medium text-center">
+                  {t('platform.scouts.watchlistCount')}
+                </th>
+                <th className="pb-3 pr-4 font-medium text-center">
+                  {t('platform.scouts.requests')}
+                </th>
                 <th className="pb-3 font-medium">{t('admin.common.actions')}</th>
               </tr>
             </thead>
             <tbody>
               {(scouts ?? []).map((scout) => (
                 <tr key={scout.id} className="border-b border-border/50">
-                  <td className="py-3 pr-4 font-medium text-foreground">{scout.full_name ?? '—'}</td>
+                  <td className="py-3 pr-4 font-medium text-foreground">
+                    {scout.full_name ?? '—'}
+                  </td>
                   <td className="py-3 pr-4 text-foreground-muted">{scout.email ?? '—'}</td>
                   <td className="py-3 pr-4 text-foreground-muted">{scout.organization ?? '—'}</td>
                   <td className="py-3 pr-4 text-foreground-muted">
                     {scout.created_at ? format(new Date(scout.created_at), 'MMM d, yyyy') : '—'}
                   </td>
-                  <td className="py-3 pr-4 text-center text-foreground">{watchlistMap.get(scout.id) ?? 0}</td>
-                  <td className="py-3 pr-4 text-center text-foreground">{requestMap.get(scout.id) ?? 0}</td>
+                  <td className="py-3 pr-4 text-center text-foreground">
+                    {watchlistMap.get(scout.id) ?? 0}
+                  </td>
+                  <td className="py-3 pr-4 text-center text-foreground">
+                    {requestMap.get(scout.id) ?? 0}
+                  </td>
                   <td className="py-3">
-                    <Link href={`/platform/scouts/${scout.id}`} className="text-accent hover:underline">
+                    <Link
+                      href={`/platform/scouts/${scout.id}`}
+                      className="text-accent hover:underline"
+                    >
                       {t('common.viewAll')}
                     </Link>
                   </td>

@@ -15,7 +15,9 @@ export async function POST(request: NextRequest) {
   const { profile } = auth
 
   let body: unknown
-  try { body = await request.json() } catch {
+  try {
+    body = await request.json()
+  } catch {
     return apiError('errors.invalidInput', 400)
   }
 
@@ -45,7 +47,9 @@ export async function PUT(request: NextRequest) {
   }
 
   let body: unknown
-  try { body = await request.json() } catch {
+  try {
+    body = await request.json()
+  } catch {
     return apiError('errors.invalidInput', 400)
   }
 
@@ -63,10 +67,11 @@ export async function PUT(request: NextRequest) {
 async function handleAdminCreate(
   supabase: Awaited<ReturnType<typeof createApiClient>>,
   body: unknown,
-  clubId: string,
+  clubId: string
 ) {
   const parsed = playerFormSchema.safeParse(body)
-  if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
+  if (!parsed.success)
+    return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -83,7 +88,10 @@ async function handleAdminCreate(
   const { data: newPlayer, error: insertError } = await supabase
     .from('players')
     .insert({
-      name, name_ka, club_id: clubId, slug: finalSlug,
+      name,
+      name_ka,
+      club_id: clubId,
+      slug: finalSlug,
       date_of_birth: parsed.data.date_of_birth,
       position: parsed.data.position,
       preferred_foot: parsed.data.preferred_foot ?? null,
@@ -109,7 +117,7 @@ async function handleAdminUpdate(
   supabase: Awaited<ReturnType<typeof createApiClient>>,
   playerId: string,
   body: unknown,
-  clubId: string,
+  clubId: string
 ) {
   const { data: existingPlayer } = await supabase
     .from('players')
@@ -121,7 +129,8 @@ async function handleAdminUpdate(
   if (existingPlayer.club_id !== clubId) return apiError('errors.unauthorized', 403)
 
   const parsed = playerFormSchema.safeParse(body)
-  if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
+  if (!parsed.success)
+    return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
 
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
@@ -129,7 +138,8 @@ async function handleAdminUpdate(
   const { error: updateError } = await supabase
     .from('players')
     .update({
-      name, name_ka,
+      name,
+      name_ka,
       date_of_birth: parsed.data.date_of_birth,
       position: parsed.data.position,
       preferred_foot: parsed.data.preferred_foot ?? null,
@@ -150,18 +160,15 @@ async function handleAdminUpdate(
 
 async function handlePlatformCreate(body: unknown) {
   const parsed = platformPlayerFormSchema.safeParse(body)
-  if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
+  if (!parsed.success)
+    return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
 
   const admin = createAdminClient()
   const name = `${parsed.data.first_name} ${parsed.data.last_name}`
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
   const slug = generateSlug(name)
 
-  const { data: existing } = await admin
-    .from('players')
-    .select('id')
-    .eq('slug', slug)
-    .maybeSingle()
+  const { data: existing } = await admin.from('players').select('id').eq('slug', slug).maybeSingle()
 
   const finalSlug = existing ? `${slug}-${Date.now().toString(36)}` : slug
   const clubId = parsed.data.club_id || null
@@ -170,7 +177,10 @@ async function handlePlatformCreate(body: unknown) {
   const { data: newPlayer, error: insertError } = await admin
     .from('players')
     .insert({
-      name, name_ka, club_id: clubId, slug: finalSlug,
+      name,
+      name_ka,
+      club_id: clubId,
+      slug: finalSlug,
       date_of_birth: parsed.data.date_of_birth,
       position: parsed.data.position,
       preferred_foot: parsed.data.preferred_foot ?? null,
@@ -194,7 +204,8 @@ async function handlePlatformCreate(body: unknown) {
 
 async function handlePlatformUpdate(playerId: string, body: unknown) {
   const parsed = platformPlayerFormSchema.safeParse(body)
-  if (!parsed.success) return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
+  if (!parsed.success)
+    return apiError(parsed.error.issues[0]?.message ?? 'errors.invalidInput', 400)
 
   const admin = createAdminClient()
 
@@ -214,7 +225,9 @@ async function handlePlatformUpdate(playerId: string, body: unknown) {
   const { error: updateError } = await admin
     .from('players')
     .update({
-      name, name_ka, club_id: newClubId,
+      name,
+      name_ka,
+      club_id: newClubId,
       date_of_birth: parsed.data.date_of_birth,
       position: parsed.data.position,
       preferred_foot: parsed.data.preferred_foot ?? null,

@@ -8,7 +8,10 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient()
 
   // Auth check
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
@@ -44,18 +47,23 @@ export async function POST(request: NextRequest) {
   }
 
   // Validate file type (MIME type check)
-  if (!ALLOWED_CHAT_FILE_TYPES.includes(file.type as typeof ALLOWED_CHAT_FILE_TYPES[number])) {
+  if (!ALLOWED_CHAT_FILE_TYPES.includes(file.type as (typeof ALLOWED_CHAT_FILE_TYPES)[number])) {
     return NextResponse.json({ error: 'errors.fileTypeNotAllowed' }, { status: 400 })
   }
 
   // Sanitize filename (prevent XSS in rendered filenames, strip null bytes)
-  const safeName = file.name.replace(/[<>"'&\x00]/g, '_').substring(0, 200)
+  const safeName = file.name
+    .replace(/[<>"'&]/g, '_')
+    .replaceAll('\0', '_')
+    .substring(0, 200)
   const fileName = safeName.toLowerCase()
 
   // Check ONLY the final extension (prevents double-extension bypass like evil.jpg.svg)
   const lastDotIndex = fileName.lastIndexOf('.')
   const ext = lastDotIndex > 0 ? fileName.substring(lastDotIndex) : ''
-  if (!ALLOWED_CHAT_FILE_EXTENSIONS.includes(ext as typeof ALLOWED_CHAT_FILE_EXTENSIONS[number])) {
+  if (
+    !ALLOWED_CHAT_FILE_EXTENSIONS.includes(ext as (typeof ALLOWED_CHAT_FILE_EXTENSIONS)[number])
+  ) {
     return NextResponse.json({ error: 'errors.fileTypeNotAllowed' }, { status: 400 })
   }
 

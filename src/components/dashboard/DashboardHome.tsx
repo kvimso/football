@@ -14,7 +14,13 @@ interface DashboardHomeProps {
   recentNotifications: Notification[]
 }
 
-export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCount, recentNotifications }: DashboardHomeProps) {
+export function DashboardHome({
+  fullName,
+  watchlistCount,
+  messageCount,
+  unreadCount,
+  recentNotifications,
+}: DashboardHomeProps) {
   const { t } = useLang()
 
   return (
@@ -48,9 +54,7 @@ export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCo
             </div>
           </div>
           <div className="mt-2 text-xs text-foreground-muted">
-            {unreadCount > 0
-              ? `${unreadCount} ${t('chat.unread')}`
-              : t('dashboard.messagesDesc')}
+            {unreadCount > 0 ? `${unreadCount} ${t('chat.unread')}` : t('dashboard.messagesDesc')}
           </div>
         </Link>
 
@@ -78,18 +82,22 @@ export function DashboardHome({ fullName, watchlistCount, messageCount, unreadCo
             </Link>
           </div>
           <div className="rounded-lg border border-border bg-card overflow-hidden divide-y divide-border/50">
-            {recentNotifications.slice(0, 5).map(n => (
+            {recentNotifications.slice(0, 5).map((n) => (
               <Link
                 key={n.id}
                 href={n.link ?? '/dashboard/notifications'}
                 className={`flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}
               >
                 <div className="min-w-0 flex-1">
-                  <p className={`text-xs leading-snug truncate ${!n.is_read ? 'text-foreground font-medium' : 'text-foreground-muted'}`}>
+                  <p
+                    className={`text-xs leading-snug truncate ${!n.is_read ? 'text-foreground font-medium' : 'text-foreground-muted'}`}
+                  >
                     {n.title}
                   </p>
                 </div>
-                <span className="shrink-0 text-[10px] text-foreground-muted/50">{timeAgo(n.created_at)}</span>
+                <span className="shrink-0 text-[10px] text-foreground-muted/50">
+                  {timeAgo(n.created_at)}
+                </span>
                 {!n.is_read && <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />}
               </Link>
             ))}

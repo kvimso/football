@@ -101,7 +101,7 @@ export const en = {
     failedToSendMessage: 'Failed to send message. Please try again.',
     rateLimitConversations: "You've reached the daily conversation limit. Try again tomorrow.",
     rateLimitMessages: "You're sending too many messages. Please wait.",
-    rateLimitContact: "Too many messages sent. Please try again later.",
+    rateLimitContact: 'Too many messages sent. Please try again later.',
     rateLimitUploads: "You've reached the daily file upload limit.",
     conversationBlocked: 'This conversation has been closed by the academy.',
     fileTooLarge: 'File is too large. Maximum size is 10MB.',
@@ -199,7 +199,8 @@ export const ka = {
     hasAccount: 'უკვე გაქვთ ანგარიში?',
     signUpLink: 'დარეგისტრირდი',
     signInLink: 'შედი',
-    orContinue: 'სკაუტის რეგისტრაცია — დაათვალიერეთ მოთამაშეები, შექმენით სიები და დაუკავშირდით აკადემიებს.',
+    orContinue:
+      'სკაუტის რეგისტრაცია — დაათვალიერეთ მოთამაშეები, შექმენით სიები და დაუკავშირდით აკადემიებს.',
     error: 'რაღაც შეცდომა მოხდა. სცადეთ ხელახლა.',
     checkEmail: 'შეამოწმეთ ელ. ფოსტა დადასტურების ბმულისთვის.',
   },

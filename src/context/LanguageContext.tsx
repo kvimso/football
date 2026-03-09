@@ -21,7 +21,13 @@ function setLangCookie(lang: Lang) {
   document.cookie = `lang=${lang};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax;Secure`
 }
 
-export function LanguageProvider({ children, initialLang = 'en' }: { children: ReactNode; initialLang?: Lang }) {
+export function LanguageProvider({
+  children,
+  initialLang = 'en',
+}: {
+  children: ReactNode
+  initialLang?: Lang
+}) {
   const [lang, setLangState] = useState<Lang>(initialLang)
 
   const setLang = useCallback((newLang: Lang) => {
@@ -30,16 +36,9 @@ export function LanguageProvider({ children, initialLang = 'en' }: { children: R
     document.documentElement.lang = newLang
   }, [])
 
-  const t = useCallback(
-    (key: string) => getNestedValue(translations[lang], key),
-    [lang]
-  )
+  const t = useCallback((key: string) => getNestedValue(translations[lang], key), [lang])
 
   const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t])
 
-  return (
-    <LanguageContext.Provider value={value}>
-      {children}
-    </LanguageContext.Provider>
-  )
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }

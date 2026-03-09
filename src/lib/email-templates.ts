@@ -50,7 +50,12 @@ function wrap(content: string): string {
 <body><div class="container">${content}</div></body></html>`
 }
 
-export function contactRequestReceivedEmail({ scoutName, scoutOrg, playerName, message }: ContactRequestReceivedParams) {
+export function contactRequestReceivedEmail({
+  scoutName,
+  scoutOrg,
+  playerName,
+  message,
+}: ContactRequestReceivedParams) {
   const safeScoutName = escapeHtml(scoutName)
   const safePlayerName = escapeHtml(playerName)
   const safeMessage = escapeHtml(message)
@@ -67,7 +72,12 @@ export function contactRequestReceivedEmail({ scoutName, scoutOrg, playerName, m
   return { subject: `New contact request for ${safePlayerName}`, html }
 }
 
-export function contactRequestStatusEmail({ scoutName, playerName, status, clubName }: ContactRequestStatusParams) {
+export function contactRequestStatusEmail({
+  scoutName,
+  playerName,
+  status,
+  clubName,
+}: ContactRequestStatusParams) {
   const safeScoutName = escapeHtml(scoutName)
   const safePlayerName = escapeHtml(playerName)
   const safeClubName = escapeHtml(clubName)
@@ -90,7 +100,11 @@ export function contactRequestStatusEmail({ scoutName, playerName, status, clubN
   return { subject: `Contact request ${statusText.toLowerCase()}: ${safePlayerName}`, html }
 }
 
-export function transferRequestReceivedEmail({ playerName, fromClubName, toClubName }: TransferRequestReceivedParams) {
+export function transferRequestReceivedEmail({
+  playerName,
+  fromClubName,
+  toClubName,
+}: TransferRequestReceivedParams) {
   const safePlayerName = escapeHtml(playerName)
   const safeFromClubName = escapeHtml(fromClubName)
   const safeToClubName = escapeHtml(toClubName)

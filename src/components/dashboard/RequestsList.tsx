@@ -104,17 +104,11 @@ function RequestCard({
   t: (key: string) => string
 }) {
   const player = item.player
-  const displayName = player
-    ? lang === 'ka' ? player.name_ka : player.name
-    : t('matches.unknown')
-  const clubName = player?.club
-    ? lang === 'ka' ? player.club.name_ka : player.club.name
-    : null
+  const displayName = player ? (lang === 'ka' ? player.name_ka : player.name) : t('matches.unknown')
+  const clubName = player?.club ? (lang === 'ka' ? player.club.name_ka : player.club.name) : null
 
   const statusClasses = statusColors[group]
-  const statusLabel = group === 'active'
-    ? t('dashboard.pending')
-    : t(`dashboard.${group}`)
+  const statusLabel = group === 'active' ? t('dashboard.pending') : t(`dashboard.${group}`)
 
   const daysSent = item.created_at ? getDaysSince(item.created_at) : 0
 
@@ -123,37 +117,40 @@ function RequestCard({
       <div className="flex items-start justify-between gap-4">
         <div>
           {player ? (
-            <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent transition-colors">
+            <Link
+              href={`/players/${player.slug}`}
+              className="font-medium text-foreground hover:text-accent transition-colors"
+            >
               {displayName}
             </Link>
           ) : (
             <span className="font-medium text-foreground">{displayName}</span>
           )}
           <div className="mt-0.5 text-xs text-foreground-muted">
-            {player?.position}{clubName ? ` \u00b7 ${clubName}` : ''}
+            {player?.position}
+            {clubName ? ` \u00b7 ${clubName}` : ''}
           </div>
         </div>
-        <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${statusClasses}`}>
+        <span
+          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${statusClasses}`}
+        >
           {statusLabel}
         </span>
       </div>
 
-      <p className="mt-3 text-sm text-foreground-muted leading-relaxed">
-        {item.message}
-      </p>
+      <p className="mt-3 text-sm text-foreground-muted leading-relaxed">{item.message}</p>
 
       {/* Expiry context for pending requests */}
       {group === 'active' && (
         <p className="mt-2 text-xs text-yellow-400/80">
-          {t('dashboard.waitingForResponse')} &mdash; {t('dashboard.daysSent').replace('{days}', String(daysSent))}
+          {t('dashboard.waitingForResponse')} &mdash;{' '}
+          {t('dashboard.daysSent').replace('{days}', String(daysSent))}
         </p>
       )}
 
       {/* Expired message */}
       {group === 'expired' && (
-        <p className="mt-2 text-xs text-gray-400">
-          {t('dashboard.expiredNoResponse')}
-        </p>
+        <p className="mt-2 text-xs text-gray-400">{t('dashboard.expiredNoResponse')}</p>
       )}
 
       {/* Approved with response message */}
@@ -162,18 +159,26 @@ function RequestCard({
           <p className="text-xs text-green-400">{t('dashboard.approvedMessage')}</p>
           {item.response_message && (
             <div className="rounded-lg bg-green-500/5 border border-green-500/20 p-3">
-              <p className="text-xs font-medium text-green-400 mb-1">{t('dashboard.adminResponse')}</p>
+              <p className="text-xs font-medium text-green-400 mb-1">
+                {t('dashboard.adminResponse')}
+              </p>
               <p className="text-sm text-foreground-muted">{item.response_message}</p>
             </div>
           )}
-          <p className="text-xs text-foreground-muted/50 italic">{t('dashboard.fullMessagingSoon')}</p>
+          <p className="text-xs text-foreground-muted/50 italic">
+            {t('dashboard.fullMessagingSoon')}
+          </p>
         </div>
       )}
 
       <div className="mt-3 text-xs text-foreground-muted/70">
-        {t('dashboard.sentOn')} {item.created_at ? format(new Date(item.created_at), 'dd MMM yyyy') : ''}
+        {t('dashboard.sentOn')}{' '}
+        {item.created_at ? format(new Date(item.created_at), 'dd MMM yyyy') : ''}
         {item.responded_at && (
-          <span> &middot; {t('dashboard.responded')} {format(new Date(item.responded_at), 'dd MMM yyyy')}</span>
+          <span>
+            {' '}
+            &middot; {t('dashboard.responded')} {format(new Date(item.responded_at), 'dd MMM yyyy')}
+          </span>
         )}
       </div>
     </div>

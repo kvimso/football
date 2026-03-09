@@ -11,7 +11,8 @@ export function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const rawRedirect = searchParams.get('redirect') || '/dashboard'
-  const redirectTo = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
+  const redirectTo =
+    rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -44,7 +45,9 @@ export function LoginForm() {
         <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
           {/* GFT branding */}
           <div className="mb-6 text-center">
-            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">GFT</span>
+            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">
+              GFT
+            </span>
             <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.welcomeBack')}</h1>
             <p className="mt-1 text-sm text-foreground-muted">{t('auth.loginTitle')}</p>
           </div>

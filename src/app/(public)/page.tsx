@@ -12,7 +12,9 @@ export default async function Home() {
   let isLoggedIn = false
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     isLoggedIn = !!user
   } catch {
     // Auth check failed — show landing page

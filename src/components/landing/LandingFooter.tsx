@@ -35,16 +35,28 @@ export async function LandingFooter() {
           <div>
             <h4 className="text-sm font-semibold">{t('landing.footerPlatform')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
-              <Link href="/about" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/about"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('nav.about')}
               </Link>
-              <Link href="/contact" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/contact"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('nav.contact')}
               </Link>
-              <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/login"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('nav.login')}
               </Link>
-              <Link href="/register" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/register"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('nav.register')}
               </Link>
             </nav>
@@ -54,10 +66,16 @@ export async function LandingFooter() {
           <div>
             <h4 className="text-sm font-semibold">{t('landing.footerForScouts')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
-              <Link href="/register" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/register"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('landing.footerCreateAccount')}
               </Link>
-              <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/login"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('landing.footerBrowsePlayers')}
               </Link>
             </nav>
@@ -67,10 +85,16 @@ export async function LandingFooter() {
           <div>
             <h4 className="text-sm font-semibold">{t('landing.footerForAcademies')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
-              <Link href="/login" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/login"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('landing.footerRegister')}
               </Link>
-              <Link href="/about" className="text-sm text-foreground-muted hover:text-foreground transition-colors">
+              <Link
+                href="/about"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
                 {t('landing.footerLearnMore')}
               </Link>
             </nav>

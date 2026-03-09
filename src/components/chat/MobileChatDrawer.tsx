@@ -9,7 +9,8 @@ interface MobileChatDrawerProps {
   children: React.ReactNode
 }
 
-const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
   const { isDrawerOpen, closeDrawer } = useChatDrawer()
@@ -44,7 +45,9 @@ export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
 
       // Focus trap: cycle Tab within the drawer
       if (e.key === 'Tab' && panelRef.current) {
-        const focusable = Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
+        const focusable = Array.from(
+          panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+        )
         if (focusable.length === 0) return
 
         const first = focusable[0]

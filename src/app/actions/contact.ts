@@ -9,7 +9,10 @@ import { contactRequestReceivedEmail } from '@/lib/email-templates'
 
 export async function sendContactRequest(playerId: string, message: string) {
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError) {
     console.error('[contact] Auth error:', authError.message)
     return { error: 'errors.serverError' }
@@ -46,14 +49,12 @@ export async function sendContactRequest(playerId: string, message: string) {
   }
   if (existing) return { error: 'errors.alreadySentRequest' }
 
-  const { error } = await supabase
-    .from('contact_requests')
-    .insert({
-      scout_id: user.id,
-      player_id: parsed.data.playerId,
-      message: parsed.data.message.trim(),
-      expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-    })
+  const { error } = await supabase.from('contact_requests').insert({
+    scout_id: user.id,
+    player_id: parsed.data.playerId,
+    message: parsed.data.message.trim(),
+    expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+  })
 
   if (error) {
     console.error('[contact] Insert error:', error.message)
@@ -64,29 +65,37 @@ export async function sendContactRequest(playerId: string, message: string) {
   if (player.club_id) {
     const admin = createAdminClient()
     Promise.all([
-      admin.from('profiles').select('email').eq('club_id', player.club_id).eq('role', 'academy_admin').limit(1).single(),
+      admin
+        .from('profiles')
+        .select('email')
+        .eq('club_id', player.club_id)
+        .eq('role', 'academy_admin')
+        .limit(1)
+        .single(),
       admin.from('profiles').select('full_name, organization').eq('id', user.id).single(),
-    ]).then(([clubAdminResult, scoutResult]) => {
-      if (clubAdminResult.error) {
-        console.error('Failed to fetch club admin for email:', clubAdminResult.error.message)
-        return
-      }
-      if (scoutResult.error) {
-        console.error('Failed to fetch scout profile for email:', scoutResult.error.message)
-      }
-      const clubAdminEmail = clubAdminResult.data?.email
-      const scoutName = scoutResult.data?.full_name ?? 'A scout'
-      const scoutOrg = scoutResult.data?.organization ?? null
-      if (clubAdminEmail) {
-        const template = contactRequestReceivedEmail({
-          scoutName,
-          scoutOrg,
-          playerName: player.name,
-          message: parsed.data.message.trim(),
-        })
-        sendEmail({ to: clubAdminEmail, ...template })
-      }
-    }).catch((err) => console.error('Failed to send contact request email:', err))
+    ])
+      .then(([clubAdminResult, scoutResult]) => {
+        if (clubAdminResult.error) {
+          console.error('Failed to fetch club admin for email:', clubAdminResult.error.message)
+          return
+        }
+        if (scoutResult.error) {
+          console.error('Failed to fetch scout profile for email:', scoutResult.error.message)
+        }
+        const clubAdminEmail = clubAdminResult.data?.email
+        const scoutName = scoutResult.data?.full_name ?? 'A scout'
+        const scoutOrg = scoutResult.data?.organization ?? null
+        if (clubAdminEmail) {
+          const template = contactRequestReceivedEmail({
+            scoutName,
+            scoutOrg,
+            playerName: player.name,
+            message: parsed.data.message.trim(),
+          })
+          sendEmail({ to: clubAdminEmail, ...template })
+        }
+      })
+      .catch((err) => console.error('Failed to send contact request email:', err))
   }
 
   revalidatePath('/dashboard/requests')

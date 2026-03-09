@@ -14,7 +14,9 @@ export async function GET(request: NextRequest) {
     if (!error) {
       // For invited academy admins, redirect to /admin instead of /dashboard
       if (safeNext === '/dashboard') {
-        const { data: { user } } = await supabase.auth.getUser()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
         if (user) {
           const { data: profile } = await supabase
             .from('profiles')

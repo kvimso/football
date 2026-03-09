@@ -8,7 +8,11 @@ export function createAdminClient() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey) {
-    console.error('[supabase/admin] Missing env vars: URL=%s, SERVICE_KEY=%s', !!supabaseUrl, !!supabaseKey)
+    console.error(
+      '[supabase/admin] Missing env vars: URL=%s, SERVICE_KEY=%s',
+      !!supabaseUrl,
+      !!supabaseKey
+    )
     throw new Error('Admin client configuration error. Please check environment variables.')
   }
 

@@ -15,7 +15,9 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
   const supabase = await createClient()
   const { t } = await getServerT()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return notFound()
 
   const { data: profile, error: profileError } = await supabase
@@ -35,7 +37,9 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
 
   const { data: player, error: playerError } = await supabase
     .from('players')
-    .select('id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, club_id')
+    .select(
+      'id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, club_id'
+    )
     .eq('id', id)
     .single()
 
@@ -58,7 +62,13 @@ export default async function AdminEditPlayerPage({ params }: EditPlayerPageProp
         </Link>
       </div>
       <h1 className="mb-6 text-2xl font-bold text-foreground">{t('admin.players.editPlayer')}</h1>
-      <PlayerForm player={{ ...player, position: player.position as Position, parent_guardian_contact: guardianData?.parent_guardian_contact ?? null }} />
+      <PlayerForm
+        player={{
+          ...player,
+          position: player.position as Position,
+          parent_guardian_contact: guardianData?.parent_guardian_contact ?? null,
+        }}
+      />
     </div>
   )
 }

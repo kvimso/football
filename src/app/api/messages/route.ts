@@ -8,7 +8,10 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient()
 
   // Auth check
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
@@ -28,7 +31,16 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { conversation_id, content, message_type, file_url, file_name, file_type, file_size_bytes, referenced_player_id } = parsed.data
+  const {
+    conversation_id,
+    content,
+    message_type,
+    file_url,
+    file_name,
+    file_type,
+    file_size_bytes,
+    referenced_player_id,
+  } = parsed.data
 
   // Verify user is a participant (RLS will also check, but we want a nice error)
   const { data: conversation, error: convError } = await supabase
@@ -94,7 +106,10 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient()
 
   // Auth check
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
@@ -127,7 +142,8 @@ export async function GET(request: NextRequest) {
   // Build query — include player ref data via JOIN
   let query = supabase
     .from('messages')
-    .select(`
+    .select(
+      `
       id, conversation_id, sender_id, content, message_type,
       file_url, file_name, file_type, file_size_bytes,
       referenced_player_id, read_at, created_at,
@@ -136,7 +152,8 @@ export async function GET(request: NextRequest) {
         id, name, name_ka, position, photo_url, slug,
         club:clubs!players_club_id_fkey ( name, name_ka )
       )
-    `)
+    `
+    )
     .eq('conversation_id', conversation_id)
 
     .order('created_at', { ascending: false })

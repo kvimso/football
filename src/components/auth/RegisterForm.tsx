@@ -51,8 +51,18 @@ export function RegisterForm() {
         <div className="w-full max-w-md">
           <div className="rounded-2xl border border-border bg-card p-8 shadow-lg text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
-              <svg className="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              <svg
+                className="h-8 w-8 text-accent"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                />
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-foreground">{t('auth.checkEmail')}</h1>
@@ -72,7 +82,9 @@ export function RegisterForm() {
         <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
           {/* GFT branding */}
           <div className="mb-6 text-center">
-            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">GFT</span>
+            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">
+              GFT
+            </span>
             <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.registerTitle')}</h1>
             <p className="mt-1 text-sm text-foreground-muted">{t('auth.joinPlatform')}</p>
           </div>
@@ -87,7 +99,10 @@ export function RegisterForm() {
             {/* Personal info group */}
             <div className="space-y-4">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-foreground-muted">
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-foreground-muted"
+                >
                   {t('auth.fullName')}
                 </label>
                 <input
@@ -101,7 +116,10 @@ export function RegisterForm() {
               </div>
 
               <div>
-                <label htmlFor="organization" className="block text-sm font-medium text-foreground-muted">
+                <label
+                  htmlFor="organization"
+                  className="block text-sm font-medium text-foreground-muted"
+                >
                   {t('auth.organization')}
                 </label>
                 <input
@@ -115,7 +133,10 @@ export function RegisterForm() {
               </div>
 
               <div>
-                <label htmlFor="country" className="block text-sm font-medium text-foreground-muted">
+                <label
+                  htmlFor="country"
+                  className="block text-sm font-medium text-foreground-muted"
+                >
                   {t('auth.country')}
                 </label>
                 <select
@@ -126,7 +147,9 @@ export function RegisterForm() {
                 >
                   <option value="">{t('auth.countryHint')}</option>
                   {SCOUT_COUNTRIES.map((c) => (
-                    <option key={c} value={c}>{c}</option>
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -151,7 +174,10 @@ export function RegisterForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-foreground-muted">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-foreground-muted"
+                >
                   {t('auth.password')}
                 </label>
                 <input

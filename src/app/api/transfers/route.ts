@@ -33,12 +33,14 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('transfer_requests')
-    .select(`
+    .select(
+      `
       id, status, requested_at, resolved_at, expires_at,
       player:players!transfer_requests_player_id_fkey ( id, name, name_ka, slug, position ),
       from_club:clubs!transfer_requests_from_club_id_fkey ( id, name, name_ka ),
       to_club:clubs!transfer_requests_to_club_id_fkey ( id, name, name_ka )
-    `)
+    `
+    )
     .order('requested_at', { ascending: false })
 
   if (direction === 'incoming') {
@@ -50,8 +52,8 @@ export async function GET(request: NextRequest) {
   }
 
   const validStatuses = ['pending', 'accepted', 'declined', 'expired'] as const
-  if (statusFilter && validStatuses.includes(statusFilter as typeof validStatuses[number])) {
-    query = query.eq('status', statusFilter as typeof validStatuses[number])
+  if (statusFilter && validStatuses.includes(statusFilter as (typeof validStatuses)[number])) {
+    query = query.eq('status', statusFilter as (typeof validStatuses)[number])
   }
 
   const { data, error } = await query
@@ -86,7 +88,9 @@ export async function POST(request: NextRequest) {
   }
 
   let body: unknown
-  try { body = await request.json() } catch {
+  try {
+    body = await request.json()
+  } catch {
     return apiError('errors.invalidInput', 400)
   }
 
@@ -142,7 +146,7 @@ export async function POST(request: NextRequest) {
 async function handleClaimFreeAgent(
   supabase: Awaited<ReturnType<typeof createApiClient>>,
   playerId: string,
-  clubId: string,
+  clubId: string
 ) {
   const { data: player } = await supabase
     .from('players')

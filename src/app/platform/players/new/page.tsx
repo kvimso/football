@@ -6,10 +6,7 @@ export default async function PlatformNewPlayerPage() {
   const { t } = await getServerT()
   const admin = createAdminClient()
 
-  const { data: clubs } = await admin
-    .from('clubs')
-    .select('id, name')
-    .order('name')
+  const { data: clubs } = await admin.from('clubs').select('id, name').order('name')
 
   return (
     <div>

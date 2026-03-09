@@ -51,17 +51,25 @@ export function useConversationList({ initialConversations, userId }: UseConvers
       const channelBuilder = supabase.channel(`conversations-${userId}`)
 
       // Unfiltered — RLS restricts server-side; new conversations are caught too
-      channelBuilder.on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'messages',
-      }, refetchConversations)
+      channelBuilder.on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+        },
+        refetchConversations
+      )
 
-      channelBuilder.on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'conversations',
-      }, refetchConversations)
+      channelBuilder.on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'conversations',
+        },
+        refetchConversations
+      )
 
       activeChannel = channelBuilder.subscribe()
     }, 0)

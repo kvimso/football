@@ -11,7 +11,10 @@ const MAX_FOLDERS = 20
 export async function createFolder(name: string) {
   if (!folderNameSchema.safeParse(name).success) return { error: 'errors.invalidInput' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   // Check folder limit
@@ -45,7 +48,10 @@ export async function renameFolder(folderId: string, name: string) {
   if (!uuidSchema.safeParse(folderId).success) return { error: 'errors.invalidId' }
   if (!folderNameSchema.safeParse(name).success) return { error: 'errors.invalidInput' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase
@@ -66,7 +72,10 @@ export async function renameFolder(folderId: string, name: string) {
 export async function deleteFolder(folderId: string) {
   if (!uuidSchema.safeParse(folderId).success) return { error: 'errors.invalidId' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   // Deleting a folder cascades to watchlist_folder_players (junction),
@@ -91,7 +100,10 @@ export async function addToFolder(folderId: string, watchlistId: string) {
     return { error: 'errors.invalidId' }
   }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase
@@ -113,7 +125,10 @@ export async function removeFromFolder(folderId: string, watchlistId: string) {
     return { error: 'errors.invalidId' }
   }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated' }
 
   const { error } = await supabase

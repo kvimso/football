@@ -53,27 +53,38 @@ export const createConversationSchema = z.object({
   club_id: z.string().uuid(),
 })
 
-export const sendMessageSchema = z.object({
-  conversation_id: z.string().uuid(),
-  content: z.string().min(1).max(5000).optional(),
-  message_type: z.enum(['text', 'file', 'player_ref']),
-  file_url: z.string().min(1).refine(
-    val => val.startsWith('chat-attachments/') || val.includes('.supabase.co/storage/'),
-    'File URL must be a valid storage path'
-  ).optional(),
-  file_name: z.string().max(255).optional(),
-  file_type: z.string().max(100).optional(),
-  file_size_bytes: z.number().int().positive().max(10 * 1024 * 1024).optional(),
-  referenced_player_id: z.string().uuid().optional(),
-}).refine(
-  (data) => {
-    if (data.message_type === 'text') return !!data.content
-    if (data.message_type === 'file') return !!data.file_url && !!data.file_name
-    if (data.message_type === 'player_ref') return !!data.referenced_player_id
-    return false
-  },
-  { message: 'Missing required fields for message type' }
-)
+export const sendMessageSchema = z
+  .object({
+    conversation_id: z.string().uuid(),
+    content: z.string().min(1).max(5000).optional(),
+    message_type: z.enum(['text', 'file', 'player_ref']),
+    file_url: z
+      .string()
+      .min(1)
+      .refine(
+        (val) => val.startsWith('chat-attachments/') || val.includes('.supabase.co/storage/'),
+        'File URL must be a valid storage path'
+      )
+      .optional(),
+    file_name: z.string().max(255).optional(),
+    file_type: z.string().max(100).optional(),
+    file_size_bytes: z
+      .number()
+      .int()
+      .positive()
+      .max(10 * 1024 * 1024)
+      .optional(),
+    referenced_player_id: z.string().uuid().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.message_type === 'text') return !!data.content
+      if (data.message_type === 'file') return !!data.file_url && !!data.file_name
+      if (data.message_type === 'player_ref') return !!data.referenced_player_id
+      return false
+    },
+    { message: 'Missing required fields for message type' }
+  )
 
 // Validate Realtime payload from Supabase (untrusted data)
 export const realtimeMessageSchema = z.object({

@@ -38,7 +38,24 @@ interface PlayersPageProps {
 
 export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   const params = await searchParams
-  const { position, age_min, age_max, club, foot, q, status, sort, height_min, height_max, weight_min, weight_max, goals_min, assists_min, matches_min, pass_acc_min } = params
+  const {
+    position,
+    age_min,
+    age_max,
+    club,
+    foot,
+    q,
+    status,
+    sort,
+    height_min,
+    height_max,
+    weight_min,
+    weight_max,
+    goals_min,
+    assists_min,
+    matches_min,
+    pass_acc_min,
+  } = params
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
 
   const supabase = await createClient()
@@ -189,7 +206,11 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
 
     filteredPlayers = filteredPlayers.filter((p) => {
-      const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+      const statsArr = Array.isArray(p.season_stats)
+        ? p.season_stats
+        : p.season_stats
+          ? [p.season_stats]
+          : []
       const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
       if (!latest) return false // No stats → excluded when stat filters are active
       if (minGoals && (latest.goals ?? 0) < minGoals) return false
@@ -202,7 +223,11 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
 
   // Map to card props — pick the latest season stats
   const allCards = filteredPlayers.map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    const statsArr = Array.isArray(p.season_stats)
+      ? p.season_stats
+      : p.season_stats
+        ? [p.season_stats]
+        : []
     const stats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
     return {
       ...p,
@@ -215,7 +240,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
 
   // Fetch view counts scoped to the current result set (avoids full-table scan)
   let viewCountMap = new Map<string, number>()
-  const playerIds = allCards.map(p => p.id)
+  const playerIds = allCards.map((p) => p.id)
   if (playerIds.length > 0) {
     try {
       const { data: viewCounts, error: vcError } = await supabase.rpc('get_player_view_counts', {
@@ -224,7 +249,12 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       if (vcError) {
         console.error('Failed to fetch view counts:', vcError.message)
       } else if (viewCounts) {
-        viewCountMap = new Map(viewCounts.map((v: { player_id: string; total_views: number }) => [v.player_id, Number(v.total_views)]))
+        viewCountMap = new Map(
+          viewCounts.map((v: { player_id: string; total_views: number }) => [
+            v.player_id,
+            Number(v.total_views),
+          ])
+        )
       }
     } catch {
       // Silently fail — view counts are non-critical
@@ -270,14 +300,16 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
 
   // Fetch user's watchlist IDs (for watch icon on cards)
   let watchedPlayerIds: string[] = []
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (user) {
     const { data: watchlist, error: wlError } = await supabase
       .from('watchlist')
       .select('player_id')
       .eq('user_id', user.id)
     if (wlError) console.error('Failed to fetch watchlist:', wlError.message)
-    else watchedPlayerIds = (watchlist ?? []).map(w => w.player_id)
+    else watchedPlayerIds = (watchlist ?? []).map((w) => w.player_id)
   }
 
   // Convert Map to plain object for serialization across server/client boundary
@@ -287,60 +319,59 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
   }
 
   // Build pagination element (server-rendered)
-  const paginationElement = totalPages > 1 ? (
-    <div className="mt-8 flex items-center justify-center gap-2">
-      {page > 1 && (
-        <Link
-          href={pageUrl(page - 1)}
-          className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
-        >
-          &larr;
-        </Link>
-      )}
-      {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-        let p: number
-        if (totalPages <= 7) {
-          p = i + 1
-        } else if (page <= 4) {
-          p = i + 1
-        } else if (page >= totalPages - 3) {
-          p = totalPages - 6 + i
-        } else {
-          p = page - 3 + i
-        }
-        return (
+  const paginationElement =
+    totalPages > 1 ? (
+      <div className="mt-8 flex items-center justify-center gap-2">
+        {page > 1 && (
           <Link
-            key={p}
-            href={pageUrl(p)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
-              p === page
-                ? 'bg-accent/10 text-accent'
-                : 'text-foreground-muted hover:text-foreground'
-            }`}
+            href={pageUrl(page - 1)}
+            className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
           >
-            {p}
+            &larr;
           </Link>
-        )
-      })}
-      {page < totalPages && (
-        <Link
-          href={pageUrl(page + 1)}
-          className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
-        >
-          &rarr;
-        </Link>
-      )}
-    </div>
-  ) : null
+        )}
+        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+          let p: number
+          if (totalPages <= 7) {
+            p = i + 1
+          } else if (page <= 4) {
+            p = i + 1
+          } else if (page >= totalPages - 3) {
+            p = totalPages - 6 + i
+          } else {
+            p = page - 3 + i
+          }
+          return (
+            <Link
+              key={p}
+              href={pageUrl(p)}
+              className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                p === page
+                  ? 'bg-accent/10 text-accent'
+                  : 'text-foreground-muted hover:text-foreground'
+              }`}
+            >
+              {p}
+            </Link>
+          )
+        })}
+        {page < totalPages && (
+          <Link
+            href={pageUrl(page + 1)}
+            className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
+          >
+            &rarr;
+          </Link>
+        )}
+      </div>
+    ) : null
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">{t('players.title')}</h1>
-        <p className="mt-1 text-foreground-muted">
-          {t('players.subtitle')}
-        </p>
+        <p className="mt-1 text-foreground-muted">{t('players.subtitle')}</p>
       </div>
 
       {/* Client wrapper: AI search + filters + player grid + pagination */}

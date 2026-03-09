@@ -16,7 +16,12 @@ interface Request {
   expires_at: string | null
   response_message: string | null
   scout: { full_name: string | null; organization: string | null; email: string | null } | null
-  player: { name: string; name_ka: string | null; slug: string; club: { name: string } | { name: string }[] | null } | null
+  player: {
+    name: string
+    name_ka: string | null
+    slug: string
+    club: { name: string } | { name: string }[] | null
+  } | null
 }
 
 function getDaysSince(dateStr: string): number {
@@ -76,9 +81,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
         </div>
       )}
       {requests.map((req) => {
-        const club = req.player?.club
-          ? unwrapRelation(req.player.club)
-          : null
+        const club = req.player?.club ? unwrapRelation(req.player.club) : null
         const expired = req.status === 'pending' && isExpired(req.expires_at)
         const daysUntilExpiry = req.expires_at ? getDaysUntil(req.expires_at) : null
         const daysSent = req.created_at ? getDaysSince(req.created_at) : 0
@@ -92,10 +95,15 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                     {req.scout?.full_name ?? t('common.unknownScout')}
                   </p>
                   {req.scout?.organization && (
-                    <span className="text-xs text-foreground-muted">({req.scout.organization})</span>
+                    <span className="text-xs text-foreground-muted">
+                      ({req.scout.organization})
+                    </span>
                   )}
                   <span className="text-foreground-muted">&rarr;</span>
-                  <Link href={`/players/${req.player?.slug ?? ''}`} className="text-sm text-accent hover:underline">
+                  <Link
+                    href={`/players/${req.player?.slug ?? ''}`}
+                    className="text-sm text-accent hover:underline"
+                  >
                     {req.player?.name ?? t('common.unknown')}
                   </Link>
                   {club?.name && (
@@ -103,7 +111,8 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                   )}
                 </div>
                 <p className="mt-1 text-xs text-foreground-muted">
-                  {req.message?.slice(0, 120)}{(req.message?.length ?? 0) > 120 ? '...' : ''}
+                  {req.message?.slice(0, 120)}
+                  {(req.message?.length ?? 0) > 120 ? '...' : ''}
                 </p>
 
                 {/* Urgency badges for pending requests */}
@@ -119,7 +128,10 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 7 ? (
                       <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-400">
-                        {t('admin.requests.expiringSoon').replace('{days}', String(daysUntilExpiry))}
+                        {t('admin.requests.expiringSoon').replace(
+                          '{days}',
+                          String(daysUntilExpiry)
+                        )}
                       </span>
                     ) : (
                       <span className="text-xs text-foreground-muted/70">
@@ -162,7 +174,10 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                           {t('admin.requests.confirmApproveWithMessage')}
                         </button>
                         <button
-                          onClick={() => { setApproveFormId(null); setResponseMessage('') }}
+                          onClick={() => {
+                            setApproveFormId(null)
+                            setResponseMessage('')
+                          }}
                           disabled={loading === req.id}
                           className="rounded-lg px-3 py-1.5 text-xs font-medium text-foreground-muted hover:text-foreground transition-colors"
                         >
@@ -173,7 +188,10 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                   ) : (
                     <>
                       <button
-                        onClick={() => { setApproveFormId(req.id); setResponseMessage('') }}
+                        onClick={() => {
+                          setApproveFormId(req.id)
+                          setResponseMessage('')
+                        }}
                         disabled={loading === req.id}
                         className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
                       >
@@ -193,11 +211,13 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                     {t('admin.requests.expired')}
                   </span>
                 ) : (
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    req.status === 'approved'
-                      ? 'bg-green-500/10 text-green-400'
-                      : 'bg-red-500/10 text-red-400'
-                  }`}>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      req.status === 'approved'
+                        ? 'bg-green-500/10 text-green-400'
+                        : 'bg-red-500/10 text-red-400'
+                    }`}
+                  >
                     {t(`admin.requests.${req.status}`)}
                   </span>
                 )}

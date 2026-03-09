@@ -10,7 +10,10 @@ const notesSchema = z.string().max(2000)
 export async function addToWatchlist(playerId: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError) {
     console.error('[watchlist] Auth error:', authError.message)
     return { error: 'errors.serverError' }
@@ -35,7 +38,10 @@ export async function addToWatchlist(playerId: string) {
 export async function removeFromWatchlist(playerId: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError) {
     console.error('[watchlist] Auth error:', authError.message)
     return { error: 'errors.serverError' }
@@ -62,7 +68,10 @@ export async function updateWatchlistNotes(playerId: string, notes: string) {
   if (!uuidSchema.safeParse(playerId).success) return { error: 'errors.invalidId' }
   if (!notesSchema.safeParse(notes).success) return { error: 'errors.notesTooLong' }
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError) {
     console.error('[watchlist] Auth error:', authError.message)
     return { error: 'errors.serverError' }

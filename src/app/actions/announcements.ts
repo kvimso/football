@@ -41,11 +41,7 @@ export async function createAnnouncement(content: string) {
   if (insertErr) return { error: 'errors.generic' }
 
   // Get club name for notification title
-  const { data: club } = await supabase
-    .from('clubs')
-    .select('name, slug')
-    .eq('id', clubId)
-    .single()
+  const { data: club } = await supabase.from('clubs').select('name, slug').eq('id', clubId).single()
 
   const clubName = club?.name ?? 'Academy'
   const clubSlug = club?.slug ?? ''
@@ -105,7 +101,7 @@ async function notifyInterestedScouts(
     .eq('club_id', clubId)
     .eq('status', 'active')
 
-  const playerIds = (players ?? []).map(p => p.id)
+  const playerIds = (players ?? []).map((p) => p.id)
 
   // 1. Scouts who have messaged this academy
   const { data: conversationScouts } = await admin
@@ -114,24 +110,23 @@ async function notifyInterestedScouts(
     .eq('club_id', clubId)
 
   // 2. Scouts with this academy's players in watchlist
-  const { data: watchlistScouts } = playerIds.length > 0
-    ? await admin
-        .from('watchlist')
-        .select('user_id')
-        .in('player_id', playerIds)
-    : { data: [] }
+  const { data: watchlistScouts } =
+    playerIds.length > 0
+      ? await admin.from('watchlist').select('user_id').in('player_id', playerIds)
+      : { data: [] }
 
   // 3. Scouts who viewed players in last 30 days
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-  const { data: viewerScouts } = playerIds.length > 0
-    ? await admin
-        .from('player_views')
-        .select('viewer_id')
-        .in('player_id', playerIds)
-        .gte('viewed_at', thirtyDaysAgo.toISOString())
-    : { data: [] }
+  const { data: viewerScouts } =
+    playerIds.length > 0
+      ? await admin
+          .from('player_views')
+          .select('viewer_id')
+          .in('player_id', playerIds)
+          .gte('viewed_at', thirtyDaysAgo.toISOString())
+      : { data: [] }
 
   // Deduplicate scout IDs
   const scoutIds = new Set<string>()
@@ -145,7 +140,7 @@ async function notifyInterestedScouts(
   const body = content.length > 100 ? content.slice(0, 97) + '...' : content
 
   // Create notifications for each scout
-  const notifications = Array.from(scoutIds).map(scoutId =>
+  const notifications = Array.from(scoutIds).map((scoutId) =>
     createNotification({
       user_id: scoutId,
       type: 'announcement',

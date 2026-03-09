@@ -8,7 +8,10 @@ import { revalidatePath } from 'next/cache'
 export async function inviteAcademyAdmin(data: { email: string; clubId: string }) {
   // 1. Verify caller is platform_admin
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) return { error: 'errors.notAuthenticated', success: false }
 
   const { data: profile } = await supabase
@@ -69,16 +72,13 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
 
   // 5. Send invitation (new user)
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(
-    parsed.data.email,
-    {
-      data: {
-        role: 'academy_admin',
-        club_id: parsed.data.clubId,
-      },
-      redirectTo: `${siteUrl}/callback?next=/admin`,
-    }
-  )
+  const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(parsed.data.email, {
+    data: {
+      role: 'academy_admin',
+      club_id: parsed.data.clubId,
+    },
+    redirectTo: `${siteUrl}/callback?next=/admin`,
+  })
 
   if (inviteError) {
     console.error('[admin-invite] Invite error:', inviteError.message)

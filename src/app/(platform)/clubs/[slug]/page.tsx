@@ -41,10 +41,12 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   const { data: club, error } = await supabase
     .from('clubs')
-    .select(`
+    .select(
+      `
       id, name, name_ka, slug, logo_url, city, region,
       description, description_ka, website
-    `)
+    `
+    )
     .eq('slug', slug)
     .single()
 
@@ -53,7 +55,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
   trackPageView({ pageType: 'club', entityId: club.id, entitySlug: club.slug })
 
   // Fetch user + role for MessageAcademyButton
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   let userRole: string | null = null
   if (user) {
     const { data: profile } = await supabase
@@ -67,12 +71,14 @@ export default async function ClubPage({ params }: ClubPageProps) {
   // Fetch players for this club
   const { data: players, error: playersError } = await supabase
     .from('players')
-    .select(`
+    .select(
+      `
       slug, name, name_ka, position, date_of_birth, height_cm,
       preferred_foot, is_featured, photo_url, status,
       club:clubs!players_club_id_fkey ( name, name_ka ),
       season_stats:player_season_stats ( season, goals, assists, matches_played )
-    `)
+    `
+    )
     .eq('club_id', club.id)
     .eq('status', 'active')
     .order('position')
@@ -89,19 +95,27 @@ export default async function ClubPage({ params }: ClubPageProps) {
     .limit(5)
 
   const playerCards = (players ?? []).map((p) => {
-    const statsArr = Array.isArray(p.season_stats) ? p.season_stats : p.season_stats ? [p.season_stats] : []
+    const statsArr = Array.isArray(p.season_stats)
+      ? p.season_stats
+      : p.season_stats
+        ? [p.season_stats]
+        : []
     return {
       ...p,
       position: p.position as Position,
       status: (p.status ?? 'active') as PlayerStatus,
       club: unwrapRelation(p.club),
-      season_stats: statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
+      season_stats:
+        statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
     }
   })
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <Link href="/clubs" className="mb-6 inline-flex items-center gap-1 text-sm text-foreground-muted hover:text-foreground transition-colors">
+      <Link
+        href="/clubs"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-foreground-muted hover:text-foreground transition-colors"
+      >
         &larr; {t('clubs.backToClubs')}
       </Link>
 
@@ -109,24 +123,40 @@ export default async function ClubPage({ params }: ClubPageProps) {
       <div className="mt-4 flex items-start gap-5">
         <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-background-secondary border border-border text-3xl font-bold text-accent">
           {club.logo_url ? (
-            <Image src={club.logo_url} alt={club.name} fill className="rounded-2xl object-cover" sizes="80px" />
+            <Image
+              src={club.logo_url}
+              alt={club.name}
+              fill
+              className="rounded-2xl object-cover"
+              sizes="80px"
+            />
           ) : (
             <ClubSilhouette className="h-12 w-12 text-accent/40" />
           )}
         </div>
         <div>
-          <ClubDetailClient club={{
-            name: club.name,
-            name_ka: club.name_ka,
-            description: club.description,
-            description_ka: club.description_ka,
-          }} />
+          <ClubDetailClient
+            club={{
+              name: club.name,
+              name_ka: club.name_ka,
+              description: club.description,
+              description_ka: club.description_ka,
+            }}
+          />
           <div className="mt-1 flex items-center gap-3 text-sm text-foreground-muted">
-            <span>{club.city}{club.region && club.city !== club.region ? `, ${club.region}` : ''}</span>
+            <span>
+              {club.city}
+              {club.region && club.city !== club.region ? `, ${club.region}` : ''}
+            </span>
             {club.website && (
               <>
                 <span>&middot;</span>
-                <a href={club.website} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                <a
+                  href={club.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-accent hover:underline"
+                >
                   {t('clubs.website')}
                 </a>
               </>
@@ -141,11 +171,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
       </div>
 
       {/* Announcements */}
-      <ClubAnnouncements
-        announcements={announcements ?? []}
-        title={t('clubs.announcements')}
-        noAnnouncements={t('clubs.noAnnouncements')}
-      />
+      <ClubAnnouncements announcements={announcements ?? []} title={t('clubs.announcements')} />
 
       {/* Squad */}
       <div className="mt-10">

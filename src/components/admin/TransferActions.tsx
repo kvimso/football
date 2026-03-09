@@ -18,9 +18,8 @@ export function TransferActions({ requestId }: TransferActionsProps) {
   async function handleAction(action: 'accept' | 'decline') {
     setLoadingAction(action)
     setErrorMsg('')
-    const result = action === 'accept'
-      ? await acceptTransfer(requestId)
-      : await declineTransfer(requestId)
+    const result =
+      action === 'accept' ? await acceptTransfer(requestId) : await declineTransfer(requestId)
 
     if (result.error) {
       setErrorMsg(result.error.startsWith('errors.') ? t(result.error) : result.error)
@@ -34,9 +33,7 @@ export function TransferActions({ requestId }: TransferActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {errorMsg && (
-        <span className="text-[10px] text-red-400">{errorMsg}</span>
-      )}
+      {errorMsg && <span className="text-[10px] text-red-400">{errorMsg}</span>}
       <button
         onClick={() => handleAction('accept')}
         disabled={isLoading}
@@ -46,7 +43,13 @@ export function TransferActions({ requestId }: TransferActionsProps) {
         {loadingAction === 'accept' ? (
           <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-green-400/30 border-t-green-400" />
         ) : (
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.5}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
           </svg>
         )}
@@ -60,7 +63,13 @@ export function TransferActions({ requestId }: TransferActionsProps) {
         {loadingAction === 'decline' ? (
           <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-400/30 border-t-red-400" />
         ) : (
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.5}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
           </svg>
         )}

@@ -15,26 +15,22 @@ export async function createClient() {
     throw new Error('Server configuration error. Please check environment variables.')
   }
 
-  return createServerClient<Database>(url, key,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method is called from a Server Component where
-            // cookies cannot be set. This can be ignored if middleware
-            // refreshes user sessions.
-          }
-        },
+  return createServerClient<Database>(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
       },
-    }
-  )
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+        } catch {
+          // The `setAll` method is called from a Server Component where
+          // cookies cannot be set. This can be ignored if middleware
+          // refreshes user sessions.
+        }
+      },
+    },
+  })
 }
 
 /**

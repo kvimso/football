@@ -67,7 +67,9 @@ export function TransferCard({
       <div className="flex items-center gap-3 px-4 py-3">
         {/* Position badge */}
         {pos && (
-          <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wider ${posClasses}`}>
+          <span
+            className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wider ${posClasses}`}
+          >
             {pos}
           </span>
         )}
@@ -95,7 +97,9 @@ export function TransferCard({
           {isPending ? (
             <TransferActions requestId={requestId} />
           ) : badge ? (
-            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.classes}`}>
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${badge.classes}`}
+            >
               {badge.icon} {t(`admin.transfers.${status}`)}
             </span>
           ) : null}
@@ -112,9 +116,7 @@ export function TransferCard({
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <span className="text-[10px] font-medium text-foreground-muted/40">
-              {daysLeft}d
-            </span>
+            <span className="text-[10px] font-medium text-foreground-muted/40">{daysLeft}d</span>
           </div>
         </div>
       )}

@@ -58,9 +58,7 @@ export async function POST(request: NextRequest) {
     const filters = isRequery ? providedFilters : await parseSearchQuery(query)
 
     // 6. Build Supabase query from filters
-    let dbQuery = supabase
-      .from('players')
-      .select(`
+    let dbQuery = supabase.from('players').select(`
         id, slug, name, name_ka, position, date_of_birth,
         height_cm, weight_kg, preferred_foot, is_featured,
         photo_url, status, nationality,
@@ -124,7 +122,10 @@ export async function POST(request: NextRequest) {
           .or(`name.ilike.%${sanitizedClub}%,name_ka.ilike.%${sanitizedClub}%`)
 
         if (clubs && clubs.length > 0) {
-          dbQuery = dbQuery.in('club_id', clubs.map(c => c.id))
+          dbQuery = dbQuery.in(
+            'club_id',
+            clubs.map((c) => c.id)
+          )
         } else {
           // Club not found — return empty results
           return apiSuccess({
@@ -140,11 +141,19 @@ export async function POST(request: NextRequest) {
     // Age filters (converted to DOB boundaries)
     const today = new Date()
     if (filters.max_age) {
-      const minDOB = new Date(today.getFullYear() - (filters.max_age + 1), today.getMonth(), today.getDate())
+      const minDOB = new Date(
+        today.getFullYear() - (filters.max_age + 1),
+        today.getMonth(),
+        today.getDate()
+      )
       dbQuery = dbQuery.gt('date_of_birth', minDOB.toISOString().split('T')[0])
     }
     if (filters.min_age) {
-      const maxDOB = new Date(today.getFullYear() - filters.min_age, today.getMonth(), today.getDate())
+      const maxDOB = new Date(
+        today.getFullYear() - filters.min_age,
+        today.getMonth(),
+        today.getDate()
+      )
       dbQuery = dbQuery.lte('date_of_birth', maxDOB.toISOString().split('T')[0])
     }
 
@@ -159,11 +168,16 @@ export async function POST(request: NextRequest) {
     let filteredPlayers = players ?? []
 
     // 7. Post-filter by skills (player_skills is an array from join)
-    const hasSkillFilter = filters.min_pace || filters.min_shooting || filters.min_passing ||
-      filters.min_dribbling || filters.min_defending || filters.min_physical
+    const hasSkillFilter =
+      filters.min_pace ||
+      filters.min_shooting ||
+      filters.min_passing ||
+      filters.min_dribbling ||
+      filters.min_defending ||
+      filters.min_physical
 
     if (hasSkillFilter) {
-      filteredPlayers = filteredPlayers.filter(player => {
+      filteredPlayers = filteredPlayers.filter((player) => {
         const skillsArr = Array.isArray(player.player_skills) ? player.player_skills : []
         const skills = skillsArr[0]
         if (!skills) return false
@@ -178,23 +192,37 @@ export async function POST(request: NextRequest) {
     }
 
     // Post-filter by season stats (use latest season)
-    const hasStatFilter = filters.min_goals || filters.min_assists || filters.min_matches_played ||
-      filters.min_pass_accuracy || filters.min_tackles || filters.min_interceptions ||
-      filters.min_clean_sheets || filters.min_shots_on_target
+    const hasStatFilter =
+      filters.min_goals ||
+      filters.min_assists ||
+      filters.min_matches_played ||
+      filters.min_pass_accuracy ||
+      filters.min_tackles ||
+      filters.min_interceptions ||
+      filters.min_clean_sheets ||
+      filters.min_shots_on_target
 
     if (hasStatFilter) {
-      filteredPlayers = filteredPlayers.filter(player => {
+      filteredPlayers = filteredPlayers.filter((player) => {
         const statsArr = Array.isArray(player.season_stats) ? player.season_stats : []
         if (statsArr.length === 0) return false
         const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
         if (filters.min_goals && (latest.goals ?? 0) < filters.min_goals) return false
         if (filters.min_assists && (latest.assists ?? 0) < filters.min_assists) return false
-        if (filters.min_matches_played && (latest.matches_played ?? 0) < filters.min_matches_played) return false
-        if (filters.min_pass_accuracy && (latest.pass_accuracy ?? 0) < filters.min_pass_accuracy) return false
+        if (filters.min_matches_played && (latest.matches_played ?? 0) < filters.min_matches_played)
+          return false
+        if (filters.min_pass_accuracy && (latest.pass_accuracy ?? 0) < filters.min_pass_accuracy)
+          return false
         if (filters.min_tackles && (latest.tackles ?? 0) < filters.min_tackles) return false
-        if (filters.min_interceptions && (latest.interceptions ?? 0) < filters.min_interceptions) return false
-        if (filters.min_clean_sheets && (latest.clean_sheets ?? 0) < filters.min_clean_sheets) return false
-        if (filters.min_shots_on_target && (latest.shots_on_target ?? 0) < filters.min_shots_on_target) return false
+        if (filters.min_interceptions && (latest.interceptions ?? 0) < filters.min_interceptions)
+          return false
+        if (filters.min_clean_sheets && (latest.clean_sheets ?? 0) < filters.min_clean_sheets)
+          return false
+        if (
+          filters.min_shots_on_target &&
+          (latest.shots_on_target ?? 0) < filters.min_shots_on_target
+        )
+          return false
         return true
       })
     }
@@ -218,8 +246,16 @@ export async function POST(request: NextRequest) {
 
         // Season stat fields
         const statFields = [
-          'goals', 'assists', 'pass_accuracy', 'matches_played', 'tackles',
-          'interceptions', 'clean_sheets', 'minutes_played', 'sprints', 'distance_covered_km',
+          'goals',
+          'assists',
+          'pass_accuracy',
+          'matches_played',
+          'tackles',
+          'interceptions',
+          'clean_sheets',
+          'minutes_played',
+          'sprints',
+          'distance_covered_km',
           'shots_on_target',
         ]
         if (statFields.includes(sortKey)) {
@@ -273,7 +309,7 @@ function saveSearchHistory(
   userId: string,
   queryText: string,
   filters: AISearchFilters,
-  resultCount: number,
+  resultCount: number
 ) {
   supabase
     .from('ai_search_history')
@@ -300,8 +336,13 @@ function saveSearchHistory(
             supabase
               .from('ai_search_history')
               .delete()
-              .in('id', old.map(o => o.id))
-              .then(() => { /* eviction done */ })
+              .in(
+                'id',
+                old.map((o) => o.id)
+              )
+              .then(() => {
+                /* eviction done */
+              })
           }
         })
     })

@@ -15,12 +15,14 @@ export default async function PlatformTransfersPage({
 
   let query = admin
     .from('transfer_requests')
-    .select(`
+    .select(
+      `
       id, status, requested_at, resolved_at, expires_at,
       player:players!transfer_requests_player_id_fkey(name, name_ka, slug, platform_id),
       from_club:clubs!transfer_requests_from_club_id_fkey(name, name_ka),
       to_club:clubs!transfer_requests_to_club_id_fkey(name, name_ka)
-    `)
+    `
+    )
     .order('requested_at', { ascending: false })
 
   if (params.status && params.status !== 'all') {
@@ -45,13 +47,25 @@ export default async function PlatformTransfersPage({
       <div className="rounded-2xl border border-border bg-card p-6">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent/10">
-            <svg className="h-7 w-7 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+            <svg
+              className="h-7 w-7 text-accent"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+              />
             </svg>
           </div>
           <div>
             <h1 className="text-xl font-bold text-foreground">{t('platform.transfers.title')}</h1>
-            <p className="mt-0.5 text-sm text-foreground-muted">{processed.length} {t('admin.transfers.title').toLowerCase()}</p>
+            <p className="mt-0.5 text-sm text-foreground-muted">
+              {processed.length} {t('admin.transfers.title').toLowerCase()}
+            </p>
           </div>
         </div>
       </div>

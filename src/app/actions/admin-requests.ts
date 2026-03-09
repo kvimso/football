@@ -9,7 +9,11 @@ import { uuidSchema, responseMessageSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { contactRequestStatusEmail } from '@/lib/email-templates'
 
-async function verifyRequestBelongsToClub(supabase: Awaited<ReturnType<typeof createClient>>, requestId: string, clubId: string) {
+async function verifyRequestBelongsToClub(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  requestId: string,
+  clubId: string
+) {
   const { data: request, error } = await supabase
     .from('contact_requests')
     .select('id, player:players!contact_requests_player_id_fkey(club_id)')
@@ -26,7 +30,8 @@ export async function approveRequest(requestId: string, responseMessage?: string
   if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   if (responseMessage !== undefined) {
     const msgParsed = responseMessageSchema.safeParse(responseMessage)
-    if (!msgParsed.success) return { error: msgParsed.error.issues[0]?.message ?? 'errors.invalidInput' }
+    if (!msgParsed.success)
+      return { error: msgParsed.error.issues[0]?.message ?? 'errors.invalidInput' }
   }
   const { error: authErr, supabase, userId, clubId } = await getAdminContext()
   if (authErr || !supabase || !userId || !clubId) return { error: authErr ?? 'errors.unauthorized' }
@@ -90,10 +95,12 @@ async function sendRequestStatusEmail(requestId: string, status: 'approved' | 'r
     const admin = createAdminClient()
     const { data: request } = await admin
       .from('contact_requests')
-      .select(`
+      .select(
+        `
         scout_id,
         player:players!contact_requests_player_id_fkey ( name, club:clubs!players_club_id_fkey ( name ) )
-      `)
+      `
+      )
       .eq('id', requestId)
       .single()
 

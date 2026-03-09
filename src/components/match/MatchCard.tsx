@@ -20,10 +20,14 @@ export function MatchCard({ match }: MatchCardProps) {
   const { t, lang } = useLang()
 
   const homeName = match.home_club
-    ? lang === 'ka' ? match.home_club.name_ka : match.home_club.name
+    ? lang === 'ka'
+      ? match.home_club.name_ka
+      : match.home_club.name
     : t('matches.tbd')
   const awayName = match.away_club
-    ? lang === 'ka' ? match.away_club.name_ka : match.away_club.name
+    ? lang === 'ka'
+      ? match.away_club.name_ka
+      : match.away_club.name
     : t('matches.tbd')
 
   return (

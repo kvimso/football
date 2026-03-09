@@ -14,10 +14,12 @@ export default async function ClubsPage() {
 
   const { data: clubs, error: clubsError } = await supabase
     .from('clubs')
-    .select(`
+    .select(
+      `
       id, name, name_ka, slug, logo_url, city, region, description, description_ka,
       players ( id )
-    `)
+    `
+    )
     .order('name')
 
   if (clubsError) console.error('Failed to fetch clubs:', clubsError.message)
@@ -31,9 +33,7 @@ export default async function ClubsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">{t('clubs.title')}</h1>
-        <p className="mt-1 text-foreground-muted">
-          {t('clubs.subtitle')}
-        </p>
+        <p className="mt-1 text-foreground-muted">{t('clubs.subtitle')}</p>
       </div>
 
       {clubCards.length > 0 ? (

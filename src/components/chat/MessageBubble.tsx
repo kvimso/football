@@ -1,7 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { formatBubbleTime, formatFileSize, isImageType, linkifyMessage, isEmojiOnly } from '@/lib/chat-utils'
+import {
+  formatBubbleTime,
+  formatFileSize,
+  isImageType,
+  linkifyMessage,
+  isEmojiOnly,
+} from '@/lib/chat-utils'
 import { PlayerRefCard } from '@/components/chat/PlayerRefCard'
 import type { MessageWithSender } from '@/lib/types'
 import type { Lang } from '@/lib/translations'
@@ -57,7 +63,9 @@ export function MessageBubble({
   const tightSpacing = !showSenderName && !showTimestamp
 
   return (
-    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'} ${tightSpacing ? 'mt-0.5' : 'mt-2'} ${isNew ? 'animate-chat-fade-in' : ''}`}>
+    <div
+      className={`flex ${isMine ? 'justify-end' : 'justify-start'} ${tightSpacing ? 'mt-0.5' : 'mt-2'} ${isNew ? 'animate-chat-fade-in' : ''}`}
+    >
       <div className={`max-w-[75%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
         {/* Sender name for received messages */}
         {!isMine && showSenderName && (
@@ -68,7 +76,9 @@ export function MessageBubble({
 
         {/* Timestamp */}
         {showTimestamp && (
-          <span className={`mb-0.5 text-[11px] text-foreground-muted ${isMine ? 'mr-3 text-right' : 'ml-3'}`}>
+          <span
+            className={`mb-0.5 text-[11px] text-foreground-muted ${isMine ? 'mr-3 text-right' : 'ml-3'}`}
+          >
             {time}
           </span>
         )}
@@ -81,28 +91,37 @@ export function MessageBubble({
               : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground'
           }`}
         >
-          {message.message_type === 'text' && (() => {
-            const emojiOnly = message.content ? isEmojiOnly(message.content) : false
-            return (
-              <div className="px-3.5 py-2">
-                <p className={`whitespace-pre-wrap break-words ${emojiOnly ? 'text-2xl leading-relaxed' : 'text-sm leading-relaxed'}`}>
-                  {message.content ? (emojiOnly ? message.content : linkifyMessage(message.content).map((part, i) =>
-                    typeof part === 'string' ? part : (
-                      <a
-                        key={i}
-                        href={part.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline hover:opacity-80"
-                      >
-                        {part.url}
-                      </a>
-                    )
-                  )) : null}
-                </p>
-              </div>
-            )
-          })()}
+          {message.message_type === 'text' &&
+            (() => {
+              const emojiOnly = message.content ? isEmojiOnly(message.content) : false
+              return (
+                <div className="px-3.5 py-2">
+                  <p
+                    className={`whitespace-pre-wrap break-words ${emojiOnly ? 'text-2xl leading-relaxed' : 'text-sm leading-relaxed'}`}
+                  >
+                    {message.content
+                      ? emojiOnly
+                        ? message.content
+                        : linkifyMessage(message.content).map((part, i) =>
+                            typeof part === 'string' ? (
+                              part
+                            ) : (
+                              <a
+                                key={i}
+                                href={part.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline hover:opacity-80"
+                              >
+                                {part.url}
+                              </a>
+                            )
+                          )
+                      : null}
+                  </p>
+                </div>
+              )
+            })()}
 
           {message.message_type === 'file' && (
             <div className="p-2">
@@ -121,7 +140,9 @@ export function MessageBubble({
                     />
                   </button>
                   {message.file_name && (
-                    <p className={`mt-1 truncate px-1 text-xs ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}>
+                    <p
+                      className={`mt-1 truncate px-1 text-xs ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}
+                    >
                       {message.file_name}
                     </p>
                   )}
@@ -134,19 +155,33 @@ export function MessageBubble({
                   download={message.file_name ?? undefined}
                   aria-label={t('aria.downloadFile')}
                   className={`flex items-center gap-2 rounded-xl px-3 py-2 ${
-                    isMine ? 'bg-white/10 hover:bg-white/20' : 'bg-background hover:bg-background/80'
+                    isMine
+                      ? 'bg-white/10 hover:bg-white/20'
+                      : 'bg-background hover:bg-background/80'
                   } transition-colors`}
                 >
-                  <svg className={`h-8 w-8 shrink-0 ${isMine ? 'text-white/70' : 'text-foreground-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                  <svg
+                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                    />
                   </svg>
                   <div className="min-w-0 flex-1">
-                    <p className={`truncate text-sm font-medium ${isMine ? 'text-white' : 'text-foreground'}`}>
+                    <p
+                      className={`truncate text-sm font-medium ${isMine ? 'text-white' : 'text-foreground'}`}
+                    >
                       {message.file_name ?? t('chat.unnamedFile')}
                     </p>
                     <p className={`text-xs ${isMine ? 'text-white/60' : 'text-foreground-muted'}`}>
-                      {message.file_size_bytes ? formatFileSize(message.file_size_bytes) : ''}
-                      {' '}&middot;{' '}{t('chat.downloadFile')}
+                      {message.file_size_bytes ? formatFileSize(message.file_size_bytes) : ''}{' '}
+                      &middot; {t('chat.downloadFile')}
                     </p>
                   </div>
                 </a>
@@ -156,11 +191,7 @@ export function MessageBubble({
 
           {message.message_type === 'player_ref' && (
             <div className="p-2">
-              <PlayerRefCard
-                player={message.referenced_player ?? null}
-                lang={lang}
-                t={t}
-              />
+              <PlayerRefCard player={message.referenced_player ?? null} lang={lang} t={t} />
             </div>
           )}
         </div>
@@ -186,15 +217,37 @@ export function MessageBubble({
               </span>
             )}
             {(!message._status || message._status === 'sent') && (
-              <span title={message.read_at ? `${t('chat.read')} ${formatBubbleTime(message.read_at, lang)}` : t('chat.delivered')}>
+              <span
+                title={
+                  message.read_at
+                    ? `${t('chat.read')} ${formatBubbleTime(message.read_at, lang)}`
+                    : t('chat.delivered')
+                }
+              >
                 {message.read_at ? (
                   // Double check — read
-                  <svg className="h-3.5 w-3.5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2 12.5l5 5L12 12m4-4.5l5 5L16 17.5" />
+                  <svg
+                    className="h-3.5 w-3.5 text-accent"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2 12.5l5 5L12 12m4-4.5l5 5L16 17.5"
+                    />
                   </svg>
                 ) : (
                   // Single check — delivered
-                  <svg className="h-3.5 w-3.5 text-foreground-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg
+                    className="h-3.5 w-3.5 text-foreground-muted"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 )}
@@ -215,7 +268,13 @@ export function MessageBubble({
             onClick={() => setImageExpanded(false)}
             aria-label={t('aria.closeImage')}
           >
-            <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg
+              className="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>

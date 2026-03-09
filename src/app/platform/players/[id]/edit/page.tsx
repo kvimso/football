@@ -16,7 +16,9 @@ export default async function PlatformEditPlayerPage({
   const [{ data: player, error }, { data: clubs }] = await Promise.all([
     admin
       .from('players')
-      .select('id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, parent_guardian_contact, club_id, status, platform_id')
+      .select(
+        'id, name, name_ka, date_of_birth, position, preferred_foot, height_cm, weight_kg, parent_guardian_contact, club_id, status, platform_id'
+      )
       .eq('id', id)
       .single(),
     admin.from('clubs').select('id, name').order('name'),
@@ -33,7 +35,14 @@ export default async function PlatformEditPlayerPage({
         <p className="mt-1 font-mono text-sm text-foreground-muted">{player.platform_id}</p>
       )}
       <div className="mt-6">
-        <PlatformPlayerForm player={{ ...player, position: player.position as Position, status: player.status as PlayerStatus | null }} clubs={clubs ?? []} />
+        <PlatformPlayerForm
+          player={{
+            ...player,
+            position: player.position as Position,
+            status: player.status as PlayerStatus | null,
+          }}
+          clubs={clubs ?? []}
+        />
       </div>
     </div>
   )

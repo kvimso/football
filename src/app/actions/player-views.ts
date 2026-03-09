@@ -9,7 +9,9 @@ export async function trackPlayerView(playerId: string): Promise<void> {
     if (!uuidRegex.test(playerId)) return
 
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
     if (!user) return
 
     // Get viewer's profile to check role and club_id

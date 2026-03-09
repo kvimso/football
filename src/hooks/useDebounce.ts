@@ -17,8 +17,11 @@ export function useDebouncedCallback<T extends (...args: Parameters<T>) => void>
     }
   }, [])
 
-  return useCallback((...args: Parameters<T>) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => callbackRef.current(...args), delay)
-  }, [delay])
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => callbackRef.current(...args), delay)
+    },
+    [delay]
+  )
 }

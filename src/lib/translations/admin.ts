@@ -4,9 +4,9 @@ export const en = {
     title: 'Scout Dashboard',
     welcome: 'Welcome back',
     watchlist: 'Watchlist',
-    watchlistDesc: 'Players you\'re watching',
+    watchlistDesc: "Players you're watching",
     noWatchlist: 'No players in your watchlist yet',
-    noWatchlistHint: 'Browse the player directory and watch players you\'re interested in.',
+    noWatchlistHint: "Browse the player directory and watch players you're interested in.",
     removeFromWatchlist: 'Remove',
     folders: 'Folders',
     allPlayers: 'All Players',
@@ -441,7 +441,8 @@ export const ka = {
     transfers: {
       title: 'ტრანსფერები',
       searchTitle: 'მოთამაშეების ძიება',
-      searchHint: 'მოძებნეთ სახელით ან პლატფორმის ID-ით ტრანსფერის მოთხოვნისთვის ან თავისუფალი აგენტის მოსაზიდად.',
+      searchHint:
+        'მოძებნეთ სახელით ან პლატფორმის ID-ით ტრანსფერის მოთხოვნისთვის ან თავისუფალი აგენტის მოსაზიდად.',
       searchPlaceholder: 'სახელი ან პლატფორმის ID...',
       requestTransfer: 'ტრანსფერის მოთხოვნა',
       claimPlayer: 'მოთამაშის მოზიდვა',
@@ -485,7 +486,8 @@ export const ka = {
     },
     announcements: {
       title: 'განცხადებები',
-      subtitle: 'გაუზიარეთ სიახლეები თქვენი მოთამაშეებით დაინტერესებულ სკაუტებს. მაქსიმუმ 2 კვირაში.',
+      subtitle:
+        'გაუზიარეთ სიახლეები თქვენი მოთამაშეებით დაინტერესებულ სკაუტებს. მაქსიმუმ 2 კვირაში.',
       placeholder: 'დაწერეთ განცხადება...',
       publish: 'გამოქვეყნება',
       publishing: 'ქვეყნდება...',
@@ -544,7 +546,8 @@ export const ka = {
       deleteConfirm: 'ნამდვილად გსურთ ამ კლუბის წაშლა? ეს ვერ გაუქმდება.',
       playerCount: 'მოთამაშეები',
       adminCount: 'ადმინები',
-      cannotDeleteWithPlayers: 'წაშლა შეუძლებელია: კლუბს ჰყავს მოთამაშეები. ჯერ გადაანაწილეთ ან გაათავისუფლეთ.',
+      cannotDeleteWithPlayers:
+        'წაშლა შეუძლებელია: კლუბს ჰყავს მოთამაშეები. ჯერ გადაანაწილეთ ან გაათავისუფლეთ.',
     },
     players: {
       title: 'ყველა მოთამაშე',

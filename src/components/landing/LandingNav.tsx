@@ -24,7 +24,9 @@ export function LandingNav() {
           <Link
             href="/about"
             className={`text-sm transition-colors ${
-              pathname === '/about' ? 'font-medium text-accent' : 'text-foreground-muted hover:text-foreground'
+              pathname === '/about'
+                ? 'font-medium text-accent'
+                : 'text-foreground-muted hover:text-foreground'
             }`}
           >
             {t('nav.about')}
@@ -32,7 +34,9 @@ export function LandingNav() {
           <Link
             href="/contact"
             className={`text-sm transition-colors ${
-              pathname === '/contact' ? 'font-medium text-accent' : 'text-foreground-muted hover:text-foreground'
+              pathname === '/contact'
+                ? 'font-medium text-accent'
+                : 'text-foreground-muted hover:text-foreground'
             }`}
           >
             {t('nav.contact')}
@@ -64,7 +68,13 @@ export function LandingNav() {
             onClick={() => setMenuOpen(!menuOpen)}
             className="rounded-md p-1.5 text-foreground-muted hover:text-foreground transition-colors md:hidden"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
               {menuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (

@@ -6,10 +6,7 @@ import { uuidSchema } from '@/lib/validations'
 
 // GET /api/players/[id] — Full player profile with stats
 // Accepts UUID (id) or slug string
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createApiClient(request)
   const auth = await authenticateRequest(supabase)
@@ -21,7 +18,8 @@ export async function GET(
 
   const { data: player, error } = await supabase
     .from('players')
-    .select(`
+    .select(
+      `
       id, name, name_ka, slug, date_of_birth, nationality, position,
       preferred_foot, height_cm, weight_kg, photo_url, jersey_number,
       scouting_report, scouting_report_ka, status, is_featured, platform_id,
@@ -41,7 +39,8 @@ export async function GET(
         id, joined_at, left_at,
         club:clubs!player_club_history_club_id_fkey ( name, name_ka, slug )
       )
-    `)
+    `
+    )
     .eq(filterColumn, id)
     .single()
 
@@ -69,13 +68,17 @@ export async function GET(
 
   // Fetch view counts and similar players in parallel
   const [viewCountResult, similarResult] = await Promise.all([
-    Promise.resolve(supabase.rpc('get_player_view_counts', { player_ids: [player.id] })).catch(() => ({ data: null })),
+    Promise.resolve(supabase.rpc('get_player_view_counts', { player_ids: [player.id] })).catch(
+      () => ({ data: null })
+    ),
     supabase
       .from('players')
-      .select(`
+      .select(
+        `
         id, slug, name, name_ka, position, date_of_birth, photo_url, status,
         club:clubs!players_club_id_fkey ( name, name_ka )
-      `)
+      `
+      )
       .eq('position', player.position)
       .neq('id', player.id)
       .in('status', ['active', 'free_agent'])

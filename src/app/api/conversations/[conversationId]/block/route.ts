@@ -21,7 +21,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
   }
 
   // Auth check
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
@@ -84,12 +87,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     // Insert block
-    const { error: insertError } = await supabase
-      .from('conversation_blocks')
-      .insert({
-        conversation_id: conversationId,
-        blocked_by: user.id,
-      })
+    const { error: insertError } = await supabase.from('conversation_blocks').insert({
+      conversation_id: conversationId,
+      blocked_by: user.id,
+    })
 
     if (insertError) {
       console.error('[block/POST] Insert error:', insertError.message)

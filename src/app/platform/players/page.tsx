@@ -16,10 +16,12 @@ export default async function PlatformPlayersPage({
 
   let query = admin
     .from('players')
-    .select(`
+    .select(
+      `
       id, name, name_ka, position, status, platform_id, date_of_birth,
       club:clubs!players_club_id_fkey ( id, name, name_ka )
-    `)
+    `
+    )
     .order('name')
 
   if (params.position) query = query.eq('position', params.position)
@@ -28,7 +30,9 @@ export default async function PlatformPlayersPage({
   if (params.q) {
     const sanitized = params.q.replace(/[,.()"\\%_]/g, '')
     if (sanitized) {
-      query = query.or(`name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%,platform_id.ilike.%${sanitized}%`)
+      query = query.or(
+        `name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%,platform_id.ilike.%${sanitized}%`
+      )
     }
   }
 
@@ -60,13 +64,17 @@ export default async function PlatformPlayersPage({
         <select name="position" defaultValue={params.position ?? ''} className="input text-sm">
           <option value="">{t('players.allPositions')}</option>
           {['GK', 'DEF', 'MID', 'ATT', 'WNG', 'ST'].map((pos) => (
-            <option key={pos} value={pos}>{t(`positions.${pos}`)}</option>
+            <option key={pos} value={pos}>
+              {t(`positions.${pos}`)}
+            </option>
           ))}
         </select>
         <select name="club" defaultValue={params.club ?? ''} className="input text-sm">
           <option value="">{t('platform.players.allClubs')}</option>
           {(clubs ?? []).map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
           ))}
         </select>
         <select name="status" defaultValue={params.status ?? ''} className="input text-sm">
@@ -74,7 +82,9 @@ export default async function PlatformPlayersPage({
           <option value="active">{t('players.statusActive')}</option>
           <option value="free_agent">{t('players.statusFreeAgent')}</option>
         </select>
-        <button type="submit" className="btn-primary text-sm">{t('admin.common.search')}</button>
+        <button type="submit" className="btn-primary text-sm">
+          {t('admin.common.search')}
+        </button>
       </form>
 
       {(players ?? []).length === 0 ? (
@@ -101,26 +111,37 @@ export default async function PlatformPlayersPage({
                   <tr key={player.id} className="border-b border-border/50">
                     <td className="py-3 pr-4 font-medium text-foreground">{displayName}</td>
                     <td className="py-3 pr-4">
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${POSITION_COLOR_CLASSES[player.position as Position] ?? ''}`}>
+                      <span
+                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${POSITION_COLOR_CLASSES[player.position as Position] ?? ''}`}
+                      >
                         {player.position}
                       </span>
                     </td>
                     <td className="py-3 pr-4 text-foreground-muted">
                       {player.date_of_birth ? calculateAge(player.date_of_birth) : '—'}
                     </td>
-                    <td className="py-3 pr-4 text-foreground-muted">{club?.name ?? t('players.freeAgent')}</td>
-                    <td className="py-3 pr-4 font-mono text-xs text-foreground-muted">{player.platform_id}</td>
+                    <td className="py-3 pr-4 text-foreground-muted">
+                      {club?.name ?? t('players.freeAgent')}
+                    </td>
+                    <td className="py-3 pr-4 font-mono text-xs text-foreground-muted">
+                      {player.platform_id}
+                    </td>
                     <td className="py-3 pr-4">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        player.status === 'active'
-                          ? 'bg-green-500/10 text-green-400'
-                          : 'bg-yellow-500/10 text-yellow-400'
-                      }`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          player.status === 'active'
+                            ? 'bg-green-500/10 text-green-400'
+                            : 'bg-yellow-500/10 text-yellow-400'
+                        }`}
+                      >
                         {t(`admin.players.${player.status}`)}
                       </span>
                     </td>
                     <td className="py-3">
-                      <Link href={`/platform/players/${player.id}/edit`} className="text-accent hover:underline">
+                      <Link
+                        href={`/platform/players/${player.id}/edit`}
+                        className="text-accent hover:underline"
+                      >
                         {t('common.edit')}
                       </Link>
                     </td>

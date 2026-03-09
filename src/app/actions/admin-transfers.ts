@@ -4,7 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getAdminContext } from '@/lib/auth'
 import { unwrapRelation, escapePostgrestValue } from '@/lib/utils'
-import { recordClubJoin, recordClubDeparture, executeTransferAccept, executeTransferDecline } from '@/lib/transfer-helpers'
+import {
+  recordClubJoin,
+  recordClubDeparture,
+  executeTransferAccept,
+  executeTransferDecline,
+} from '@/lib/transfer-helpers'
 import { uuidSchema } from '@/lib/validations'
 import { sendEmail } from '@/lib/email'
 import { transferRequestReceivedEmail } from '@/lib/email-templates'
@@ -51,7 +56,8 @@ export async function releasePlayer(playerId: string) {
 
 export async function searchPlayersForTransfer(query: string) {
   const { error: authErr, clubId, supabase } = await getAdminContext()
-  if (authErr || !supabase || !clubId) return { error: authErr ?? 'errors.unauthorized', players: [] }
+  if (authErr || !supabase || !clubId)
+    return { error: authErr ?? 'errors.unauthorized', players: [] }
 
   if (!query || query.trim().length < 2) return { error: null, players: [] }
 
@@ -62,19 +68,23 @@ export async function searchPlayersForTransfer(query: string) {
   const [{ data: players, error }, { data: freeAgents, error: faError }] = await Promise.all([
     supabase
       .from('players')
-      .select(`
+      .select(
+        `
         id, name, name_ka, platform_id, position, date_of_birth, status,
         club:clubs!players_club_id_fkey ( id, name, name_ka )
-      `)
+      `
+      )
       .neq('club_id', clubId)
       .or(`platform_id.ilike.%${sanitized}%,name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%`)
       .limit(10),
     supabase
       .from('players')
-      .select(`
+      .select(
+        `
         id, name, name_ka, platform_id, position, date_of_birth, status,
         club:clubs!players_club_id_fkey ( id, name, name_ka )
-      `)
+      `
+      )
       .is('club_id', null)
       .or(`platform_id.ilike.%${sanitized}%,name.ilike.%${sanitized}%,name_ka.ilike.%${sanitized}%`)
       .limit(10),
@@ -123,13 +133,11 @@ export async function requestTransfer(playerId: string) {
 
   if (existing) return { error: 'errors.transferAlreadyPending' }
 
-  const { error: insertErr } = await supabase
-    .from('transfer_requests')
-    .insert({
-      player_id: playerId,
-      from_club_id: player.club_id,
-      to_club_id: clubId,
-    })
+  const { error: insertErr } = await supabase.from('transfer_requests').insert({
+    player_id: playerId,
+    from_club_id: player.club_id,
+    to_club_id: clubId,
+  })
 
   if (insertErr) {
     console.error('[admin-transfers] Transfer request insert error:', insertErr.message)
@@ -142,7 +150,13 @@ export async function requestTransfer(playerId: string) {
   try {
     const admin = createAdminClient()
     const [clubAdminResult, myClubResult] = await Promise.all([
-      admin.from('profiles').select('email').eq('club_id', player.club_id).eq('role', 'academy_admin').limit(1).single(),
+      admin
+        .from('profiles')
+        .select('email')
+        .eq('club_id', player.club_id)
+        .eq('role', 'academy_admin')
+        .limit(1)
+        .single(),
       admin.from('clubs').select('name').eq('id', clubId).single(),
     ])
     const clubAdminEmail = clubAdminResult.data?.email
@@ -198,9 +212,20 @@ export async function claimFreeAgent(playerId: string) {
   await recordClubJoin(admin, playerId, clubId)
 
   // Notify watchers of club change (fire-and-forget)
-  admin.from('clubs').select('name').eq('id', clubId).single().then(({ data: club }) => {
-    notifyClubChange(playerId, player.name, player.slug, club?.name ?? 'a new club', clubId).catch(() => {})
-  })
+  admin
+    .from('clubs')
+    .select('name')
+    .eq('id', clubId)
+    .single()
+    .then(({ data: club }) => {
+      notifyClubChange(
+        playerId,
+        player.name,
+        player.slug,
+        club?.name ?? 'a new club',
+        clubId
+      ).catch(() => {})
+    })
 
   revalidatePath('/admin')
   revalidatePath('/admin/players')

@@ -3,11 +3,7 @@ import { getCachedUser, getCachedAdminProfile } from '@/lib/cached-auth'
 import { getCachedConversations } from '@/lib/chat-queries'
 import { ChatMessagesLayout } from '@/components/chat/ChatMessagesLayout'
 
-export default async function AdminMessagesLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function AdminMessagesLayout({ children }: { children: React.ReactNode }) {
   const { user } = await getCachedUser()
   if (!user) redirect('/login')
 

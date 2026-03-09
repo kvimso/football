@@ -17,11 +17,13 @@ export async function generateMetadata({ params }: MatchPageProps): Promise<Meta
   const supabase = await createClient()
   const { data: match, error } = await supabase
     .from('matches')
-    .select(`
+    .select(
+      `
       home_score, away_score, competition, match_date,
       home_club:clubs!matches_home_club_id_fkey ( name ),
       away_club:clubs!matches_away_club_id_fkey ( name )
-    `)
+    `
+    )
     .eq('slug', slug)
     .single()
 
@@ -42,7 +44,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   const { data: match, error } = await supabase
     .from('matches')
-    .select(`
+    .select(
+      `
       id, slug, home_score, away_score, competition, match_date, venue,
       video_url, highlights_url, match_report, match_report_ka,
       home_club:clubs!matches_home_club_id_fkey ( name, name_ka, slug ),
@@ -52,7 +55,8 @@ export default async function MatchPage({ params }: MatchPageProps) {
         tackles, interceptions, distance_km, sprints, top_speed_kmh, rating,
         player:players!match_player_stats_player_id_fkey ( name, name_ka, slug, position, club_id )
       )
-    `)
+    `
+    )
     .eq('slug', slug)
     .single()
 
@@ -71,20 +75,32 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
-      <Link href="/matches" className="mb-6 inline-flex items-center gap-1 text-sm text-foreground-muted hover:text-foreground transition-colors">
+      <Link
+        href="/matches"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-foreground-muted hover:text-foreground transition-colors"
+      >
         &larr; {t('matches.backToMatches')}
       </Link>
 
       {/* Match header */}
       <div className="mt-4 card text-center">
         <div className="text-sm text-foreground-muted">{match.competition}</div>
-        <div className="mt-1 text-xs text-foreground-muted">{dateFormatted} &middot; {match.venue}</div>
+        <div className="mt-1 text-xs text-foreground-muted">
+          {dateFormatted} &middot; {match.venue}
+        </div>
 
         <div className="mt-6 flex items-center justify-center gap-6">
           <div className="flex-1 text-right">
             {homeClub?.slug ? (
-              <Link href={`/clubs/${homeClub.slug}`} className="text-lg font-bold text-foreground hover:text-accent transition-colors">
-                <MatchDetailClient type="home_club" name={homeClub.name} name_ka={homeClub.name_ka} />
+              <Link
+                href={`/clubs/${homeClub.slug}`}
+                className="text-lg font-bold text-foreground hover:text-accent transition-colors"
+              >
+                <MatchDetailClient
+                  type="home_club"
+                  name={homeClub.name}
+                  name_ka={homeClub.name_ka}
+                />
               </Link>
             ) : (
               <span className="text-lg font-bold text-foreground">{t('matches.tbd')}</span>
@@ -99,8 +115,15 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
           <div className="flex-1 text-left">
             {awayClub?.slug ? (
-              <Link href={`/clubs/${awayClub.slug}`} className="text-lg font-bold text-foreground hover:text-accent transition-colors">
-                <MatchDetailClient type="away_club" name={awayClub.name} name_ka={awayClub.name_ka} />
+              <Link
+                href={`/clubs/${awayClub.slug}`}
+                className="text-lg font-bold text-foreground hover:text-accent transition-colors"
+              >
+                <MatchDetailClient
+                  type="away_club"
+                  name={awayClub.name}
+                  name_ka={awayClub.name_ka}
+                />
               </Link>
             ) : (
               <span className="text-lg font-bold text-foreground">{t('matches.tbd')}</span>
@@ -144,29 +167,50 @@ export default async function MatchPage({ params }: MatchPageProps) {
                     <tr key={i} className="border-b border-border/50">
                       <td className="py-2 pr-4">
                         {ps.player?.slug ? (
-                          <Link href={`/players/${ps.player.slug}`} className="font-medium text-accent hover:underline">
+                          <Link
+                            href={`/players/${ps.player.slug}`}
+                            className="font-medium text-accent hover:underline"
+                          >
                             {lang === 'ka' ? ps.player.name_ka : ps.player.name}
                           </Link>
                         ) : (
-                          <span className="font-medium text-foreground">{t('matches.unknown')}</span>
+                          <span className="font-medium text-foreground">
+                            {t('matches.unknown')}
+                          </span>
                         )}
                       </td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ps.player?.position ?? '-'}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ps.minutes_played ?? '-'}</td>
+                      <td className="py-2 pr-4 text-foreground-muted">
+                        {ps.player?.position ?? '-'}
+                      </td>
+                      <td className="py-2 pr-4 text-foreground-muted">
+                        {ps.minutes_played ?? '-'}
+                      </td>
                       <td className="py-2 pr-4 font-semibold text-foreground">{ps.goals}</td>
                       <td className="py-2 pr-4 font-semibold text-foreground">{ps.assists}</td>
                       <td className="py-2 pr-4">
                         {ps.rating ? (
-                          <span className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-accent' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}>
+                          <span
+                            className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-accent' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                          >
                             {ps.rating}
                           </span>
-                        ) : '-'}
+                        ) : (
+                          '-'
+                        )}
                       </td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ps.pass_accuracy ? `${ps.pass_accuracy}%` : '-'}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ps.shots_on_target}/{ps.shots}</td>
+                      <td className="py-2 pr-4 text-foreground-muted">
+                        {ps.pass_accuracy ? `${ps.pass_accuracy}%` : '-'}
+                      </td>
+                      <td className="py-2 pr-4 text-foreground-muted">
+                        {ps.shots_on_target}/{ps.shots}
+                      </td>
                       <td className="py-2 pr-4 text-foreground-muted">{ps.tackles}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">{ps.distance_km ? `${ps.distance_km}km` : '-'}</td>
-                      <td className="py-2 text-foreground-muted">{ps.top_speed_kmh ? `${ps.top_speed_kmh}km/h` : '-'}</td>
+                      <td className="py-2 pr-4 text-foreground-muted">
+                        {ps.distance_km ? `${ps.distance_km}km` : '-'}
+                      </td>
+                      <td className="py-2 text-foreground-muted">
+                        {ps.top_speed_kmh ? `${ps.top_speed_kmh}km/h` : '-'}
+                      </td>
                     </tr>
                   ))}
               </tbody>

@@ -6,7 +6,11 @@ interface TrackPageViewParams {
   entitySlug: string
 }
 
-export async function trackPageView({ pageType, entityId, entitySlug }: TrackPageViewParams): Promise<void> {
+export async function trackPageView({
+  pageType,
+  entityId,
+  entitySlug,
+}: TrackPageViewParams): Promise<void> {
   try {
     const admin = createAdminClient()
     const { error } = await admin

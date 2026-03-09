@@ -4,10 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { calculateAge, unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
   // Validate UUID format
@@ -19,7 +16,10 @@ export async function GET(
   const supabase = await createClient()
 
   // Auth check — must be logged in
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
@@ -27,7 +27,8 @@ export async function GET(
   // Fetch player with all relevant data
   const { data: player, error } = await supabase
     .from('players')
-    .select(`
+    .select(
+      `
       id, name, position, date_of_birth, nationality, preferred_foot,
       height_cm, weight_kg, platform_id, status,
       club:clubs!players_club_id_fkey ( name ),
@@ -37,7 +38,8 @@ export async function GET(
         joined_at, left_at,
         club:clubs!player_club_history_club_id_fkey ( name )
       )
-    `)
+    `
+    )
     .eq('id', id)
     .single()
 
@@ -47,7 +49,11 @@ export async function GET(
 
   const club = unwrapRelation(player.club)
   const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats) ? player.season_stats : player.season_stats ? [player.season_stats] : []
+  const seasonStats = Array.isArray(player.season_stats)
+    ? player.season_stats
+    : player.season_stats
+      ? [player.season_stats]
+      : []
   const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
     .map((h) => ({ ...h, club: unwrapRelation(h.club) }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
@@ -102,12 +108,28 @@ export async function GET(
   for (let i = 0; i < infoRows.length; i += 2) {
     const y = doc.y
     // Left pair
-    doc.fontSize(9).font('Helvetica-Bold').fillColor('#888888').text(infoRows[i][0], col1X, y, { width: 120 })
-    doc.fontSize(10).font('Helvetica').fillColor('#000000').text(infoRows[i][1], col2X, y, { width: 130 })
+    doc
+      .fontSize(9)
+      .font('Helvetica-Bold')
+      .fillColor('#888888')
+      .text(infoRows[i][0], col1X, y, { width: 120 })
+    doc
+      .fontSize(10)
+      .font('Helvetica')
+      .fillColor('#000000')
+      .text(infoRows[i][1], col2X, y, { width: 130 })
     // Right pair (if exists)
     if (infoRows[i + 1]) {
-      doc.fontSize(9).font('Helvetica-Bold').fillColor('#888888').text(infoRows[i + 1][0], col3X, y, { width: 120 })
-      doc.fontSize(10).font('Helvetica').fillColor('#000000').text(infoRows[i + 1][1], col4X, y, { width: 130 })
+      doc
+        .fontSize(9)
+        .font('Helvetica-Bold')
+        .fillColor('#888888')
+        .text(infoRows[i + 1][0], col3X, y, { width: 120 })
+      doc
+        .fontSize(10)
+        .font('Helvetica')
+        .fillColor('#000000')
+        .text(infoRows[i + 1][1], col4X, y, { width: 130 })
     }
     doc.x = col1X
     doc.moveDown(0.6)
@@ -134,8 +156,16 @@ export async function GET(
 
     skillEntries.forEach(([label, value], idx) => {
       const x = col1X + idx * skillColWidth
-      doc.fontSize(8).font('Helvetica').fillColor('#888888').text(label, x, skillY, { width: skillColWidth })
-      doc.fontSize(12).font('Helvetica-Bold').fillColor('#000000').text(String(value ?? '-'), x, skillY + 12, { width: skillColWidth })
+      doc
+        .fontSize(8)
+        .font('Helvetica')
+        .fillColor('#888888')
+        .text(label, x, skillY, { width: skillColWidth })
+      doc
+        .fontSize(12)
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text(String(value ?? '-'), x, skillY + 12, { width: skillColWidth })
     })
 
     doc.x = col1X
@@ -156,7 +186,11 @@ export async function GET(
     const headerY = doc.y
 
     headers.forEach((header, idx) => {
-      doc.fontSize(8).font('Helvetica-Bold').fillColor('#888888').text(header, tableX, headerY, { width: colWidths[idx] })
+      doc
+        .fontSize(8)
+        .font('Helvetica-Bold')
+        .fillColor('#888888')
+        .text(header, tableX, headerY, { width: colWidths[idx] })
       tableX += colWidths[idx]
     })
 
@@ -167,7 +201,9 @@ export async function GET(
     doc.moveDown(0.3)
 
     // Table rows
-    const sortedStats = [...seasonStats].sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))
+    const sortedStats = [...seasonStats].sort((a, b) =>
+      (b.season ?? '').localeCompare(a.season ?? '')
+    )
     for (const s of sortedStats) {
       const rowY = doc.y
       tableX = col1X
@@ -183,7 +219,11 @@ export async function GET(
       ]
 
       rowData.forEach((val, idx) => {
-        doc.fontSize(9).font('Helvetica').fillColor('#000000').text(val, tableX, rowY, { width: colWidths[idx] })
+        doc
+          .fontSize(9)
+          .font('Helvetica')
+          .fillColor('#000000')
+          .text(val, tableX, rowY, { width: colWidths[idx] })
         tableX += colWidths[idx]
       })
 
@@ -209,7 +249,11 @@ export async function GET(
       const from = format(new Date(entry.joined_at), 'MMM yyyy')
       const to = entry.left_at ? format(new Date(entry.left_at), 'MMM yyyy') : 'Present'
 
-      doc.fontSize(10).font('Helvetica-Bold').fillColor('#000000').text(entryClubName, col1X, doc.y, { continued: true })
+      doc
+        .fontSize(10)
+        .font('Helvetica-Bold')
+        .fillColor('#000000')
+        .text(entryClubName, col1X, doc.y, { continued: true })
       doc.font('Helvetica').fillColor('#888888').text(`   ${from} — ${to}`)
       doc.moveDown(0.3)
 
@@ -224,13 +268,22 @@ export async function GET(
   if (footerY > 750) doc.addPage()
   const finalFooterY = footerY > 750 ? 50 : footerY
 
-  doc.moveTo(50, finalFooterY).lineTo(545, finalFooterY).strokeColor('#cccccc').lineWidth(0.5).stroke()
-  doc.fontSize(8).font('Helvetica').fillColor('#999999').text(
-    `Generated from Georgian Football Talent Platform — ${format(new Date(), 'MMMM d, yyyy')}`,
-    50,
-    finalFooterY + 8,
-    { align: 'center' }
-  )
+  doc
+    .moveTo(50, finalFooterY)
+    .lineTo(545, finalFooterY)
+    .strokeColor('#cccccc')
+    .lineWidth(0.5)
+    .stroke()
+  doc
+    .fontSize(8)
+    .font('Helvetica')
+    .fillColor('#999999')
+    .text(
+      `Generated from Georgian Football Talent Platform — ${format(new Date(), 'MMMM d, yyyy')}`,
+      50,
+      finalFooterY + 8,
+      { align: 'center' }
+    )
 
   doc.end()
 

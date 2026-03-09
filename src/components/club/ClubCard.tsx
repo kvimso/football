@@ -27,7 +27,13 @@ export async function ClubCard({ club }: ClubCardProps) {
       <div className="flex items-center gap-4">
         <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-background border border-border">
           {club.logo_url ? (
-            <Image src={club.logo_url} alt={club.name} fill className="rounded-xl object-cover" sizes="64px" />
+            <Image
+              src={club.logo_url}
+              alt={club.name}
+              fill
+              className="rounded-xl object-cover"
+              sizes="64px"
+            />
           ) : (
             <ClubSilhouette className="h-10 w-10 text-accent/40" />
           )}
@@ -37,7 +43,8 @@ export async function ClubCard({ club }: ClubCardProps) {
             {displayName}
           </h3>
           <div className="mt-0.5 text-xs text-foreground-muted">
-            {club.city}{club.city && club.region && club.city !== club.region ? `, ${club.region}` : ''}
+            {club.city}
+            {club.city && club.region && club.city !== club.region ? `, ${club.region}` : ''}
           </div>
         </div>
         <span className="shrink-0 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
@@ -45,9 +52,7 @@ export async function ClubCard({ club }: ClubCardProps) {
         </span>
       </div>
       {desc && (
-        <p className="mt-3 line-clamp-2 text-xs text-foreground-muted leading-relaxed">
-          {desc}
-        </p>
+        <p className="mt-3 line-clamp-2 text-xs text-foreground-muted leading-relaxed">{desc}</p>
       )}
     </Link>
   )

@@ -31,7 +31,13 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
     return (
       <div className="text-center py-8">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
-          <svg className="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg
+            className="h-8 w-8 text-accent"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </div>
@@ -78,7 +84,10 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
       </div>
 
       <div>
-        <label htmlFor="contact-message" className="block text-sm font-medium text-foreground-muted">
+        <label
+          htmlFor="contact-message"
+          className="block text-sm font-medium text-foreground-muted"
+        >
           {t('contact.message')}
         </label>
         <textarea

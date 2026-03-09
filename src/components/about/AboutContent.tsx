@@ -18,9 +18,7 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       <section className="mt-8">
         <h2 className="text-xl font-semibold text-foreground">{t('about.what')}</h2>
-        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">
-          {t('about.whatText')}
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t('about.whatText')}</p>
       </section>
 
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">

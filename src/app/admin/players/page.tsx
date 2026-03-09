@@ -13,7 +13,9 @@ export default async function AdminPlayersPage() {
   const supabase = await createClient()
   const { t, lang } = await getServerT()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
   const { data: profile, error: profileError } = await supabase
@@ -44,7 +46,7 @@ export default async function AdminPlayersPage() {
   const demandMap = new Map<string, { country: string; view_count: number }[]>()
   if (players && players.length > 0) {
     const demandResults = await Promise.all(
-      players.map(p => admin.rpc('get_player_scout_demand', { p_player_id: p.id }))
+      players.map((p) => admin.rpc('get_player_scout_demand', { p_player_id: p.id }))
     )
     players.forEach((p, i) => {
       const data = demandResults[i].data
@@ -89,14 +91,21 @@ export default async function AdminPlayersPage() {
                 const displayName = lang === 'ka' ? player.name_ka : player.name
                 return (
                   <tr key={player.id} className="table-row-hover border-b border-border/50">
-                    <td className="hidden px-4 py-3 font-mono text-xs text-foreground-muted sm:table-cell">{player.platform_id ?? '-'}</td>
+                    <td className="hidden px-4 py-3 font-mono text-xs text-foreground-muted sm:table-cell">
+                      {player.platform_id ?? '-'}
+                    </td>
                     <td className="px-4 py-3">
-                      <Link href={`/players/${player.slug}`} className="font-medium text-foreground hover:text-accent transition-colors">
+                      <Link
+                        href={`/players/${player.slug}`}
+                        className="font-medium text-foreground hover:text-accent transition-colors"
+                      >
                         {displayName}
                       </Link>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${posClasses}`}>
+                      <span
+                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${posClasses}`}
+                      >
                         {t(`positions.${player.position}`)}
                       </span>
                     </td>
@@ -104,9 +113,13 @@ export default async function AdminPlayersPage() {
                       {calculateAge(player.date_of_birth)}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`status-badge ${
-                        player.status === 'active' ? 'status-badge-approved' : 'status-badge-pending'
-                      }`}>
+                      <span
+                        className={`status-badge ${
+                          player.status === 'active'
+                            ? 'status-badge-approved'
+                            : 'status-badge-pending'
+                        }`}
+                      >
                         {t(`admin.players.${player.status}`)}
                       </span>
                     </td>

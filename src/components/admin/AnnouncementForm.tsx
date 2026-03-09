@@ -20,7 +20,9 @@ interface AnnouncementFormProps {
 export function AnnouncementForm({ labels }: AnnouncementFormProps) {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
-  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(
+    null
+  )
   const remaining = MAX_LENGTH - content.length
 
   async function handleSubmit(e: React.FormEvent) {
@@ -69,7 +71,9 @@ export function AnnouncementForm({ labels }: AnnouncementFormProps) {
         </button>
       </div>
       {feedback && (
-        <p className={`mt-2 text-xs ${feedback.type === 'success' ? 'text-accent' : 'text-red-400'}`}>
+        <p
+          className={`mt-2 text-xs ${feedback.type === 'success' ? 'text-accent' : 'text-red-400'}`}
+        >
           {feedback.message}
         </p>
       )}

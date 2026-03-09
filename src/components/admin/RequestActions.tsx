@@ -48,7 +48,9 @@ export function RequestActions({ requestId }: RequestActionsProps) {
           rows={3}
           className="w-full rounded-lg border border-border bg-surface-alt p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-accent focus:outline-none resize-none"
         />
-        <p className="text-[10px] text-foreground-muted/50">{t('admin.requests.responseMessageHint')}</p>
+        <p className="text-[10px] text-foreground-muted/50">
+          {t('admin.requests.responseMessageHint')}
+        </p>
         <div className="flex items-center gap-2">
           <button
             onClick={handleApproveConfirm}
@@ -58,7 +60,10 @@ export function RequestActions({ requestId }: RequestActionsProps) {
             {t('admin.requests.confirmApproveWithMessage')}
           </button>
           <button
-            onClick={() => { setShowApproveForm(false); setResponseMessage('') }}
+            onClick={() => {
+              setShowApproveForm(false)
+              setResponseMessage('')
+            }}
             disabled={loading}
             className="rounded-lg px-3 py-1.5 text-xs font-medium text-foreground-muted hover:text-foreground transition-colors"
           >

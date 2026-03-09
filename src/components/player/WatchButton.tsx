@@ -27,9 +27,10 @@ export function WatchButton({ playerId, isWatched: initial, size = 'sm' }: Watch
     })
   }
 
-  const baseClasses = size === 'md'
-    ? 'rounded-lg px-4 py-2 text-sm font-medium transition-colors'
-    : 'rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors'
+  const baseClasses =
+    size === 'md'
+      ? 'rounded-lg px-4 py-2 text-sm font-medium transition-colors'
+      : 'rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors'
 
   return (
     <button

@@ -17,11 +17,13 @@ export default async function PlatformRequestsPage({
 
   let query = admin
     .from('contact_requests')
-    .select(`
+    .select(
+      `
       id, message, status, created_at, expires_at, response_message,
       scout:profiles!contact_requests_scout_id_fkey(full_name, organization, email),
       player:players!contact_requests_player_id_fkey(name, name_ka, slug, club:clubs!players_club_id_fkey(name))
-    `)
+    `
+    )
     .order('created_at', { ascending: false })
 
   if (dbStatusFilter && dbStatusFilter !== 'all') {

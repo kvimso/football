@@ -6,7 +6,10 @@ import { WatchlistPage } from '@/components/dashboard/WatchlistPage'
 
 export default async function WatchlistServerPage() {
   const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
 
   if (authError) console.error('Failed to get user:', authError.message)
   if (!user) redirect('/login')
@@ -20,13 +23,15 @@ export default async function WatchlistServerPage() {
   ] = await Promise.all([
     supabase
       .from('watchlist')
-      .select(`
+      .select(
+        `
         id, player_id, notes, created_at,
         player:players!watchlist_player_id_fkey (
           id, name, name_ka, slug, position, date_of_birth, photo_url,
           club:clubs!players_club_id_fkey ( name, name_ka )
         )
-      `)
+      `
+      )
       .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
     supabase
@@ -34,13 +39,8 @@ export default async function WatchlistServerPage() {
       .select('id, name, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: true }),
-    supabase
-      .from('watchlist_folder_players')
-      .select('id, folder_id, watchlist_id'),
-    supabase
-      .from('watchlist_tags')
-      .select('id, watchlist_id, tag')
-      .eq('user_id', user.id),
+    supabase.from('watchlist_folder_players').select('id, folder_id, watchlist_id'),
+    supabase.from('watchlist_tags').select('id, watchlist_id, tag').eq('user_id', user.id),
   ])
 
   if (wlError) console.error('Failed to fetch watchlist:', wlError.message)
@@ -48,18 +48,20 @@ export default async function WatchlistServerPage() {
   if (assignError) console.error('Failed to fetch folder assignments:', assignError.message)
   if (tagsError) console.error('Failed to fetch tags:', tagsError.message)
 
-  const items = (watchlistItems ?? []).map((item) => {
-    const player = unwrapRelation(item.player)
-    if (!player) return null
-    return {
-      ...item,
-      player: {
-        ...player,
-        position: player.position as Position,
-        club: unwrapRelation(player.club),
-      },
-    }
-  }).filter((item): item is NonNullable<typeof item> => item !== null)
+  const items = (watchlistItems ?? [])
+    .map((item) => {
+      const player = unwrapRelation(item.player)
+      if (!player) return null
+      return {
+        ...item,
+        player: {
+          ...player,
+          position: player.position as Position,
+          club: unwrapRelation(player.club),
+        },
+      }
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null)
 
   // Build tag map: watchlistId -> tags[]
   const tagMap: Record<string, Array<{ id: string; tag: string }>> = {}

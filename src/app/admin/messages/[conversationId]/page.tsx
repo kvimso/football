@@ -10,7 +10,9 @@ export default async function AdminConversationPage({
 }) {
   const { conversationId } = await params
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
 
@@ -25,7 +27,12 @@ export default async function AdminConversationPage({
     redirect('/login')
   }
 
-  const conversation = await fetchConversationById(supabase, conversationId, user.id, 'academy_admin')
+  const conversation = await fetchConversationById(
+    supabase,
+    conversationId,
+    user.id,
+    'academy_admin'
+  )
   if (!conversation) notFound()
 
   const { messages, has_more } = await fetchInitialMessages(supabase, conversationId)

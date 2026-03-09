@@ -20,7 +20,10 @@ export type AuthResult =
 
 /** Authenticate a request and return user + profile, or an error response */
 export async function authenticateRequest(supabase: SupabaseClient<Database>): Promise<AuthResult> {
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
   if (authError || !user) {
     return { ok: false, error: apiError('errors.notAuthenticated', 401) }
   }
@@ -39,7 +42,12 @@ export async function authenticateRequest(supabase: SupabaseClient<Database>): P
 }
 
 /** Parse a numeric query param with min/max/default */
-export function parseIntParam(value: string | null, defaultVal: number, min: number, max: number): number {
+export function parseIntParam(
+  value: string | null,
+  defaultVal: number,
+  min: number,
+  max: number
+): number {
   if (!value) return defaultVal
   const parsed = parseInt(value, 10)
   if (isNaN(parsed)) return defaultVal

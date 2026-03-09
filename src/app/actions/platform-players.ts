@@ -19,11 +19,7 @@ export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
   const name_ka = `${parsed.data.first_name_ka} ${parsed.data.last_name_ka}`
   const slug = generateSlug(name)
 
-  const { data: existing } = await admin
-    .from('players')
-    .select('id')
-    .eq('slug', slug)
-    .maybeSingle()
+  const { data: existing } = await admin.from('players').select('id').eq('slug', slug).maybeSingle()
 
   const finalSlug = existing ? `${slug}-${Date.now().toString(36)}` : slug
 
@@ -55,13 +51,11 @@ export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
 
   // Insert club history if assigned to a club
   if (newPlayer && clubId) {
-    const { error: historyError } = await admin
-      .from('player_club_history')
-      .insert({
-        player_id: newPlayer.id,
-        club_id: clubId,
-        joined_at: todayDateString(),
-      })
+    const { error: historyError } = await admin.from('player_club_history').insert({
+      player_id: newPlayer.id,
+      club_id: clubId,
+      joined_at: todayDateString(),
+    })
 
     if (historyError) console.error('Failed to insert club history:', historyError.message)
   }
@@ -131,13 +125,11 @@ export async function platformUpdatePlayer(playerId: string, data: PlatformPlaye
     }
     // Open new club history
     if (newClubId) {
-      const { error: histErr } = await admin
-        .from('player_club_history')
-        .insert({
-          player_id: playerId,
-          club_id: newClubId,
-          joined_at: today,
-        })
+      const { error: histErr } = await admin.from('player_club_history').insert({
+        player_id: playerId,
+        club_id: newClubId,
+        joined_at: today,
+      })
 
       if (histErr) console.error('Failed to insert club history:', histErr.message)
     }
@@ -153,10 +145,7 @@ export async function platformDeletePlayer(playerId: string) {
   const { error: authErr, admin } = await getPlatformAdminContext()
   if (authErr || !admin) return { error: authErr ?? 'errors.unauthorized' }
 
-  const { error: deleteError } = await admin
-    .from('players')
-    .delete()
-    .eq('id', playerId)
+  const { error: deleteError } = await admin.from('players').delete().eq('id', playerId)
 
   if (deleteError) {
     console.error('[platform-players] Delete error:', deleteError.message)

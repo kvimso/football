@@ -78,7 +78,7 @@ export const en = {
     noResults: 'No results',
   },
   aiSearch: {
-    placeholder: 'Describe the player you\'re looking for...',
+    placeholder: "Describe the player you're looking for...",
     button: 'Search',
     searching: 'Searching...',
     analyzing: 'Analyzing your search...',
@@ -227,7 +227,8 @@ export const ka = {
     careerHistory: 'კარიერის ისტორია',
     freeAgent: 'თავისუფალი აგენტი',
     present: 'დღემდე',
-    freeAgentNotice: 'ეს მოთამაშე ამჟამად თავისუფალი აგენტია და არცერთ კლუბთან არ არის დაკავშირებული.',
+    freeAgentNotice:
+      'ეს მოთამაშე ამჟამად თავისუფალი აგენტია და არცერთ კლუბთან არ არის დაკავშირებული.',
     allStatuses: 'ყველა სტატუსი',
     statusActive: 'აქტიური',
     statusFreeAgent: 'თავისუფალი აგენტი',

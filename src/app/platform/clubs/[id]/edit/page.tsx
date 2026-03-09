@@ -30,7 +30,9 @@ export default async function PlatformEditClubPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-foreground">{t('platform.clubs.editClub')}: {club.name}</h1>
+      <h1 className="text-2xl font-bold text-foreground">
+        {t('platform.clubs.editClub')}: {club.name}
+      </h1>
 
       <div className="mt-6 card p-6">
         <ClubForm club={club} />
@@ -39,7 +41,9 @@ export default async function PlatformEditClubPage({
       {/* Squad */}
       {(players ?? []).length > 0 && (
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-foreground">{t('clubs.squad')} ({players?.length})</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            {t('clubs.squad')} ({players?.length})
+          </h2>
           <div className="mt-3 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -56,13 +60,17 @@ export default async function PlatformEditClubPage({
                   <tr key={player.id} className="border-b border-border/50">
                     <td className="py-3 pr-4 font-medium text-foreground">{player.name}</td>
                     <td className="py-3 pr-4 text-foreground-muted">{player.position}</td>
-                    <td className="py-3 pr-4 font-mono text-xs text-foreground-muted">{player.platform_id}</td>
+                    <td className="py-3 pr-4 font-mono text-xs text-foreground-muted">
+                      {player.platform_id}
+                    </td>
                     <td className="py-3 pr-4">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        player.status === 'active'
-                          ? 'bg-green-500/10 text-green-400'
-                          : 'bg-yellow-500/10 text-yellow-400'
-                      }`}>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          player.status === 'active'
+                            ? 'bg-green-500/10 text-green-400'
+                            : 'bg-yellow-500/10 text-yellow-400'
+                        }`}
+                      >
                         {player.status}
                       </span>
                     </td>

@@ -39,10 +39,7 @@ export function ContactRequestForm({ playerId }: ContactRequestFormProps) {
 
   if (!open) {
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="btn-primary text-sm"
-      >
+      <button onClick={() => setOpen(true)} className="btn-primary text-sm">
         {t('dashboard.sendRequest')}
       </button>
     )
@@ -66,10 +63,7 @@ export function ContactRequestForm({ playerId }: ContactRequestFormProps) {
         >
           {isPending ? t('common.loading') : t('common.save')}
         </button>
-        <button
-          onClick={() => setOpen(false)}
-          className="btn-secondary text-sm"
-        >
+        <button onClick={() => setOpen(false)} className="btn-secondary text-sm">
           {t('common.cancel')}
         </button>
       </div>

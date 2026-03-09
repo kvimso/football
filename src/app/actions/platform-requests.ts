@@ -8,7 +8,8 @@ export async function platformApproveRequest(requestId: string, responseMessage?
   if (!uuidSchema.safeParse(requestId).success) return { error: 'errors.invalidId' }
   if (responseMessage !== undefined) {
     const msgParsed = responseMessageSchema.safeParse(responseMessage)
-    if (!msgParsed.success) return { error: msgParsed.error.issues[0]?.message ?? 'errors.invalidInput' }
+    if (!msgParsed.success)
+      return { error: msgParsed.error.issues[0]?.message ?? 'errors.invalidInput' }
   }
   const { error: authErr, admin, userId } = await getPlatformAdminContext()
   if (authErr || !admin || !userId) return { error: authErr ?? 'errors.unauthorized' }

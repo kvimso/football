@@ -31,18 +31,22 @@ export function DashboardNav() {
     let debounceTimer: NodeJS.Timeout
     const channel = supabase
       .channel('dashboard-nav-unread')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'messages',
-      }, () => {
-        clearTimeout(debounceTimer)
-        debounceTimer = setTimeout(() => {
-          supabase.rpc('get_total_unread_count').then(({ data, error }) => {
-            if (!error && data != null) setUnreadCount(Number(data))
-          })
-        }, 500)
-      })
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+        },
+        () => {
+          clearTimeout(debounceTimer)
+          debounceTimer = setTimeout(() => {
+            supabase.rpc('get_total_unread_count').then(({ data, error }) => {
+              if (!error && data != null) setUnreadCount(Number(data))
+            })
+          }, 500)
+        }
+      )
       .subscribe()
 
     return () => {
@@ -54,9 +58,8 @@ export function DashboardNav() {
   return (
     <nav className="flex gap-1 overflow-x-auto border-b border-border pb-px">
       {links.map((link) => {
-        const isActive = link.href === '/dashboard'
-          ? pathname === '/dashboard'
-          : pathname.startsWith(link.href)
+        const isActive =
+          link.href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(link.href)
         return (
           <Link
             key={link.href}
