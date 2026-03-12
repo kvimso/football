@@ -37,9 +37,7 @@ export function PlayerProfileClient({ player }: PlayerProfileClientProps) {
           {t(`positions.${player.position}`)}
         </span>
         {isFreeAgent && (
-          <span className="rounded-full bg-yellow-500/20 px-2.5 py-1 text-xs font-semibold text-yellow-400">
-            {t('players.freeAgent')}
-          </span>
+          <span className="status-badge status-badge-free_agent">{t('players.freeAgent')}</span>
         )}
         {player.is_featured && (
           <span className="rounded-full bg-accent/20 px-2.5 py-1 text-xs font-semibold text-accent">

@@ -382,7 +382,7 @@ function CompareRow({
     if (diff > 0) {
       diffContent = <span className="text-accent font-medium">+{diff}</span>
     } else if (diff < 0) {
-      diffContent = <span className="text-red-400 font-medium">{diff}</span>
+      diffContent = <span className="text-red-600 font-medium">{diff}</span>
     } else {
       diffContent = <span className="text-foreground-muted">0</span>
     }

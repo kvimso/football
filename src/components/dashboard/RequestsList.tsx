@@ -44,10 +44,10 @@ function getDisplayGroup(item: RequestItem): DisplayGroup {
 const groupOrder: DisplayGroup[] = ['active', 'approved', 'rejected', 'expired']
 
 const statusColors: Record<string, string> = {
-  active: 'bg-yellow-500/20 text-yellow-400',
-  approved: 'bg-green-500/20 text-green-400',
-  rejected: 'bg-red-500/20 text-red-400',
-  expired: 'bg-gray-500/20 text-gray-400',
+  active: 'status-badge-pending',
+  approved: 'status-badge-approved',
+  rejected: 'status-badge-rejected',
+  expired: 'status-badge-expired',
 }
 
 export function RequestsList({ items }: { items: RequestItem[] }) {
@@ -131,18 +131,14 @@ function RequestCard({
             {clubName ? ` \u00b7 ${clubName}` : ''}
           </div>
         </div>
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${statusClasses}`}
-        >
-          {statusLabel}
-        </span>
+        <span className={`shrink-0 status-badge ${statusClasses}`}>{statusLabel}</span>
       </div>
 
       <p className="mt-3 text-sm text-foreground-muted leading-relaxed">{item.message}</p>
 
       {/* Expiry context for pending requests */}
       {group === 'active' && (
-        <p className="mt-2 text-xs text-yellow-400/80">
+        <p className="mt-2 text-xs text-yellow-700/80">
           {t('dashboard.waitingForResponse')} &mdash;{' '}
           {t('dashboard.daysSent').replace('{days}', String(daysSent))}
         </p>
@@ -150,16 +146,16 @@ function RequestCard({
 
       {/* Expired message */}
       {group === 'expired' && (
-        <p className="mt-2 text-xs text-gray-400">{t('dashboard.expiredNoResponse')}</p>
+        <p className="mt-2 text-xs text-gray-500">{t('dashboard.expiredNoResponse')}</p>
       )}
 
       {/* Approved with response message */}
       {group === 'approved' && (
         <div className="mt-3 space-y-2">
-          <p className="text-xs text-green-400">{t('dashboard.approvedMessage')}</p>
+          <p className="text-xs text-green-700">{t('dashboard.approvedMessage')}</p>
           {item.response_message && (
             <div className="rounded-lg bg-green-500/5 border border-green-500/20 p-3">
-              <p className="text-xs font-medium text-green-400 mb-1">
+              <p className="text-xs font-medium text-green-700 mb-1">
                 {t('dashboard.adminResponse')}
               </p>
               <p className="text-sm text-foreground-muted">{item.response_message}</p>

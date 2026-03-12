@@ -96,7 +96,7 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-600">
           {error}
         </div>
       )}

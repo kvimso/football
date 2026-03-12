@@ -626,7 +626,7 @@ export function ChatThread({
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border border-foreground-muted border-t-transparent" />
                   ) : (
                     <svg
-                      className="h-4 w-4 text-red-400"
+                      className="h-4 w-4 text-red-600"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -642,10 +642,10 @@ export function ChatThread({
                   <span
                     className={
                       blockConfirming
-                        ? 'text-red-400 font-medium'
+                        ? 'text-red-600 font-medium'
                         : isBlocked && blockedByMe
                           ? 'text-foreground'
-                          : 'text-red-400'
+                          : 'text-red-600'
                     }
                   >
                     {blockConfirming
@@ -666,8 +666,8 @@ export function ChatThread({
         <div
           className={`flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium animate-slide-in-down ${
             connectionStatus === 'reconnecting'
-              ? 'bg-yellow-500/10 text-yellow-400'
-              : 'bg-red-500/10 text-red-400'
+              ? 'bg-yellow-500/10 text-yellow-700'
+              : 'bg-red-500/10 text-red-600'
           }`}
         >
           <span className="h-2 w-2 rounded-full animate-pulse bg-current" />

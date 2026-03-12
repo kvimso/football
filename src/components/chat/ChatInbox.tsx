@@ -27,7 +27,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <svg
-          className="h-16 w-16 text-red-400/50"
+          className="h-16 w-16 text-red-600/50"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -136,7 +136,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
                   </span>
                   {conv.is_blocked && (
                     <svg
-                      className="h-3.5 w-3.5 shrink-0 text-red-400"
+                      className="h-3.5 w-3.5 shrink-0 text-red-600"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

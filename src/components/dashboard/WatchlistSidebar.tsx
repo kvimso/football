@@ -194,7 +194,7 @@ export function WatchlistSidebar({
                     </button>
                     <button
                       onClick={() => handleDelete(folder.id)}
-                      className="rounded p-0.5 text-foreground-muted/50 hover:text-red-400"
+                      className="rounded p-0.5 text-foreground-muted/50 hover:text-red-600"
                       title={t('dashboard.deleteFolder')}
                     >
                       <svg

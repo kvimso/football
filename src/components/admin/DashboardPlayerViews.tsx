@@ -63,7 +63,7 @@ export function DashboardPlayerViews({
                 )}
                 {pv.thisWeek > 0 && pv.thisWeek < pv.lastWeek && (
                   <svg
-                    className="h-3 w-3 text-red-400"
+                    className="h-3 w-3 text-red-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

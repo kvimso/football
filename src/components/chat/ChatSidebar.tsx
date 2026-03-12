@@ -35,7 +35,7 @@ export function ChatSidebar({ userRole, basePath, userId, error }: ChatSidebarPr
     return (
       <div className="flex flex-1 flex-col items-center justify-center p-4 text-center">
         <svg
-          className="h-10 w-10 text-red-400/50"
+          className="h-10 w-10 text-red-600/50"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

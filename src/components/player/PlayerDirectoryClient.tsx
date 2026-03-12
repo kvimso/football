@@ -180,7 +180,7 @@ export function PlayerDirectoryClient({
         {isAIActive && (
           <button
             onClick={handleClearSearch}
-            className="text-xs text-purple-400/70 hover:text-purple-300 transition-colors underline"
+            className="text-xs text-purple-700/70 hover:text-purple-500 transition-colors underline"
           >
             {t('aiSearch.clear')}
           </button>
@@ -202,7 +202,7 @@ export function PlayerDirectoryClient({
       ) : isAIActive ? (
         /* AI empty state */
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="text-5xl text-purple-400/20 mb-4">&#128269;</div>
+          <div className="text-5xl text-purple-700/20 mb-4">&#128269;</div>
           <p className="text-lg font-medium text-foreground-muted">{t('aiSearch.noResults')}</p>
           <p className="mt-1 text-sm text-foreground-muted/70">{t('aiSearch.noResultsHint')}</p>
           <button

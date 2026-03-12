@@ -50,7 +50,7 @@ export function TransferCard({
 
   const statusConfig: Record<string, { classes: string; icon: string }> = {
     accepted: { classes: 'bg-accent/10 text-accent', icon: '✓' },
-    declined: { classes: 'bg-red-500/10 text-red-400', icon: '✗' },
+    declined: { classes: 'bg-red-500/10 text-red-600', icon: '✗' },
     expired: { classes: 'bg-foreground-muted/10 text-foreground-muted', icon: '⏱' },
   }
   const badge = statusConfig[status]

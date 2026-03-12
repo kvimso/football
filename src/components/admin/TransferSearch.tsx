@@ -163,7 +163,7 @@ export function TransferSearch() {
 
         {/* Error message */}
         {errorMsg && (
-          <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400 animate-slide-in-down">
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-600 animate-slide-in-down">
             <svg
               className="h-4 w-4 shrink-0"
               fill="none"
@@ -235,7 +235,7 @@ export function TransferSearch() {
                     <div className="flex items-baseline gap-2">
                       <span className="text-sm font-semibold text-foreground">{displayName}</span>
                       {isFreeAgent ? (
-                        <span className="text-[11px] font-medium text-yellow-400">
+                        <span className="text-[11px] font-medium text-yellow-700">
                           {t('admin.transfers.freeAgent')}
                         </span>
                       ) : (

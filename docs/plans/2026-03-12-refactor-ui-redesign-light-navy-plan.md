@@ -210,18 +210,18 @@ The admin/dashboard/platform sidebars already use semantic tokens (`bg-backgroun
 
 **Scope:** ~48 files with hardcoded Tailwind -400 color utilities
 
-- [ ] Search and fix: `text-yellow-400` → `text-yellow-700` (7 files, 11 instances)
-- [ ] Search and fix: `text-green-400` → `text-green-700` (8 files, 12 instances)
-- [ ] Search and fix: `text-red-400` → `text-red-600` (20+ files, 35+ instances — audit each, some on colored bg may be fine)
-- [ ] Search and fix: `text-amber-400` → `text-amber-700` (3 instances)
-- [ ] Search and fix: `text-purple-400` → `text-purple-700` (5 instances)
-- [ ] Search and fix: `text-cyan-400` → `text-cyan-700` (2 instances)
-- [ ] Search and fix: `text-blue-400` → `text-blue-700` (2 instances)
-- [ ] Consolidate inline status badge colors (Pattern B: `bg-yellow-500/20 text-yellow-400`) to use CSS `.status-badge-*` classes (Pattern A)
-- [ ] Audit `text-white` instances — most are correct (on colored/navy buttons), fix any on light backgrounds
-- [ ] Audit `bg-green-500/10`, `bg-red-500/10` etc. — verify readability on light bg
-- [ ] Verify RadarChart.tsx and CompareRadarChart.tsx look correct with new `var(--accent)` and `var(--pos-def)` values
-- [ ] `npm run build`
+- [x] Search and fix: `text-yellow-400` → `text-yellow-700` (7 files, 11 instances)
+- [x] Search and fix: `text-green-400` → `text-green-700` (8 files, 12 instances)
+- [x] Search and fix: `text-red-400` → `text-red-600` (20+ files, 35+ instances — audit each, some on colored bg may be fine)
+- [x] Search and fix: `text-amber-400` → `text-amber-700` (3 instances)
+- [x] Search and fix: `text-purple-400` → `text-purple-700` (5 instances)
+- [x] Search and fix: `text-cyan-400` → `text-cyan-700` (2 instances)
+- [x] Search and fix: `text-blue-400` → `text-blue-700` (2 instances)
+- [x] Consolidate inline status badge colors (Pattern B: `bg-yellow-500/20 text-yellow-400`) to use CSS `.status-badge-*` classes (Pattern A)
+- [x] Audit `text-white` instances — most are correct (on colored/navy buttons), fix any on light backgrounds
+- [x] Audit `bg-green-500/10`, `bg-red-500/10` etc. — verify readability on light bg
+- [x] Verify RadarChart.tsx and CompareRadarChart.tsx look correct with new `var(--accent)` and `var(--pos-def)` values
+- [x] `npm run build`
 
 ### Session 4: Layout Components (~60-70k)
 

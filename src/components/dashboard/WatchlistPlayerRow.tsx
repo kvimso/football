@@ -201,7 +201,7 @@ export function WatchlistPlayerRow({
           <button
             onClick={handleRemove}
             disabled={isPending}
-            className="rounded p-1 text-foreground-muted/50 hover:text-red-400 transition-colors disabled:opacity-50"
+            className="rounded p-1 text-foreground-muted/50 hover:text-red-600 transition-colors disabled:opacity-50"
             title={t('dashboard.removeFromWatchlist')}
           >
             <svg
@@ -228,7 +228,7 @@ export function WatchlistPlayerRow({
             <button
               onClick={() => handleRemoveTag(tag.id)}
               disabled={isPending}
-              className="ml-0.5 hover:text-red-400"
+              className="ml-0.5 hover:text-red-600"
             >
               &times;
             </button>

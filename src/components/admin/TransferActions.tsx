@@ -33,7 +33,7 @@ export function TransferActions({ requestId }: TransferActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {errorMsg && <span className="text-[10px] text-red-400">{errorMsg}</span>}
+      {errorMsg && <span className="text-[10px] text-red-600">{errorMsg}</span>}
       <button
         onClick={() => handleAction('accept')}
         disabled={isLoading}

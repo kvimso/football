@@ -188,12 +188,12 @@ export default async function PlatformDashboardPage() {
                     </p>
                   </div>
                   <span
-                    className={`ml-3 shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    className={`ml-3 shrink-0 status-badge ${
                       req.status === 'approved'
-                        ? 'bg-green-500/10 text-green-400'
+                        ? 'status-badge-approved'
                         : req.status === 'rejected'
-                          ? 'bg-red-500/10 text-red-400'
-                          : 'bg-yellow-500/10 text-yellow-400'
+                          ? 'status-badge-rejected'
+                          : 'status-badge-pending'
                     }`}
                   >
                     {t(`admin.requests.${req.status}`)}

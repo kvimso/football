@@ -128,10 +128,10 @@ export default async function PlatformPlayersPage({
                     </td>
                     <td className="py-3 pr-4">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                        className={`status-badge ${
                           player.status === 'active'
-                            ? 'bg-green-500/10 text-green-400'
-                            : 'bg-yellow-500/10 text-yellow-400'
+                            ? 'status-badge-active'
+                            : 'status-badge-free_agent'
                         }`}
                       >
                         {t(`admin.players.${player.status}`)}

@@ -197,6 +197,18 @@ body {
   background-color: #fee2e2;
   color: #991b1b;
 }
+.status-badge-active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.status-badge-free_agent {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+.status-badge-expired {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
 
 /* ── Data table rows ── */
 .table-row-hover:nth-child(even) {

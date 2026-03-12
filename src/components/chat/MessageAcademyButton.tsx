@@ -76,7 +76,7 @@ export function MessageAcademyButton({ clubId }: MessageAcademyButtonProps) {
           </>
         )}
       </button>
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   )
 }

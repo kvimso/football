@@ -76,7 +76,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
   return (
     <div className="space-y-3">
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-600">
           {error}
         </div>
       )}
@@ -119,15 +119,15 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                 {req.status === 'pending' && (
                   <div className="mt-1.5 flex items-center gap-2">
                     {expired ? (
-                      <span className="rounded-full bg-gray-500/20 px-2 py-0.5 text-xs font-medium text-gray-400">
+                      <span className="status-badge status-badge-expired">
                         {t('admin.requests.expired')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 1 ? (
-                      <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-400">
+                      <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-600">
                         {t('admin.requests.expiresTomorrow')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 7 ? (
-                      <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-400">
+                      <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700">
                         {t('admin.requests.expiringSoon').replace(
                           '{days}',
                           String(daysUntilExpiry)
@@ -169,7 +169,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                         <button
                           onClick={() => handleApproveConfirm(req.id)}
                           disabled={loading === req.id}
-                          className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+                          className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
                         >
                           {t('admin.requests.confirmApproveWithMessage')}
                         </button>
@@ -193,29 +193,27 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                           setResponseMessage('')
                         }}
                         disabled={loading === req.id}
-                        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+                        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
                       >
                         {t('admin.requests.approve')}
                       </button>
                       <button
                         onClick={() => handleReject(req.id)}
                         disabled={loading === req.id}
-                        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+                        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
                       >
                         {t('admin.requests.reject')}
                       </button>
                     </>
                   )
                 ) : req.status === 'pending' && expired ? (
-                  <span className="rounded-full bg-gray-500/10 px-2.5 py-0.5 text-xs font-medium text-gray-400">
+                  <span className="status-badge status-badge-expired">
                     {t('admin.requests.expired')}
                   </span>
                 ) : (
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      req.status === 'approved'
-                        ? 'bg-green-500/10 text-green-400'
-                        : 'bg-red-500/10 text-red-400'
+                    className={`status-badge ${
+                      req.status === 'approved' ? 'status-badge-approved' : 'status-badge-rejected'
                     }`}
                   >
                     {t(`admin.requests.${req.status}`)}

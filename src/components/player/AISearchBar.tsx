@@ -142,7 +142,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
         <div className="relative flex-1">
           {/* AI sparkle icon */}
           <svg
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-400/70"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-700/70"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -232,19 +232,19 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
 
       {/* Analyzing text */}
       {isSearching && (
-        <p className="mt-2 text-xs text-purple-400/70 animate-pulse">{t('aiSearch.analyzing')}</p>
+        <p className="mt-2 text-xs text-purple-700/70 animate-pulse">{t('aiSearch.analyzing')}</p>
       )}
 
       {/* Error message */}
       {error && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-red-400">
+        <div className="mt-2 flex items-center gap-2 text-xs text-red-600">
           <span>{error}</span>
           <button
             onClick={() => {
               setError(null)
               handleSearch()
             }}
-            className="underline hover:text-red-300 transition-colors"
+            className="underline hover:text-red-500 transition-colors"
           >
             {t('aiSearch.retry')}
           </button>
@@ -299,7 +299,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
               className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-background-secondary px-3 py-1 text-xs text-foreground-muted hover:bg-card hover:text-foreground transition-colors"
             >
               <svg
-                className="h-3 w-3 text-purple-400/50"
+                className="h-3 w-3 text-purple-700/50"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

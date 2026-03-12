@@ -144,7 +144,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
       </div>
       <div className="mt-1 flex items-center gap-1.5 px-1 text-xs text-foreground-muted min-w-0">
         {isFreeAgent ? (
-          <span className="font-medium text-yellow-400 shrink-0">{t('players.freeAgent')}</span>
+          <span className="font-medium text-yellow-700 shrink-0">{t('players.freeAgent')}</span>
         ) : clubName ? (
           <span className="truncate">{clubName}</span>
         ) : null}
