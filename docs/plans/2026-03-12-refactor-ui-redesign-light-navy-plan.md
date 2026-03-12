@@ -245,18 +245,18 @@ The admin/dashboard/platform sidebars already use semantic tokens (`bg-backgroun
 **Scope:** Scan all routes, fix anything that looks wrong post-migration
 **Approach:** Most pages auto-update via semantic tokens. Only fix pages with remaining issues.
 
-- [ ] Landing page: hero, stat cards, services, CTA sections
-- [ ] Auth: login form, register form
-- [ ] Players list: PlayerCard colors, filter chips, search bar
-- [ ] Player profile: stat cards, career history, video section, compare view
-- [ ] Matches: match cards, detail pages, score display
-- [ ] Clubs: club cards, detail pages
-- [ ] Dashboard: stat cards, watchlist, requests, notifications
-- [ ] Admin: dashboard cards, player forms, announcements, scout demand, transfer pages
-- [ ] Chat: sidebar, thread, input, empty state, mobile drawer
-- [ ] Platform admin: all forms and lists
-- [ ] Shared: about page, contact form
-- [ ] `npm run build`
+- [x] Landing page: hero, stat cards, services, CTA sections
+- [x] Auth: login form, register form
+- [x] Players list: PlayerCard colors, filter chips, search bar
+- [x] Player profile: stat cards, career history, video section, compare view
+- [x] Matches: match cards, detail pages, score display
+- [x] Clubs: club cards, detail pages
+- [x] Dashboard: stat cards, watchlist, requests, notifications
+- [x] Admin: dashboard cards, player forms, announcements, scout demand, transfer pages
+- [x] Chat: sidebar, thread, input, empty state, mobile drawer
+- [x] Platform admin: all forms and lists
+- [x] Shared: about page, contact form
+- [x] `npm run build`
 
 ### Session 6: QA + Documentation (~40-50k)
 
