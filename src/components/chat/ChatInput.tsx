@@ -292,7 +292,7 @@ export function ChatInput({
             <button
               onClick={handleSendPastedImage}
               disabled={isUploading}
-              className="rounded bg-accent px-3 py-1 text-xs text-white hover:bg-accent/90 disabled:opacity-50"
+              className="rounded bg-accent px-3 py-1 text-xs text-background hover:bg-accent/90 disabled:opacity-50"
             >
               {t('common.send')}
             </button>
@@ -374,7 +374,7 @@ export function ChatInput({
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-sm transition-all hover:bg-accent-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-accent"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-background shadow-sm transition-all hover:bg-accent-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-accent"
             aria-label={t('aria.sendMessage')}
           >
             <svg

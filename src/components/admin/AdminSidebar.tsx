@@ -114,7 +114,7 @@ export function AdminSidebar({ clubName, clubNameKa }: AdminSidebarProps) {
                   href={link.href}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-accent/10 text-accent border-l-2 border-accent'
+                      ? 'bg-accent/15 text-accent border-l-2 border-accent'
                       : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
                   }`}
                 >

@@ -45,7 +45,7 @@ export function LoginForm() {
         <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
           {/* GFT branding */}
           <div className="mb-6 text-center">
-            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">
+            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-foreground">
               GFT
             </span>
             <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.welcomeBack')}</h1>

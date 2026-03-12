@@ -666,8 +666,8 @@ export function ChatThread({
         <div
           className={`flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium animate-slide-in-down ${
             connectionStatus === 'reconnecting'
-              ? 'bg-yellow-500/10 text-yellow-700'
-              : 'bg-red-500/10 text-red-600'
+              ? 'bg-yellow-500/10 text-yellow-500'
+              : 'bg-red-500/10 text-red-500'
           }`}
         >
           <span className="h-2 w-2 rounded-full animate-pulse bg-current" />
@@ -762,7 +762,7 @@ export function ChatThread({
           onClick={() => scrollToBottom()}
           aria-label={t('aria.scrollToLatest')}
           tabIndex={newMessageCount > 0 ? 0 : -1}
-          className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-white shadow-lg transition-transform hover:scale-105"
+          className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-background shadow-lg transition-transform hover:scale-105"
         >
           {displayCount > 99 ? '99+' : displayCount} {t('chat.newMessages')}
           <svg

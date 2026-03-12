@@ -241,7 +241,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             setSearchInput(e.target.value)
             debouncedSearch(e.target.value)
           }}
-          className="w-full rounded-xl border border-border bg-background-secondary pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-accent/40 focus:shadow-[0_0_12px_rgba(30,58,138,0.08)]"
+          className="w-full rounded-xl border border-border bg-background-secondary pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-accent/40 focus:shadow-[0_0_12px_rgba(201,162,39,0.08)]"
         />
       </div>
 

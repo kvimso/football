@@ -87,7 +87,7 @@ export function MessageBubble({
         <div
           className={`shadow-sm ${
             isMine
-              ? 'rounded-2xl rounded-br-sm bg-accent text-white'
+              ? 'rounded-2xl rounded-br-sm bg-accent text-background'
               : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground border border-border'
           }`}
         >
@@ -141,7 +141,7 @@ export function MessageBubble({
                   </button>
                   {message.file_name && (
                     <p
-                      className={`mt-1 truncate px-1 text-xs ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}
+                      className={`mt-1 truncate px-1 text-xs ${isMine ? 'text-background/70' : 'text-foreground-muted'}`}
                     >
                       {message.file_name}
                     </p>
@@ -161,7 +161,7 @@ export function MessageBubble({
                   } transition-colors`}
                 >
                   <svg
-                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}
+                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-background/70' : 'text-foreground-muted'}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -175,11 +175,13 @@ export function MessageBubble({
                   </svg>
                   <div className="min-w-0 flex-1">
                     <p
-                      className={`truncate text-sm font-medium ${isMine ? 'text-white' : 'text-foreground'}`}
+                      className={`truncate text-sm font-medium ${isMine ? 'text-background' : 'text-foreground'}`}
                     >
                       {message.file_name ?? t('chat.unnamedFile')}
                     </p>
-                    <p className={`text-xs ${isMine ? 'text-white/60' : 'text-foreground-muted'}`}>
+                    <p
+                      className={`text-xs ${isMine ? 'text-background/60' : 'text-foreground-muted'}`}
+                    >
                       {message.file_size_bytes ? formatFileSize(message.file_size_bytes) : ''}{' '}
                       &middot; {t('chat.downloadFile')}
                     </p>

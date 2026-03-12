@@ -105,7 +105,7 @@ export function WatchlistSidebar({
             <button
               onClick={handleCreateFolder}
               disabled={isPending || !newFolderName.trim()}
-              className="rounded bg-accent px-2 py-1 text-xs text-white disabled:opacity-50"
+              className="rounded bg-accent px-2 py-1 text-xs text-background disabled:opacity-50"
             >
               {t('common.save')}
             </button>
@@ -244,7 +244,7 @@ export function WatchlistSidebar({
                 onClick={() => onSelectTag(tag)}
                 className={`rounded-full px-2 py-0.5 text-[11px] transition-colors ${
                   activeTags.includes(tag)
-                    ? 'bg-accent text-white'
+                    ? 'bg-accent text-background'
                     : 'bg-background-secondary text-foreground-muted hover:text-foreground'
                 }`}
               >

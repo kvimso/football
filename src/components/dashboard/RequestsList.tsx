@@ -138,7 +138,7 @@ function RequestCard({
 
       {/* Expiry context for pending requests */}
       {group === 'active' && (
-        <p className="mt-2 text-xs text-yellow-700/80">
+        <p className="mt-2 text-xs text-yellow-500/80">
           {t('dashboard.waitingForResponse')} &mdash;{' '}
           {t('dashboard.daysSent').replace('{days}', String(daysSent))}
         </p>

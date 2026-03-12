@@ -235,41 +235,41 @@ Gold on dark (#c9a227 on #141218) = 7:1 — highly visible. On `.landing`, gold 
 **Files changed:** ~15-20
 
 **PlayerCard redesign:**
-- [ ] `PlayerCard.tsx`: Change from `border-t-[3px]` to `border-l-[3px]` using `POSITION_LEFT_BORDER_CLASSES`
-- [ ] `PlayerCard.tsx`: Photo area gradient background (dark → slightly lighter, position-tinted)
-- [ ] `PlayerCard.tsx`: Update view count badge — `bg-black/60` → `bg-white/10` (visible on dark)
-- [ ] `PlayerCard.tsx`: Update popular badge — `bg-amber-500/90` → verify visibility on dark
-- [ ] `PlayerCard.tsx`: Add gold glow on featured players — `shadow-[0_0_20px_rgba(201,162,39,0.12)]`
-- [ ] `PlayerCard.tsx`: Hover effect — shadow lift + subtle card lighten
-- [ ] `PlayerCard.tsx`: Free agent label — `text-yellow-700` → `text-yellow-500` (for dark bg)
+- [x] `PlayerCard.tsx`: Change from `border-t-[3px]` to `border-l-[3px]` using `POSITION_LEFT_BORDER_CLASSES`
+- [x] `PlayerCard.tsx`: Photo area gradient background (dark → slightly lighter, position-tinted)
+- [x] `PlayerCard.tsx`: Update view count badge — `bg-black/60` → `bg-white/10` (visible on dark)
+- [x] `PlayerCard.tsx`: Update popular badge — `bg-amber-500/90` → verify visibility on dark
+- [x] `PlayerCard.tsx`: Add gold glow on featured players — `shadow-[0_0_20px_rgba(201,162,39,0.12)]`
+- [x] `PlayerCard.tsx`: Hover effect — shadow lift + subtle card lighten
+- [x] `PlayerCard.tsx`: Free agent label — `text-yellow-700` → `text-yellow-500` (for dark bg)
 
 **Navigation:**
-- [ ] `Navbar.tsx`: Dark bg matching platform, gold active underline, warm off-white text
-- [ ] `Navbar.tsx`: Logo pill — `bg-accent text-background` (gold bg, dark text)
-- [ ] `Navbar.tsx`: Mobile menu — dark bg, gold active items
-- [ ] `Navbar.tsx`: Notification badge — keep `bg-red-500` (semantic, works on dark)
-- [ ] `LandingNav.tsx`: Warm ivory bg, gold accents, dark text — adapts via `.landing` scope
-- [ ] `Footer.tsx`: Dark bg, warm off-white text, gold links
-- [ ] `LandingFooter.tsx`: Warm ivory bg — adapts via `.landing` scope
+- [x] `Navbar.tsx`: Dark bg matching platform, gold active underline, warm off-white text
+- [x] `Navbar.tsx`: Logo pill — `bg-accent text-background` (gold bg, dark text)
+- [x] `Navbar.tsx`: Mobile menu — dark bg, gold active items
+- [x] `Navbar.tsx`: Notification badge — keep `bg-red-500` (semantic, works on dark)
+- [x] `LandingNav.tsx`: Warm ivory bg, gold accents, dark text — adapts via `.landing` scope
+- [x] `Footer.tsx`: Dark bg, warm off-white text, gold links
+- [x] `LandingFooter.tsx`: Warm ivory bg — adapts via `.landing` scope
 
 **Sidebars:**
-- [ ] `AdminSidebar.tsx`: Verify dark styling — `bg-background-secondary` (#1c1a22), gold active state
-- [ ] `AdminSidebar.tsx`: Active item `bg-accent/10` → verify gold tint visible on `#1c1a22`. If too subtle, increase to `bg-accent/15`
-- [ ] `DashboardNav.tsx`: Dark tab bar, gold active border
-- [ ] `PlatformSidebar.tsx`: Same treatment as AdminSidebar
+- [x] `AdminSidebar.tsx`: Verify dark styling — `bg-background-secondary` (#1c1a22), gold active state
+- [x] `AdminSidebar.tsx`: Active item `bg-accent/10` → verify gold tint visible on `#1c1a22`. If too subtle, increase to `bg-accent/15`
+- [x] `DashboardNav.tsx`: Dark tab bar, gold active border
+- [x] `PlatformSidebar.tsx`: Same treatment as AdminSidebar
 
 **Chat (palette-affected):**
-- [ ] `MessageBubble.tsx`: Sent bubble → `bg-accent text-[var(--background)]` (dark text on gold)
-- [ ] `MessageBubble.tsx`: Sent file cards → `bg-white/20 hover:bg-white/30` → verify on gold
-- [ ] `MessageBubble.tsx`: Received file cards → `bg-background` → verify contrast on `bg-background-secondary`
-- [ ] `ChatInput.tsx`, `ChatSidebar.tsx`, `ChatThread.tsx`: Verify auto-adapted dark styling
+- [x] `MessageBubble.tsx`: Sent bubble → `bg-accent text-[var(--background)]` (dark text on gold)
+- [x] `MessageBubble.tsx`: Sent file cards → `bg-white/20 hover:bg-white/30` → verify on gold
+- [x] `MessageBubble.tsx`: Received file cards → `bg-background` → verify contrast on `bg-background-secondary`
+- [x] `ChatInput.tsx`, `ChatSidebar.tsx`, `ChatThread.tsx`: Verify auto-adapted dark styling
 
 **Hardcoded color fixes (remaining from research):**
-- [ ] `FilterPanel.tsx`: Replace `focus:shadow-[0_0_12px_rgba(30,58,138,0.08)]` with gold rgba
-- [ ] Fix any remaining `text-yellow-700` → `text-yellow-500` on dark surfaces
-- [ ] Fix any remaining hardcoded colors that fail on dark backgrounds
+- [x] `FilterPanel.tsx`: Replace `focus:shadow-[0_0_12px_rgba(30,58,138,0.08)]` with gold rgba
+- [x] Fix any remaining `text-yellow-700` → `text-yellow-500` on dark surfaces
+- [x] Fix any remaining hardcoded colors that fail on dark backgrounds
 
-- [ ] `npm run build`
+- [x] `npm run build`
 - [ ] Visual spot check: player grid, player profile, navbar, admin sidebar, chat
 
 ### Session 3: Stat Presentation + Comparison (~60-70k)

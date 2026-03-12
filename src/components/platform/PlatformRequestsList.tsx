@@ -127,7 +127,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                         {t('admin.requests.expiresTomorrow')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 7 ? (
-                      <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-700">
+                      <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-500">
                         {t('admin.requests.expiringSoon').replace(
                           '{days}',
                           String(daysUntilExpiry)

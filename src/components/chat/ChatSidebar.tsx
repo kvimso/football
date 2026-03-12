@@ -178,7 +178,7 @@ const ConversationListItem = memo(
               {lastMessagePreview}
             </p>
             {conv.unread_count > 0 && (
-              <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-white">
+              <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-background">
                 {conv.unread_count > 99 ? '99+' : conv.unread_count}
               </span>
             )}

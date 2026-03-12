@@ -288,7 +288,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
             {/* Free agent notice */}
             {isFreeAgent && (
-              <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-700">
+              <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-500">
                 {t('players.freeAgentNotice')}
               </div>
             )}

@@ -7,7 +7,7 @@ import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import {
   POSITION_COLOR_CLASSES,
-  POSITION_BORDER_CLASSES,
+  POSITION_LEFT_BORDER_CLASSES,
   BLUR_DATA_URL,
   POPULAR_VIEWS_THRESHOLD,
 } from '@/lib/constants'
@@ -50,8 +50,9 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = player.club ? (lang === 'ka' ? player.club.name_ka : player.club.name) : null
   const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
-  const borderClass = POSITION_BORDER_CLASSES[player.position] ?? 'border-t-accent'
+  const borderClass = POSITION_LEFT_BORDER_CLASSES[player.position] ?? 'border-l-accent'
   const isFreeAgent = player.status === 'free_agent'
+  const isFeatured = player.is_featured
 
   function handleWatch(e: React.MouseEvent) {
     e.preventDefault()
@@ -72,7 +73,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
   return (
     <Link
       href={`/players/${player.slug}`}
-      className={`card group block overflow-hidden !border-t-[3px] ${borderClass}`}
+      className={`card group block overflow-hidden !border-l-[3px] ${borderClass}${isFeatured ? ' shadow-[0_0_20px_rgba(201,162,39,0.12)]' : ''}`}
     >
       {/* Photo area */}
       <div className="relative mb-3 flex h-44 items-center justify-center overflow-hidden rounded-lg bg-background">
@@ -90,7 +91,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
           <PlayerSilhouette size="md" className="text-foreground-muted/20" />
         )}
         {player.is_featured && (
-          <span className="absolute top-2 right-2 rounded-full bg-accent/90 px-2 py-0.5 text-[10px] font-semibold text-white">
+          <span className="absolute top-2 right-2 rounded-full bg-accent/90 px-2 py-0.5 text-[10px] font-semibold text-background">
             {t('players.featured')}
           </span>
         )}
@@ -105,7 +106,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
           </span>
         )}
         {viewCount != null && viewCount > 0 && (
-          <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white/80 backdrop-blur-sm">
+          <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/80 backdrop-blur-sm">
             <svg
               className="h-3 w-3"
               fill="none"
@@ -144,7 +145,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
       </div>
       <div className="mt-1 flex items-center gap-1.5 px-1 text-xs text-foreground-muted min-w-0">
         {isFreeAgent ? (
-          <span className="font-medium text-yellow-700 shrink-0">{t('players.freeAgent')}</span>
+          <span className="font-medium text-yellow-500 shrink-0">{t('players.freeAgent')}</span>
         ) : clubName ? (
           <span className="truncate">{clubName}</span>
         ) : null}

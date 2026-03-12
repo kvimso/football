@@ -117,7 +117,10 @@ export function Navbar() {
       <nav className="mx-auto grid h-14 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4">
         {/* Logo — left */}
         <div className="flex items-center">
-          <Link href="/" className="rounded bg-accent px-2 py-0.5 text-sm font-bold text-white">
+          <Link
+            href="/"
+            className="rounded bg-accent px-2 py-0.5 text-sm font-bold text-background"
+          >
             GFT
           </Link>
         </div>

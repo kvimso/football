@@ -118,10 +118,10 @@ export function TransferSearch() {
           <button
             onClick={handleSearch}
             disabled={searching || query.trim().length < 2}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-accent-hover disabled:opacity-40"
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-background transition-all hover:bg-accent-hover disabled:opacity-40"
           >
             {searching && !actingOn ? (
-              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-background/30 border-t-background" />
             ) : (
               <svg
                 className="h-3.5 w-3.5"
@@ -235,7 +235,7 @@ export function TransferSearch() {
                     <div className="flex items-baseline gap-2">
                       <span className="text-sm font-semibold text-foreground">{displayName}</span>
                       {isFreeAgent ? (
-                        <span className="text-[11px] font-medium text-yellow-700">
+                        <span className="text-[11px] font-medium text-yellow-500">
                           {t('admin.transfers.freeAgent')}
                         </span>
                       ) : (

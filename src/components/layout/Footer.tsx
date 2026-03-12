@@ -16,7 +16,7 @@ export function Footer() {
           <div>
             <Link
               href="/"
-              className="inline-block rounded bg-accent px-2 py-0.5 text-sm font-bold text-white"
+              className="inline-block rounded bg-accent px-2 py-0.5 text-sm font-bold text-background"
             >
               GFT
             </Link>
