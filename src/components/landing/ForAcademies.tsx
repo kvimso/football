@@ -29,20 +29,20 @@ export async function ForAcademies() {
               <div className="absolute inset-8 rounded-lg border border-accent/[0.07]" />
               {/* Formation dots (4-3-3) */}
               {/* GK */}
-              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-amber-500/30" />
+              <div className="absolute bottom-12 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-pos-gk/30" />
               {/* DEF line */}
-              <div className="absolute bottom-24 left-[20%] h-2.5 w-2.5 rounded-full bg-blue-500/25" />
-              <div className="absolute bottom-28 left-[38%] h-2.5 w-2.5 rounded-full bg-blue-500/25" />
-              <div className="absolute bottom-28 right-[38%] h-2.5 w-2.5 rounded-full bg-blue-500/25" />
-              <div className="absolute bottom-24 right-[20%] h-2.5 w-2.5 rounded-full bg-blue-500/25" />
+              <div className="absolute bottom-24 left-[20%] h-2.5 w-2.5 rounded-full bg-pos-def/25" />
+              <div className="absolute bottom-28 left-[38%] h-2.5 w-2.5 rounded-full bg-pos-def/25" />
+              <div className="absolute bottom-28 right-[38%] h-2.5 w-2.5 rounded-full bg-pos-def/25" />
+              <div className="absolute bottom-24 right-[20%] h-2.5 w-2.5 rounded-full bg-pos-def/25" />
               {/* MID line */}
-              <div className="absolute top-[42%] left-[28%] h-2.5 w-2.5 rounded-full bg-cyan-500/25" />
-              <div className="absolute top-[38%] left-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-cyan-500/25" />
-              <div className="absolute top-[42%] right-[28%] h-2.5 w-2.5 rounded-full bg-cyan-500/25" />
+              <div className="absolute top-[42%] left-[28%] h-2.5 w-2.5 rounded-full bg-pos-mid/25" />
+              <div className="absolute top-[38%] left-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-pos-mid/25" />
+              <div className="absolute top-[42%] right-[28%] h-2.5 w-2.5 rounded-full bg-pos-mid/25" />
               {/* ATT line */}
-              <div className="absolute top-[18%] left-[25%] h-2.5 w-2.5 rounded-full bg-purple-500/25" />
-              <div className="absolute top-[15%] left-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-purple-500/25" />
-              <div className="absolute top-[18%] right-[25%] h-2.5 w-2.5 rounded-full bg-purple-500/25" />
+              <div className="absolute top-[18%] left-[25%] h-2.5 w-2.5 rounded-full bg-pos-att/25" />
+              <div className="absolute top-[15%] left-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-pos-att/25" />
+              <div className="absolute top-[18%] right-[25%] h-2.5 w-2.5 rounded-full bg-pos-att/25" />
               {/* Connecting lines */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 rounded-full border border-dashed border-accent/[0.08]" />
             </div>

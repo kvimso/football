@@ -316,27 +316,27 @@ Gold on dark (#c9a227 on #141218) = 7:1 — highly visible. On `.landing`, gold 
 **Files changed:** ~10-12
 
 **Landing page hero:**
-- [ ] `LandingHero.tsx`: Gold-highlighted "Georgian" word (large text = 3.2:1 passes WCAG large text threshold at text-4xl)
-- [ ] `LandingHero.tsx`: Primary CTA — dark bg button (not gold — for stronger contrast against warm ivory). E.g., `bg-foreground text-card` (dark button, white text)
-- [ ] `LandingHero.tsx`: Secondary CTA — outlined gold (`border-accent text-accent`)
-- [ ] `LandingHero.tsx`: Mock player card — show as dark card (previews platform experience) on warm ivory bg
-- [ ] `LandingHero.tsx`: Stat bar — warm tones, gold numbers
+- [x] `LandingHero.tsx`: Gold-highlighted "Georgian" word (large text = 3.2:1 passes WCAG large text threshold at text-4xl)
+- [x] `LandingHero.tsx`: Primary CTA — dark bg button (not gold — for stronger contrast against warm ivory). E.g., `bg-foreground text-card` (dark button, white text)
+- [x] `LandingHero.tsx`: Secondary CTA — outlined gold (`border-accent text-accent`)
+- [x] `LandingHero.tsx`: Mock player card — show as dark card (previews platform experience) on warm ivory bg
+- [x] `LandingHero.tsx`: Stat bar — warm tones, gold numbers
 
 **Landing sections:**
-- [ ] `MarketStats.tsx`: Warm ivory bg, gold numbers, warm text
-- [ ] `Services.tsx`: Service cards — warm white cards on ivory bg, gold accent top border
-- [ ] `ForScouts.tsx`: Warm ivory alt bg, gold check icons
-- [ ] `ForAcademies.tsx`: Update decorative formation dots (currently hardcoded amber/blue/cyan/purple) — verify on warm ivory
-- [ ] `WhatWeDo.tsx`: Warm styling
-- [ ] `Partners.tsx`: Warm styling
+- [x] `MarketStats.tsx`: Warm ivory bg, gold numbers, warm text
+- [x] `Services.tsx`: Service cards — warm white cards on ivory bg, gold accent top border
+- [x] `ForScouts.tsx`: Warm ivory alt bg, gold check icons
+- [x] `ForAcademies.tsx`: Update decorative formation dots (currently hardcoded amber/blue/cyan/purple) — verify on warm ivory
+- [x] `WhatWeDo.tsx`: Warm styling
+- [x] `Partners.tsx`: Warm styling
 
 **Auth pages:**
-- [ ] Login page: Warm ivory bg (via `.landing` on layout), gold focus states on inputs
-- [ ] Register page: Same treatment
-- [ ] Verify form controls render with `color-scheme: light` on `.landing`
+- [x] Login page: Warm ivory bg (via `.landing` on layout), gold focus states on inputs
+- [x] Register page: Same treatment
+- [x] Verify form controls render with `color-scheme: light` on `.landing`
 
-- [ ] `npm run build`
-- [ ] Visual spot check: landing page all sections, login, register
+- [x] `npm run build`
+- [x] Visual spot check: landing page all sections, login, register
 
 ### Session 5: Page-by-Page Polish (~70-80k)
 

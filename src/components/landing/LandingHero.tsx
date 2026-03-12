@@ -31,10 +31,16 @@ export async function LandingHero() {
               {t('landing.heroSubtitle')}
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start sm:justify-center">
-              <Link href="/register" className="btn-primary px-8 py-3.5 text-base font-semibold">
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center rounded-lg bg-foreground px-8 py-3.5 text-base font-semibold text-card shadow-lg transition-opacity hover:opacity-90"
+              >
                 {t('landing.registerScout')}
               </Link>
-              <Link href="/login" className="btn-secondary px-8 py-3.5 text-base font-semibold">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-lg border border-accent px-8 py-3.5 text-base font-semibold text-accent transition-colors hover:bg-accent-muted"
+              >
                 {t('landing.registerAcademy')}
               </Link>
             </div>
@@ -68,17 +74,28 @@ export async function LandingHero() {
             </div>
           </div>
 
-          {/* Right — mock player card */}
-          <div className="hidden lg:flex items-center justify-center" aria-hidden="true">
+          {/* Right — mock player card (dark theme preview of platform) */}
+          <div
+            className="hidden lg:flex items-center justify-center"
+            aria-hidden="true"
+            style={
+              {
+                '--background': '#141218',
+                '--background-secondary': '#1c1a22',
+                '--foreground': '#e8e6ef',
+                '--foreground-muted': '#9896a3',
+                '--accent': '#c9a227',
+                '--border': '#33313d',
+                '--card': '#23212b',
+              } as React.CSSProperties
+            }
+          >
             <div className="relative">
               {/* Gold gradient glow behind card */}
               <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-accent/20 via-accent/5 to-transparent blur-2xl" />
 
-              {/* Card */}
-              <div className="relative w-72 rounded-xl border border-border bg-card overflow-hidden shadow-2xl shadow-black/30">
-                {/* Position-colored top border (cyan for MID) */}
-                <div className="h-1 bg-pos-mid" />
-
+              {/* Card — dark platform preview with position left border */}
+              <div className="relative w-72 rounded-xl border border-border border-l-[3px] border-l-pos-mid bg-card overflow-hidden shadow-2xl shadow-black/30">
                 {/* Card body */}
                 <div className="p-6">
                   {/* Player silhouette */}
@@ -90,7 +107,9 @@ export async function LandingHero() {
 
                   {/* Name & info */}
                   <div className="mt-4 text-center">
-                    <div className="text-lg font-bold">{t('landing.mockPlayerName')}</div>
+                    <div className="text-lg font-bold text-foreground">
+                      {t('landing.mockPlayerName')}
+                    </div>
                     <div className="mt-1 flex items-center justify-center gap-2 text-sm text-foreground-muted">
                       <span className="inline-block h-2 w-2 rounded-full bg-pos-mid" />
                       <span>{t('landing.mockPosition')}</span>
