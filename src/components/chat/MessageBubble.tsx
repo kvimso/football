@@ -88,7 +88,7 @@ export function MessageBubble({
           className={`shadow-sm ${
             isMine
               ? 'rounded-2xl rounded-br-sm bg-accent text-white'
-              : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground'
+              : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground border border-border'
           }`}
         >
           {message.message_type === 'text' &&
@@ -156,7 +156,7 @@ export function MessageBubble({
                   aria-label={t('aria.downloadFile')}
                   className={`flex items-center gap-2 rounded-xl px-3 py-2 ${
                     isMine
-                      ? 'bg-white/10 hover:bg-white/20'
+                      ? 'bg-white/20 hover:bg-white/30'
                       : 'bg-background hover:bg-background/80'
                   } transition-colors`}
                 >

@@ -32,12 +32,12 @@ export const POSITION_LEFT_BORDER_CLASSES: Record<Position, string> = {
 }
 
 export const POSITION_GLOW_CLASSES: Record<Position, string> = {
-  GK: 'bg-pos-gk/15 text-white border-pos-gk/30',
-  DEF: 'bg-pos-def/15 text-white border-pos-def/30',
-  MID: 'bg-pos-mid/15 text-white border-pos-mid/30',
-  ATT: 'bg-pos-att/15 text-white border-pos-att/30',
-  WNG: 'bg-pos-wng/15 text-white border-pos-wng/30',
-  ST: 'bg-pos-st/15 text-white border-pos-st/30',
+  GK: 'bg-pos-gk text-white border-pos-gk',
+  DEF: 'bg-pos-def text-white border-pos-def',
+  MID: 'bg-pos-mid text-white border-pos-mid',
+  ATT: 'bg-pos-att text-white border-pos-att',
+  WNG: 'bg-pos-wng text-white border-pos-wng',
+  ST: 'bg-pos-st text-white border-pos-st',
 }
 
 export const AGE_MIN_DEFAULT = 14

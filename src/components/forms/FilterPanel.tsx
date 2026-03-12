@@ -41,14 +41,13 @@ function GlassSelect({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-lg border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent/40"
-      style={{ colorScheme: 'dark' }}
+      className="w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent/40"
     >
-      <option value="" className="bg-[#1a2420] text-white">
+      <option value="" className="bg-card text-foreground">
         {placeholder}
       </option>
       {options.map((opt) => (
-        <option key={opt.value} value={opt.value} className="bg-[#1a2420] text-white">
+        <option key={opt.value} value={opt.value} className="bg-card text-foreground">
           {opt.label}
         </option>
       ))}
@@ -72,7 +71,7 @@ function TriggerPill({
       className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-all ${
         hasValue
           ? 'border-accent/20 bg-accent/8 text-accent'
-          : 'border-white/[0.08] bg-white/[0.04] text-foreground-muted hover:bg-white/[0.08] hover:border-white/[0.12] hover:text-foreground'
+          : 'border-border bg-transparent text-foreground-muted hover:bg-background-secondary hover:text-foreground'
       }`}
     >
       {icon}
@@ -218,7 +217,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         : ''
 
   return (
-    <div className="relative z-10 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 backdrop-blur-sm space-y-4">
+    <div className="relative z-10 rounded-2xl border border-border bg-card p-5 shadow-sm space-y-4">
       {/* Layer 1: Search bar */}
       <div className="relative">
         <svg
@@ -242,7 +241,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             setSearchInput(e.target.value)
             debouncedSearch(e.target.value)
           }}
-          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-accent/40 focus:shadow-[0_0_12px_rgba(16,185,129,0.08)]"
+          className="w-full rounded-xl border border-border bg-background-secondary pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-accent/40 focus:shadow-[0_0_12px_rgba(30,58,138,0.08)]"
         />
       </div>
 
@@ -257,7 +256,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-all ${
                 isActive
                   ? POSITION_GLOW_CLASSES[pos as Position]
-                  : 'border-white/[0.08] bg-white/[0.04] text-foreground-muted hover:bg-white/[0.08] hover:text-foreground'
+                  : 'border-border bg-transparent text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t(`positions.${pos}`)}
@@ -299,7 +298,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               placeholder={t('players.searchClub')}
               value={clubSearch}
               onChange={(e) => setClubSearch(e.target.value)}
-              className="w-full rounded-lg border border-white/[0.08] bg-white/[0.05] px-3 py-1.5 text-sm text-foreground placeholder-foreground-muted/50 outline-none transition-colors focus:border-accent/40"
+              className="w-full rounded-lg border border-border bg-background-secondary px-3 py-1.5 text-sm text-foreground placeholder-foreground-muted/50 outline-none transition-colors focus:border-accent/40"
             />
             <div className="flex flex-wrap gap-2">
               {clubs
@@ -317,7 +316,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
                       className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                         isActive
                           ? 'bg-accent/15 text-accent border-accent/30'
-                          : 'bg-white/[0.04] border-white/[0.08] text-foreground-muted hover:bg-white/[0.08]'
+                          : 'bg-transparent border-border text-foreground-muted hover:bg-background-secondary'
                       }`}
                     >
                       {lang === 'ka' ? c.name_ka : c.name}
@@ -461,7 +460,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
                 className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   foot === f
                     ? 'bg-accent/15 text-accent'
-                    : 'text-foreground-muted hover:bg-white/[0.06] hover:text-foreground'
+                    : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
                 }`}
               >
                 {t('foot.' + f)}
@@ -575,7 +574,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 !sort
                   ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-white/[0.06] hover:text-foreground'
+                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t('players.sortName')}
@@ -585,7 +584,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 sort === 'most_viewed'
                   ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-white/[0.06] hover:text-foreground'
+                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t('players.sortMostViewed')}
@@ -625,7 +624,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 !status
                   ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-white/[0.06] hover:text-foreground'
+                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t('players.allStatuses')}
@@ -635,7 +634,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 status === 'active'
                   ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-white/[0.06] hover:text-foreground'
+                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t('players.statusActive')}
@@ -645,7 +644,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 status === 'free_agent'
                   ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-white/[0.06] hover:text-foreground'
+                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
               }`}
             >
               {t('players.statusFreeAgent')}
@@ -656,12 +655,12 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
 
       {/* Layer 4: Active filter summary strip */}
       {hasFilters && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3">
+        <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
           {/* Position tags */}
           {activePositions.map((pos) => (
             <span
               key={pos}
-              className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
+              className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
             >
               {t(`positions.${pos}`)}
               <button
@@ -679,7 +678,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             return (
               <span
                 key={clubId}
-                className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
+                className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
               >
                 {lang === 'ka' ? c.name_ka : c.name}
                 <button
@@ -693,7 +692,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           })}
           {/* Age tag */}
           {(ageMin || ageMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.filterAge')}: {ageMin || '?'}&ndash;{ageMax || '?'}
               <button
                 onClick={() => clearParams('age_min', 'age_max')}
@@ -705,7 +704,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Foot tag */}
           {foot && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('foot.' + foot)}
               <button
                 onClick={() => updateParam('foot', '')}
@@ -717,7 +716,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Height tag */}
           {(heightMin || heightMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.height')}: {heightMin || '?'}&ndash;{heightMax || '?'} {t('players.cm')}
               <button
                 onClick={() => clearParams('height_min', 'height_max')}
@@ -729,7 +728,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Weight tag */}
           {(weightMin || weightMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.weight')}: {weightMin || '?'}&ndash;{weightMax || '?'} {t('players.kg')}
               <button
                 onClick={() => clearParams('weight_min', 'weight_max')}
@@ -741,7 +740,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Stat filter tags */}
           {goalsMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.goals')}: {goalsMin}+
               <button
                 onClick={() => updateParam('goals_min', '')}
@@ -752,7 +751,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             </span>
           )}
           {assistsMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.assists')}: {assistsMin}+
               <button
                 onClick={() => updateParam('assists_min', '')}
@@ -763,7 +762,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             </span>
           )}
           {matchesMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.matches')}: {matchesMin}+
               <button
                 onClick={() => updateParam('matches_min', '')}
@@ -774,7 +773,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             </span>
           )}
           {passAccMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.passAccuracyMin')}: {passAccMin}%+
               <button
                 onClick={() => updateParam('pass_acc_min', '')}
@@ -786,7 +785,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Sort tag */}
           {sort && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.sort')}: {sort === 'most_viewed' ? t('players.sortMostViewed') : sort}
               <button
                 onClick={() => updateParam('sort', '')}
@@ -798,7 +797,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Status tag */}
           {status && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {status === 'active' ? t('players.statusActive') : t('players.statusFreeAgent')}
               <button
                 onClick={() => updateParam('status', '')}
@@ -811,7 +810,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           {/* Clear All */}
           <button
             onClick={clearFilters}
-            className="ml-auto inline-flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/5 px-2.5 py-1 text-[11px] font-medium text-red-400 transition-colors hover:bg-red-500/10"
+            className="ml-auto inline-flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/5 px-2.5 py-1 text-[11px] font-medium text-red-600 transition-colors hover:bg-red-500/10"
           >
             <svg
               className="h-3 w-3"

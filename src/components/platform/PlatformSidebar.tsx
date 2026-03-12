@@ -51,7 +51,7 @@ export function PlatformSidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 md:block">
         <div className="sticky top-24">
-          <div className="mb-4 rounded-lg border border-border bg-surface p-3">
+          <div className="mb-4 rounded-lg border border-border bg-background-secondary p-3">
             <p className="text-xs text-foreground-muted">{t('platform.title')}</p>
             <p className="mt-0.5 text-sm font-semibold text-accent">{t('platform.subtitle')}</p>
           </div>
@@ -68,7 +68,7 @@ export function PlatformSidebar() {
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? 'bg-accent/10 text-accent'
-                      : 'text-foreground-muted hover:bg-surface hover:text-foreground'
+                      : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
                   }`}
                 >
                   <svg

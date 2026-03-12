@@ -190,19 +190,20 @@ The admin/dashboard/platform sidebars already use semantic tokens (`bg-backgroun
 **Scope:** 8 files with glass-morphism, 4 files with `bg-[#1a2420]`
 **Must complete before merging** (Session 1 + 2 are atomic)
 
-- [ ] `FilterPanel.tsx`: Replace all `bg-white/[0.0x]` → `bg-background-secondary`, `border-white/[0.0x]` → `border-border`, remove `colorScheme: 'dark'`, remove `backdrop-blur-sm`
-- [ ] `TransferCard.tsx`: Replace glass patterns, remove backdrop-blur
-- [ ] `TransferSearch.tsx`: Replace glass patterns + remove emerald rgba shadows
-- [ ] `TransferTabs.tsx`: Replace glass patterns
-- [ ] `PlayerActionsMenu.tsx`: Replace glass + `bg-[#1a2420]` → `bg-card border border-border shadow-sm`
-- [ ] `AISearchBar.tsx`: Replace glass + `bg-[#1a2420]` + remove purple glow shadow
-- [ ] `FilterPopover.tsx`: Replace border + `bg-[#1a2420]`
-- [ ] `MessageBubble.tsx`: `bg-white/10` → `bg-white/20` in sent messages
-- [ ] `TransferActions.tsx`: Remove emerald/red glow shadows
-- [ ] Fix `bg-surface`/`bg-surface-alt` in PlatformSidebar.tsx → `bg-background-secondary`
-- [ ] Fix `bg-surface-alt` in PlatformRequestsList.tsx, RequestActions.tsx → `bg-card`
-- [ ] Verify received chat bubbles have enough contrast (add `border border-border` if needed)
-- [ ] `npm run build`
+- [x] `FilterPanel.tsx`: Replace all `bg-white/[0.0x]` → `bg-background-secondary`, `border-white/[0.0x]` → `border-border`, remove `colorScheme: 'dark'`, remove `backdrop-blur-sm`
+- [x] Fix `POSITION_GLOW_CLASSES` contrast: `bg-pos-X/15 text-white` is invisible on light bg — change to `bg-pos-X text-white` (solid bg) or `bg-pos-X/15 text-pos-X` (tinted bg + dark text)
+- [x] `TransferCard.tsx`: Replace glass patterns, remove backdrop-blur
+- [x] `TransferSearch.tsx`: Replace glass patterns + remove emerald rgba shadows
+- [x] `TransferTabs.tsx`: Replace glass patterns
+- [x] `PlayerActionsMenu.tsx`: Replace glass + `bg-[#1a2420]` → `bg-card border border-border shadow-sm`
+- [x] `AISearchBar.tsx`: Replace glass + `bg-[#1a2420]` + remove purple glow shadow
+- [x] `FilterPopover.tsx`: Replace border + `bg-[#1a2420]`
+- [x] `MessageBubble.tsx`: `bg-white/10` → `bg-white/20` in sent messages
+- [x] `TransferActions.tsx`: Remove emerald/red glow shadows
+- [x] Fix `bg-surface`/`bg-surface-alt` in PlatformSidebar.tsx → `bg-background-secondary`
+- [x] Fix `bg-surface-alt` in PlatformRequestsList.tsx, RequestActions.tsx → `bg-card`
+- [x] Verify received chat bubbles have enough contrast (add `border border-border` if needed)
+- [x] `npm run build`
 - [ ] Visual spot check: filters, transfers, admin actions, chat, AI search
 
 ### Session 3: Hardcoded Color Utilities (~70-80k)

@@ -35,7 +35,7 @@ export function TransferTabs({
   return (
     <div>
       {/* Segment control */}
-      <div className="inline-flex rounded-xl border border-white/[0.06] bg-white/[0.02] p-1">
+      <div className="inline-flex rounded-xl border border-border bg-background-secondary p-1">
         <button
           onClick={() => setActiveTab('incoming')}
           className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
@@ -113,8 +113,8 @@ export function TransferTabs({
             />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.06] py-14 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.03]">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-14 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background-secondary">
               <svg
                 className="h-6 w-6 text-foreground-muted/20"
                 fill="none"

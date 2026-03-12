@@ -39,7 +39,7 @@ export function FilterPopover({ trigger, children, align = 'left' }: FilterPopov
       <div onClick={() => setOpen((v) => !v)}>{trigger}</div>
       {open && (
         <div
-          className={`absolute top-full z-30 mt-2 min-w-[200px] rounded-xl border border-white/[0.08] bg-[#1a2420] p-3 shadow-xl shadow-black/30 animate-slide-in-down ${
+          className={`absolute top-full z-30 mt-2 min-w-[200px] rounded-xl border border-border bg-card p-3 shadow-lg animate-slide-in-down ${
             align === 'right' ? 'right-0' : 'left-0'
           }`}
         >

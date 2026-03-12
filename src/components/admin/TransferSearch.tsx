@@ -87,7 +87,7 @@ export function TransferSearch() {
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <div className="p-4">
         {/* Search input */}
         <div className="flex gap-2">
@@ -112,7 +112,7 @@ export function TransferSearch() {
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={t('admin.transfers.searchPlaceholder')}
               aria-label={t('admin.transfers.searchTitle')}
-              className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-foreground-muted/40 transition-colors focus:border-accent/40 focus:outline-none"
+              className="w-full rounded-lg border border-border bg-background-secondary py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-foreground-muted/40 transition-colors focus:border-accent/40 focus:outline-none"
             />
           </div>
           <button
@@ -183,7 +183,7 @@ export function TransferSearch() {
 
         {/* No results */}
         {searched && results.length === 0 && !actionMsg && (
-          <div className="mt-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-white/[0.06] py-8 text-center">
+          <div className="mt-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-8 text-center">
             <svg
               className="h-8 w-8 text-foreground-muted/15"
               fill="none"
@@ -220,7 +220,7 @@ export function TransferSearch() {
               return (
                 <div
                   key={player.id}
-                  className={`animate-transfer-card-in flex items-center gap-3 rounded-xl border-l-[4px] ${leftBorder} border border-white/[0.06] bg-white/[0.03] px-4 py-3 backdrop-blur-sm transition-all hover:bg-white/[0.07] hover:border-white/[0.12]`}
+                  className={`animate-transfer-card-in flex items-center gap-3 rounded-xl border-l-[4px] ${leftBorder} border border-border bg-card px-4 py-3 transition-all hover:bg-card-hover hover:shadow-sm`}
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
                   {/* Position badge */}
@@ -257,7 +257,7 @@ export function TransferSearch() {
                       <button
                         onClick={() => handleClaimFreeAgent(player.id)}
                         disabled={searching}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 text-green-400 transition-all hover:bg-green-500/20 hover:shadow-[0_0_12px_rgba(34,197,94,0.15)] disabled:opacity-50"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 text-green-700 transition-all hover:bg-green-500/20 disabled:opacity-50"
                         title={t('admin.transfers.claimPlayer')}
                       >
                         {isActing ? (
@@ -282,7 +282,7 @@ export function TransferSearch() {
                       <button
                         onClick={() => handleRequestTransfer(player.id)}
                         disabled={searching}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent transition-all hover:bg-accent/20 hover:shadow-[0_0_12px_rgba(16,185,129,0.15)] disabled:opacity-50"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent transition-all hover:bg-accent/20 disabled:opacity-50"
                         title={t('admin.transfers.requestTransfer')}
                       >
                         {isActing ? (
