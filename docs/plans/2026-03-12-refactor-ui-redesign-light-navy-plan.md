@@ -227,18 +227,18 @@ The admin/dashboard/platform sidebars already use semantic tokens (`bg-backgroun
 
 **Scope:** Navbar, Footer, LandingNav, LandingFooter, sidebars
 
-- [ ] `Navbar.tsx`: Remove `backdrop-blur-md` (95% opaque = blur invisible, wastes GPU), add `border-b border-border` or `shadow-sm` instead
-- [ ] `Navbar.tsx`: Verify active link indicator, notification badge, mobile menu on light bg
-- [ ] `LandingNav.tsx`: Remove `backdrop-blur-md`, match Navbar visual treatment
-- [ ] `Footer.tsx`: Verify light theme styling
-- [ ] `LandingFooter.tsx`: Verify styling matches Footer
-- [ ] `AdminSidebar.tsx`: Verify auto-adapted light styling looks good. If not, add scoped dark variables
-- [ ] `DashboardNav.tsx`: Same — verify auto-adapted styling
-- [ ] `PlatformSidebar.tsx`: Same — already fixed `bg-surface` bug in Session 2
-- [ ] `NotificationBell.tsx`, `NotificationDropdown.tsx`, `NotificationItem.tsx`: Verify on light bg
-- [ ] Navigate all route groups: `/` → `/login` → `/players` → `/dashboard` → `/admin` → `/platform`
-- [ ] Check mobile at 375px for all nav patterns
-- [ ] `npm run build`
+- [x] `Navbar.tsx`: Remove `backdrop-blur-md` (95% opaque = blur invisible, wastes GPU), add `border-b border-border` or `shadow-sm` instead
+- [x] `Navbar.tsx`: Verify active link indicator, notification badge, mobile menu on light bg
+- [x] `LandingNav.tsx`: Remove `backdrop-blur-md`, match Navbar visual treatment
+- [x] `Footer.tsx`: Verify light theme styling
+- [x] `LandingFooter.tsx`: Verify styling matches Footer
+- [x] `AdminSidebar.tsx`: Verify auto-adapted light styling looks good. If not, add scoped dark variables
+- [x] `DashboardNav.tsx`: Same — verify auto-adapted styling
+- [x] `PlatformSidebar.tsx`: Same — already fixed `bg-surface` bug in Session 2
+- [x] `NotificationBell.tsx`, `NotificationDropdown.tsx`, `NotificationItem.tsx`: Verify on light bg
+- [x] Navigate all route groups: `/` → `/login` → `/players` → `/dashboard` → `/admin` → `/platform`
+- [x] Check mobile at 375px for all nav patterns
+- [x] `npm run build`
 
 ### Session 5: Page-by-Page Visual Polish (~70-80k)
 

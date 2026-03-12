@@ -113,7 +113,7 @@ export function Navbar() {
         : t('nav.dashboard')
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-nav-bg/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-nav-bg shadow-sm">
       <nav className="mx-auto grid h-14 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4">
         {/* Logo — left */}
         <div className="flex items-center">
