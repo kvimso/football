@@ -1,10 +1,10 @@
 export default function PlatformTransfersLoading() {
   return (
     <div className="animate-pulse">
-      <div className="h-7 w-40 rounded bg-background-secondary" />
+      <div className="h-7 w-40 rounded bg-card-hover" />
       <div className="mt-4 flex gap-2">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="h-8 w-20 rounded bg-background-secondary" />
+          <div key={i} className="h-8 w-20 rounded bg-card-hover" />
         ))}
       </div>
       <div className="mt-6 space-y-3">

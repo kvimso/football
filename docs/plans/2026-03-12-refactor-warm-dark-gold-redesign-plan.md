@@ -345,50 +345,50 @@ Gold on dark (#c9a227 on #141218) = 7:1 — highly visible. On `.landing`, gold 
 **Files changed:** ~10-15 (fixes and tweaks)
 
 **Route-by-route audit:**
-- [ ] `/` (landing) — warm ivory, all sections correct
-- [ ] `/about` — dark theme, Navbar dark, content readable
-- [ ] `/contact` — dark theme, form inputs styled for dark
-- [ ] `/login`, `/register` — warm ivory, form controls light
-- [ ] `/players` — dark, player grid, filter panel, search
-- [ ] `/players/[slug]` — dark, stat cards, career history, videos, similar players
-- [ ] `/players/compare` — dark, radar overlay, center bars, shareable URL
-- [ ] `/matches` — dark, match cards
-- [ ] `/matches/[slug]` — dark, match detail, top performers
-- [ ] `/clubs` — dark, club cards
-- [ ] `/clubs/[slug]` — dark, club detail, squad list
-- [ ] `/dashboard` — dark, stat cards, watchlist, messages nav
-- [ ] `/dashboard/shortlist` — dark, shortlisted players
-- [ ] `/dashboard/messages` — dark, chat sidebar, thread, input
-- [ ] `/admin` — dark, dashboard cards, sidebar
-- [ ] `/admin/players` — dark, player list, add/edit forms
-- [ ] `/admin/messages` — dark, chat
-- [ ] `/admin/transfers` — dark, transfer cards, search
-- [ ] `/platform/*` — dark, all platform admin pages
+- [x] `/` (landing) — warm ivory, all sections correct
+- [x] `/about` — dark theme, Navbar dark, content readable
+- [x] `/contact` — dark theme, form inputs styled for dark
+- [x] `/login`, `/register` — warm ivory, form controls light
+- [x] `/players` — dark, player grid, filter panel, search
+- [x] `/players/[slug]` — dark, stat cards, career history, videos, similar players
+- [x] `/players/compare` — dark, radar overlay, center bars, shareable URL
+- [x] `/matches` — dark, match cards
+- [x] `/matches/[slug]` — dark, match detail, top performers
+- [x] `/clubs` — dark, club cards
+- [x] `/clubs/[slug]` — dark, club detail, squad list
+- [x] `/dashboard` — dark, stat cards, watchlist, messages nav
+- [x] `/dashboard/shortlist` — dark, shortlisted players
+- [x] `/dashboard/messages` — dark, chat sidebar, thread, input
+- [x] `/admin` — dark, dashboard cards, sidebar
+- [x] `/admin/players` — dark, player list, add/edit forms
+- [x] `/admin/messages` — dark, chat
+- [x] `/admin/transfers` — dark, transfer cards, search
+- [x] `/platform/*` — dark, all platform admin pages
 
 **Edge cases:**
-- [ ] Loading states (33 loading.tsx files) — update skeleton color to `--skeleton`/`bg-card-hover`
-- [ ] Error boundaries — verify dark bg inheritance
-- [ ] Empty states — verify muted text/icons on dark
-- [ ] Modals/popovers — verify `bg-card` + `border-border` on dark
-- [ ] Dropdowns (`<select>`) — verify `color-scheme: dark` renders dark option menus
-- [ ] PlayerActionsMenu popover — dark styling
-- [ ] NotificationDropdown — dark styling
+- [x] Loading states (33 loading.tsx files) — update skeleton color to `--skeleton`/`bg-card-hover`
+- [x] Error boundaries — verify dark bg inheritance
+- [x] Empty states — verify muted text/icons on dark
+- [x] Modals/popovers — verify `bg-card` + `border-border` on dark
+- [x] Dropdowns (`<select>`) — verify `color-scheme: dark` renders dark option menus
+- [x] PlayerActionsMenu popover — dark styling
+- [x] NotificationDropdown — dark styling
 
 **Mobile responsive (375px):**
-- [ ] Landing page — stacked hero, readable gold text
-- [ ] Navbar mobile menu — dark drawer
-- [ ] Player grid — single column cards
-- [ ] Admin sidebar → horizontal tabs — dark bg, gold active
-- [ ] Chat — full-width thread on mobile
-- [ ] Filter panel — dark mobile sheet
+- [x] Landing page — stacked hero, readable gold text
+- [x] Navbar mobile menu — dark drawer
+- [x] Player grid — single column cards
+- [x] Admin sidebar → horizontal tabs — dark bg, gold active
+- [x] Chat — full-width thread on mobile
+- [x] Filter panel — dark mobile sheet
 
 **i18n verification:**
-- [ ] Georgian text on dark backgrounds — verify Noto Sans Georgian readability
-- [ ] Georgian text on warm ivory — verify readability
-- [ ] All gold accent text readable in both languages
-- [ ] Letter-spacing/line-height adjustments still correct
+- [x] Georgian text on dark backgrounds — verify Noto Sans Georgian readability
+- [x] Georgian text on warm ivory — verify readability
+- [x] All gold accent text readable in both languages
+- [x] Letter-spacing/line-height adjustments still correct
 
-- [ ] `npm run build`
+- [x] `npm run build`
 
 ### Session 6: QA + Documentation + Merge (~40-50k)
 

@@ -146,7 +146,7 @@ function RequestCard({
 
       {/* Expired message */}
       {group === 'expired' && (
-        <p className="mt-2 text-xs text-gray-500">{t('dashboard.expiredNoResponse')}</p>
+        <p className="mt-2 text-xs text-foreground-muted">{t('dashboard.expiredNoResponse')}</p>
       )}
 
       {/* Approved with response message */}

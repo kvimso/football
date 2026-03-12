@@ -118,7 +118,7 @@ export function Navbar() {
         {/* Logo — left */}
         <div className="flex items-center">
           <Link
-            href="/"
+            href={user ? dashboardHref : '/'}
             className="rounded bg-accent px-2 py-0.5 text-sm font-bold text-background"
           >
             GFT
