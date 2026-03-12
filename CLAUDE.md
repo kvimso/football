@@ -45,7 +45,7 @@ A professional marketing page — clean, hrmony.com-style layout. This is what e
 
 ### Part 2: Protected Platform (auth required)
 
-A Transfermarkt-style data marketplace behind login. All player browsing, stats, matches, clubs, scout tools, and admin panel require authentication.
+A warm dark scouting platform with Georgian gold accent, behind login. All player browsing, stats, matches, clubs, scout tools, and admin panel require authentication.
 
 **Protected pages:** Everything under `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin`, `/platform`
 
@@ -316,13 +316,48 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 
 ## Styling System
 
-- **Landing page:** Light/neutral theme, professional, hrmony.com-style
-- **Platform:** Dark theme, data-dense, Transfermarkt-style football pitch aesthetic
-- CSS custom properties in `globals.css` for colors
-- Primary accent: emerald green
-- Position colors: GK=amber, DEF=blue, MID=cyan, ATT=purple, WNG=emerald, ST=red
+### Theme Architecture
+
+Two-theme system using CSS custom properties with class-based scoping:
+
+- **Platform (dark):** `:root` default — warm purple-black (`#141218`) background, warm off-white text (`#e8e6ef`). Used for all authenticated pages: `(platform)`, `dashboard`, `admin`, `platform`, `(shared)` (About/Contact).
+- **Landing (warm ivory):** `.landing` class override — warm ivory (`#faf8f5`) background, warm near-black text (`#2c2a35`). Applied to `(public)/layout.tsx` and `(auth)/layout.tsx` wrapper divs only.
+
+```
+:root (dark platform — default, color-scheme: dark)
+  └── .landing (warm ivory override — color-scheme: light)
+      └── @theme inline (Tailwind bridge — auto-adapts)
+```
+
+### Primary Accent: Georgian Gold
+
+- **Gold accent:** `#c9a227` (7:1 on dark bg — AA pass)
+- **Gold on ivory:** 3.2:1 (large text only — hero headings OK)
+- **Button strategy:** `.btn-primary` uses `bg-accent text-background` (dark text on gold) — accessible at 8.6:1
+- On `.landing`, buttons use darker gold (`--accent-hover: #a68521`) for hover
+
+### Position Colors (-500 variants for dark bg visibility)
+
+| Position | Color | Variable |
+|----------|-------|----------|
+| GK | amber-500 (`#f59e0b`) | `--pos-gk` |
+| DEF | indigo-500 (`#6366f1`) | `--pos-def` |
+| MID | cyan-500 (`#06b6d4`) | `--pos-mid` |
+| ATT | violet-500 (`#a855f7`) | `--pos-att` |
+| WNG | emerald-500 (`#10b981`) | `--pos-wng` |
+| ST | red-500 (`#ef4444`) | `--pos-st` |
+
+**Badge pattern:** `bg-pos-X/20 text-pos-X` (tinted bg + colored text) — works on both dark and light themes.
+
+### Key Conventions
+
+- CSS custom properties in `globals.css` for all colors — never hardcode hex in components
 - Use Tailwind utilities for layout, CSS custom properties for theme colors
 - Check `globals.css` before creating new component classes — most patterns exist
+- `color-scheme: dark` on `:root`, `color-scheme: light` on `.landing` — controls browser form controls
+- Dark theme elevation: borders (`border-border`) instead of shadows; subtle shadows only on hover/modal
+- Loading skeletons: use `--skeleton` (`#2a2834`) — visible on dark backgrounds
+- Gold focus-visible ring on all interactive elements
 - Mobile-first — all pages work at 375px+
 - Use `next/image` for all images
 - **Landing page: no placeholder content, use real market numbers (37,600+ youth players, €100M+)**

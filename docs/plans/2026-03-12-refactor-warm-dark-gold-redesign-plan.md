@@ -394,25 +394,25 @@ Gold on dark (#c9a227 on #141218) = 7:1 — highly visible. On `.landing`, gold 
 
 **Scope:** Full verification, CLAUDE.md update, merge to main
 
-- [ ] Full Playwright walkthrough: every route, both languages, mobile + desktop
-- [ ] WCAG contrast spot check:
+- [x] Full Playwright walkthrough: every route, both languages, mobile + desktop
+- [x] WCAG contrast spot check:
   - Gold accent on dark bg (buttons, links, nav)
   - Gold accent on warm ivory (hero, landing CTAs)
   - Muted text on card surfaces
   - Position badges on dark cards
   - Status badges on dark surfaces
-- [ ] Search for any remaining hardcoded light-theme values: `#f8fafc`, `#f1f5f9`, `#1e3a8a`, `#e2e8f0`, `#334155`
-- [ ] Search for any `color-scheme: light` not inside `.landing`
-- [ ] Verify PDF export still generates light-themed documents
-- [ ] Update CLAUDE.md:
+- [x] Search for any remaining hardcoded light-theme values: `#f8fafc`, `#f1f5f9`, `#1e3a8a`, `#e2e8f0`, `#334155`
+- [x] Search for any `color-scheme: light` not inside `.landing`
+- [x] Verify PDF export still generates light-themed documents
+- [x] Update CLAUDE.md:
   - Styling System: document dark platform + warm ivory landing split
   - Primary accent: navy → Georgian gold
   - Position colors: updated -500 values
   - Add `.landing` class documentation
   - Update "Transfermarkt-style football pitch aesthetic" → "Warm dark scouting platform"
   - Document gold button contrast strategy (dark text on gold)
-- [ ] `npm run build` — clean pass
-- [ ] `npm run lint` — clean pass
+- [x] `npm run build` — clean pass
+- [x] `npm run lint` — clean pass
 - [ ] Merge `redesign/light-navy` → `main`
 
 ---
