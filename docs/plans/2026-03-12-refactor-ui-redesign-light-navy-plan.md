@@ -204,7 +204,7 @@ The admin/dashboard/platform sidebars already use semantic tokens (`bg-backgroun
 - [x] Fix `bg-surface-alt` in PlatformRequestsList.tsx, RequestActions.tsx → `bg-card`
 - [x] Verify received chat bubbles have enough contrast (add `border border-border` if needed)
 - [x] `npm run build`
-- [ ] Visual spot check: filters, transfers, admin actions, chat, AI search
+- [x] Visual spot check: filters, transfers, admin actions, chat, AI search
 
 ### Session 3: Hardcoded Color Utilities (~70-80k)
 
