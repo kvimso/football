@@ -2,40 +2,27 @@
 
 /* ── Theme custom properties ── */
 :root {
-  --background: #0a0f0d;
-  --background-secondary: #111916;
-  --foreground: #ededed;
-  --foreground-muted: #9ca3af;
-  --accent: #10b981;
-  --accent-hover: #059669;
-  --accent-muted: #065f46;
-  --border: #1f2937;
-  --card: #111916;
-  --card-hover: #162118;
-  --nav-bg: #080d0b;
+  color-scheme: light;
 
-  /* Position colors */
-  --pos-gk: #f59e0b;
-  --pos-def: #3b82f6;
-  --pos-mid: #06b6d4;
-  --pos-att: #a855f7;
-  --pos-wng: #10b981;
-  --pos-st: #ef4444;
-}
-
-/* ── Landing page light theme ── */
-.landing {
-  --background: #fafbfc;
-  --background-secondary: #f1f5f3;
-  --foreground: #111827;
-  --foreground-muted: #6b7280;
-  --accent: #059669;
-  --accent-hover: #047857;
-  --accent-muted: #d1fae5;
-  --border: #e5e7eb;
+  --background: #f8fafc;
+  --background-secondary: #f1f5f9;
+  --foreground: #334155;
+  --foreground-muted: #64748b;
+  --accent: #1e3a8a;
+  --accent-hover: #1e40af;
+  --accent-muted: #dbeafe;
+  --border: #e2e8f0;
   --card: #ffffff;
-  --card-hover: #f9fafb;
+  --card-hover: #f8fafc;
   --nav-bg: rgba(255, 255, 255, 0.95);
+
+  /* Position colors (WCAG-verified -700 variants for colored bg + white text) */
+  --pos-gk: #b45309;
+  --pos-def: #4338ca;
+  --pos-mid: #0e7490;
+  --pos-att: #7e22ce;
+  --pos-wng: #047857;
+  --pos-st: #b91c1c;
 }
 
 @theme inline {
@@ -78,12 +65,12 @@ body {
   font-weight: 500;
   background-color: var(--accent);
   color: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
   transition: background-color 150ms, box-shadow 150ms;
 }
 .btn-primary:hover {
   background-color: var(--accent-hover);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
 }
 .btn-primary:focus-visible {
   outline: 2px solid var(--accent);
@@ -107,21 +94,6 @@ body {
 .btn-secondary:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-}
-
-/* Landing-scoped button overrides for light theme */
-.landing .btn-primary {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
-.landing .btn-primary:hover {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.18);
-}
-.landing .btn-secondary {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.landing .btn-secondary:hover {
-  background-color: var(--accent-muted);
 }
 
 /* ── Form inputs ── */
@@ -148,13 +120,12 @@ body {
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   padding: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-  transition: background-color 150ms, transform 150ms, box-shadow 150ms;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  transition: background-color 150ms, box-shadow 150ms;
 }
 .card:hover {
   background-color: var(--card-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
 }
 
 /* ── Enhanced card with position-colored top border ── */
@@ -164,13 +135,12 @@ body {
   border-top: 3px solid var(--accent);
   border-radius: 0.75rem;
   padding: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-  transition: background-color 150ms, transform 150ms, box-shadow 150ms;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  transition: background-color 150ms, box-shadow 150ms;
 }
 .card-enhanced:hover {
   background-color: var(--card-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);
 }
 
 /* ── Filter chip pills ── */
@@ -206,7 +176,7 @@ body {
   color: var(--foreground);
 }
 
-/* ── Status badge pills ── */
+/* ── Status badge pills (accessible: dark text on tinted bg) ── */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -216,36 +186,24 @@ body {
   font-weight: 600;
 }
 .status-badge-pending {
-  background-color: rgba(234, 179, 8, 0.1);
-  color: #eab308;
+  background-color: #fef9c3;
+  color: #854d0e;
 }
 .status-badge-approved {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background-color: #d1fae5;
+  color: #065f46;
 }
 .status-badge-rejected {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  background-color: #fee2e2;
+  color: #991b1b;
 }
 
 /* ── Data table rows ── */
 .table-row-hover:nth-child(even) {
-  background-color: rgba(17, 25, 22, 0.3);
+  background-color: rgba(0,0,0,0.02);
 }
 .table-row-hover:hover {
-  background-color: rgba(16, 185, 129, 0.05);
-}
-
-/* ── Football decorative patterns (CSS/SVG only) ── */
-.pitch-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Ccircle cx='200' cy='200' r='80' fill='none' stroke='%23059669' stroke-width='1' opacity='0.12'/%3E%3Ccircle cx='200' cy='200' r='3' fill='%23059669' opacity='0.15'/%3E%3Cline x1='200' y1='0' x2='200' y2='400' stroke='%23059669' stroke-width='0.75' opacity='0.08'/%3E%3Cline x1='0' y1='200' x2='400' y2='200' stroke='%23059669' stroke-width='0.75' opacity='0.08'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 400px 400px;
-}
-
-.hex-pattern {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100' viewBox='0 0 56 100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66ZM28 100L0 84L0 50L28 34L56 50L56 84L28 100Z' fill='none' stroke='%23059669' stroke-width='0.5' opacity='0.06'/%3E%3C/svg%3E");
-  background-repeat: repeat;
+  background-color: rgba(30,58,138,0.04);
 }
 
 /* ── Chat animations ── */
@@ -281,8 +239,7 @@ html:lang(ka) {
   --font-sans: var(--font-noto-georgian), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ── Themed scrollbars ── */
-/* Dark platform: thin emerald scrollbars */
+/* ── Themed scrollbars (slate-400 for light theme) ── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -291,28 +248,17 @@ html:lang(ka) {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(16, 185, 129, 0.3);
+  background-color: rgba(148, 163, 184, 0.3);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(16, 185, 129, 0.5);
-}
-
-/* Landing page light theme: gray scrollbars */
-.landing ::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.3);
-}
-.landing ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(156, 163, 175, 0.5);
+  background-color: rgba(148, 163, 184, 0.5);
 }
 
 /* Firefox: thin scrollbar support */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
-}
-.landing * {
-  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
 }
 
 /* Georgian script doesn't benefit from tight letter-spacing — it looks cramped */

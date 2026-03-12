@@ -11,19 +11,8 @@ export async function LandingHero() {
   const parts = title.split(highlightWord)
 
   return (
-    <section className="relative overflow-hidden">
-      {/* Pitch pattern background */}
-      <div className="pitch-pattern absolute inset-0 opacity-40" />
-
-      {/* Corner arc decoration — top-left */}
-      <div className="absolute -top-20 -left-20 h-60 w-60 rounded-full border border-accent/10 hidden lg:block" />
-      <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full border border-accent/[0.07] hidden lg:block" />
-
-      {/* Corner arc decoration — bottom-right */}
-      <div className="absolute -bottom-20 -right-20 h-60 w-60 rounded-full border border-accent/10 hidden lg:block" />
-      <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full border border-accent/[0.07] hidden lg:block" />
-
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-28 lg:py-32">
+    <section>
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left — content */}
           <div className="text-center lg:text-left">

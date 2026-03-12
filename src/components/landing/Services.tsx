@@ -13,9 +13,8 @@ export async function Services() {
   ]
 
   return (
-    <section className="relative py-16 sm:py-20">
-      <div className="pitch-pattern absolute inset-0 opacity-30" />
-      <div className="relative mx-auto max-w-7xl px-4">
+    <section className="py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4">
         {/* Section header */}
         <div className="text-center max-w-2xl mx-auto">
           <div className="inline-block h-1 w-12 rounded-full bg-accent mb-4" />

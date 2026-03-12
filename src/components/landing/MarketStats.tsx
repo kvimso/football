@@ -10,9 +10,8 @@ export async function MarketStats() {
   ]
 
   return (
-    <section className="relative py-16 sm:py-20">
-      <div className="hex-pattern absolute inset-0 opacity-50" />
-      <div className="relative mx-auto max-w-7xl px-4">
+    <section className="py-16 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-col items-center gap-10 sm:flex-row sm:justify-center sm:gap-0">
           {stats.map((stat, i) => (
             <div key={stat.label} className="flex items-center">
