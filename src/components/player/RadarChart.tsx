@@ -37,6 +37,16 @@ export function RadarChart({ skills, labels }: RadarChartProps) {
 
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[240px]">
+      {/* Background fill for chart area */}
+      <polygon
+        points={Array.from({ length: 6 }, (_, i) => {
+          const [x, y] = getPoint(i, 100, RADIUS)
+          return `${x},${y}`
+        }).join(' ')}
+        fill="var(--background-secondary)"
+        fillOpacity={0.5}
+      />
+
       {/* Grid levels */}
       {Array.from({ length: LEVELS }, (_, level) => {
         const gridPoints = Array.from({ length: 6 }, (_, i) => {

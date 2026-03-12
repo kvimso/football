@@ -76,6 +76,11 @@ export const en = {
     downloadingPdf: 'Generating...',
     similarPlayers: 'Similar Players',
     noResults: 'No results',
+    atAGlance: 'At a Glance',
+    attacking: 'Attacking',
+    defensive: 'Defensive',
+    passingCategory: 'Passing',
+    physicalCategory: 'Physical',
   },
   aiSearch: {
     placeholder: "Describe the player you're looking for...",
@@ -268,6 +273,11 @@ export const ka = {
     downloadingPdf: 'მზადდება...',
     similarPlayers: 'მსგავსი მოთამაშეები',
     noResults: 'შედეგი არ არის',
+    atAGlance: 'ერთი შეხედვით',
+    attacking: 'შეტევითი',
+    defensive: 'თავდაცვითი',
+    passingCategory: 'პასები',
+    physicalCategory: 'ფიზიკური',
   },
   aiSearch: {
     placeholder: 'აღწერეთ მოთამაშე, რომელსაც ეძებთ...',

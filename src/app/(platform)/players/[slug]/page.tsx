@@ -8,6 +8,7 @@ import { calculateAge, unwrapRelation } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
+import { StatBar } from '@/components/player/StatBar'
 import { PlayerProfileClient } from '@/components/player/PlayerProfileClient'
 import { WatchButton } from '@/components/player/WatchButton'
 import { MessageAcademyButton } from '@/components/chat/MessageAcademyButton'
@@ -96,6 +97,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       club: unwrapRelation(h.club),
     }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
+  const latestSeason =
+    seasonStats.length > 0
+      ? [...seasonStats].sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
+      : null
   const isFreeAgent = player.status === 'free_agent'
 
   // Build similar players query
@@ -420,10 +425,42 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         </div>
       </div>
 
-      {/* Skills + Season Stats grid */}
-      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Radar chart */}
-        {skills && (
+      {/* At a Glance — hero stats */}
+      {latestSeason && (
+        <div className="mt-12">
+          <h3 className="section-header mb-4">{t('players.atAGlance')}</h3>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { label: t('compare.goals'), value: latestSeason.goals, accent: true },
+              { label: t('compare.assists'), value: latestSeason.assists, accent: true },
+              { label: t('compare.matches'), value: latestSeason.matches_played, accent: false },
+              {
+                label: t('compare.passPercent'),
+                value: latestSeason.pass_accuracy,
+                suffix: '%',
+                accent: false,
+              },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl border border-border bg-card p-4 text-center"
+              >
+                <div
+                  className={`text-3xl font-bold ${item.accent ? 'text-accent' : 'text-foreground'}`}
+                >
+                  {item.value != null ? `${item.value}${item.suffix ?? ''}` : '-'}
+                </div>
+                <div className="mt-1 text-xs text-foreground-muted">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Skills: Radar + Grouped Stat Bars */}
+      {skills && (
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Radar chart */}
           <div className="card">
             <h3 className="section-header mb-4">{t('players.skills')}</h3>
             <RadarChart
@@ -433,66 +470,173 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               )}
             />
           </div>
-        )}
 
-        {/* Season stats table */}
-        {seasonStats.length > 0 && (
+          {/* Grouped stat bars */}
           <div className="card lg:col-span-2">
-            <h3 className="section-header mb-4">{t('players.seasonStats')}</h3>
-            <div
-              className="overflow-x-auto"
-              tabIndex={0}
-              role="region"
-              aria-label={t('players.seasonStats')}
-            >
-              <table className="w-full min-w-[550px] text-sm">
-                <thead>
-                  <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-foreground-muted">
-                    <th className="pb-2 pr-4">{t('stats.season')}</th>
-                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.mp')}</th>
-                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.g')}</th>
-                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.a')}</th>
-                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.min')}</th>
-                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.passPercent')}</th>
-                    <th className="whitespace-nowrap pb-2 pr-4">{t('stats.tackles')}</th>
-                    <th className="whitespace-nowrap pb-2">{t('stats.int')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {seasonStats.map((s) => (
-                    <tr key={s.season} className="table-row-hover border-b border-border/50">
-                      <td className="whitespace-nowrap py-2 pr-4 font-medium text-foreground">
-                        {s.season}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
-                        {s.matches_played}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">
-                        {s.goals}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">
-                        {s.assists}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
-                        {s.minutes_played}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
-                        {s.pass_accuracy ? `${s.pass_accuracy}%` : '-'}
-                      </td>
-                      <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
-                        {s.tackles}
-                      </td>
-                      <td className="whitespace-nowrap py-2 text-foreground-muted">
-                        {s.interceptions}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {/* Attacking */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <svg
+                    className="h-4 w-4 text-pos-att"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"
+                    />
+                  </svg>
+                  <span className="text-sm font-semibold text-foreground">
+                    {t('players.attacking')}
+                  </span>
+                </div>
+                <div className="space-y-2.5">
+                  <StatBar label={t('compare.shooting')} value={skills.shooting} />
+                  <StatBar label={t('compare.dribbling')} value={skills.dribbling} />
+                </div>
+              </div>
+
+              {/* Passing */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <svg
+                    className="h-4 w-4 text-pos-mid"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"
+                    />
+                  </svg>
+                  <span className="text-sm font-semibold text-foreground">
+                    {t('players.passingCategory')}
+                  </span>
+                </div>
+                <div className="space-y-2.5">
+                  <StatBar label={t('compare.passing')} value={skills.passing} />
+                </div>
+              </div>
+
+              {/* Defensive */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <svg
+                    className="h-4 w-4 text-pos-def"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                    />
+                  </svg>
+                  <span className="text-sm font-semibold text-foreground">
+                    {t('players.defensive')}
+                  </span>
+                </div>
+                <div className="space-y-2.5">
+                  <StatBar label={t('compare.defending')} value={skills.defending} />
+                </div>
+              </div>
+
+              {/* Physical */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <svg
+                    className="h-4 w-4 text-pos-wng"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
+                    />
+                  </svg>
+                  <span className="text-sm font-semibold text-foreground">
+                    {t('players.physicalCategory')}
+                  </span>
+                </div>
+                <div className="space-y-2.5">
+                  <StatBar label={t('compare.pace')} value={skills.pace} />
+                  <StatBar label={t('compare.physical')} value={skills.physical} />
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Season stats table */}
+      {seasonStats.length > 0 && (
+        <div className="mt-6 card">
+          <h3 className="section-header mb-4">{t('players.seasonStats')}</h3>
+          <div
+            className="overflow-x-auto"
+            tabIndex={0}
+            role="region"
+            aria-label={t('players.seasonStats')}
+          >
+            <table className="w-full min-w-[550px] text-sm">
+              <thead>
+                <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+                  <th className="pb-2 pr-4">{t('stats.season')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.mp')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.g')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.a')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.min')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.passPercent')}</th>
+                  <th className="whitespace-nowrap pb-2 pr-4">{t('stats.tackles')}</th>
+                  <th className="whitespace-nowrap pb-2">{t('stats.int')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {seasonStats.map((s) => (
+                  <tr key={s.season} className="table-row-hover border-b border-border/50">
+                    <td className="whitespace-nowrap py-2 pr-4 font-medium text-foreground">
+                      {s.season}
+                    </td>
+                    <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
+                      {s.matches_played}
+                    </td>
+                    <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">
+                      {s.goals}
+                    </td>
+                    <td className="whitespace-nowrap py-2 pr-4 font-semibold text-foreground">
+                      {s.assists}
+                    </td>
+                    <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
+                      {s.minutes_played}
+                    </td>
+                    <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
+                      {s.pass_accuracy ? `${s.pass_accuracy}%` : '-'}
+                    </td>
+                    <td className="whitespace-nowrap py-2 pr-4 text-foreground-muted">
+                      {s.tackles}
+                    </td>
+                    <td className="whitespace-nowrap py-2 text-foreground-muted">
+                      {s.interceptions}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Match history */}
       {matchStats.length > 0 && (

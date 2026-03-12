@@ -270,7 +270,7 @@ Gold on dark (#c9a227 on #141218) = 7:1 — highly visible. On `.landing`, gold 
 - [x] Fix any remaining hardcoded colors that fail on dark backgrounds
 
 - [x] `npm run build`
-- [ ] Visual spot check: player grid, player profile, navbar, admin sidebar, chat
+- [x] Visual spot check: player grid, player profile, navbar, admin sidebar, chat
 
 ### Session 3: Stat Presentation + Comparison (~60-70k)
 
@@ -279,35 +279,35 @@ Gold on dark (#c9a227 on #141218) = 7:1 — highly visible. On `.landing`, gold 
 **Files changed:** ~5-8
 
 **Color-coded stat rows:**
-- [ ] Create `StatBar` component (or add to existing) — thin horizontal progress bar with color-coded fill
+- [x] Create `StatBar` component (or add to existing) — thin horizontal progress bar with color-coded fill
   - Green (`#10b981`) = above average
   - Amber (`#f59e0b`) = average
   - Red (`#ef4444`) = below average
   - Bar width = percentile (0-100 scale based on stat value)
   - Dark bg behind bar, colored fill, stat value overlaid
-- [ ] Player profile page (`[slug]/page.tsx`): Add color-coded stat indicators to stat grid
-- [ ] Player profile page: Add "At a Glance" hero stats section — 4-5 large numbers in mini-cards at top
-- [ ] Player profile page: Group stats by category (Attacking, Defensive, Physical, Passing) with subtle headers
-- [ ] Stat grouping: Each category gets a subtle icon and label divider
+- [x] Player profile page (`[slug]/page.tsx`): Add color-coded stat indicators to stat grid
+- [x] Player profile page: Add "At a Glance" hero stats section — 4-5 large numbers in mini-cards at top
+- [x] Player profile page: Group stats by category (Attacking, Defensive, Physical, Passing) with subtle headers
+- [x] Stat grouping: Each category gets a subtle icon and label divider
 
 **Radar chart:**
-- [ ] `RadarChart.tsx`: Verify gold polygon on dark bg looks good (filled at 20% + gold stroke)
-- [ ] `RadarChart.tsx`: Grid lines use `var(--border)` (#33313d) — subtle on dark, good
-- [ ] `RadarChart.tsx`: Consider adding subtle background circle/polygon to make chart area distinct
+- [x] `RadarChart.tsx`: Verify gold polygon on dark bg looks good (filled at 20% + gold stroke)
+- [x] `RadarChart.tsx`: Grid lines use `var(--border)` (#33313d) — subtle on dark, good
+- [x] `RadarChart.tsx`: Consider adding subtle background circle/polygon to make chart area distinct
 
 **Comparison view:**
-- [ ] `CompareView.tsx`: Replace text-based stat comparison with center-growing bars
+- [x] `CompareView.tsx`: Replace text-based stat comparison with center-growing bars
   - Bars grow outward from center divider
   - Winner side: filled bar in green (`#10b981`)
   - Loser side: filled bar in muted gray (`var(--foreground-muted)`)
   - Equal values: both sides neutral
   - Zero vs zero: no bars
   - Missing stat: show "—" with no bar
-- [ ] `CompareRadarChart.tsx`: Player 1 = gold (`var(--accent)`), Player 2 = indigo (`var(--pos-def)` = `#6366f1`). Verify contrast of gold vs indigo overlay on dark
-- [ ] Comparison page: Dark bg, card surfaces for each player column
+- [x] `CompareRadarChart.tsx`: Player 1 = gold (`var(--accent)`), Player 2 = indigo (`var(--pos-def)` = `#6366f1`). Verify contrast of gold vs indigo overlay on dark
+- [x] Comparison page: Dark bg, card surfaces for each player column
 
-- [ ] `npm run build`
-- [ ] Visual spot check: player profile stats, comparison view, radar charts
+- [x] `npm run build`
+- [x] Visual spot check: player profile stats, comparison view, radar charts
 
 ### Session 4: Landing Page + Auth (~60-70k)
 

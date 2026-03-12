@@ -76,7 +76,6 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
   )
   const bothSelected = player1 && player2
 
-  // Build display labels from loaded player data
   const p1Label = player1
     ? `${lang === 'ka' ? player1.name_ka : player1.name} (${player1.position})`
     : ''
@@ -92,7 +91,7 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
         {bothSelected && <CopyLinkButton t={t} />}
       </div>
 
-      {/* Player selectors — async search instead of full player list */}
+      {/* Player selectors */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-8">
         <PlayerSearchSelect
           value={selectedP1}
@@ -136,152 +135,130 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
             </div>
           ) : null}
 
-          {/* Comparison table */}
-          <div className="card overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-xs text-foreground-muted">
-                  <th className="pb-2 text-left">{t('compare.attribute')}</th>
-                  <th className="pb-2 text-center">{getName(player1)}</th>
-                  <th className="pb-2 text-center">{getName(player2)}</th>
-                  <th className="pb-2 text-center">{t('compare.diff')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <CompareRow
-                  label={t('compare.position')}
-                  v1={player1.position}
-                  v2={player2.position}
-                />
-                <CompareRow
-                  label={t('compare.age')}
-                  v1={calculateAge(player1.date_of_birth)}
-                  v2={calculateAge(player2.date_of_birth)}
-                  showDiff
-                />
-                <CompareRow
-                  label={t('compare.club')}
-                  v1={getClubName(player1)}
-                  v2={getClubName(player2)}
-                />
-                <CompareRow
-                  label={t('compare.height')}
-                  v1={player1.height_cm ?? '-'}
-                  v2={player2.height_cm ?? '-'}
-                  suffix="cm"
-                  showDiff
-                />
-                <CompareRow
-                  label={t('compare.weight')}
-                  v1={player1.weight_kg ?? '-'}
-                  v2={player2.weight_kg ?? '-'}
-                  suffix="kg"
-                  showDiff
-                />
-                <CompareRow
-                  label={t('compare.foot')}
-                  v1={player1.preferred_foot ?? '-'}
-                  v2={player2.preferred_foot ?? '-'}
-                />
+          {/* Comparison with center-growing bars */}
+          <div className="card">
+            {/* Column headers */}
+            <div className="grid grid-cols-[1fr_auto_1fr] gap-2 mb-4 text-sm font-semibold">
+              <div className="text-left text-accent truncate">{getName(player1)}</div>
+              <div className="w-24 sm:w-32 text-center text-foreground-muted text-xs">vs</div>
+              <div className="text-right text-[var(--pos-def)] truncate">{getName(player2)}</div>
+            </div>
 
-                {/* Skills */}
-                {player1.skills && player2.skills && (
-                  <>
-                    <CompareRow
-                      label={t('compare.pace')}
-                      v1={player1.skills.pace ?? 0}
-                      v2={player2.skills.pace ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.shooting')}
-                      v1={player1.skills.shooting ?? 0}
-                      v2={player2.skills.shooting ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.passing')}
-                      v1={player1.skills.passing ?? 0}
-                      v2={player2.skills.passing ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.dribbling')}
-                      v1={player1.skills.dribbling ?? 0}
-                      v2={player2.skills.dribbling ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.defending')}
-                      v1={player1.skills.defending ?? 0}
-                      v2={player2.skills.defending ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.physical')}
-                      v1={player1.skills.physical ?? 0}
-                      v2={player2.skills.physical ?? 0}
-                      highlight
-                      showDiff
-                    />
-                  </>
-                )}
+            {/* Info rows (text only, no bars) */}
+            <div className="space-y-2 mb-6">
+              <InfoRow label={t('compare.position')} v1={player1.position} v2={player2.position} />
+              <InfoRow
+                label={t('compare.age')}
+                v1={String(calculateAge(player1.date_of_birth))}
+                v2={String(calculateAge(player2.date_of_birth))}
+              />
+              <InfoRow
+                label={t('compare.club')}
+                v1={getClubName(player1)}
+                v2={getClubName(player2)}
+              />
+              <InfoRow
+                label={t('compare.height')}
+                v1={player1.height_cm ? `${player1.height_cm}cm` : '-'}
+                v2={player2.height_cm ? `${player2.height_cm}cm` : '-'}
+              />
+              <InfoRow
+                label={t('compare.weight')}
+                v1={player1.weight_kg ? `${player1.weight_kg}kg` : '-'}
+                v2={player2.weight_kg ? `${player2.weight_kg}kg` : '-'}
+              />
+              <InfoRow
+                label={t('compare.foot')}
+                v1={player1.preferred_foot ?? '-'}
+                v2={player2.preferred_foot ?? '-'}
+              />
+            </div>
 
-                {/* Season stats */}
-                {player1.season_stats && player2.season_stats && (
-                  <>
-                    <CompareRow
-                      label={t('compare.matches')}
-                      v1={player1.season_stats.matches_played ?? 0}
-                      v2={player2.season_stats.matches_played ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.goals')}
-                      v1={player1.season_stats.goals ?? 0}
-                      v2={player2.season_stats.goals ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.assists')}
-                      v1={player1.season_stats.assists ?? 0}
-                      v2={player2.season_stats.assists ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.minutes')}
-                      v1={player1.season_stats.minutes_played ?? 0}
-                      v2={player2.season_stats.minutes_played ?? 0}
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.passPercent')}
-                      v1={player1.season_stats.pass_accuracy ?? '-'}
-                      v2={player2.season_stats.pass_accuracy ?? '-'}
-                      suffix="%"
-                      highlight
-                      showDiff
-                    />
-                    <CompareRow
-                      label={t('compare.tackles')}
-                      v1={player1.season_stats.tackles ?? 0}
-                      v2={player2.season_stats.tackles ?? 0}
-                      highlight
-                      showDiff
-                    />
-                  </>
-                )}
-              </tbody>
-            </table>
+            {/* Skills bars */}
+            {player1.skills && player2.skills && (
+              <div className="space-y-3 mb-6">
+                <div className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-2">
+                  {t('players.skills')}
+                </div>
+                <CompareBar
+                  label={t('compare.pace')}
+                  v1={player1.skills.pace}
+                  v2={player2.skills.pace}
+                  max={100}
+                />
+                <CompareBar
+                  label={t('compare.shooting')}
+                  v1={player1.skills.shooting}
+                  v2={player2.skills.shooting}
+                  max={100}
+                />
+                <CompareBar
+                  label={t('compare.passing')}
+                  v1={player1.skills.passing}
+                  v2={player2.skills.passing}
+                  max={100}
+                />
+                <CompareBar
+                  label={t('compare.dribbling')}
+                  v1={player1.skills.dribbling}
+                  v2={player2.skills.dribbling}
+                  max={100}
+                />
+                <CompareBar
+                  label={t('compare.defending')}
+                  v1={player1.skills.defending}
+                  v2={player2.skills.defending}
+                  max={100}
+                />
+                <CompareBar
+                  label={t('compare.physical')}
+                  v1={player1.skills.physical}
+                  v2={player2.skills.physical}
+                  max={100}
+                />
+              </div>
+            )}
+
+            {/* Season stats bars */}
+            {player1.season_stats && player2.season_stats && (
+              <div className="space-y-3">
+                <div className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-2">
+                  {t('players.seasonStats')}
+                </div>
+                <CompareBar
+                  label={t('compare.matches')}
+                  v1={player1.season_stats.matches_played}
+                  v2={player2.season_stats.matches_played}
+                />
+                <CompareBar
+                  label={t('compare.goals')}
+                  v1={player1.season_stats.goals}
+                  v2={player2.season_stats.goals}
+                />
+                <CompareBar
+                  label={t('compare.assists')}
+                  v1={player1.season_stats.assists}
+                  v2={player2.season_stats.assists}
+                />
+                <CompareBar
+                  label={t('compare.minutes')}
+                  v1={player1.season_stats.minutes_played}
+                  v2={player2.season_stats.minutes_played}
+                />
+                <CompareBar
+                  label={t('compare.passPercent')}
+                  v1={player1.season_stats.pass_accuracy}
+                  v2={player2.season_stats.pass_accuracy}
+                  suffix="%"
+                  max={100}
+                />
+                <CompareBar
+                  label={t('compare.tackles')}
+                  v1={player1.season_stats.tackles}
+                  v2={player2.season_stats.tackles}
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -292,6 +269,106 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
           </p>
         </div>
       )}
+    </div>
+  )
+}
+
+/** Simple text row for non-numeric info (position, club, foot) */
+function InfoRow({ label, v1, v2 }: { label: string; v1: string; v2: string }) {
+  return (
+    <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center text-sm">
+      <div className="text-right text-foreground">{v1}</div>
+      <div className="w-24 sm:w-32 text-center text-xs text-foreground-muted">{label}</div>
+      <div className="text-left text-foreground">{v2}</div>
+    </div>
+  )
+}
+
+/** Center-growing comparison bar — FotMob/SofaScore style */
+function CompareBar({
+  label,
+  v1,
+  v2,
+  max,
+  suffix = '',
+}: {
+  label: string
+  v1: number | null
+  v2: number | null
+  max?: number
+  suffix?: string
+}) {
+  const n1 = v1 ?? 0
+  const n2 = v2 ?? 0
+  const isNull1 = v1 == null
+  const isNull2 = v2 == null
+
+  // For bars without explicit max, use the larger value as reference
+  const reference = max ?? Math.max(n1, n2, 1)
+  const pct1 = (n1 / reference) * 100
+  const pct2 = (n2 / reference) * 100
+
+  // Determine winner for coloring
+  const winner = n1 > n2 ? 1 : n2 > n1 ? 2 : 0
+  const bothZero = n1 === 0 && n2 === 0
+
+  // Colors: winner = green, loser = muted gray, equal = both neutral
+  const color1 = bothZero
+    ? 'transparent'
+    : winner === 1
+      ? '#10b981'
+      : winner === 0
+        ? 'var(--foreground-muted)'
+        : 'rgba(152, 150, 163, 0.3)'
+  const color2 = bothZero
+    ? 'transparent'
+    : winner === 2
+      ? '#10b981'
+      : winner === 0
+        ? 'var(--foreground-muted)'
+        : 'rgba(152, 150, 163, 0.3)'
+
+  const textColor1 = winner === 1 ? 'text-emerald-500 font-semibold' : 'text-foreground'
+  const textColor2 = winner === 2 ? 'text-emerald-500 font-semibold' : 'text-foreground'
+
+  return (
+    <div>
+      {/* Label centered above */}
+      <div className="text-center text-xs text-foreground-muted mb-1">{label}</div>
+      <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
+        {/* P1 value + bar (right-aligned, growing left) */}
+        <div className="flex items-center gap-2">
+          <span className={`shrink-0 text-sm tabular-nums ${textColor1}`}>
+            {isNull1 ? '—' : `${n1}${suffix}`}
+          </span>
+          <div className="flex-1 h-2 rounded-full bg-border/30 overflow-hidden relative">
+            {!bothZero && !isNull1 && (
+              <div
+                className="absolute inset-y-0 right-0 rounded-full transition-all duration-500"
+                style={{ width: `${pct1}%`, backgroundColor: color1 }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Center divider */}
+        <div className="w-px h-4 bg-border" />
+
+        {/* P2 bar + value (left-aligned, growing right) */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1 h-2 rounded-full bg-border/30 overflow-hidden relative">
+            {!bothZero && !isNull2 && (
+              <div
+                className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
+                style={{ width: `${pct2}%`, backgroundColor: color2 }}
+              />
+            )}
+          </div>
+          <span className={`shrink-0 text-sm tabular-nums ${textColor2}`}>
+            {isNull2 ? '—' : `${n2}${suffix}`}
+          </span>
+        </div>
+      </div>
     </div>
   )
 }
@@ -342,58 +419,5 @@ function CopyLinkButton({ t }: { t: (key: string) => string }) {
         </>
       )}
     </button>
-  )
-}
-
-function CompareRow({
-  label,
-  v1,
-  v2,
-  highlight = false,
-  showDiff = false,
-  suffix = '',
-}: {
-  label: string
-  v1: string | number
-  v2: string | number
-  highlight?: boolean
-  showDiff?: boolean
-  suffix?: string
-}) {
-  const n1 = typeof v1 === 'number' ? v1 : NaN
-  const n2 = typeof v2 === 'number' ? v2 : NaN
-
-  let c1 = 'text-foreground'
-  let c2 = 'text-foreground'
-
-  if (highlight && !isNaN(n1) && !isNaN(n2) && n1 !== n2) {
-    c1 = n1 > n2 ? 'text-accent font-semibold' : 'text-foreground-muted'
-    c2 = n2 > n1 ? 'text-accent font-semibold' : 'text-foreground-muted'
-  }
-
-  // Display values with suffix
-  const display1 = typeof v1 === 'number' ? `${v1}${suffix}` : v1
-  const display2 = typeof v2 === 'number' ? `${v2}${suffix}` : v2
-
-  // Diff cell
-  let diffContent: React.ReactNode = null
-  if (showDiff && !isNaN(n1) && !isNaN(n2)) {
-    const diff = n1 - n2
-    if (diff > 0) {
-      diffContent = <span className="text-accent font-medium">+{diff}</span>
-    } else if (diff < 0) {
-      diffContent = <span className="text-red-600 font-medium">{diff}</span>
-    } else {
-      diffContent = <span className="text-foreground-muted">0</span>
-    }
-  }
-
-  return (
-    <tr className="border-b border-border/50">
-      <td className="py-2 text-foreground-muted">{label}</td>
-      <td className={`py-2 text-center ${c1}`}>{display1}</td>
-      <td className={`py-2 text-center ${c2}`}>{display2}</td>
-      <td className="py-2 text-center text-xs">{diffContent}</td>
-    </tr>
   )
 }
