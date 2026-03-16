@@ -172,7 +172,7 @@ export function WatchlistPlayerRow({
                       key={folder.id}
                       onClick={() => handleToggleFolder(folder.id)}
                       disabled={isPending}
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-xs text-foreground-muted hover:bg-surface hover:text-foreground"
+                      className="flex w-full items-center gap-2 px-3 py-1.5 text-xs text-foreground-muted hover:bg-elevated hover:text-foreground"
                     >
                       <span
                         className={`h-3 w-3 rounded border ${folderIds.includes(folder.id) ? 'bg-primary border-primary' : 'border-border'}`}
@@ -201,7 +201,7 @@ export function WatchlistPlayerRow({
           <button
             onClick={handleRemove}
             disabled={isPending}
-            className="rounded p-1 text-foreground-muted/50 hover:text-red-600 transition-colors disabled:opacity-50"
+            className="rounded p-1 text-foreground-muted/50 hover:text-danger transition-colors disabled:opacity-50"
             title={t('dashboard.removeFromWatchlist')}
           >
             <svg
@@ -222,13 +222,13 @@ export function WatchlistPlayerRow({
         {tags.map((tag) => (
           <span
             key={tag.id}
-            className="inline-flex items-center gap-0.5 rounded-full bg-surface px-2 py-0.5 text-[11px] text-foreground-muted"
+            className="inline-flex items-center gap-0.5 rounded-full bg-elevated px-2 py-0.5 text-[11px] text-foreground-muted"
           >
             #{tag.tag}
             <button
               onClick={() => handleRemoveTag(tag.id)}
               disabled={isPending}
-              className="ml-0.5 hover:text-red-600"
+              className="ml-0.5 hover:text-danger"
             >
               &times;
             </button>

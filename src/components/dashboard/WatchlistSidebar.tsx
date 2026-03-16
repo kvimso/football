@@ -119,7 +119,7 @@ export function WatchlistSidebar({
             className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
               !activeFolder
                 ? 'bg-primary/10 text-primary font-medium'
-                : 'text-foreground-muted hover:text-foreground hover:bg-surface'
+                : 'text-foreground-muted hover:text-foreground hover:bg-elevated'
             }`}
           >
             <span>{t('dashboard.allPlayers')}</span>
@@ -163,7 +163,7 @@ export function WatchlistSidebar({
                     className={`flex flex-1 items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
                       activeFolder === folder.id
                         ? 'bg-primary/10 text-primary font-medium'
-                        : 'text-foreground-muted hover:text-foreground hover:bg-surface'
+                        : 'text-foreground-muted hover:text-foreground hover:bg-elevated'
                     }`}
                   >
                     <span className="truncate">{folder.name}</span>
@@ -194,7 +194,7 @@ export function WatchlistSidebar({
                     </button>
                     <button
                       onClick={() => handleDelete(folder.id)}
-                      className="rounded p-0.5 text-foreground-muted/50 hover:text-red-600"
+                      className="rounded p-0.5 text-foreground-muted/50 hover:text-danger"
                       title={t('dashboard.deleteFolder')}
                     >
                       <svg
@@ -223,7 +223,7 @@ export function WatchlistSidebar({
             className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
               activeFolder === '__unfoldered'
                 ? 'bg-primary/10 text-primary font-medium'
-                : 'text-foreground-muted hover:text-foreground hover:bg-surface'
+                : 'text-foreground-muted hover:text-foreground hover:bg-elevated'
             }`}
           >
             <span className="italic">{t('dashboard.unfoldered')}</span>
@@ -245,7 +245,7 @@ export function WatchlistSidebar({
                 className={`rounded-full px-2 py-0.5 text-[11px] transition-colors ${
                   activeTags.includes(tag)
                     ? 'bg-primary text-background'
-                    : 'bg-surface text-foreground-muted hover:text-foreground'
+                    : 'bg-elevated text-foreground-muted hover:text-foreground'
                 }`}
               >
                 #{tag}
