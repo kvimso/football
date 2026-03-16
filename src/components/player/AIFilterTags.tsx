@@ -95,19 +95,19 @@ export function AIFilterTags({ filters, onRemoveFilter, onClearAll }: AIFilterTa
       role="region"
       aria-label={t('aiSearch.label')}
     >
-      <span className="text-xs font-medium text-purple-700/80">{t('aiSearch.label')}:</span>
+      <span className="text-xs font-medium text-primary">{t('aiSearch.label')}:</span>
       {entries.map(([key, value]) => {
         const label = getLabel(key, value)
         if (!label) return null
         return (
           <span
             key={key}
-            className="inline-flex items-center gap-1 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-1 text-[11px] font-medium text-purple-700"
+            className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary"
           >
             {label}
             <button
               onClick={() => onRemoveFilter(key as keyof AISearchFilters)}
-              className="ml-0.5 text-purple-500/50 hover:text-purple-700 transition-colors"
+              className="ml-0.5 text-primary/50 hover:text-primary transition-colors"
               aria-label={`${t('aiSearch.clear')} ${label}`}
             >
               <svg
@@ -125,7 +125,7 @@ export function AIFilterTags({ filters, onRemoveFilter, onClearAll }: AIFilterTa
       })}
       <button
         onClick={onClearAll}
-        className="ml-auto inline-flex items-center gap-1 rounded-full border border-purple-500/15 bg-purple-500/5 px-2.5 py-1 text-[11px] font-medium text-purple-700/70 transition-colors hover:bg-purple-500/10 hover:text-purple-500"
+        className="ml-auto inline-flex items-center gap-1 rounded-full border border-primary/15 bg-primary/5 px-2.5 py-1 text-[11px] font-medium text-primary/70 transition-colors hover:bg-primary/10 hover:text-primary"
       >
         <svg
           className="h-3 w-3"
