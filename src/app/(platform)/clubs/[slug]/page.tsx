@@ -73,7 +73,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     .from('players')
     .select(
       `
-      slug, name, name_ka, position, date_of_birth, height_cm,
+      id, slug, name, name_ka, position, date_of_birth, height_cm,
       preferred_foot, is_featured, photo_url, status,
       club:clubs!players_club_id_fkey ( name, name_ka ),
       season_stats:player_season_stats ( season, goals, assists, matches_played )

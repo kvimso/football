@@ -217,7 +217,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         : ''
 
   return (
-    <div className="relative z-10 rounded-2xl border border-border bg-surface p-5 shadow-sm space-y-4">
+    <div className="sticky top-[48px] relative z-10 rounded-2xl border border-border bg-surface p-5 shadow-sm space-y-4">
       {/* Layer 1: Search bar */}
       <div className="relative">
         <svg

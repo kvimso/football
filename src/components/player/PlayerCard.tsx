@@ -1,135 +1,110 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useRef, useTransition } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
-import {
-  POSITION_COLOR_CLASSES,
-  POSITION_LEFT_BORDER_CLASSES,
-  BLUR_DATA_URL,
-  POPULAR_VIEWS_THRESHOLD,
-} from '@/lib/constants'
+import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 import { addToWatchlist, removeFromWatchlist } from '@/app/actions/watchlist'
-import type { Position, PlayerStatus } from '@/lib/types'
+import type { PlayerBrowseData } from '@/lib/types'
 
 interface PlayerCardProps {
-  player: {
-    id?: string
-    slug: string
-    name: string
-    name_ka: string
-    position: Position
-    date_of_birth: string
-    height_cm: number | null
-    preferred_foot: string | null
-    is_featured: boolean | null
-    photo_url: string | null
-    status: PlayerStatus
-    club: {
-      name: string
-      name_ka: string
-    } | null
-    season_stats: {
-      goals: number | null
-      assists: number | null
-      matches_played: number | null
-    } | null
-  }
+  player: PlayerBrowseData
   viewCount?: number
   isWatched?: boolean
 }
 
 export function PlayerCard({ player, viewCount, isWatched: initialWatched }: PlayerCardProps) {
   const { t, lang } = useLang()
+  const actionInFlightRef = useRef(false)
   const [isWatched, setIsWatched] = useState(initialWatched ?? false)
   const [isPending, startTransition] = useTransition()
   const age = calculateAge(player.date_of_birth)
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = player.club ? (lang === 'ka' ? player.club.name_ka : player.club.name) : null
   const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-primary/20 text-primary'
-  const borderClass = POSITION_LEFT_BORDER_CLASSES[player.position] ?? 'border-l-primary'
   const isFreeAgent = player.status === 'free_agent'
   const isFeatured = player.is_featured
+
+  // Sync from server only when no local action is pending
+  useEffect(() => {
+    if (!actionInFlightRef.current && initialWatched !== undefined) {
+      setIsWatched(initialWatched)
+    }
+  }, [initialWatched])
 
   function handleWatch(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     if (!player.id) return
     const playerId = player.id
+    actionInFlightRef.current = true
     startTransition(async () => {
-      if (isWatched) {
-        const result = await removeFromWatchlist(playerId)
-        if (!result.error) setIsWatched(false)
-      } else {
-        const result = await addToWatchlist(playerId)
-        if (!result.error) setIsWatched(true)
+      try {
+        if (isWatched) {
+          const result = await removeFromWatchlist(playerId)
+          if (!result.error) setIsWatched(false)
+        } else {
+          const result = await addToWatchlist(playerId)
+          if (!result.error) setIsWatched(true)
+        }
+      } finally {
+        actionInFlightRef.current = false
       }
     })
   }
 
   return (
-    <Link
-      href={`/players/${player.slug}`}
-      className={`card group block overflow-hidden !border-l-[3px] ${borderClass}${isFeatured ? ' shadow-[0_0_20px_rgba(201,162,39,0.12)]' : ''}`}
-    >
-      {/* Photo area */}
-      <div className="relative mb-3 flex h-44 items-center justify-center overflow-hidden rounded-lg bg-background">
-        {player.photo_url ? (
-          <Image
-            src={player.photo_url}
-            alt={player.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
-            placeholder="blur"
-            blurDataURL={BLUR_DATA_URL}
-          />
-        ) : (
-          <PlayerSilhouette size="md" className="text-foreground-muted/20" />
-        )}
-        {player.is_featured && (
-          <span className="absolute top-2 right-2 rounded-full bg-primary/90 px-2 py-0.5 text-[10px] font-semibold text-background">
-            {t('players.featured')}
-          </span>
-        )}
-        <span
-          className={`absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}
-        >
-          {player.position}
-        </span>
-        {viewCount != null && viewCount >= POPULAR_VIEWS_THRESHOLD && (
-          <span className="absolute bottom-2 right-2 rounded-full bg-amber-500/90 px-2 py-0.5 text-[10px] font-semibold text-white">
-            {t('players.popular')}
-          </span>
-        )}
-        {viewCount != null && viewCount > 0 && (
-          <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/80 backdrop-blur-sm">
-            <svg
-              className="h-3 w-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178zM15 12a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-            {viewCount}
-          </span>
-        )}
-      </div>
+    <Link href={`/players/${player.slug}`} className="card group block overflow-hidden">
+      {/* Top row: photo + info + star */}
+      <div className="flex gap-3">
+        {/* Photo — 56px rounded square */}
+        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-elevated">
+          {player.photo_url ? (
+            <Image
+              src={player.photo_url}
+              alt={player.name}
+              fill
+              className="object-cover"
+              sizes="56px"
+            />
+          ) : (
+            <PlayerSilhouette size="sm" className="text-foreground-muted/20" />
+          )}
+        </div>
 
-      {/* Info + Watch row */}
-      <div className="flex items-start justify-between gap-1 px-1">
-        <h3 className="truncate text-base font-bold text-foreground group-hover:text-primary transition-colors">
-          {displayName}
-        </h3>
+        {/* Name + meta */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+              {displayName}
+            </h3>
+            <span
+              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}
+            >
+              {player.position}
+            </span>
+          </div>
+          <div className="mt-0.5 flex items-center gap-1.5 text-xs text-foreground-muted">
+            {isFreeAgent ? (
+              <span className="font-medium text-yellow-500 shrink-0">{t('players.freeAgent')}</span>
+            ) : clubName ? (
+              <span className="truncate">{clubName}</span>
+            ) : null}
+            <span>·</span>
+            <span className="shrink-0">{age}</span>
+            {player.preferred_foot && (
+              <>
+                <span>·</span>
+                <span>{player.preferred_foot.charAt(0)}</span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Watchlist star */}
         {initialWatched !== undefined && (
           <button
             onClick={handleWatch}
@@ -143,44 +118,36 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
           </button>
         )}
       </div>
-      <div className="mt-1 flex items-center gap-1.5 px-1 text-xs text-foreground-muted min-w-0">
-        {isFreeAgent ? (
-          <span className="font-medium text-yellow-500 shrink-0">{t('players.freeAgent')}</span>
-        ) : clubName ? (
-          <span className="truncate">{clubName}</span>
-        ) : null}
-        <span className="shrink-0">·</span>
-        <span className="shrink-0">{age}</span>
-        {player.preferred_foot && (
-          <>
-            <span className="shrink-0">·</span>
-            <span className="shrink-0">{player.preferred_foot.charAt(0)}</span>
-          </>
-        )}
-      </div>
 
-      {/* Stats bar */}
+      {/* Stat chips */}
       {player.season_stats && (
-        <div className="mt-3 flex gap-0 rounded-lg bg-background/60 overflow-hidden text-xs">
-          <div className="flex-1 py-2 text-center border-r border-border/50">
-            <span className="block text-sm font-bold text-foreground">
-              {player.season_stats.goals}
+        <div className="mt-3 flex gap-2">
+          <div className="flex-1 rounded bg-elevated px-2 py-1.5 text-center">
+            <span className="block text-sm font-medium text-foreground">
+              {player.season_stats.goals ?? 0}
             </span>
-            <span className="text-[10px] text-foreground-muted">{t('players.goals')}</span>
+            <span className="text-[9px] text-foreground-faint">{t('players.goals')}</span>
           </div>
-          <div className="flex-1 py-2 text-center border-r border-border/50">
-            <span className="block text-sm font-bold text-foreground">
-              {player.season_stats.assists}
+          <div className="flex-1 rounded bg-elevated px-2 py-1.5 text-center">
+            <span className="block text-sm font-medium text-foreground">
+              {player.season_stats.assists ?? 0}
             </span>
-            <span className="text-[10px] text-foreground-muted">{t('players.assists')}</span>
+            <span className="text-[9px] text-foreground-faint">{t('players.assists')}</span>
           </div>
-          <div className="flex-1 py-2 text-center">
-            <span className="block text-sm font-bold text-foreground">
-              {player.season_stats.matches_played}
+          <div className="flex-1 rounded bg-elevated px-2 py-1.5 text-center">
+            <span className="block text-sm font-medium text-foreground">
+              {player.season_stats.matches_played ?? 0}
             </span>
-            <span className="text-[10px] text-foreground-muted">{t('players.matches')}</span>
+            <span className="text-[9px] text-foreground-faint">{t('players.matches')}</span>
           </div>
         </div>
+      )}
+
+      {/* Featured badge */}
+      {isFeatured && (
+        <span className="mt-2 inline-block rounded-full bg-primary-muted px-2 py-0.5 text-[10px] font-semibold text-primary">
+          {t('players.featured')}
+        </span>
       )}
     </Link>
   )
