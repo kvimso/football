@@ -95,13 +95,13 @@ Light-first with dark mode toggle. All tokens defined in `globals.css`.
 | Position | Light | Light BG | Dark | Dark BG |
 |---|---|---|---|---|
 | GK | `#B87A08` | `#FDF5E0` | `#FBBF24` | `#2D2508` |
-| DEF | `#2563EB` | `#E8F0FE` | `#5B9CF0` | `#172035` |
-| MID | `#0E8585` | `#E0F5F5` | `#2DD4BF` | `#142D2D` |
+| DEF | `#CC3333` | `#FDE8E8` | `#F87171` | `#2B1717` |
+| MID | `#1B8A4A` | `#E3F5E9` | `#4ADE80` | `#1A2E1F` |
 | ATT | `#8B3FC7` | `#F3EAFC` | `#C084FC` | `#231735` |
-| WNG | `#1B8A4A` | `#E3F5E9` | `#4ADE80` | `#1A2E1F` |
-| ST | `#CC3333` | `#FDE8E8` | `#F87171` | `#2B1717` |
+| WNG | `#0E8585` | `#E0F5F5` | `#2DD4BF` | `#142D2D` |
+| ST | `#2563EB` | `#E8F0FE` | `#5B9CF0` | `#172035` |
 
-> **Note:** All 6 positions have distinct colors. MID = teal (not green like WNG), ST = red (not gold like GK).
+> **Note:** All 6 positions have distinct colors. GK = yellow, DEF = red, MID = green, ATT = purple, WNG = cyan, ST = blue.
 
 ---
 
