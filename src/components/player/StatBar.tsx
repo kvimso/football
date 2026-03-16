@@ -5,9 +5,9 @@ interface StatBarProps {
 }
 
 function getColor(pct: number): string {
-  if (pct >= 70) return '#10b981' // emerald-500 — above average
-  if (pct >= 40) return '#f59e0b' // amber-500 — average
-  return '#ef4444' // red-500 — below average
+  if (pct >= 70) return 'var(--primary)' // green — above average
+  if (pct >= 40) return 'var(--pos-gk)' // gold — average
+  return 'var(--foreground-muted)' // muted — below average
 }
 
 export function StatBar({ label, value, maxValue = 100 }: StatBarProps) {
