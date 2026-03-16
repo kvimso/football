@@ -13,6 +13,11 @@ export const en = {
     logout: 'Logout',
     contact: 'Contact',
     switchLanguage: 'Switch language',
+    messages: 'Messages',
+    switchToLight: 'Switch to light mode',
+    switchToDark: 'Switch to dark mode',
+    myAccount: 'My Account',
+    getStarted: 'Get Started',
   },
   common: {
     loading: 'Loading...',
@@ -157,6 +162,11 @@ export const ka = {
     logout: 'გასვლა',
     contact: 'კონტაქტი',
     switchLanguage: 'ენის შეცვლა',
+    messages: 'შეტყობინებები',
+    switchToLight: 'ღია რეჟიმზე გადართვა',
+    switchToDark: 'მუქ რეჟიმზე გადართვა',
+    myAccount: 'ჩემი ანგარიში',
+    getStarted: 'დაწყება',
   },
   common: {
     loading: 'იტვირთება...',

@@ -23,7 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <>
       <Navbar />
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col px-4 pt-8">
+      <div className="mx-auto flex min-h-[calc(100dvh-var(--navbar-height))] max-w-7xl flex-col px-4 pt-8">
         <DashboardNav />
         <div className="mt-6 min-h-0 flex-1">{children}</div>
       </div>

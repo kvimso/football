@@ -23,7 +23,7 @@ export default async function PlatformLayout({ children }: { children: React.Rea
   return (
     <>
       <Navbar />
-      <div className="mx-auto min-h-[calc(100vh-4rem)] max-w-7xl px-4 py-8">
+      <div className="mx-auto min-h-[calc(100dvh-var(--navbar-height))] max-w-7xl px-4 py-8">
         <div className="flex flex-col gap-6 md:flex-row">
           <PlatformSidebar />
           <main className="min-w-0 flex-1">{children}</main>

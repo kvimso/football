@@ -12,6 +12,9 @@
   --elevated: #EAE6DF;
   --foreground: #1A1917;
   --foreground-muted: #7A756F;
+  --foreground-secondary: #4A4641;
+  --foreground-faint: #A39E97;
+  --navbar-height: 48px;
   --primary: #1B8A4A;
   --primary-hover: #15703C;
   --primary-muted: #E3F5E9;
@@ -46,6 +49,8 @@
   --elevated: #2A2623;
   --foreground: #EEECE8;
   --foreground-muted: #9A9590;
+  --foreground-secondary: #C4BFB8;
+  --foreground-faint: #6B6660;
   --primary: #4ADE80;
   --primary-hover: #3CC96E;
   --primary-muted: #1A2E1F;
@@ -77,6 +82,8 @@
   --color-elevated: var(--elevated);
   --color-foreground: var(--foreground);
   --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-faint: var(--foreground-faint);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-muted: var(--primary-muted);

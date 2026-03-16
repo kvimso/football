@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { useClickOutside } from '@/hooks/useClickOutside'
+import { registerDropdown, clearDropdown } from '@/lib/dropdownManager'
 import {
   getUnreadCount,
   getRecentNotifications,
@@ -40,14 +42,26 @@ export function NotificationBell() {
     }
   }, [enabled])
 
-  // Close on outside click
+  const closeFn = useCallback(() => setOpen(false), [])
+  useClickOutside(ref, closeFn, open)
+
+  // Register/clear with dropdown manager for mutual exclusion
+  useEffect(() => {
+    if (open) {
+      registerDropdown(closeFn)
+    } else {
+      clearDropdown(closeFn)
+    }
+  }, [open, closeFn])
+
+  // Close on Escape key
   useEffect(() => {
     if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
   }, [open])
 
   const handleToggle = useCallback(async () => {

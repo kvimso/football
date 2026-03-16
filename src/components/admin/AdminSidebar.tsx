@@ -86,18 +86,14 @@ export function AdminSidebar({ clubName, clubNameKa }: AdminSidebarProps) {
 
   const renderUnreadBadge = (link: (typeof links)[number]) => {
     if (!link.showUnread || unreadCount <= 0) return null
-    return (
-      <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-        {unreadCount > 99 ? '99+' : unreadCount}
-      </span>
-    )
+    return <span className="h-2 w-2 rounded-full bg-primary" />
   }
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 md:block">
-        <div className="sticky top-24">
+        <div className="sticky top-[calc(var(--navbar-height)+2rem)]">
           {displayName && (
             <div className="mb-4 rounded-lg border border-border bg-surface p-3 border-l-4 border-l-primary">
               <p className="text-xs text-foreground-muted">{t('admin.title')}</p>

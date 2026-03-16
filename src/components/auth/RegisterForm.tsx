@@ -47,7 +47,7 @@ export function RegisterForm() {
 
   if (success) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+      <div className="flex min-h-[calc(100dvh-var(--navbar-height))] items-center justify-center px-4">
         <div className="w-full max-w-md">
           <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
@@ -77,7 +77,7 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-8">
+    <div className="flex min-h-[calc(100dvh-var(--navbar-height))] items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg">
           {/* GFT branding */}

@@ -1,26 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useAuth } from '@/context/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { NotificationBell } from './NotificationBell'
+import { ThemeToggle } from './ThemeToggle'
+import { AvatarDropdown } from './AvatarDropdown'
 import { LanguageToggle } from '@/components/ui/LanguageToggle'
-
-const NAV_ICONS: Record<string, string> = {
-  '/players':
-    'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z',
-  '/matches':
-    'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5',
-  '/clubs':
-    'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21',
-  '/about':
-    'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z',
-  '/contact':
-    'M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75',
-}
 
 function NavLink({
   href,
@@ -33,7 +22,6 @@ function NavLink({
 }) {
   const pathname = usePathname()
   const isActive = pathname === href || pathname.startsWith(href + '/')
-  const iconPath = NAV_ICONS[href]
 
   return (
     <Link
@@ -41,17 +29,6 @@ function NavLink({
       onClick={onClick}
       className={`relative flex items-center gap-1.5 py-1 text-sm transition-colors ${isActive ? 'text-primary font-medium' : 'text-foreground-muted hover:text-foreground'}`}
     >
-      {iconPath && (
-        <svg
-          className="h-3.5 w-3.5 shrink-0"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={1.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d={iconPath} />
-        </svg>
-      )}
       {children}
       {isActive && (
         <span className="absolute -bottom-[13px] left-0 right-0 h-0.5 bg-primary rounded-full" />
@@ -60,14 +37,27 @@ function NavLink({
   )
 }
 
-export function Navbar() {
+interface NavbarProps {
+  showInfoLinks?: boolean
+}
+
+export function Navbar({ showInfoLinks = false }: NavbarProps) {
   const { t } = useLang()
-  const { user, userRole, signOut } = useAuth()
-  const router = useRouter()
+  const { user, userRole } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [loggingOut, setLoggingOut] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
+  // Close mobile menu on viewport resize crossing md breakpoint
+  useEffect(() => {
+    const mql = window.matchMedia('(min-width: 768px)')
+    const handler = () => {
+      if (mql.matches) setMenuOpen(false)
+    }
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
+  // Poll unread message count every 30s
   useEffect(() => {
     if (!user || userRole === 'platform_admin') return
     let cancelled = false
@@ -79,10 +69,7 @@ export function Navbar() {
       })
     }
 
-    // Initial fetch
     fetchUnread()
-
-    // Poll every 30s instead of subscribing to all messages globally
     const interval = setInterval(fetchUnread, 30_000)
 
     return () => {
@@ -91,13 +78,7 @@ export function Navbar() {
     }
   }, [user, userRole])
 
-  async function handleLogout() {
-    if (loggingOut) return
-    setLoggingOut(true)
-    await signOut()
-    router.push('/')
-    router.refresh()
-  }
+  const closeMobile = useCallback(() => setMenuOpen(false), [])
 
   const dashboardHref =
     userRole === 'platform_admin'
@@ -105,21 +86,18 @@ export function Navbar() {
       : userRole === 'academy_admin'
         ? '/admin'
         : '/dashboard'
-  const dashboardLabel =
-    userRole === 'platform_admin'
-      ? t('platform.title')
-      : userRole === 'academy_admin'
-        ? t('nav.admin')
-        : t('nav.dashboard')
+
+  const messagesHref = userRole === 'academy_admin' ? '/admin/messages' : '/dashboard/messages'
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav-bg shadow-sm">
-      <nav className="mx-auto grid h-14 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4">
+      <nav className="mx-auto grid h-12 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4">
         {/* Logo — left */}
         <div className="flex items-center">
           <Link
             href={user ? dashboardHref : '/'}
-            className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-background"
+            className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-btn-primary-text"
+            title={user ? t('nav.dashboard') : undefined}
           >
             GFT
           </Link>
@@ -134,54 +112,54 @@ export function Navbar() {
               <NavLink href="/clubs">{t('nav.clubs')}</NavLink>
             </>
           )}
-          <NavLink href="/about">{t('nav.about')}</NavLink>
-          <NavLink href="/contact">{t('nav.contact')}</NavLink>
+          {showInfoLinks && (
+            <>
+              <NavLink href="/about">{t('nav.about')}</NavLink>
+              <NavLink href="/contact">{t('nav.contact')}</NavLink>
+            </>
+          )}
         </div>
 
         {/* Right side actions */}
-        <div className="flex items-center justify-end gap-2.5">
+        <div className="flex items-center justify-end gap-2">
           <LanguageToggle />
 
           {user ? (
             <>
-              {/* Notification bell */}
               <NotificationBell />
 
-              {/* Dashboard link with role badge */}
-              <Link
-                href={dashboardHref}
-                className="flex items-center gap-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                <svg
-                  className="h-3.5 w-3.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
+              {/* Messages link with green dot */}
+              {userRole !== 'platform_admin' && (
+                <Link
+                  href={messagesHref}
+                  className="relative hidden items-center gap-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors md:flex"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
-                  />
-                </svg>
-                {dashboardLabel}
-                {unreadCount > 0 && (
-                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
-                )}
-              </Link>
-              <button
-                onClick={handleLogout}
-                disabled={loggingOut}
-                className="rounded-md border border-border px-3 py-1 text-xs text-foreground-muted hover:text-foreground disabled:opacity-50 transition-colors"
-              >
-                {loggingOut ? t('common.loading') : t('nav.logout')}
-              </button>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+                    />
+                  </svg>
+                  {t('nav.messages')}
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1.5 h-2 w-2 rounded-full bg-primary" />
+                  )}
+                </Link>
+              )}
+
+              <ThemeToggle />
+              <AvatarDropdown />
             </>
           ) : (
             <>
+              <ThemeToggle />
               <Link
                 href="/login"
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"
@@ -198,6 +176,7 @@ export function Navbar() {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden rounded-md p-1.5 text-foreground-muted hover:text-foreground transition-colors"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
             <svg
               className="h-5 w-5"
@@ -219,35 +198,59 @@ export function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="border-t border-border bg-nav-bg px-4 py-3 md:hidden">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
+            {/* Platform links */}
             {user && (
               <>
-                <NavLink href="/players" onClick={() => setMenuOpen(false)}>
+                <NavLink href="/players" onClick={closeMobile}>
                   {t('nav.players')}
                 </NavLink>
-                <NavLink href="/matches" onClick={() => setMenuOpen(false)}>
+                <NavLink href="/matches" onClick={closeMobile}>
                   {t('nav.matches')}
                 </NavLink>
-                <NavLink href="/clubs" onClick={() => setMenuOpen(false)}>
+                <NavLink href="/clubs" onClick={closeMobile}>
                   {t('nav.clubs')}
                 </NavLink>
               </>
             )}
-            <NavLink href="/about" onClick={() => setMenuOpen(false)}>
-              {t('nav.about')}
-            </NavLink>
-            <NavLink href="/contact" onClick={() => setMenuOpen(false)}>
-              {t('nav.contact')}
-            </NavLink>
+            {showInfoLinks && (
+              <>
+                <NavLink href="/about" onClick={closeMobile}>
+                  {t('nav.about')}
+                </NavLink>
+                <NavLink href="/contact" onClick={closeMobile}>
+                  {t('nav.contact')}
+                </NavLink>
+              </>
+            )}
+
             {user && (
-              <NavLink href={dashboardHref} onClick={() => setMenuOpen(false)}>
-                {dashboardLabel}
-                {unreadCount > 0 && (
-                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
+              <>
+                {/* Separator */}
+                <div className="border-t border-border my-1" />
+
+                {/* Your Space links */}
+                <NavLink href={dashboardHref} onClick={closeMobile}>
+                  {userRole === 'platform_admin'
+                    ? t('platform.title')
+                    : userRole === 'academy_admin'
+                      ? t('nav.admin')
+                      : t('nav.dashboard')}
+                </NavLink>
+                {userRole === 'scout' && (
+                  <NavLink href="/dashboard/watchlist" onClick={closeMobile}>
+                    {t('watchlist.watching')}
+                  </NavLink>
                 )}
-              </NavLink>
+                {userRole !== 'platform_admin' && (
+                  <NavLink href={messagesHref} onClick={closeMobile}>
+                    {t('nav.messages')}
+                    {unreadCount > 0 && (
+                      <span className="ml-1.5 h-2 w-2 rounded-full bg-primary inline-block" />
+                    )}
+                  </NavLink>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -26,7 +26,7 @@ export async function LandingFooter() {
             <Link href="/" className="text-lg font-bold text-primary">
               GFT
             </Link>
-            <p className="mt-3 text-sm leading-relaxed text-foreground-muted">
+            <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
               {t('landing.footerTagline')}
             </p>
           </div>
@@ -102,10 +102,10 @@ export async function LandingFooter() {
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-4 border-t border-border pt-8 sm:flex-row sm:justify-between">
-          <p className="text-xs text-foreground-muted">
+          <p className="text-xs text-foreground-faint">
             &copy; {new Date().getFullYear()} {t('footer.platformName')}. {t('footer.rights')}
           </p>
-          <p className="text-xs text-foreground-muted">{t('footer.location')}</p>
+          <p className="text-xs text-foreground-faint">{t('footer.location')}</p>
         </div>
       </div>
     </footer>

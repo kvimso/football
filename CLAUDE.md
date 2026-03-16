@@ -345,6 +345,8 @@ Light-first A3 design system with `[data-theme="dark"]` toggle:
 | `--surface` | Cards, inputs, secondary bg | `#F4F1EC` | `#1C1A17` |
 | `--elevated` | Hover states, skeletons | `#EAE6DF` | `#2A2623` |
 | `--primary` | Accent/brand color | `#1B8A4A` | `#4ADE80` |
+| `--foreground-secondary` | Body text, descriptions | `#4A4641` | `#C4BFB8` |
+| `--foreground-faint` | Metadata, copyright, disabled | `#A39E97` | `#6B6660` |
 | `--danger` | Error/rejected states | `#CC3333` | `#E05252` |
 
 ### Position Colors (theme-aware with explicit bg tokens)

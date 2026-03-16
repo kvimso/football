@@ -20,7 +20,7 @@ export function Footer() {
             >
               GFT
             </Link>
-            <p className="mt-2 text-sm text-foreground-muted">{t('footer.platformName')}</p>
+            <p className="mt-2 text-sm text-foreground-secondary">{t('footer.platformName')}</p>
           </div>
 
           {/* Navigation */}
@@ -93,12 +93,12 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h4 className="text-sm font-semibold text-foreground">{t('footer.contact')}</h4>
-            <p className="mt-2 text-sm text-foreground-muted">info@gft.ge</p>
-            <p className="mt-1 text-sm text-foreground-muted">{t('footer.location')}</p>
+            <p className="mt-2 text-sm text-foreground-secondary">info@gft.ge</p>
+            <p className="mt-1 text-sm text-foreground-secondary">{t('footer.location')}</p>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-border pt-6 text-center text-xs text-foreground-muted">
+        <div className="mt-8 border-t border-border pt-6 text-center text-xs text-foreground-faint">
           &copy; {new Date().getFullYear()} {t('footer.platformName')}. {t('footer.rights')}
         </div>
       </div>
