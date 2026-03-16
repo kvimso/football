@@ -34,19 +34,33 @@ export function PlayerSearchSelect({
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  // Cancel in-flight fetch on unmount
+  useEffect(
+    () => () => {
+      abortRef.current?.abort()
+    },
+    []
+  )
 
   const search = useCallback(async (q: string) => {
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
     setIsLoading(true)
     try {
       const params = new URLSearchParams({ limit: '15' })
       if (q) params.set('q', q)
-      const res = await fetch(`/api/players/search?${params.toString()}`)
+      const res = await fetch(`/api/players/search?${params.toString()}`, {
+        signal: controller.signal,
+      })
       const data = await res.json()
       setResults(data.players ?? [])
-    } catch {
-      setResults([])
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') setResults([])
     } finally {
-      setIsLoading(false)
+      if (!controller.signal.aborted) setIsLoading(false)
     }
   }, [])
 

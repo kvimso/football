@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
@@ -40,6 +40,19 @@ interface PlayerData {
   } | null
 }
 
+type SkillKey = keyof NonNullable<PlayerData['skills']>
+type StatKey = keyof NonNullable<PlayerData['season_stats']>
+
+const SKILL_KEYS: SkillKey[] = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical']
+const STAT_KEYS: StatKey[] = [
+  'goals',
+  'assists',
+  'matches_played',
+  'minutes_played',
+  'pass_accuracy',
+  'tackles',
+]
+
 interface CompareViewProps {
   player1: PlayerData | null
   player2: PlayerData | null
@@ -51,15 +64,25 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
   const router = useRouter()
   const { t, lang } = useLang()
 
+  // Local pending state to avoid stale reads during rapid selection
+  const [pendingP1, setPendingP1] = useState(selectedP1)
+  const [pendingP2, setPendingP2] = useState(selectedP2)
+
+  useEffect(() => {
+    setPendingP1(selectedP1)
+  }, [selectedP1])
+  useEffect(() => {
+    setPendingP2(selectedP2)
+  }, [selectedP2])
+
   function updatePlayer(which: 'p1' | 'p2', slug: string) {
+    const s1 = which === 'p1' ? slug : pendingP1
+    const s2 = which === 'p2' ? slug : pendingP2
+    if (which === 'p1') setPendingP1(slug)
+    else setPendingP2(slug)
     const params = new URLSearchParams()
-    if (which === 'p1') {
-      if (slug) params.set('p1', slug)
-      if (selectedP2) params.set('p2', selectedP2)
-    } else {
-      if (selectedP1) params.set('p1', selectedP1)
-      if (slug) params.set('p2', slug)
-    }
+    if (s1) params.set('p1', s1)
+    if (s2) params.set('p2', s2)
     router.push(`/players/compare?${params.toString()}`)
   }
 
@@ -71,17 +94,11 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
     return p.club ? (lang === 'ka' ? p.club.name_ka : p.club.name) : '-'
   }
 
-  const radarLabels = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(
-    (k) => t('skills.' + k)
-  )
+  const radarLabels = SKILL_KEYS.map((k) => t('skills.' + k))
   const bothSelected = player1 && player2
 
-  const p1Label = player1
-    ? `${lang === 'ka' ? player1.name_ka : player1.name} (${player1.position})`
-    : ''
-  const p2Label = player2
-    ? `${lang === 'ka' ? player2.name_ka : player2.name} (${player2.position})`
-    : ''
+  const p1Label = player1 ? `${getName(player1)} (${player1.position})` : ''
+  const p2Label = player2 ? `${getName(player2)} (${player2.position})` : ''
 
   return (
     <div>
@@ -108,7 +125,10 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
       </div>
 
       {bothSelected ? (
-        <div className="space-y-6">
+        <div className="mx-auto max-w-4xl space-y-6">
+          {/* Quick verdict */}
+          <QuickVerdict player1={player1} player2={player2} getName={getName} t={t} />
+
           {/* Overlay radar chart */}
           {player1.skills && player2.skills ? (
             <div className="card text-center">
@@ -141,7 +161,7 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
             <div className="grid grid-cols-[1fr_auto_1fr] gap-2 mb-4 text-sm font-semibold">
               <div className="text-left text-primary truncate">{getName(player1)}</div>
               <div className="w-24 sm:w-32 text-center text-foreground-muted text-xs">vs</div>
-              <div className="text-right text-[var(--pos-def)] truncate">{getName(player2)}</div>
+              <div className="text-right text-[var(--pos-gk)] truncate">{getName(player2)}</div>
             </div>
 
             {/* Info rows (text only, no bars) */}
@@ -180,42 +200,15 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
                 <div className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-2">
                   {t('players.skills')}
                 </div>
-                <CompareBar
-                  label={t('compare.pace')}
-                  v1={player1.skills.pace}
-                  v2={player2.skills.pace}
-                  max={100}
-                />
-                <CompareBar
-                  label={t('compare.shooting')}
-                  v1={player1.skills.shooting}
-                  v2={player2.skills.shooting}
-                  max={100}
-                />
-                <CompareBar
-                  label={t('compare.passing')}
-                  v1={player1.skills.passing}
-                  v2={player2.skills.passing}
-                  max={100}
-                />
-                <CompareBar
-                  label={t('compare.dribbling')}
-                  v1={player1.skills.dribbling}
-                  v2={player2.skills.dribbling}
-                  max={100}
-                />
-                <CompareBar
-                  label={t('compare.defending')}
-                  v1={player1.skills.defending}
-                  v2={player2.skills.defending}
-                  max={100}
-                />
-                <CompareBar
-                  label={t('compare.physical')}
-                  v1={player1.skills.physical}
-                  v2={player2.skills.physical}
-                  max={100}
-                />
+                {SKILL_KEYS.map((key) => (
+                  <CompareBar
+                    key={key}
+                    label={t(`compare.${key}`)}
+                    v1={player1.skills![key]}
+                    v2={player2.skills![key]}
+                    max={100}
+                  />
+                ))}
               </div>
             )}
 
@@ -273,6 +266,64 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
   )
 }
 
+/** Quick verdict — "Player A leads in 7 of 12 comparable stats" */
+function QuickVerdict({
+  player1,
+  player2,
+  getName,
+  t,
+}: {
+  player1: PlayerData
+  player2: PlayerData
+  getName: (p: PlayerData) => string
+  t: (key: string) => string
+}) {
+  let p1Wins = 0,
+    p2Wins = 0,
+    totalCompared = 0
+
+  for (const key of SKILL_KEYS) {
+    const v1 = player1.skills?.[key] ?? null
+    const v2 = player2.skills?.[key] ?? null
+    if (v1 != null && v2 != null) {
+      totalCompared++
+      if (v1 > v2) p1Wins++
+      else if (v2 > v1) p2Wins++
+    }
+  }
+  for (const key of STAT_KEYS) {
+    const v1 = player1.season_stats?.[key] ?? null
+    const v2 = player2.season_stats?.[key] ?? null
+    if (v1 != null && v2 != null && typeof v1 === 'number' && typeof v2 === 'number') {
+      totalCompared++
+      if (v1 > v2) p1Wins++
+      else if (v2 > v1) p2Wins++
+    }
+  }
+
+  if (totalCompared === 0) return null
+
+  const leader = p1Wins > p2Wins ? getName(player1) : p2Wins > p1Wins ? getName(player2) : null
+  const leadCount = Math.max(p1Wins, p2Wins)
+
+  const leadsText = t('compare.leadsIn')
+    .replace('{count}', String(leadCount))
+    .replace('{total}', String(totalCompared))
+
+  return (
+    <div className="rounded-lg bg-surface border border-border px-4 py-3 text-center text-sm">
+      {leader ? (
+        <span>
+          <span className="font-semibold text-primary">{leader}</span>{' '}
+          <span className="text-foreground-muted">{leadsText}</span>
+        </span>
+      ) : (
+        <span className="text-foreground-muted">{t('compare.evenMatch')}</span>
+      )}
+    </div>
+  )
+}
+
 /** Simple text row for non-numeric info (position, club, foot) */
 function InfoRow({ label, v1, v2 }: { label: string; v1: string; v2: string }) {
   return (
@@ -284,7 +335,7 @@ function InfoRow({ label, v1, v2 }: { label: string; v1: string; v2: string }) {
   )
 }
 
-/** Center-growing comparison bar — FotMob/SofaScore style */
+/** Center-growing comparison bar with stat diffs — theme-aware */
 function CompareBar({
   label,
   v1,
@@ -300,72 +351,68 @@ function CompareBar({
 }) {
   const n1 = v1 ?? 0
   const n2 = v2 ?? 0
-  const isNull1 = v1 == null
-  const isNull2 = v2 == null
 
-  // For bars without explicit max, use the larger value as reference
   const reference = max ?? Math.max(n1, n2, 1)
   const pct1 = (n1 / reference) * 100
   const pct2 = (n2 / reference) * 100
-
-  // Determine winner for coloring
+  const diff = Math.abs(n1 - n2)
   const winner = n1 > n2 ? 1 : n2 > n1 ? 2 : 0
-  const bothZero = n1 === 0 && n2 === 0
+  const hasDiff = diff > 0 && v1 != null && v2 != null
 
-  // Colors: winner = green, loser = muted gray, equal = both neutral
-  const color1 = bothZero
-    ? 'transparent'
-    : winner === 1
-      ? '#10b981'
-      : winner === 0
-        ? 'var(--foreground-muted)'
-        : 'rgba(152, 150, 163, 0.3)'
-  const color2 = bothZero
-    ? 'transparent'
-    : winner === 2
-      ? '#10b981'
-      : winner === 0
-        ? 'var(--foreground-muted)'
-        : 'rgba(152, 150, 163, 0.3)'
+  const winnerColor = 'var(--primary)'
+  const loserColor = 'var(--foreground-muted)'
 
-  const textColor1 = winner === 1 ? 'text-emerald-500 font-semibold' : 'text-foreground'
-  const textColor2 = winner === 2 ? 'text-emerald-500 font-semibold' : 'text-foreground'
+  const color1 = winner === 1 ? winnerColor : loserColor
+  const color2 = winner === 2 ? winnerColor : loserColor
+  const textColor1 = winner === 1 ? 'text-primary font-semibold' : 'text-foreground'
+  const textColor2 = winner === 2 ? 'text-primary font-semibold' : 'text-foreground'
+  const diffText = hasDiff ? (suffix === '%' ? `+${diff.toFixed(1)}` : `+${diff}`) : ''
 
   return (
-    <div>
-      {/* Label centered above */}
+    <div aria-label={`${label}: ${n1}${suffix} vs ${n2}${suffix}`}>
       <div className="text-center text-xs text-foreground-muted mb-1">{label}</div>
       <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
-        {/* P1 value + bar (right-aligned, growing left) */}
-        <div className="flex items-center gap-2">
+        {/* P1 side */}
+        <div className="flex items-center gap-1.5">
+          <span
+            className="w-10 shrink-0 text-[10px] tabular-nums text-primary text-left"
+            aria-hidden="true"
+          >
+            {winner === 1 ? diffText : ''}
+          </span>
           <span className={`shrink-0 text-sm tabular-nums ${textColor1}`}>
-            {isNull1 ? '—' : `${n1}${suffix}`}
+            {v1 == null ? '\u2014' : `${n1}${suffix}`}
           </span>
           <div className="flex-1 h-2 rounded-full bg-border/30 overflow-hidden relative">
-            {!bothZero && !isNull1 && (
+            {v1 != null && n1 > 0 && (
               <div
-                className="absolute inset-y-0 right-0 rounded-full transition-all duration-500"
+                className="absolute inset-y-0 right-0 rounded-full transition-[width] duration-150"
                 style={{ width: `${pct1}%`, backgroundColor: color1 }}
               />
             )}
           </div>
         </div>
 
-        {/* Center divider */}
         <div className="w-px h-4 bg-border" />
 
-        {/* P2 bar + value (left-aligned, growing right) */}
-        <div className="flex items-center gap-2">
+        {/* P2 side */}
+        <div className="flex items-center gap-1.5">
           <div className="flex-1 h-2 rounded-full bg-border/30 overflow-hidden relative">
-            {!bothZero && !isNull2 && (
+            {v2 != null && n2 > 0 && (
               <div
-                className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
+                className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-150"
                 style={{ width: `${pct2}%`, backgroundColor: color2 }}
               />
             )}
           </div>
           <span className={`shrink-0 text-sm tabular-nums ${textColor2}`}>
-            {isNull2 ? '—' : `${n2}${suffix}`}
+            {v2 == null ? '\u2014' : `${n2}${suffix}`}
+          </span>
+          <span
+            className="w-10 shrink-0 text-[10px] tabular-nums text-primary text-right"
+            aria-hidden="true"
+          >
+            {winner === 2 ? diffText : ''}
           </span>
         </div>
       </div>
@@ -375,11 +422,20 @@ function CompareBar({
 
 function CopyLinkButton({ t }: { t: (key: string) => string }) {
   const [copied, setCopied] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(
+    () => () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    },
+    []
+  )
 
   async function handleCopy() {
     await navigator.clipboard.writeText(window.location.href)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }
 
   return (

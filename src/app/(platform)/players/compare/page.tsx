@@ -19,8 +19,8 @@ export async function generateMetadata({ searchParams }: ComparePageProps): Prom
 
   const supabase = await createClient()
   const [{ data: p1 }, { data: p2 }] = await Promise.all([
-    supabase.from('players').select('name').eq('slug', params.p1).single(),
-    supabase.from('players').select('name').eq('slug', params.p2).single(),
+    supabase.from('players').select('name, position').eq('slug', params.p1).single(),
+    supabase.from('players').select('name, position').eq('slug', params.p2).single(),
   ])
 
   const title =
@@ -28,9 +28,21 @@ export async function generateMetadata({ searchParams }: ComparePageProps): Prom
       ? `${p1.name} vs ${p2.name} | Compare Players`
       : 'Compare Players | Georgian Football Talent Platform'
 
+  const description =
+    p1 && p2
+      ? `Head-to-head comparison of ${p1.name} (${p1.position}) and ${p2.name} (${p2.position}). Skills, stats, and career data.`
+      : 'Side-by-side comparison of Georgian youth football players.'
+
   return {
     title,
-    description: 'Side-by-side comparison of Georgian youth football players.',
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website' as const,
+      siteName: 'Georgian Football Talent Platform',
+    },
+    twitter: { card: 'summary' as const, title, description },
   }
 }
 

@@ -206,6 +206,8 @@ export const en = {
     copyLink: 'Copy Link',
     copied: 'Copied!',
     comparePlayer: 'Compare',
+    leadsIn: 'leads in {count} of {total} comparable stats',
+    evenMatch: 'Even match — both players are comparable',
   },
 }
 
@@ -417,5 +419,7 @@ export const ka = {
     copyLink: 'ბმულის კოპირება',
     copied: 'დაკოპირებულია!',
     comparePlayer: 'შედარება',
+    leadsIn: 'ლიდერია {count} სტატისტიკაში {total}-დან',
+    evenMatch: 'თანაბარი მატჩი — ორივე მოთამაშე შედარებადია',
   },
 }
