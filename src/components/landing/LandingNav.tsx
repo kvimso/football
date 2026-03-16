@@ -24,6 +24,12 @@ export function LandingNav() {
     return () => mql.removeEventListener('change', handler)
   }, [])
 
+  const navLinks = [
+    { href: '/#for-scouts', label: t('nav.forScouts') },
+    { href: '/#for-academies', label: t('nav.forAcademies') },
+    { href: '/about', label: t('nav.about'), isActive: pathname === '/about' },
+  ]
+
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav-bg shadow-sm">
       <nav className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4">
@@ -35,16 +41,19 @@ export function LandingNav() {
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">
-          <Link
-            href="/about"
-            className={`text-sm transition-colors ${
-              pathname === '/about'
-                ? 'font-medium text-primary'
-                : 'text-foreground-muted hover:text-foreground'
-            }`}
-          >
-            {t('nav.about')}
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`text-sm transition-colors ${
+                link.isActive
+                  ? 'font-medium text-primary'
+                  : 'text-foreground-muted hover:text-foreground'
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -94,13 +103,16 @@ export function LandingNav() {
       {menuOpen && (
         <div className="border-t border-border bg-nav-bg px-4 py-3 md:hidden">
           <div className="flex flex-col gap-3">
-            <Link
-              href="/about"
-              onClick={() => setMenuOpen(false)}
-              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-            >
-              {t('nav.about')}
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
             <Link
               href="/contact"
               onClick={() => setMenuOpen(false)}

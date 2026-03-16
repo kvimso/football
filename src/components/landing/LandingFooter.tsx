@@ -7,19 +7,6 @@ export async function LandingFooter() {
   return (
     <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-12">
-        {/* CTA strip */}
-        <div className="mb-10 flex flex-col items-center gap-4 rounded-xl bg-primary/5 p-8 text-center sm:flex-row sm:justify-center sm:gap-6">
-          <p className="font-semibold">{t('landing.footerTagline')}</p>
-          <div className="flex gap-3">
-            <Link href="/register" className="btn-primary text-sm">
-              {t('landing.registerScout')}
-            </Link>
-            <Link href="/login" className="btn-secondary text-sm">
-              {t('landing.registerAcademy')}
-            </Link>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>

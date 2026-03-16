@@ -18,6 +18,9 @@ export const en = {
     switchToDark: 'Switch to dark mode',
     myAccount: 'My Account',
     getStarted: 'Get Started',
+    forScouts: 'For Scouts',
+    forAcademies: 'For Academies',
+    learnMore: 'Learn More',
   },
   common: {
     loading: 'Loading...',
@@ -167,6 +170,9 @@ export const ka = {
     switchToDark: 'მუქ რეჟიმზე გადართვა',
     myAccount: 'ჩემი ანგარიში',
     getStarted: 'დაწყება',
+    forScouts: 'სკაუტებისთვის',
+    forAcademies: 'აკადემიებისთვის',
+    learnMore: 'გაიგე მეტი',
   },
   common: {
     loading: 'იტვირთება...',

@@ -3,6 +3,9 @@
 /* Enable dark: prefix with data-theme attribute */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Smooth scrolling for anchor links */
+html { scroll-behavior: smooth; }
+
 /* ── Theme custom properties (light-first A3 palette) ── */
 :root {
   color-scheme: light;

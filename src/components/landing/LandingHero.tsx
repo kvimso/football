@@ -5,18 +5,18 @@ import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 export async function LandingHero() {
   const { t, lang } = await getServerT()
 
-  // Split the hero title to highlight "Georgian" in light gold
+  // Split the hero title to highlight "Georgian" in green
   const title = t('landing.heroTitle')
   const highlightWord = lang === 'ka' ? 'ქართული' : 'Georgian'
   const parts = title.split(highlightWord)
 
   return (
-    <section>
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section className="overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:gap-8 lg:py-24">
           {/* Left — content */}
           <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
+            <h1 className="text-4xl font-extrabold tracking-tight leading-[1.1] sm:text-5xl lg:text-6xl">
               {parts.length > 1 ? (
                 <>
                   {parts[0]}
@@ -27,74 +27,42 @@ export async function LandingHero() {
                 title
               )}
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-foreground-muted sm:text-xl max-w-xl mx-auto lg:mx-0">
+            <p className="mt-6 text-lg leading-relaxed text-foreground-secondary max-w-xl mx-auto lg:mx-0">
               {t('landing.heroSubtitle')}
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start sm:justify-center">
-              <Link
-                href="/register"
-                className="inline-flex items-center justify-center rounded-lg bg-foreground px-8 py-3.5 text-base font-semibold text-surface shadow-lg transition-opacity hover:opacity-90"
-              >
-                {t('landing.registerScout')}
+              <Link href="/register" className="btn-primary px-8 py-3 text-base font-semibold">
+                {t('nav.getStarted')} &rarr;
               </Link>
               <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-lg border border-primary px-8 py-3.5 text-base font-semibold text-primary transition-colors hover:bg-primary-muted"
+                href="/about"
+                className="inline-flex items-center justify-center rounded-lg border border-border px-8 py-3 text-base font-semibold text-foreground-secondary transition-colors hover:bg-surface hover:text-foreground"
               >
-                {t('landing.registerAcademy')}
+                {t('landing.heroLearnMore')}
               </Link>
-            </div>
-
-            {/* Mobile stat bar — visible below lg only */}
-            <div className="mt-8 flex items-center justify-center gap-4 text-center lg:hidden">
-              <div>
-                <div className="text-lg font-bold text-primary">
-                  {t('landing.statsYouthPlayers')}
-                </div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                  {t('landing.statsYouthPlayersLabel')}
-                </div>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <div className="text-lg font-bold text-primary">
-                  {t('landing.statsTransferValue')}
-                </div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                  {t('landing.statsTransferValueLabel')}
-                </div>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <div className="text-lg font-bold text-primary">{t('landing.statsAcademies')}</div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                  {t('landing.statsAcademiesLabel')}
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Right — mock player card (dark theme preview of platform) */}
-          <div
-            className="hidden lg:flex items-center justify-center"
-            aria-hidden="true"
-            style={
-              {
-                '--background': '#12110F',
-                '--surface': '#1C1A17',
-                '--foreground': '#EEECE8',
-                '--foreground-muted': '#9A9590',
-                '--primary': '#4ADE80',
-                '--border': '#2A2623',
-              } as React.CSSProperties
-            }
-          >
-            <div className="relative">
-              {/* Gold gradient glow behind card */}
-              <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-primary/20 via-primary/5 to-transparent blur-2xl" />
+          <div className="flex items-center justify-center lg:justify-end" aria-hidden="true">
+            <div
+              className="relative"
+              style={
+                {
+                  '--background': '#12110F',
+                  '--surface': '#1C1A17',
+                  '--foreground': '#EEECE8',
+                  '--foreground-muted': '#9A9590',
+                  '--primary': '#4ADE80',
+                  '--border': '#2A2623',
+                } as React.CSSProperties
+              }
+            >
+              {/* Green gradient glow behind card */}
+              <div className="absolute -inset-10 rounded-3xl bg-gradient-to-br from-primary/25 via-primary/8 to-transparent blur-3xl" />
 
-              {/* Card — dark platform preview with position left border */}
-              <div className="relative w-72 rounded-xl border border-border border-l-[3px] border-l-pos-mid bg-surface overflow-hidden shadow-2xl shadow-black/30">
+              {/* Card — dark platform preview with rotation */}
+              <div className="relative w-72 rotate-2 rounded-xl border border-border border-l-[3px] border-l-pos-mid bg-surface overflow-hidden shadow-2xl shadow-black/40 sm:w-80">
                 {/* Card body */}
                 <div className="p-6">
                   {/* Player silhouette */}
