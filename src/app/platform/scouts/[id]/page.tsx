@@ -49,7 +49,7 @@ export default async function PlatformScoutDetailPage({
 
   return (
     <div>
-      <Link href="/platform/scouts" className="text-sm text-accent hover:underline">
+      <Link href="/platform/scouts" className="text-sm text-primary hover:underline">
         &larr; {t('admin.common.backToList')}
       </Link>
 
@@ -96,7 +96,7 @@ export default async function PlatformScoutDetailPage({
                   <div>
                     <Link
                       href={`/players/${player?.slug ?? ''}`}
-                      className="text-sm font-medium text-accent hover:underline"
+                      className="text-sm font-medium text-primary hover:underline"
                     >
                       {player?.name ?? t('common.unknown')}
                     </Link>
@@ -134,7 +134,7 @@ export default async function PlatformScoutDetailPage({
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/players/${player?.slug ?? ''}`}
-                      className="text-sm font-medium text-accent hover:underline"
+                      className="text-sm font-medium text-primary hover:underline"
                     >
                       {player?.name ?? t('common.unknown')}
                     </Link>

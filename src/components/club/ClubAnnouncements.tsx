@@ -25,11 +25,11 @@ export function ClubAnnouncements({ announcements, title }: ClubAnnouncementsPro
           })
 
           return (
-            <div key={a.id} className="rounded-xl border border-border bg-card p-4">
+            <div key={a.id} className="rounded-xl border border-border bg-surface p-4">
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                   <svg
-                    className="h-4 w-4 text-accent"
+                    className="h-4 w-4 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

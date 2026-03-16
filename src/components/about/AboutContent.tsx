@@ -23,7 +23,7 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="card">
-          <h3 className="text-lg font-semibold text-accent">{t('about.forScouts')}</h3>
+          <h3 className="text-lg font-semibold text-primary">{t('about.forScouts')}</h3>
           <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
             {t('about.forScoutsText')}
           </p>
@@ -39,7 +39,7 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
         </div>
 
         <div className="card">
-          <h3 className="text-lg font-semibold text-accent">{t('about.forAcademies')}</h3>
+          <h3 className="text-lg font-semibold text-primary">{t('about.forAcademies')}</h3>
           <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
             {t('about.forAcademiesText')}
           </p>

@@ -39,7 +39,7 @@ function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      className={`relative flex items-center gap-1.5 py-1 text-sm transition-colors ${isActive ? 'text-accent font-medium' : 'text-foreground-muted hover:text-foreground'}`}
+      className={`relative flex items-center gap-1.5 py-1 text-sm transition-colors ${isActive ? 'text-primary font-medium' : 'text-foreground-muted hover:text-foreground'}`}
     >
       {iconPath && (
         <svg
@@ -54,7 +54,7 @@ function NavLink({
       )}
       {children}
       {isActive && (
-        <span className="absolute -bottom-[13px] left-0 right-0 h-0.5 bg-accent rounded-full" />
+        <span className="absolute -bottom-[13px] left-0 right-0 h-0.5 bg-primary rounded-full" />
       )}
     </Link>
   )
@@ -119,7 +119,7 @@ export function Navbar() {
         <div className="flex items-center">
           <Link
             href={user ? dashboardHref : '/'}
-            className="rounded bg-accent px-2 py-0.5 text-sm font-bold text-background"
+            className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-background"
           >
             GFT
           </Link>

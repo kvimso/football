@@ -347,7 +347,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
               href={pageUrl(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 p === page
-                  ? 'bg-accent/10 text-accent'
+                  ? 'bg-primary/10 text-primary'
                   : 'text-foreground-muted hover:text-foreground'
               }`}
             >

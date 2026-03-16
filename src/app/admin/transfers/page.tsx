@@ -95,9 +95,9 @@ export default async function AdminTransfersPage() {
     <div className="space-y-5">
       {/* Compact header bar */}
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
           <svg
-            className="h-4.5 w-4.5 text-accent"
+            className="h-4.5 w-4.5 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

@@ -221,7 +221,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
       {/* Player header */}
       <div
-        className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position as Position] ?? 'border-t-accent'}`}
+        className={`mt-4 card border-t-4 ${POSITION_BORDER_CLASSES[player.position as Position] ?? 'border-t-primary'}`}
       >
         <div className="flex flex-col gap-6 md:flex-row md:gap-10">
           {/* Photo */}
@@ -271,7 +271,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </span>
                 )}
                 {isTrending && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-semibold text-accent">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary/20 px-2.5 py-0.5 text-xs font-semibold text-primary">
                     <svg
                       className="h-3.5 w-3.5"
                       fill="none"
@@ -307,7 +307,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                 )}
                 <Link
                   href={`/players/compare?p1=${player.slug}`}
-                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-accent/50 transition-colors inline-flex items-center gap-1.5"
+                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-primary/50 transition-colors inline-flex items-center gap-1.5"
                 >
                   <svg
                     className="h-4 w-4"
@@ -406,7 +406,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                             ((recentViews - previousViews) / previousViews) * 100
                           )
                           return (
-                            <span className={pct >= 0 ? 'text-accent' : 'text-red-600'}>
+                            <span className={pct >= 0 ? 'text-primary' : 'text-red-600'}>
                               {' '}
                               ({pct >= 0 ? '+' : ''}
                               {pct}%)
@@ -414,7 +414,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                           )
                         })()
                       ) : (
-                        <span className="text-accent"> ({t('players.new')})</span>
+                        <span className="text-primary"> ({t('players.new')})</span>
                       )}
                     </div>
                   )}
@@ -443,10 +443,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-xl border border-border bg-card p-4 text-center"
+                className="rounded-xl border border-border bg-surface p-4 text-center"
               >
                 <div
-                  className={`text-3xl font-bold ${item.accent ? 'text-accent' : 'text-foreground'}`}
+                  className={`text-3xl font-bold ${item.accent ? 'text-primary' : 'text-foreground'}`}
                 >
                   {item.value != null ? `${item.value}${item.suffix ?? ''}` : '-'}
                 </div>
@@ -683,7 +683,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                     <tr key={i} className="table-row-hover border-b border-border/50">
                       <td className="min-w-[180px] max-w-[220px] py-2 pr-4">
                         {m?.slug ? (
-                          <Link href={`/matches/${m.slug}`} className="text-accent hover:underline">
+                          <Link
+                            href={`/matches/${m.slug}`}
+                            className="text-primary hover:underline"
+                          >
                             {matchLabel}
                           </Link>
                         ) : (
@@ -705,7 +708,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                       <td className="whitespace-nowrap py-2 pr-4">
                         {ms.rating ? (
                           <span
-                            className={`font-bold ${Number(ms.rating) >= 7.5 ? 'text-accent' : Number(ms.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                            className={`font-bold ${Number(ms.rating) >= 7.5 ? 'text-primary' : Number(ms.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
                           >
                             {ms.rating}
                           </span>
@@ -747,12 +750,12 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   key={entry.id}
                   className="flex items-center gap-3 rounded-lg border border-border p-3"
                 >
-                  <div className="h-8 w-1 shrink-0 rounded-full bg-accent" />
+                  <div className="h-8 w-1 shrink-0 rounded-full bg-primary" />
                   <div className="min-w-0 flex-1">
                     {entry.club?.slug ? (
                       <Link
                         href={`/clubs/${entry.club.slug}`}
-                        className="text-sm font-medium text-foreground hover:text-accent transition-colors"
+                        className="text-sm font-medium text-foreground hover:text-primary transition-colors"
                       >
                         {entryClubName}
                       </Link>

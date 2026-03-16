@@ -224,7 +224,7 @@ export function WatchlistPage({
       {/* Mobile sidebar toggle */}
       <button
         onClick={() => setMobileShowSidebar(!mobileShowSidebar)}
-        className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground-muted lg:hidden"
+        className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground-muted lg:hidden"
       >
         <svg
           className="h-4 w-4"
@@ -288,7 +288,7 @@ export function WatchlistPage({
               placeholder={t('dashboard.searchPlayers')}
               value={searchQuery}
               onChange={(e) => setFilter('q', e.target.value || null)}
-              className="w-full rounded-lg border border-border bg-background pl-8 pr-3 py-1.5 text-sm text-foreground outline-none focus:border-accent"
+              className="w-full rounded-lg border border-border bg-background pl-8 pr-3 py-1.5 text-sm text-foreground outline-none focus:border-primary"
             />
           </div>
 
@@ -296,7 +296,7 @@ export function WatchlistPage({
           <select
             value={activePosition ?? ''}
             onChange={(e) => setFilter('position', e.target.value || null)}
-            className="rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground outline-none focus:border-accent"
+            className="rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground outline-none focus:border-primary"
           >
             <option value="">{t('dashboard.filterByPosition')}</option>
             {POSITIONS.map((p) => (
@@ -309,7 +309,7 @@ export function WatchlistPage({
           {hasFilters && (
             <button
               onClick={() => router.replace('/dashboard/watchlist', { scroll: false })}
-              className="text-xs text-accent hover:underline"
+              className="text-xs text-primary hover:underline"
             >
               {t('dashboard.clearFilters')}
             </button>
@@ -320,7 +320,7 @@ export function WatchlistPage({
         {(activeTags.length > 0 || activeFolder) && (
           <div className="mb-3 flex flex-wrap gap-1.5">
             {activeFolder && activeFolder !== '__unfoldered' && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs text-accent">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs text-primary">
                 {folders.find((f) => f.id === activeFolder)?.name ?? '?'}
                 <button onClick={() => setFilter('folder', null)} className="hover:text-foreground">
                   &times;
@@ -338,7 +338,7 @@ export function WatchlistPage({
             {activeTags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-0.5 text-xs text-accent"
+                className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs text-primary"
               >
                 #{tag}
                 <button
@@ -364,12 +364,12 @@ export function WatchlistPage({
 
         {/* Player list */}
         {filteredItems.length === 0 ? (
-          <div className="rounded-lg border border-border/50 bg-card p-8 text-center">
+          <div className="rounded-lg border border-border/50 bg-surface p-8 text-center">
             <p className="text-sm text-foreground-muted">{t('common.noResults')}</p>
             {hasFilters && (
               <button
                 onClick={() => router.replace('/dashboard/watchlist', { scroll: false })}
-                className="mt-2 text-xs text-accent hover:underline"
+                className="mt-2 text-xs text-primary hover:underline"
               >
                 {t('dashboard.clearFilters')}
               </button>

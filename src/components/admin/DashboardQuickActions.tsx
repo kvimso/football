@@ -13,17 +13,17 @@ interface DashboardQuickActionsProps {
 
 export function DashboardQuickActions({ labels, unreadCount }: DashboardQuickActionsProps) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-surface p-5">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted">
         {labels.quickActions}
       </h2>
       <div className="mt-4 grid grid-cols-2 gap-2">
         <Link
           href="/admin/players/new"
-          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-background-secondary"
+          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary/30 hover:bg-surface"
         >
           <svg
-            className="h-4.5 w-4.5 text-accent"
+            className="h-4.5 w-4.5 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -39,10 +39,10 @@ export function DashboardQuickActions({ labels, unreadCount }: DashboardQuickAct
         </Link>
         <Link
           href="/admin/messages"
-          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-background-secondary"
+          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary/30 hover:bg-surface"
         >
           <svg
-            className="h-4.5 w-4.5 text-accent"
+            className="h-4.5 w-4.5 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -56,17 +56,17 @@ export function DashboardQuickActions({ labels, unreadCount }: DashboardQuickAct
           </svg>
           {labels.messages}
           {unreadCount > 0 && (
-            <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-bold text-background">
+            <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-background">
               {unreadCount}
             </span>
           )}
         </Link>
         <Link
           href="/admin/players"
-          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-background-secondary"
+          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary/30 hover:bg-surface"
         >
           <svg
-            className="h-4.5 w-4.5 text-accent"
+            className="h-4.5 w-4.5 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -82,10 +82,10 @@ export function DashboardQuickActions({ labels, unreadCount }: DashboardQuickAct
         </Link>
         <Link
           href="/admin/transfers"
-          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-accent/30 hover:bg-background-secondary"
+          className="flex items-center gap-2.5 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary/30 hover:bg-surface"
         >
           <svg
-            className="h-4.5 w-4.5 text-accent"
+            className="h-4.5 w-4.5 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

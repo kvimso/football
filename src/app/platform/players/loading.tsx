@@ -2,12 +2,12 @@ export default function PlatformPlayersLoading() {
   return (
     <div className="animate-pulse">
       <div className="flex items-center justify-between">
-        <div className="h-7 w-36 rounded bg-card-hover" />
-        <div className="h-9 w-28 rounded bg-card-hover" />
+        <div className="h-7 w-36 rounded bg-elevated" />
+        <div className="h-9 w-28 rounded bg-elevated" />
       </div>
       <div className="mt-4 flex gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-9 w-32 rounded bg-card-hover" />
+          <div key={i} className="h-9 w-32 rounded bg-elevated" />
         ))}
       </div>
       <div className="mt-6 space-y-3">

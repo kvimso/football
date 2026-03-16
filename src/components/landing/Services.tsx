@@ -17,7 +17,7 @@ export async function Services() {
       <div className="mx-auto max-w-7xl px-4">
         {/* Section header */}
         <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-block h-1 w-12 rounded-full bg-accent mb-4" />
+          <div className="inline-block h-1 w-12 rounded-full bg-primary mb-4" />
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             {t('landing.servicesTitle')}
           </h2>
@@ -31,10 +31,10 @@ export async function Services() {
           {services.map((service) => (
             <div
               key={service.title}
-              className="rounded-xl border border-border bg-card p-6 border-t-[3px] border-t-accent"
+              className="rounded-xl border border-border bg-surface p-6 border-t-[3px] border-t-primary"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-                <service.icon className="h-5 w-5 text-accent" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <service.icon className="h-5 w-5 text-primary" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{service.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{service.desc}</p>

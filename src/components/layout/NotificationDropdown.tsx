@@ -16,12 +16,12 @@ export function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead,
   const { t } = useLang()
 
   return (
-    <div className="absolute right-0 top-full mt-1.5 z-50 w-80 max-h-[420px] overflow-hidden rounded-xl border border-border bg-card shadow-xl">
+    <div className="absolute right-0 top-full mt-1.5 z-50 w-80 max-h-[420px] overflow-hidden rounded-xl border border-border bg-surface shadow-xl">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-3 py-2">
         <h3 className="text-xs font-semibold text-foreground">{t('notifications.title')}</h3>
         {notifications.some((n) => !n.is_read) && (
-          <button onClick={onMarkAllRead} className="text-[11px] text-accent hover:underline">
+          <button onClick={onMarkAllRead} className="text-[11px] text-primary hover:underline">
             {t('notifications.markAllRead')}
           </button>
         )}
@@ -31,7 +31,7 @@ export function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead,
       <div className="overflow-y-auto max-h-[370px] divide-y divide-border/50">
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-8 text-center">
@@ -59,7 +59,7 @@ export function NotificationDropdown({ notifications, onMarkRead, onMarkAllRead,
       {notifications.length > 0 && (
         <Link
           href="/dashboard/notifications"
-          className="block border-t border-border px-3 py-2 text-center text-[11px] font-medium text-accent hover:bg-background-secondary transition-colors"
+          className="block border-t border-border px-3 py-2 text-center text-[11px] font-medium text-primary hover:bg-surface transition-colors"
         >
           {t('notifications.viewAll')}
         </Link>

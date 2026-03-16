@@ -139,7 +139,7 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
           <div className="card">
             {/* Column headers */}
             <div className="grid grid-cols-[1fr_auto_1fr] gap-2 mb-4 text-sm font-semibold">
-              <div className="text-left text-accent truncate">{getName(player1)}</div>
+              <div className="text-left text-primary truncate">{getName(player1)}</div>
               <div className="w-24 sm:w-32 text-center text-foreground-muted text-xs">vs</div>
               <div className="text-right text-[var(--pos-def)] truncate">{getName(player2)}</div>
             </div>
@@ -385,12 +385,12 @@ function CopyLinkButton({ t }: { t: (key: string) => string }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground hover:border-accent/50 transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted hover:text-foreground hover:border-primary/50 transition-colors"
     >
       {copied ? (
         <>
           <svg
-            className="h-4 w-4 text-accent"
+            className="h-4 w-4 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

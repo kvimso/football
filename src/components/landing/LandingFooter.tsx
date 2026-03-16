@@ -5,10 +5,10 @@ export async function LandingFooter() {
   const { t } = await getServerT()
 
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-12">
         {/* CTA strip */}
-        <div className="mb-10 flex flex-col items-center gap-4 rounded-xl bg-accent/5 p-8 text-center sm:flex-row sm:justify-center sm:gap-6">
+        <div className="mb-10 flex flex-col items-center gap-4 rounded-xl bg-primary/5 p-8 text-center sm:flex-row sm:justify-center sm:gap-6">
           <p className="font-semibold">{t('landing.footerTagline')}</p>
           <div className="flex gap-3">
             <Link href="/register" className="btn-primary text-sm">
@@ -23,7 +23,7 @@ export async function LandingFooter() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <Link href="/" className="text-lg font-bold text-accent">
+            <Link href="/" className="text-lg font-bold text-primary">
               GFT
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-foreground-muted">

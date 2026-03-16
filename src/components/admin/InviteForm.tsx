@@ -64,7 +64,7 @@ export function InviteForm({ clubs }: InviteFormProps) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
+          className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary"
           placeholder="admin@academy.ge"
         />
       </div>
@@ -78,7 +78,7 @@ export function InviteForm({ clubs }: InviteFormProps) {
           required
           value={clubId}
           onChange={(e) => setClubId(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
+          className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-primary"
         >
           <option value="">{t('admin.invite.selectClub')}</option>
           {clubs.map((club) => (

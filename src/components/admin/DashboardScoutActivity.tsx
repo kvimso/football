@@ -21,7 +21,7 @@ export function DashboardScoutActivity({
   activity: ScoutActivityItem[]
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-surface p-5">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted">
         {title}
       </h2>
@@ -32,9 +32,9 @@ export function DashboardScoutActivity({
               key={view.id}
               className="flex items-center gap-3 rounded-lg bg-background px-4 py-3"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/10">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
                 <svg
-                  className="h-4 w-4 text-accent"
+                  className="h-4 w-4 text-primary"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

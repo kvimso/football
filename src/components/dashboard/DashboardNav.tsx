@@ -66,7 +66,7 @@ export function DashboardNav() {
             href={link.href}
             className={`flex items-center gap-1.5 whitespace-nowrap rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors ${
               isActive
-                ? 'border-b-2 border-accent text-accent'
+                ? 'border-b-2 border-primary text-primary'
                 : 'text-foreground-muted hover:text-foreground'
             }`}
           >

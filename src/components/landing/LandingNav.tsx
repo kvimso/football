@@ -16,7 +16,7 @@ export function LandingNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav-bg shadow-sm">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-        <Link href="/" className="text-lg font-bold text-accent">
+        <Link href="/" className="text-lg font-bold text-primary">
           GFT
         </Link>
 
@@ -25,7 +25,7 @@ export function LandingNav() {
             href="/about"
             className={`text-sm transition-colors ${
               pathname === '/about'
-                ? 'font-medium text-accent'
+                ? 'font-medium text-primary'
                 : 'text-foreground-muted hover:text-foreground'
             }`}
           >
@@ -35,7 +35,7 @@ export function LandingNav() {
             href="/contact"
             className={`text-sm transition-colors ${
               pathname === '/contact'
-                ? 'font-medium text-accent'
+                ? 'font-medium text-primary'
                 : 'text-foreground-muted hover:text-foreground'
             }`}
           >
@@ -86,7 +86,7 @@ export function LandingNav() {
       </nav>
 
       {menuOpen && (
-        <div className="border-t border-border bg-card px-4 py-3 md:hidden">
+        <div className="border-t border-border bg-surface px-4 py-3 md:hidden">
           <div className="flex flex-col gap-3">
             <Link
               href="/about"

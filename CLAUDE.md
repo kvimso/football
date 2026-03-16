@@ -318,46 +318,56 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 
 ### Theme Architecture
 
-Two-theme system using CSS custom properties with class-based scoping:
+Light-first A3 design system with `[data-theme="dark"]` toggle:
 
-- **Platform (dark):** `:root` default — warm purple-black (`#141218`) background, warm off-white text (`#e8e6ef`). Used for all authenticated pages: `(platform)`, `dashboard`, `admin`, `platform`, `(shared)` (About/Contact).
-- **Landing (warm ivory):** `.landing` class override — warm ivory (`#faf8f5`) background, warm near-black text (`#2c2a35`). Applied to `(public)/layout.tsx` and `(auth)/layout.tsx` wrapper divs only.
+- **Light (default):** `:root` — warm off-white (`#FDFCFA`) background, near-black text (`#1A1917`). Green primary accent (`#1B8A4A`).
+- **Dark:** `[data-theme="dark"]` — warm near-black (`#12110F`) background, warm off-white text (`#EEECE8`). Bright green primary (`#4ADE80`).
+- **ThemeProvider** in `src/context/ThemeContext.tsx` — cookie-persisted, FOUC-safe via server-side `data-theme` attribute.
 
 ```
-:root (dark platform — default, color-scheme: dark)
-  └── .landing (warm ivory override — color-scheme: light)
+:root (light — default, color-scheme: light)
+  └── [data-theme="dark"] (dark override — color-scheme: dark)
       └── @theme inline (Tailwind bridge — auto-adapts)
 ```
 
-### Primary Accent: Georgian Gold
+### Primary Accent: Green
 
-- **Gold accent:** `#c9a227` (7:1 on dark bg — AA pass)
-- **Gold on ivory:** 3.2:1 (large text only — hero headings OK)
-- **Button strategy:** `.btn-primary` uses `bg-accent text-background` (dark text on gold) — accessible at 8.6:1
-- On `.landing`, buttons use darker gold (`--accent-hover: #a68521`) for hover
+- **Light mode:** `#1B8A4A` (forest green)
+- **Dark mode:** `#4ADE80` (bright green)
+- **Button strategy:** `.btn-primary` uses `bg-primary text-btn-primary-text` — accessible in both themes
+- No `.landing` class overrides — single theme system handles all pages
 
-### Position Colors (-500 variants for dark bg visibility)
+### Token Naming
 
-| Position | Color | Variable |
-|----------|-------|----------|
-| GK | amber-500 (`#f59e0b`) | `--pos-gk` |
-| DEF | indigo-500 (`#6366f1`) | `--pos-def` |
-| MID | cyan-500 (`#06b6d4`) | `--pos-mid` |
-| ATT | violet-500 (`#a855f7`) | `--pos-att` |
-| WNG | emerald-500 (`#10b981`) | `--pos-wng` |
-| ST | red-500 (`#ef4444`) | `--pos-st` |
+| Token | Purpose | Light | Dark |
+|-------|---------|-------|------|
+| `--background` | Page background | `#FDFCFA` | `#12110F` |
+| `--surface` | Cards, inputs, secondary bg | `#F4F1EC` | `#1C1A17` |
+| `--elevated` | Hover states, skeletons | `#EAE6DF` | `#2A2623` |
+| `--primary` | Accent/brand color | `#1B8A4A` | `#4ADE80` |
+| `--danger` | Error/rejected states | `#CC3333` | `#E05252` |
 
-**Badge pattern:** `bg-pos-X/20 text-pos-X` (tinted bg + colored text) — works on both dark and light themes.
+### Position Colors (theme-aware with explicit bg tokens)
+
+| Position | Light FG | Dark FG | Variable |
+|----------|----------|---------|----------|
+| GK | `#B87A08` | `#FBBF24` | `--pos-gk` / `--pos-gk-bg` |
+| DEF | `#CC3333` | `#F87171` | `--pos-def` / `--pos-def-bg` |
+| MID | `#1B8A4A` | `#4ADE80` | `--pos-mid` / `--pos-mid-bg` |
+| ATT | `#8B3FC7` | `#C084FC` | `--pos-att` / `--pos-att-bg` |
+| WNG | `#0E8585` | `#2DD4BF` | `--pos-wng` / `--pos-wng-bg` |
+| ST | `#2563EB` | `#5B9CF0` | `--pos-st` / `--pos-st-bg` |
+
+**Badge pattern:** `bg-pos-X-bg text-pos-X` (explicit bg token + colored text) — works on both themes.
 
 ### Key Conventions
 
 - CSS custom properties in `globals.css` for all colors — never hardcode hex in components
 - Use Tailwind utilities for layout, CSS custom properties for theme colors
 - Check `globals.css` before creating new component classes — most patterns exist
-- `color-scheme: dark` on `:root`, `color-scheme: light` on `.landing` — controls browser form controls
-- Dark theme elevation: borders (`border-border`) instead of shadows; subtle shadows only on hover/modal
-- Loading skeletons: use `--skeleton` (`#2a2834`) — visible on dark backgrounds
-- Gold focus-visible ring on all interactive elements
+- `color-scheme: light` on `:root`, `color-scheme: dark` on `[data-theme="dark"]`
+- Loading skeletons: use `bg-elevated` — visible on both themes
+- Green focus-visible ring on all interactive elements
 - Mobile-first — all pages work at 375px+
 - Use `next/image` for all images
 - **Landing page: no placeholder content, use real market numbers (37,600+ youth players, €100M+)**

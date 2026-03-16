@@ -16,7 +16,7 @@ export async function MarketStats() {
           {stats.map((stat, i) => (
             <div key={stat.label} className="flex items-center">
               <div className="text-center px-8 sm:px-12">
-                <div className="text-4xl font-extrabold text-accent sm:text-5xl tracking-tight">
+                <div className="text-4xl font-extrabold text-primary sm:text-5xl tracking-tight">
                   {stat.value}
                 </div>
                 <div className="mt-2 text-xs font-semibold uppercase tracking-widest text-foreground-muted">

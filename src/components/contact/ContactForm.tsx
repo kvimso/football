@@ -30,9 +30,9 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
   if (sent) {
     return (
       <div className="text-center py-8">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
           <svg
-            className="h-8 w-8 text-accent"
+            className="h-8 w-8 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -65,7 +65,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+          className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
         />
       </div>
 
@@ -79,7 +79,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+          className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
         />
       </div>
 
@@ -97,7 +97,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={t('contact.messagePlaceholder')}
-          className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors resize-none"
+          className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
         />
       </div>
 

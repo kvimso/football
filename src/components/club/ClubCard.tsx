@@ -35,11 +35,11 @@ export async function ClubCard({ club }: ClubCardProps) {
               sizes="64px"
             />
           ) : (
-            <ClubSilhouette className="h-10 w-10 text-accent/40" />
+            <ClubSilhouette className="h-10 w-10 text-primary/40" />
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 text-base font-bold text-foreground group-hover:text-accent transition-colors">
+          <h3 className="line-clamp-2 text-base font-bold text-foreground group-hover:text-primary transition-colors">
             {displayName}
           </h3>
           <div className="mt-0.5 text-xs text-foreground-muted">
@@ -47,7 +47,7 @@ export async function ClubCard({ club }: ClubCardProps) {
             {club.city && club.region && club.city !== club.region ? `, ${club.region}` : ''}
           </div>
         </div>
-        <span className="shrink-0 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
+        <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
           {club.player_count} {t('clubs.players')}
         </span>
       </div>

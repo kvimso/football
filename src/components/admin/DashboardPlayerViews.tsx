@@ -16,7 +16,7 @@ export function DashboardPlayerViews({
   views: PlayerViewItem[]
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-surface p-5">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted">
         {title}
       </h2>
@@ -48,7 +48,7 @@ export function DashboardPlayerViews({
                 )}
                 {pv.thisWeek > pv.lastWeek && (
                   <svg
-                    className="h-3 w-3 text-accent"
+                    className="h-3 w-3 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

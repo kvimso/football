@@ -49,8 +49,8 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
   const age = calculateAge(player.date_of_birth)
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = player.club ? (lang === 'ka' ? player.club.name_ka : player.club.name) : null
-  const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
-  const borderClass = POSITION_LEFT_BORDER_CLASSES[player.position] ?? 'border-l-accent'
+  const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-primary/20 text-primary'
+  const borderClass = POSITION_LEFT_BORDER_CLASSES[player.position] ?? 'border-l-primary'
   const isFreeAgent = player.status === 'free_agent'
   const isFeatured = player.is_featured
 
@@ -91,7 +91,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
           <PlayerSilhouette size="md" className="text-foreground-muted/20" />
         )}
         {player.is_featured && (
-          <span className="absolute top-2 right-2 rounded-full bg-accent/90 px-2 py-0.5 text-[10px] font-semibold text-background">
+          <span className="absolute top-2 right-2 rounded-full bg-primary/90 px-2 py-0.5 text-[10px] font-semibold text-background">
             {t('players.featured')}
           </span>
         )}
@@ -127,7 +127,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
 
       {/* Info + Watch row */}
       <div className="flex items-start justify-between gap-1 px-1">
-        <h3 className="truncate text-base font-bold text-foreground group-hover:text-accent transition-colors">
+        <h3 className="truncate text-base font-bold text-foreground group-hover:text-primary transition-colors">
           {displayName}
         </h3>
         {initialWatched !== undefined && (
@@ -135,7 +135,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
             onClick={handleWatch}
             disabled={isPending}
             className={`shrink-0 text-lg leading-none transition-colors ${
-              isWatched ? 'text-accent' : 'text-foreground-muted/40 hover:text-accent/70'
+              isWatched ? 'text-primary' : 'text-foreground-muted/40 hover:text-primary/70'
             } disabled:opacity-50`}
             aria-label={isWatched ? t('watchlist.unwatch') : t('watchlist.watch')}
           >

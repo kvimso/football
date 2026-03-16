@@ -49,13 +49,13 @@ export function AnnouncementForm({ labels }: AnnouncementFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-card p-5">
+    <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-surface p-5">
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
         placeholder={labels.placeholder}
         rows={3}
-        className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted/50 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+        className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-foreground-muted/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         disabled={loading}
       />
       <div className="mt-2 flex items-center justify-between">
@@ -72,7 +72,7 @@ export function AnnouncementForm({ labels }: AnnouncementFormProps) {
       </div>
       {feedback && (
         <p
-          className={`mt-2 text-xs ${feedback.type === 'success' ? 'text-accent' : 'text-red-600'}`}
+          className={`mt-2 text-xs ${feedback.type === 'success' ? 'text-primary' : 'text-red-600'}`}
         >
           {feedback.message}
         </p>

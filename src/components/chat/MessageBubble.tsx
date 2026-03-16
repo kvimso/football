@@ -49,7 +49,7 @@ export function MessageBubble({
   if (message.message_type === 'system') {
     return (
       <div className="flex justify-center py-1">
-        <span className="rounded-full bg-background-secondary px-3 py-1 text-xs text-foreground-muted">
+        <span className="rounded-full bg-surface px-3 py-1 text-xs text-foreground-muted">
           {message.content?.startsWith('chat.') ? t(message.content) : message.content}
         </span>
       </div>
@@ -87,8 +87,8 @@ export function MessageBubble({
         <div
           className={`shadow-sm ${
             isMine
-              ? 'rounded-2xl rounded-br-sm bg-accent text-background'
-              : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground border border-border'
+              ? 'rounded-2xl rounded-br-sm bg-primary text-background'
+              : 'rounded-2xl rounded-bl-sm bg-surface text-foreground border border-border'
           }`}
         >
           {message.message_type === 'text' &&
@@ -211,7 +211,7 @@ export function MessageBubble({
                   <button
                     onClick={onRetry}
                     aria-label={t('aria.retrySend')}
-                    className="text-[11px] font-medium text-accent hover:underline"
+                    className="text-[11px] font-medium text-primary hover:underline"
                   >
                     {t('chat.retry')}
                   </button>
@@ -229,7 +229,7 @@ export function MessageBubble({
                 {message.read_at ? (
                   // Double check — read
                   <svg
-                    className="h-3.5 w-3.5 text-accent"
+                    className="h-3.5 w-3.5 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

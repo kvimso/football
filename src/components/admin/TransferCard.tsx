@@ -34,7 +34,7 @@ export function TransferCard({
   const [now] = useState(() => Date.now())
   const pos = position as Position | null
   const posClasses = pos ? POSITION_COLOR_CLASSES[pos] : ''
-  const leftBorder = pos ? POSITION_LEFT_BORDER_CLASSES[pos] : 'border-l-accent'
+  const leftBorder = pos ? POSITION_LEFT_BORDER_CLASSES[pos] : 'border-l-primary'
 
   // Countdown for pending transfers (7-day expiry)
   let daysLeft: number | null = null
@@ -49,7 +49,7 @@ export function TransferCard({
   const dirArrow = direction === 'incoming' ? '←' : '→'
 
   const statusConfig: Record<string, { classes: string; icon: string }> = {
-    accepted: { classes: 'bg-accent/10 text-accent', icon: '✓' },
+    accepted: { classes: 'bg-primary/10 text-primary', icon: '✓' },
     declined: { classes: 'bg-red-500/10 text-red-600', icon: '✗' },
     expired: { classes: 'bg-foreground-muted/10 text-foreground-muted', icon: '⏱' },
   }
@@ -58,8 +58,10 @@ export function TransferCard({
   return (
     <div
       className={`animate-transfer-card-in group relative overflow-hidden rounded-xl border-l-[4px] ${leftBorder} ${
-        isPending ? 'border border-accent/15 bg-card shadow-sm' : 'border border-border bg-card'
-      } transition-all duration-200 hover:bg-card-hover hover:shadow-md`}
+        isPending
+          ? 'border border-primary/15 bg-surface shadow-sm'
+          : 'border border-border bg-surface'
+      } transition-all duration-200 hover:bg-elevated hover:shadow-md`}
       style={{ animationDelay: `${index * 60}ms` }}
     >
       <div className="flex items-center gap-3 px-4 py-3">
@@ -108,9 +110,9 @@ export function TransferCard({
       {isPending && daysLeft !== null && (
         <div className="px-4 pb-2.5">
           <div className="flex items-center gap-2">
-            <div className="h-1 flex-1 overflow-hidden rounded-full bg-background-secondary">
+            <div className="h-1 flex-1 overflow-hidden rounded-full bg-surface">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-accent to-accent/30 transition-all duration-500"
+                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/30 transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>

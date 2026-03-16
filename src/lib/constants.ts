@@ -5,12 +5,12 @@ export const POSITIONS = ['GK', 'DEF', 'MID', 'ATT', 'WNG', 'ST'] as const
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 
 export const POSITION_COLOR_CLASSES: Record<Position, string> = {
-  GK: 'bg-pos-gk/20 text-pos-gk',
-  DEF: 'bg-pos-def/20 text-pos-def',
-  MID: 'bg-pos-mid/20 text-pos-mid',
-  ATT: 'bg-pos-att/20 text-pos-att',
-  WNG: 'bg-pos-wng/20 text-pos-wng',
-  ST: 'bg-pos-st/20 text-pos-st',
+  GK: 'bg-pos-gk-bg text-pos-gk',
+  DEF: 'bg-pos-def-bg text-pos-def',
+  MID: 'bg-pos-mid-bg text-pos-mid',
+  ATT: 'bg-pos-att-bg text-pos-att',
+  WNG: 'bg-pos-wng-bg text-pos-wng',
+  ST: 'bg-pos-st-bg text-pos-st',
 }
 
 export const POSITION_BORDER_CLASSES: Record<Position, string> = {
@@ -32,12 +32,12 @@ export const POSITION_LEFT_BORDER_CLASSES: Record<Position, string> = {
 }
 
 export const POSITION_GLOW_CLASSES: Record<Position, string> = {
-  GK: 'bg-pos-gk text-white border-pos-gk',
-  DEF: 'bg-pos-def text-white border-pos-def',
-  MID: 'bg-pos-mid text-white border-pos-mid',
-  ATT: 'bg-pos-att text-white border-pos-att',
-  WNG: 'bg-pos-wng text-white border-pos-wng',
-  ST: 'bg-pos-st text-white border-pos-st',
+  GK: 'bg-pos-gk text-btn-primary-text border-pos-gk',
+  DEF: 'bg-pos-def text-btn-primary-text border-pos-def',
+  MID: 'bg-pos-mid text-btn-primary-text border-pos-mid',
+  ATT: 'bg-pos-att text-btn-primary-text border-pos-att',
+  WNG: 'bg-pos-wng text-btn-primary-text border-pos-wng',
+  ST: 'bg-pos-st text-btn-primary-text border-pos-st',
 }
 
 export const AGE_MIN_DEFAULT = 14
@@ -174,6 +174,6 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   Unknown: '🌍',
 }
 
-// Dark gray placeholder for next/image blur (matches card surface on dark theme)
+// Light surface placeholder for next/image blur (matches surface color)
 export const BLUR_DATA_URL =
-  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMyMzIxMmIiLz48L3N2Zz4='
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGNEYxRUMiLz48L3N2Zz4='

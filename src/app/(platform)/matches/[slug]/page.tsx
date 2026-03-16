@@ -94,7 +94,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             {homeClub?.slug ? (
               <Link
                 href={`/clubs/${homeClub.slug}`}
-                className="text-lg font-bold text-foreground hover:text-accent transition-colors"
+                className="text-lg font-bold text-foreground hover:text-primary transition-colors"
               >
                 <MatchDetailClient
                   type="home_club"
@@ -117,7 +117,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             {awayClub?.slug ? (
               <Link
                 href={`/clubs/${awayClub.slug}`}
-                className="text-lg font-bold text-foreground hover:text-accent transition-colors"
+                className="text-lg font-bold text-foreground hover:text-primary transition-colors"
               >
                 <MatchDetailClient
                   type="away_club"
@@ -169,7 +169,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                         {ps.player?.slug ? (
                           <Link
                             href={`/players/${ps.player.slug}`}
-                            className="font-medium text-accent hover:underline"
+                            className="font-medium text-primary hover:underline"
                           >
                             {lang === 'ka' ? ps.player.name_ka : ps.player.name}
                           </Link>
@@ -190,7 +190,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                       <td className="py-2 pr-4">
                         {ps.rating ? (
                           <span
-                            className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-accent' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                            className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-primary' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
                           >
                             {ps.rating}
                           </span>

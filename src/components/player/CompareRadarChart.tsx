@@ -101,12 +101,12 @@ export function CompareRadarChart({
           )
         })}
 
-        {/* Player 1 polygon (emerald/accent) */}
+        {/* Player 1 polygon (primary) */}
         <polygon
           points={toPolygon(skills1, RADIUS)}
-          fill="var(--accent)"
+          fill="var(--primary)"
           fillOpacity={0.15}
-          stroke="var(--accent)"
+          stroke="var(--primary)"
           strokeWidth={2}
         />
 
@@ -121,7 +121,7 @@ export function CompareRadarChart({
 
         {/* Player 1 data points */}
         {p1Points.map(([x, y], i) => (
-          <circle key={`p1-${i}`} cx={x} cy={y} r={3} fill="var(--accent)" />
+          <circle key={`p1-${i}`} cx={x} cy={y} r={3} fill="var(--primary)" />
         ))}
 
         {/* Player 2 data points */}
@@ -150,7 +150,7 @@ export function CompareRadarChart({
       {/* Legend */}
       <div className="mt-3 flex items-center justify-center gap-6 text-xs text-foreground-muted">
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" />
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary" />
           <span>{player1Name}</span>
         </div>
         <div className="flex items-center gap-1.5">

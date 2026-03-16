@@ -46,7 +46,7 @@ export function RequestActions({ requestId }: RequestActionsProps) {
           placeholder={t('admin.requests.responseMessagePlaceholder')}
           maxLength={500}
           rows={3}
-          className="w-full rounded-lg border border-border bg-card p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-accent focus:outline-none resize-none"
+          className="w-full rounded-lg border border-border bg-surface p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-primary focus:outline-none resize-none"
         />
         <p className="text-[10px] text-foreground-muted/50">
           {t('admin.requests.responseMessageHint')}

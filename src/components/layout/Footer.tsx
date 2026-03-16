@@ -9,14 +9,14 @@ export function Footer() {
   const { user } = useAuth()
 
   return (
-    <footer className="border-t border-border bg-background-secondary">
+    <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand */}
           <div>
             <Link
               href="/"
-              className="inline-block rounded bg-accent px-2 py-0.5 text-sm font-bold text-background"
+              className="inline-block rounded bg-primary px-2 py-0.5 text-sm font-bold text-background"
             >
               GFT
             </Link>

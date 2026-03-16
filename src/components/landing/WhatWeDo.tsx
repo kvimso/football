@@ -11,11 +11,11 @@ export async function WhatWeDo() {
   ]
 
   return (
-    <section className="py-16 sm:py-20 bg-background-secondary">
+    <section className="py-16 sm:py-20 bg-surface">
       <div className="mx-auto max-w-7xl px-4">
         {/* Section header */}
         <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-block h-1 w-12 rounded-full bg-accent mb-4" />
+          <div className="inline-block h-1 w-12 rounded-full bg-primary mb-4" />
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             {t('landing.whatWeDoTitle')}
           </h2>
@@ -29,10 +29,10 @@ export async function WhatWeDo() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="rounded-xl border border-border bg-card p-6 text-center"
+              className="rounded-xl border border-border bg-surface p-6 text-center"
             >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-                <feature.icon className="h-6 w-6 text-accent" />
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                <feature.icon className="h-6 w-6 text-primary" />
               </div>
               <h3 className="mt-4 text-base font-semibold">{feature.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-foreground-muted">{feature.desc}</p>

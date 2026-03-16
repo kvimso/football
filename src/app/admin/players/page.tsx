@@ -97,7 +97,7 @@ export default async function AdminPlayersPage() {
                     <td className="px-4 py-3">
                       <Link
                         href={`/players/${player.slug}`}
-                        className="font-medium text-foreground hover:text-accent transition-colors"
+                        className="font-medium text-foreground hover:text-primary transition-colors"
                       >
                         {displayName}
                       </Link>

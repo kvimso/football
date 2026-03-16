@@ -1,73 +1,108 @@
 @import "tailwindcss";
 
-/* ── Theme custom properties (dark platform — default) ── */
+/* Enable dark: prefix with data-theme attribute */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* ── Theme custom properties (light-first A3 palette) ── */
 :root {
-  color-scheme: dark;
-
-  --background: #141218;
-  --background-secondary: #1c1a22;
-  --foreground: #e8e6ef;
-  --foreground-muted: #9896a3;
-  --accent: #c9a227;
-  --accent-hover: #d4b03a;
-  --accent-muted: rgba(201, 162, 39, 0.15);
-  --border: #33313d;
-  --card: #23212b;
-  --card-hover: #2a2834;
-  --nav-bg: rgba(20, 18, 24, 0.95);
-  --skeleton: #2a2834;
-
-  /* Position colors (-500 for colored text on dark bg) */
-  --pos-gk: #f59e0b;
-  --pos-def: #6366f1;
-  --pos-mid: #06b6d4;
-  --pos-att: #a855f7;
-  --pos-wng: #10b981;
-  --pos-st: #ef4444;
-}
-
-/* ── Warm ivory override for landing + auth pages ── */
-.landing {
   color-scheme: light;
 
-  --background: #faf8f5;
-  --background-secondary: #f2efe9;
-  --foreground: #2c2a35;
-  --foreground-muted: #6b6878;
-  --accent: #c9a227;
-  --accent-hover: #a68521;
-  --accent-muted: rgba(201, 162, 39, 0.12);
-  --border: #e8e4dd;
-  --card: #ffffff;
-  --card-hover: #f5f3ee;
-  --nav-bg: rgba(250, 248, 245, 0.95);
-  --skeleton: #f5f3ee;
+  --background: #FDFCFA;
+  --surface: #F4F1EC;
+  --elevated: #EAE6DF;
+  --foreground: #1A1917;
+  --foreground-muted: #7A756F;
+  --primary: #1B8A4A;
+  --primary-hover: #15703C;
+  --primary-muted: #E3F5E9;
+  --border: #DDD8D2;
+  --border-subtle: #EAE6DF; /* shares value with --elevated in light mode — intentional: subtle borders and elevated surfaces are the same cream */
+  --nav-bg: rgba(253, 252, 250, 0.92);
+  --btn-primary-text: #FDFCFA;
+  --danger: #CC3333;
+  --danger-muted: #FDE8E8;
+
+  /* Position colors (light mode — darker fg for contrast on light bg) */
+  --pos-gk: #B87A08;
+  --pos-gk-bg: #FDF5E0;
+  --pos-def: #CC3333;
+  --pos-def-bg: #FDE8E8;
+  --pos-mid: #1B8A4A;
+  --pos-mid-bg: #E3F5E9;
+  --pos-att: #8B3FC7;
+  --pos-att-bg: #F3EAFC;
+  --pos-wng: #0E8585;
+  --pos-wng-bg: #E0F5F5;
+  --pos-st: #2563EB;
+  --pos-st-bg: #E8F0FE;
+}
+
+/* ── Dark theme (toggled via data-theme attribute) ── */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #12110F;
+  --surface: #1C1A17;
+  --elevated: #2A2623;
+  --foreground: #EEECE8;
+  --foreground-muted: #9A9590;
+  --primary: #4ADE80;
+  --primary-hover: #3CC96E;
+  --primary-muted: #1A2E1F;
+  --border: #2A2623;
+  --border-subtle: #1C1A17;
+  --nav-bg: rgba(18, 17, 15, 0.92);
+  --btn-primary-text: #12110F;
+  --danger: #E05252;
+  --danger-muted: #2B1717;
+
+  /* Position colors (dark mode — brighter fg for contrast on dark bg) */
+  --pos-gk: #FBBF24;
+  --pos-gk-bg: #2D2508;
+  --pos-def: #F87171;
+  --pos-def-bg: #2B1717;
+  --pos-mid: #4ADE80;
+  --pos-mid-bg: #1A2E1F;
+  --pos-att: #C084FC;
+  --pos-att-bg: #231735;
+  --pos-wng: #2DD4BF;
+  --pos-wng-bg: #142D2D;
+  --pos-st: #5B9CF0;
+  --pos-st-bg: #172035;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-background-secondary: var(--background-secondary);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
   --color-foreground: var(--foreground);
   --color-foreground-muted: var(--foreground-muted);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-muted: var(--accent-muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
   --color-border: var(--border);
-  --color-card: var(--card);
-  --color-card-hover: var(--card-hover);
+  --color-border-subtle: var(--border-subtle);
   --color-nav-bg: var(--nav-bg);
-  --color-skeleton: var(--skeleton);
+  --color-btn-primary-text: var(--btn-primary-text);
+  --color-danger: var(--danger);
+  --color-danger-muted: var(--danger-muted);
   --color-pos-gk: var(--pos-gk);
+  --color-pos-gk-bg: var(--pos-gk-bg);
   --color-pos-def: var(--pos-def);
+  --color-pos-def-bg: var(--pos-def-bg);
   --color-pos-mid: var(--pos-mid);
+  --color-pos-mid-bg: var(--pos-mid-bg);
   --color-pos-att: var(--pos-att);
+  --color-pos-att-bg: var(--pos-att-bg);
   --color-pos-wng: var(--pos-wng);
+  --color-pos-wng-bg: var(--pos-wng-bg);
   --color-pos-st: var(--pos-st);
+  --color-pos-st-bg: var(--pos-st-bg);
 }
 
 /* Non-inline so --font-sans is a real CSS variable, overridable by :lang(ka) */
 @theme {
-  --font-sans: var(--font-geist-sans), var(--font-noto-georgian), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), var(--font-noto-georgian), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
@@ -75,9 +110,9 @@ body {
   color: var(--foreground);
 }
 
-/* ── Global focus-visible (gold ring) ── */
+/* ── Global focus-visible (primary ring) ── */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -89,17 +124,17 @@ body {
   padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-weight: 500;
-  background-color: var(--accent);
-  color: var(--background);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  background-color: var(--primary);
+  color: var(--btn-primary-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: background-color 150ms, box-shadow 150ms;
 }
 .btn-primary:hover {
-  background-color: var(--accent-hover);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: var(--primary-hover);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .btn-primary:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -110,16 +145,16 @@ body {
   padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-weight: 500;
-  border: 1px solid var(--accent);
-  color: var(--accent);
+  border: 1px solid var(--primary);
+  color: var(--primary);
   background: transparent;
   transition: background-color 150ms, color 150ms;
 }
 .btn-secondary:hover {
-  background-color: var(--accent-muted);
+  background-color: var(--primary-muted);
 }
 .btn-secondary:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -128,7 +163,7 @@ body {
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border);
-  background-color: var(--background-secondary);
+  background-color: var(--surface);
   color: var(--foreground);
   font-size: 0.875rem;
   line-height: 1.5;
@@ -139,33 +174,33 @@ body {
 }
 .input:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--primary);
 }
 
 .card {
-  background-color: var(--card);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   padding: 1.25rem;
   transition: background-color 150ms, box-shadow 150ms;
 }
 .card:hover {
-  background-color: var(--card-hover);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  background-color: var(--elevated);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* ── Enhanced card with position-colored top border ── */
 .card-enhanced {
-  background-color: var(--card);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
+  border-top: 3px solid var(--primary);
   border-radius: 0.75rem;
   padding: 1.25rem;
   transition: background-color 150ms, box-shadow 150ms;
 }
 .card-enhanced:hover {
-  background-color: var(--card-hover);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  background-color: var(--elevated);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* ── Filter chip pills ── */
@@ -183,25 +218,25 @@ body {
   transition: all 150ms;
 }
 .filter-chip:hover {
-  border-color: var(--accent);
+  border-color: var(--primary);
   color: var(--foreground);
 }
 .filter-chip.active {
-  background-color: var(--accent);
-  border-color: var(--accent);
-  color: var(--background);
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--btn-primary-text);
 }
 
-/* ── Section header with accent left-border ── */
+/* ── Section header with primary left-border ── */
 .section-header {
-  border-left: 3px solid var(--accent);
+  border-left: 3px solid var(--primary);
   padding-left: 0.75rem;
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--foreground);
 }
 
-/* ── Status badge pills (colored text on tinted bg for dark surfaces) ── */
+/* ── Status badge pills (semantic colors) ── */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -211,36 +246,50 @@ body {
   font-weight: 600;
 }
 .status-badge-pending {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  background-color: #FDF5E0;
+  color: #B87A08;
+}
+[data-theme="dark"] .status-badge-pending {
+  background-color: #2D2508;
+  color: #FBBF24;
 }
 .status-badge-approved {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background-color: var(--primary-muted);
+  color: var(--primary);
 }
 .status-badge-rejected {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  background-color: var(--danger-muted);
+  color: var(--danger);
 }
 .status-badge-active {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  background-color: var(--primary-muted);
+  color: var(--primary);
 }
 .status-badge-free_agent {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  background-color: #FDF5E0;
+  color: #B87A08;
+}
+[data-theme="dark"] .status-badge-free_agent {
+  background-color: #2D2508;
+  color: #FBBF24;
 }
 .status-badge-expired {
-  background-color: rgba(152, 150, 163, 0.15);
-  color: #9896a3;
+  background-color: var(--elevated);
+  color: var(--foreground-muted);
 }
 
 /* ── Data table rows ── */
 .table-row-hover:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+[data-theme="dark"] .table-row-hover:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.02);
 }
 .table-row-hover:hover {
-  background-color: rgba(201, 162, 39, 0.06);
+  background-color: rgba(27, 138, 74, 0.06);
+}
+[data-theme="dark"] .table-row-hover:hover {
+  background-color: rgba(74, 222, 128, 0.06);
 }
 
 /* ── Chat animations ── */
@@ -271,10 +320,10 @@ body {
 
 /* ── Georgian typography adjustments ── */
 html:lang(ka) {
-  --font-sans: var(--font-noto-georgian), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-noto-georgian), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* ── Themed scrollbars (dark platform — muted purple-gray) ── */
+/* ── Themed scrollbars ── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -283,41 +332,17 @@ html:lang(ka) {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(152, 150, 163, 0.3);
+  background-color: rgba(122, 117, 111, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(152, 150, 163, 0.5);
+  background-color: rgba(122, 117, 111, 0.45);
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(152, 150, 163, 0.3) transparent;
-}
-
-/* Landing button overrides (fix contrast on warm ivory) */
-.landing .btn-primary {
-  color: var(--foreground);
-}
-.landing .btn-primary:hover {
-  background-color: var(--accent-hover);
-}
-.landing .btn-secondary {
-  color: var(--foreground);
-  border-color: var(--accent);
-}
-.landing .btn-secondary:hover {
-  color: var(--accent-hover);
-  background-color: var(--accent-muted);
-}
-
-/* Landing scrollbars (warm gray) */
-.landing ::-webkit-scrollbar-thumb {
-  background-color: rgba(107, 104, 120, 0.2);
-}
-.landing ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(107, 104, 120, 0.4);
+  scrollbar-color: rgba(122, 117, 111, 0.25) transparent;
 }
 
 /* Georgian script doesn't benefit from tight letter-spacing — it looks cramped */

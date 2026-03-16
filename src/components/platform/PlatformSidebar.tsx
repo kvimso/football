@@ -51,9 +51,9 @@ export function PlatformSidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 md:block">
         <div className="sticky top-24">
-          <div className="mb-4 rounded-lg border border-border bg-background-secondary p-3">
+          <div className="mb-4 rounded-lg border border-border bg-surface p-3">
             <p className="text-xs text-foreground-muted">{t('platform.title')}</p>
-            <p className="mt-0.5 text-sm font-semibold text-accent">{t('platform.subtitle')}</p>
+            <p className="mt-0.5 text-sm font-semibold text-primary">{t('platform.subtitle')}</p>
           </div>
           <nav className="flex flex-col gap-1">
             {links.map((link) => {
@@ -67,8 +67,8 @@ export function PlatformSidebar() {
                   href={link.href}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-accent/15 text-accent'
-                      : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                      ? 'bg-primary/15 text-primary'
+                      : 'text-foreground-muted hover:bg-surface hover:text-foreground'
                   }`}
                 >
                   <svg
@@ -99,7 +99,7 @@ export function PlatformSidebar() {
               href={link.href}
               className={`whitespace-nowrap rounded-t-lg px-4 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'border-b-2 border-accent text-accent'
+                  ? 'border-b-2 border-primary text-primary'
                   : 'text-foreground-muted hover:text-foreground'
               }`}
             >

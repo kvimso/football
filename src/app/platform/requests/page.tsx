@@ -64,7 +64,7 @@ export default async function PlatformRequestsPage({
               href={`/platform/requests${s === 'all' ? '' : `?status=${s}`}`}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-accent/10 text-accent'
+                  ? 'bg-primary/10 text-primary'
                   : 'text-foreground-muted hover:text-foreground'
               }`}
             >

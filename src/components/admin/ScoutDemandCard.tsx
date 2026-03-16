@@ -33,14 +33,14 @@ export function ScoutDemandCard({
   const lastMonthMap = new Map(lastMonth.map((e) => [e.country, Number(e.view_count)]))
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted">
           {title}
         </h2>
         {totalThisMonth > 0 && trendPercent !== 0 && (
           <span
-            className={`text-xs font-medium ${trendPercent > 0 ? 'text-accent' : 'text-red-600'}`}
+            className={`text-xs font-medium ${trendPercent > 0 ? 'text-primary' : 'text-red-600'}`}
           >
             {trendPercent > 0 ? '+' : ''}
             {trendPercent}% {trendLabel}
@@ -70,7 +70,7 @@ export function ScoutDemandCard({
                   {count}
                   {isUp && (
                     <svg
-                      className="h-3 w-3 text-accent"
+                      className="h-3 w-3 text-primary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

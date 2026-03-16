@@ -121,7 +121,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
       {/* Club header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-background-secondary border border-border text-3xl font-bold text-accent">
+        <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-surface border border-border text-3xl font-bold text-primary">
           {club.logo_url ? (
             <Image
               src={club.logo_url}
@@ -131,7 +131,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
               sizes="80px"
             />
           ) : (
-            <ClubSilhouette className="h-12 w-12 text-accent/40" />
+            <ClubSilhouette className="h-12 w-12 text-primary/40" />
           )}
         </div>
         <div>
@@ -155,7 +155,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
                   href={club.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent hover:underline"
+                  className="text-primary hover:underline"
                 >
                   {t('clubs.website')}
                 </a>

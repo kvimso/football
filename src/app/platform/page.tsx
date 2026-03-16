@@ -119,7 +119,7 @@ export default async function PlatformDashboardPage() {
           <Link
             key={stat.label}
             href={stat.href}
-            className="card p-4 transition-colors hover:border-accent/30"
+            className="card p-4 transition-colors hover:border-primary/30"
           >
             <p className="text-sm text-foreground-muted">{stat.label}</p>
             <p className="mt-1 text-2xl font-bold text-foreground">{stat.value}</p>
@@ -137,7 +137,7 @@ export default async function PlatformDashboardPage() {
             <Link
               key={club.id}
               href={`/platform/clubs/${club.id}/edit`}
-              className="card flex items-center justify-between p-4 transition-colors hover:border-accent/30"
+              className="card flex items-center justify-between p-4 transition-colors hover:border-primary/30"
             >
               <div>
                 <p className="text-sm font-medium text-foreground">{club.name}</p>
@@ -201,7 +201,7 @@ export default async function PlatformDashboardPage() {
                 </div>
               )
             })}
-            <Link href="/platform/requests" className="text-sm text-accent hover:underline">
+            <Link href="/platform/requests" className="text-sm text-primary hover:underline">
               {t('common.viewAll')} &rarr;
             </Link>
           </div>

@@ -113,7 +113,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-foreground">{t('notifications.title')}</h1>
         {hasUnread && (
-          <button onClick={handleMarkAllRead} className="text-xs text-accent hover:underline">
+          <button onClick={handleMarkAllRead} className="text-xs text-primary hover:underline">
             {t('notifications.markAllRead')}
           </button>
         )}
@@ -127,7 +127,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
           onChange={(e) =>
             handleTypeChange(e.target.value ? (e.target.value as NotificationType) : undefined)
           }
-          className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground"
         >
           <option value="">{t('notifications.allTypes')}</option>
           {ALL_TYPES.map((type) => (
@@ -141,7 +141,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
         <select
           value={readFilter}
           onChange={(e) => handleReadChange(e.target.value as 'all' | 'unread' | 'read')}
-          className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground"
         >
           <option value="all">{t('notifications.allStatus')}</option>
           <option value="unread">{t('notifications.unreadOnly')}</option>
@@ -154,10 +154,10 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
       </div>
 
       {/* List */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden divide-y divide-border/50">
+      <div className="rounded-lg border border-border bg-surface overflow-hidden divide-y divide-border/50">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-12 text-center">
@@ -169,7 +169,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
             const icon = TYPE_ICONS[n.type]
             const content = (
               <div
-                className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}
+                className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-surface ${!n.is_read ? 'bg-primary/5' : ''}`}
               >
                 <div className={`mt-0.5 shrink-0 ${icon.color}`}>
                   <svg
@@ -200,7 +200,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
                     {t(TYPE_KEYS[n.type])}
                   </span>
                 </div>
-                {!n.is_read && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />}
+                {!n.is_read && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />}
               </div>
             )
 

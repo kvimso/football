@@ -78,7 +78,7 @@ export default async function PlatformClubsPage() {
                   <td className="py-3">
                     <Link
                       href={`/platform/clubs/${club.id}/edit`}
-                      className="text-accent hover:underline"
+                      className="text-primary hover:underline"
                     >
                       {t('common.edit')}
                     </Link>

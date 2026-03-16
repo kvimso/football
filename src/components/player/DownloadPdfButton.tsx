@@ -37,7 +37,7 @@ export function DownloadPdfButton({ playerId, playerName }: DownloadPdfButtonPro
     <button
       onClick={handleDownload}
       disabled={loading}
-      className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-accent/50 transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
+      className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-primary/50 transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
     >
       <svg
         className="h-4 w-4"

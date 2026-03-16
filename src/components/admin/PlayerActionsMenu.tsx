@@ -63,7 +63,7 @@ export function PlayerActionsMenu({ playerId, playerName, isActive }: PlayerActi
     <div ref={menuRef} className="relative inline-block">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
+        className="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-muted transition-colors hover:bg-surface hover:text-foreground"
         aria-label={t('admin.common.actions')}
       >
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -72,13 +72,13 @@ export function PlayerActionsMenu({ playerId, playerName, isActive }: PlayerActi
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] overflow-hidden rounded-xl border border-border bg-card shadow-lg animate-slide-in-down">
+        <div className="absolute right-0 top-full z-20 mt-1 min-w-[140px] overflow-hidden rounded-xl border border-border bg-surface shadow-lg animate-slide-in-down">
           <button
             onClick={() => {
               setOpen(false)
               router.push(`/admin/players/${playerId}/edit`)
             }}
-            className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-background-secondary"
+            className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-surface"
           >
             <svg
               className="h-3.5 w-3.5 text-foreground-muted"

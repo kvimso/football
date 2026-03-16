@@ -80,7 +80,7 @@ export function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={handleToggle}
-        className="relative flex items-center justify-center rounded-md p-1.5 text-foreground-muted transition-colors hover:text-foreground hover:bg-background-secondary"
+        className="relative flex items-center justify-center rounded-md p-1.5 text-foreground-muted transition-colors hover:text-foreground hover:bg-surface"
         aria-label="Notifications"
       >
         <svg

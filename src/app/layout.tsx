@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { Geist, Noto_Sans_Georgian } from 'next/font/google'
+import { Inter, Noto_Sans_Georgian } from 'next/font/google'
+import { ThemeProvider, type Theme } from '@/context/ThemeContext'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { AuthProvider } from '@/context/AuthContext'
 import { createClient } from '@/lib/supabase/server'
 import type { UserRole } from '@/lib/types'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
@@ -33,6 +34,10 @@ export default async function RootLayout({
   const rawLang = cookieStore.get('lang')?.value
   const lang = rawLang === 'ka' ? 'ka' : 'en'
 
+  const rawTheme = cookieStore.get('theme')?.value
+  const initialTheme: Theme = rawTheme === 'dark' ? 'dark' : 'light'
+  const dataTheme = initialTheme === 'dark' ? 'dark' : undefined
+
   // Check auth server-side so AuthProvider hydrates with correct state (no flash)
   let initialUser: { id: string; email?: string } | null = null
   let initialRole: UserRole | null = null
@@ -54,13 +59,15 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang={lang}>
-      <body className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}>
-        <LanguageProvider initialLang={lang as 'en' | 'ka'}>
-          <AuthProvider initialUser={initialUser} initialRole={initialRole}>
-            {children}
-          </AuthProvider>
-        </LanguageProvider>
+    <html lang={lang} {...(dataTheme ? { 'data-theme': dataTheme } : {})} suppressHydrationWarning>
+      <body className={`${inter.variable} ${notoGeorgian.variable} font-sans antialiased`}>
+        <ThemeProvider initialTheme={initialTheme}>
+          <LanguageProvider initialLang={lang as 'en' | 'ka'}>
+            <AuthProvider initialUser={initialUser} initialRole={initialRole}>
+              {children}
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

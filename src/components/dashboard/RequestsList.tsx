@@ -119,7 +119,7 @@ function RequestCard({
           {player ? (
             <Link
               href={`/players/${player.slug}`}
-              className="font-medium text-foreground hover:text-accent transition-colors"
+              className="font-medium text-foreground hover:text-primary transition-colors"
             >
               {displayName}
             </Link>

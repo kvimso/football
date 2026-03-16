@@ -102,7 +102,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                   <span className="text-foreground-muted">&rarr;</span>
                   <Link
                     href={`/players/${req.player?.slug ?? ''}`}
-                    className="text-sm text-accent hover:underline"
+                    className="text-sm text-primary hover:underline"
                   >
                     {req.player?.name ?? t('common.unknown')}
                   </Link>
@@ -143,7 +143,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
 
                 {/* Response message display */}
                 {req.response_message && req.status !== 'pending' && (
-                  <div className="mt-1.5 rounded-lg bg-card/50 p-2">
+                  <div className="mt-1.5 rounded-lg bg-surface/50 p-2">
                     <p className="text-xs text-foreground-muted">{req.response_message}</p>
                   </div>
                 )}
@@ -163,7 +163,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                         placeholder={t('admin.requests.responseMessagePlaceholder')}
                         maxLength={500}
                         rows={3}
-                        className="w-full rounded-lg border border-border bg-card p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-accent focus:outline-none resize-none"
+                        className="w-full rounded-lg border border-border bg-surface p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-primary focus:outline-none resize-none"
                       />
                       <div className="flex items-center gap-2">
                         <button

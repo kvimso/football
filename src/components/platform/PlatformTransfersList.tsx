@@ -23,7 +23,7 @@ function statusBorderColor(status: string | null) {
     case 'pending':
       return 'border-l-yellow-400'
     case 'accepted':
-      return 'border-l-accent'
+      return 'border-l-primary'
     case 'declined':
       return 'border-l-red-400'
     case 'expired':
@@ -113,11 +113,11 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
         return (
           <div
             key={transfer.id}
-            className={`flex items-center gap-3 rounded-lg border border-border border-l-4 ${statusBorderColor(transfer.status)} bg-card p-3 transition-all hover:bg-card-hover`}
+            className={`flex items-center gap-3 rounded-lg border border-border border-l-4 ${statusBorderColor(transfer.status)} bg-surface p-3 transition-all hover:bg-elevated`}
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <svg
-                className="h-5 w-5 text-accent"
+                className="h-5 w-5 text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -134,7 +134,7 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={`/players/${transfer.player?.slug ?? ''}`}
-                  className="text-sm font-medium text-accent hover:underline"
+                  className="text-sm font-medium text-primary hover:underline"
                 >
                   {playerName ?? t('common.unknown')}
                 </Link>

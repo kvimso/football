@@ -136,12 +136,12 @@ const ConversationListItem = memo(
         href={`${basePath}/${conv.id}`}
         role="listitem"
         aria-current={isActive ? 'page' : undefined}
-        className={`flex items-center gap-3 border-l-2 px-3 py-3 transition-colors hover:bg-card-hover ${
-          isActive ? 'border-l-accent bg-accent/5' : 'border-l-transparent'
+        className={`flex items-center gap-3 border-l-2 px-3 py-3 transition-colors hover:bg-elevated ${
+          isActive ? 'border-l-primary bg-primary/5' : 'border-l-transparent'
         } ${conv.is_blocked ? 'opacity-60' : ''}`}
       >
         {/* Avatar */}
-        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
           {userRole === 'scout' && conv.club?.logo_url ? (
             <Image
               src={conv.club.logo_url}
@@ -151,7 +151,7 @@ const ConversationListItem = memo(
               className="h-10 w-10 rounded-full object-cover"
             />
           ) : (
-            <span className="text-sm font-bold text-accent">
+            <span className="text-sm font-bold text-primary">
               {displayName.charAt(0).toUpperCase()}
             </span>
           )}
@@ -166,7 +166,7 @@ const ConversationListItem = memo(
               {displayName}
             </span>
             <span
-              className={`shrink-0 text-[10px] ${conv.unread_count > 0 ? 'font-semibold text-accent' : 'text-foreground-muted'}`}
+              className={`shrink-0 text-[10px] ${conv.unread_count > 0 ? 'font-semibold text-primary' : 'text-foreground-muted'}`}
             >
               {timestamp}
             </span>
@@ -178,7 +178,7 @@ const ConversationListItem = memo(
               {lastMessagePreview}
             </p>
             {conv.unread_count > 0 && (
-              <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-accent px-1 text-[9px] font-bold text-background">
+              <span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-background">
                 {conv.unread_count > 99 ? '99+' : conv.unread_count}
               </span>
             )}

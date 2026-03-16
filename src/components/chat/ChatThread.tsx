@@ -523,14 +523,14 @@ export function ChatThread({
   const dateGroups = useMemo(() => groupMessagesByDate(messages), [messages])
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-card">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-surface">
       {/* Thread Header */}
-      <div className="flex items-center gap-3 bg-background-secondary/50 px-4 py-3">
+      <div className="flex items-center gap-3 bg-surface/50 px-4 py-3">
         {/* Mobile: back button */}
         <Link
           href={backPath}
           aria-label={t('aria.goBack')}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground lg:hidden"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground lg:hidden"
         >
           <svg
             className="h-5 w-5"
@@ -547,7 +547,7 @@ export function ChatThread({
         <button
           onClick={openDrawer}
           aria-label={t('chat.switchConversation')}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground lg:hidden"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground lg:hidden"
         >
           <svg
             className="h-5 w-5"
@@ -565,7 +565,7 @@ export function ChatThread({
         </button>
 
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/10">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
             {userRole === 'scout' && conversation.club.logo_url ? (
               <Image
                 src={conversation.club.logo_url}
@@ -575,7 +575,7 @@ export function ChatThread({
                 className="h-12 w-12 rounded-full object-cover"
               />
             ) : (
-              <span className="text-lg font-bold text-accent">
+              <span className="text-lg font-bold text-primary">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             )}
@@ -602,7 +602,7 @@ export function ChatThread({
                 setBlockConfirming(false)
               }}
               aria-label={t('aria.chatOptions')}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="5" r="1.5" />
@@ -612,7 +612,7 @@ export function ChatThread({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 z-20 min-w-[160px] overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+              <div className="absolute right-0 top-full mt-1 z-20 min-w-[160px] overflow-hidden rounded-xl border border-border bg-surface shadow-lg">
                 <button
                   onClick={() => {
                     handleBlockAction()
@@ -620,7 +620,7 @@ export function ChatThread({
                     setMenuOpen(false)
                   }}
                   disabled={blockLoading}
-                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-background-secondary disabled:opacity-50"
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-surface disabled:opacity-50"
                 >
                   {blockLoading ? (
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border border-foreground-muted border-t-transparent" />
@@ -690,7 +690,7 @@ export function ChatThread({
               onClick={loadOlder}
               disabled={isLoadingMore}
               aria-label={t('aria.loadOlder')}
-              className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-foreground-muted transition-colors hover:bg-background-secondary disabled:opacity-50"
+              className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-foreground-muted transition-colors hover:bg-surface disabled:opacity-50"
             >
               {isLoadingMore ? (
                 <span className="flex items-center gap-1.5">
@@ -724,11 +724,11 @@ export function ChatThread({
                     {/* Unread separator */}
                     {msg.id === firstUnreadIdRef.current && (
                       <div className="flex items-center gap-3 px-4 py-2 animate-slide-in-down">
-                        <div className="h-px flex-1 bg-accent/50" />
-                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-accent">
+                        <div className="h-px flex-1 bg-primary/50" />
+                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-primary">
                           {t('chat.newMessages')}
                         </span>
-                        <div className="h-px flex-1 bg-accent/50" />
+                        <div className="h-px flex-1 bg-primary/50" />
                       </div>
                     )}
                     <MessageBubble
@@ -762,7 +762,7 @@ export function ChatThread({
           onClick={() => scrollToBottom()}
           aria-label={t('aria.scrollToLatest')}
           tabIndex={newMessageCount > 0 ? 0 : -1}
-          className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-medium text-background shadow-lg transition-transform hover:scale-105"
+          className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-background shadow-lg transition-transform hover:scale-105"
         >
           {displayCount > 99 ? '99+' : displayCount} {t('chat.newMessages')}
           <svg

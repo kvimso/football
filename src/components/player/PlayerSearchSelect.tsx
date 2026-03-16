@@ -85,7 +85,7 @@ export function PlayerSearchSelect({
           }
         }}
         placeholder={t('dashboard.selectPlayers')}
-        className="w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent transition-colors"
+        className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary transition-colors"
       />
       {value && (
         <button
@@ -109,7 +109,7 @@ export function PlayerSearchSelect({
         </button>
       )}
       {isOpen && (
-        <div className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto rounded-lg border border-border bg-background-secondary shadow-lg">
+        <div className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto rounded-lg border border-border bg-surface shadow-lg">
           {isLoading && (
             <div className="px-3 py-2 text-sm text-foreground-muted">{t('common.loading')}</div>
           )}
@@ -132,7 +132,7 @@ export function PlayerSearchSelect({
                 className={`w-full px-3 py-2 text-left text-sm transition-colors ${
                   isDisabled
                     ? 'text-foreground-muted/50 cursor-not-allowed'
-                    : 'text-foreground hover:bg-accent/10'
+                    : 'text-foreground hover:bg-primary/10'
                 }`}
               >
                 <span className="font-medium">{name}</span>

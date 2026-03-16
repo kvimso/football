@@ -91,7 +91,7 @@ export function PlatformPlayerForm({ player, clubs }: PlatformPlayerFormProps) {
   }
 
   const inputClass =
-    'mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none'
+    'mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-primary focus:outline-none'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

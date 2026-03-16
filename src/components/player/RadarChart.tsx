@@ -43,7 +43,7 @@ export function RadarChart({ skills, labels }: RadarChartProps) {
           const [x, y] = getPoint(i, 100, RADIUS)
           return `${x},${y}`
         }).join(' ')}
-        fill="var(--background-secondary)"
+        fill="var(--surface)"
         fillOpacity={0.5}
       />
 
@@ -83,15 +83,15 @@ export function RadarChart({ skills, labels }: RadarChartProps) {
       {/* Data polygon */}
       <polygon
         points={polygonPoints}
-        fill="var(--accent)"
+        fill="var(--primary)"
         fillOpacity={0.2}
-        stroke="var(--accent)"
+        stroke="var(--primary)"
         strokeWidth={2}
       />
 
       {/* Data points */}
       {points.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r={3} fill="var(--accent)" />
+        <circle key={i} cx={x} cy={y} r={3} fill="var(--primary)" />
       ))}
 
       {/* Labels */}

@@ -24,9 +24,9 @@ export async function ForAcademies() {
           >
             <div className="relative h-72 w-full max-w-sm">
               {/* Shield / crest shape */}
-              <div className="absolute inset-4 rounded-xl border-2 border-accent/10" />
+              <div className="absolute inset-4 rounded-xl border-2 border-primary/10" />
               {/* Inner border */}
-              <div className="absolute inset-8 rounded-lg border border-accent/[0.07]" />
+              <div className="absolute inset-8 rounded-lg border border-primary/[0.07]" />
               {/* Formation dots (4-3-3) */}
               {/* GK */}
               <div className="absolute bottom-12 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-pos-gk/30" />
@@ -44,13 +44,13 @@ export async function ForAcademies() {
               <div className="absolute top-[15%] left-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-pos-att/25" />
               <div className="absolute top-[18%] right-[25%] h-2.5 w-2.5 rounded-full bg-pos-att/25" />
               {/* Connecting lines */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 rounded-full border border-dashed border-accent/[0.08]" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-20 w-20 rounded-full border border-dashed border-primary/[0.08]" />
             </div>
           </div>
 
           {/* Right — content */}
           <div className="order-1 lg:order-2">
-            <div className="inline-block h-1 w-12 rounded-full bg-accent mb-4" />
+            <div className="inline-block h-1 w-12 rounded-full bg-primary mb-4" />
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
               {t('landing.forAcademiesTitle')}
             </h2>
@@ -61,7 +61,7 @@ export async function ForAcademies() {
             <ul className="mt-8 space-y-4">
               {benefits.map((benefit) => (
                 <li key={benefit} className="flex gap-3">
-                  <CheckCircleIcon className="h-5 w-5 shrink-0 text-accent mt-0.5" />
+                  <CheckCircleIcon className="h-5 w-5 shrink-0 text-primary mt-0.5" />
                   <span className="text-sm leading-relaxed">{benefit}</span>
                 </li>
               ))}

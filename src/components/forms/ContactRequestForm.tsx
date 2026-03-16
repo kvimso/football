@@ -31,7 +31,7 @@ export function ContactRequestForm({ playerId }: ContactRequestFormProps) {
 
   if (sent) {
     return (
-      <span className="rounded-lg bg-accent-muted/30 px-4 py-2 text-sm font-medium text-accent">
+      <span className="rounded-lg bg-primary-muted/30 px-4 py-2 text-sm font-medium text-primary">
         {t('dashboard.requestSent')}
       </span>
     )
@@ -52,7 +52,7 @@ export function ContactRequestForm({ playerId }: ContactRequestFormProps) {
         onChange={(e) => setMessage(e.target.value)}
         placeholder={t('dashboard.messagePlaceholder')}
         rows={3}
-        className="w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-accent transition-colors"
+        className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-primary transition-colors"
       />
       {error && <p className="text-xs text-red-600">{error}</p>}
       <div className="flex gap-2">

@@ -38,8 +38,8 @@ export function WatchButton({ playerId, isWatched: initial, size = 'sm' }: Watch
       disabled={isPending}
       className={`${baseClasses} ${
         isWatched
-          ? 'bg-accent/20 text-accent border border-accent/30'
-          : 'bg-background-secondary text-foreground-muted border border-border hover:text-foreground hover:border-accent/50'
+          ? 'bg-primary/20 text-primary border border-primary/30'
+          : 'bg-surface text-foreground-muted border border-border hover:text-foreground hover:border-primary/50'
       } disabled:opacity-50`}
     >
       {isPending ? '...' : isWatched ? `★ ${t('watchlist.watching')}` : `☆ ${t('watchlist.watch')}`}

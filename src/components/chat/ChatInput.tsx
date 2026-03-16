@@ -216,7 +216,7 @@ export function ChatInput({
   // Blocked state
   if (isBlocked) {
     return (
-      <div className="bg-background-secondary/50 px-4 py-3">
+      <div className="bg-surface/50 px-4 py-3">
         <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600">
           <svg
             className="h-4 w-4 shrink-0"
@@ -239,7 +239,7 @@ export function ChatInput({
 
   return (
     <>
-      <div className="bg-background-secondary/50 px-3 py-2.5">
+      <div className="bg-surface/50 px-3 py-2.5">
         {/* Error */}
         {error && (
           <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-600 animate-slide-in-down">
@@ -265,14 +265,14 @@ export function ChatInput({
         {/* Uploading indicator */}
         {isUploading && (
           <div className="mb-2 flex items-center gap-2 text-xs text-foreground-muted">
-            <div className="h-3 w-3 animate-spin rounded-full border border-accent border-t-transparent" />
+            <div className="h-3 w-3 animate-spin rounded-full border border-primary border-t-transparent" />
             {t('chat.uploadingFile')}
           </div>
         )}
 
         {/* Pasted image preview */}
         {pastedPreview && (
-          <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-background-secondary px-3 py-2 animate-slide-in-down">
+          <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2 animate-slide-in-down">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={pastedPreview.previewUrl}
@@ -292,7 +292,7 @@ export function ChatInput({
             <button
               onClick={handleSendPastedImage}
               disabled={isUploading}
-              className="rounded bg-accent px-3 py-1 text-xs text-background hover:bg-accent/90 disabled:opacity-50"
+              className="rounded bg-primary px-3 py-1 text-xs text-background hover:bg-primary/90 disabled:opacity-50"
             >
               {t('common.send')}
             </button>
@@ -306,7 +306,7 @@ export function ChatInput({
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground disabled:opacity-50"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground disabled:opacity-50"
               aria-label={t('aria.attachFile')}
             >
               <svg
@@ -327,7 +327,7 @@ export function ChatInput({
             {/* Player ref button */}
             <button
               onClick={() => setShowPlayerSearch(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-background-secondary hover:text-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground"
               aria-label={t('aria.addPlayerRef')}
             >
               <svg
@@ -366,7 +366,7 @@ export function ChatInput({
               placeholder={t('chat.typeMessage')}
               rows={1}
               disabled={isSending}
-              className="max-h-[96px] min-h-[40px] w-full resize-none overflow-hidden rounded-3xl border border-border bg-background-secondary px-4 py-2.5 text-sm text-foreground transition-colors placeholder:text-foreground-muted focus:border-accent focus:outline-none"
+              className="max-h-[96px] min-h-[40px] w-full resize-none overflow-hidden rounded-3xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground transition-colors placeholder:text-foreground-muted focus:border-primary focus:outline-none"
             />
           </div>
 
@@ -374,7 +374,7 @@ export function ChatInput({
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-background shadow-sm transition-all hover:bg-accent-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-accent"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-background shadow-sm transition-all hover:bg-primary-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-primary"
             aria-label={t('aria.sendMessage')}
           >
             <svg

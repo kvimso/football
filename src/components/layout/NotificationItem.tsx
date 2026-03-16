@@ -56,7 +56,7 @@ export function NotificationItem({
 
   const content = (
     <div
-      className={`flex items-start gap-2.5 px-3 py-2.5 transition-colors hover:bg-background-secondary ${!isRead ? 'bg-accent/5' : ''}`}
+      className={`flex items-start gap-2.5 px-3 py-2.5 transition-colors hover:bg-surface ${!isRead ? 'bg-primary/5' : ''}`}
     >
       {/* Type icon */}
       <div className={`mt-0.5 shrink-0 ${icon.color}`}>
@@ -83,7 +83,7 @@ export function NotificationItem({
       </div>
 
       {/* Unread dot */}
-      {!isRead && <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-accent" />}
+      {!isRead && <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />}
     </div>
   )
 

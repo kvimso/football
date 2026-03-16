@@ -41,13 +41,13 @@ function GlassSelect({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent/40"
+      className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary/40"
     >
-      <option value="" className="bg-card text-foreground">
+      <option value="" className="bg-surface text-foreground">
         {placeholder}
       </option>
       {options.map((opt) => (
-        <option key={opt.value} value={opt.value} className="bg-card text-foreground">
+        <option key={opt.value} value={opt.value} className="bg-surface text-foreground">
           {opt.label}
         </option>
       ))}
@@ -70,8 +70,8 @@ function TriggerPill({
     <button
       className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm transition-all ${
         hasValue
-          ? 'border-accent/20 bg-accent/8 text-accent'
-          : 'border-border bg-transparent text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+          ? 'border-primary/20 bg-primary/8 text-primary'
+          : 'border-border bg-transparent text-foreground-muted hover:bg-surface hover:text-foreground'
       }`}
     >
       {icon}
@@ -217,11 +217,11 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
         : ''
 
   return (
-    <div className="relative z-10 rounded-2xl border border-border bg-card p-5 shadow-sm space-y-4">
+    <div className="relative z-10 rounded-2xl border border-border bg-surface p-5 shadow-sm space-y-4">
       {/* Layer 1: Search bar */}
       <div className="relative">
         <svg
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-accent/50"
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/50"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -241,7 +241,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             setSearchInput(e.target.value)
             debouncedSearch(e.target.value)
           }}
-          className="w-full rounded-xl border border-border bg-background-secondary pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-accent/40 focus:shadow-[0_0_12px_rgba(201,162,39,0.08)]"
+          className="w-full rounded-xl border border-border bg-surface pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-primary/40 focus:shadow-[0_0_12px_rgba(201,162,39,0.08)]"
         />
       </div>
 
@@ -256,7 +256,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-all ${
                 isActive
                   ? POSITION_GLOW_CLASSES[pos as Position]
-                  : 'border-border bg-transparent text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  : 'border-border bg-transparent text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t(`positions.${pos}`)}
@@ -298,7 +298,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               placeholder={t('players.searchClub')}
               value={clubSearch}
               onChange={(e) => setClubSearch(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background-secondary px-3 py-1.5 text-sm text-foreground placeholder-foreground-muted/50 outline-none transition-colors focus:border-accent/40"
+              className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-foreground placeholder-foreground-muted/50 outline-none transition-colors focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-2">
               {clubs
@@ -315,8 +315,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
                       onClick={() => toggleMultiParam('club', c.id, activeClubs)}
                       className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                         isActive
-                          ? 'bg-accent/15 text-accent border-accent/30'
-                          : 'bg-transparent border-border text-foreground-muted hover:bg-background-secondary'
+                          ? 'bg-primary/15 text-primary border-primary/30'
+                          : 'bg-transparent border-border text-foreground-muted hover:bg-surface'
                       }`}
                     >
                       {lang === 'ka' ? c.name_ka : c.name}
@@ -459,8 +459,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
                 onClick={() => updateParam('foot', foot === f ? '' : f)}
                 className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   foot === f
-                    ? 'bg-accent/15 text-accent'
-                    : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                    ? 'bg-primary/15 text-primary'
+                    : 'text-foreground-muted hover:bg-surface hover:text-foreground'
                 }`}
               >
                 {t('foot.' + f)}
@@ -573,8 +573,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               onClick={() => updateParam('sort', '')}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 !sort
-                  ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t('players.sortName')}
@@ -583,8 +583,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               onClick={() => updateParam('sort', 'most_viewed')}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 sort === 'most_viewed'
-                  ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t('players.sortMostViewed')}
@@ -623,8 +623,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               onClick={() => updateParam('status', '')}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 !status
-                  ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t('players.allStatuses')}
@@ -633,8 +633,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               onClick={() => updateParam('status', 'active')}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 status === 'active'
-                  ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t('players.statusActive')}
@@ -643,8 +643,8 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
               onClick={() => updateParam('status', 'free_agent')}
               className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 status === 'free_agent'
-                  ? 'bg-accent/15 text-accent'
-                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  ? 'bg-primary/15 text-primary'
+                  : 'text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t('players.statusFreeAgent')}
@@ -660,7 +660,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           {activePositions.map((pos) => (
             <span
               key={pos}
-              className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
+              className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
             >
               {t(`positions.${pos}`)}
               <button
@@ -678,7 +678,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             return (
               <span
                 key={clubId}
-                className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
+                className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted"
               >
                 {lang === 'ka' ? c.name_ka : c.name}
                 <button
@@ -692,7 +692,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           })}
           {/* Age tag */}
           {(ageMin || ageMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.filterAge')}: {ageMin || '?'}&ndash;{ageMax || '?'}
               <button
                 onClick={() => clearParams('age_min', 'age_max')}
@@ -704,7 +704,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Foot tag */}
           {foot && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('foot.' + foot)}
               <button
                 onClick={() => updateParam('foot', '')}
@@ -716,7 +716,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Height tag */}
           {(heightMin || heightMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.height')}: {heightMin || '?'}&ndash;{heightMax || '?'} {t('players.cm')}
               <button
                 onClick={() => clearParams('height_min', 'height_max')}
@@ -728,7 +728,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Weight tag */}
           {(weightMin || weightMax) && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.weight')}: {weightMin || '?'}&ndash;{weightMax || '?'} {t('players.kg')}
               <button
                 onClick={() => clearParams('weight_min', 'weight_max')}
@@ -740,7 +740,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Stat filter tags */}
           {goalsMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.goals')}: {goalsMin}+
               <button
                 onClick={() => updateParam('goals_min', '')}
@@ -751,7 +751,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             </span>
           )}
           {assistsMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.assists')}: {assistsMin}+
               <button
                 onClick={() => updateParam('assists_min', '')}
@@ -762,7 +762,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             </span>
           )}
           {matchesMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.matches')}: {matchesMin}+
               <button
                 onClick={() => updateParam('matches_min', '')}
@@ -773,7 +773,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
             </span>
           )}
           {passAccMin && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.passAccuracyMin')}: {passAccMin}%+
               <button
                 onClick={() => updateParam('pass_acc_min', '')}
@@ -785,7 +785,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Sort tag */}
           {sort && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {t('players.sort')}: {sort === 'most_viewed' ? t('players.sortMostViewed') : sort}
               <button
                 onClick={() => updateParam('sort', '')}
@@ -797,7 +797,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           )}
           {/* Status tag */}
           {status && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-background-secondary px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
+            <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground-muted">
               {status === 'active' ? t('players.statusActive') : t('players.statusFreeAgent')}
               <button
                 onClick={() => updateParam('status', '')}

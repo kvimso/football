@@ -77,14 +77,14 @@ export function WatchlistSidebar({
   return (
     <div className="space-y-4">
       {/* Folders */}
-      <div className="rounded-lg border border-border bg-card p-3">
+      <div className="rounded-lg border border-border bg-surface p-3">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
             {t('dashboard.folders')}
           </h3>
           <button
             onClick={() => setShowNewFolder(!showNewFolder)}
-            className="text-xs text-accent hover:underline"
+            className="text-xs text-primary hover:underline"
             disabled={isPending}
           >
             + {t('dashboard.createFolder')}
@@ -99,13 +99,13 @@ export function WatchlistSidebar({
               onChange={(e) => setNewFolderName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()}
               placeholder={t('dashboard.folderName')}
-              className="flex-1 rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none focus:border-accent"
+              className="flex-1 rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none focus:border-primary"
               autoFocus
             />
             <button
               onClick={handleCreateFolder}
               disabled={isPending || !newFolderName.trim()}
-              className="rounded bg-accent px-2 py-1 text-xs text-background disabled:opacity-50"
+              className="rounded bg-primary px-2 py-1 text-xs text-background disabled:opacity-50"
             >
               {t('common.save')}
             </button>
@@ -118,8 +118,8 @@ export function WatchlistSidebar({
             onClick={() => onSelectFolder(null)}
             className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
               !activeFolder
-                ? 'bg-accent/10 text-accent font-medium'
-                : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+                ? 'bg-primary/10 text-primary font-medium'
+                : 'text-foreground-muted hover:text-foreground hover:bg-surface'
             }`}
           >
             <span>{t('dashboard.allPlayers')}</span>
@@ -139,13 +139,13 @@ export function WatchlistSidebar({
                       if (e.key === 'Enter') handleRename(folder.id)
                       if (e.key === 'Escape') setRenamingId(null)
                     }}
-                    className="flex-1 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-accent"
+                    className="flex-1 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-primary"
                     autoFocus
                   />
                   <button
                     onClick={() => handleRename(folder.id)}
                     disabled={isPending}
-                    className="text-xs text-accent"
+                    className="text-xs text-primary"
                   >
                     &#10003;
                   </button>
@@ -162,8 +162,8 @@ export function WatchlistSidebar({
                     onClick={() => onSelectFolder(activeFolder === folder.id ? null : folder.id)}
                     className={`flex flex-1 items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
                       activeFolder === folder.id
-                        ? 'bg-accent/10 text-accent font-medium'
-                        : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-foreground-muted hover:text-foreground hover:bg-surface'
                     }`}
                   >
                     <span className="truncate">{folder.name}</span>
@@ -222,8 +222,8 @@ export function WatchlistSidebar({
             onClick={() => onSelectFolder(activeFolder === '__unfoldered' ? null : '__unfoldered')}
             className={`flex w-full items-center justify-between rounded px-2 py-1.5 text-xs transition-colors ${
               activeFolder === '__unfoldered'
-                ? 'bg-accent/10 text-accent font-medium'
-                : 'text-foreground-muted hover:text-foreground hover:bg-background-secondary'
+                ? 'bg-primary/10 text-primary font-medium'
+                : 'text-foreground-muted hover:text-foreground hover:bg-surface'
             }`}
           >
             <span className="italic">{t('dashboard.unfoldered')}</span>
@@ -233,7 +233,7 @@ export function WatchlistSidebar({
 
       {/* Tags cloud */}
       {allTags.length > 0 && (
-        <div className="rounded-lg border border-border bg-card p-3">
+        <div className="rounded-lg border border-border bg-surface p-3">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-muted">
             {t('dashboard.tags')}
           </h3>
@@ -244,8 +244,8 @@ export function WatchlistSidebar({
                 onClick={() => onSelectTag(tag)}
                 className={`rounded-full px-2 py-0.5 text-[11px] transition-colors ${
                   activeTags.includes(tag)
-                    ? 'bg-accent text-background'
-                    : 'bg-background-secondary text-foreground-muted hover:text-foreground'
+                    ? 'bg-primary text-background'
+                    : 'bg-surface text-foreground-muted hover:text-foreground'
                 }`}
               >
                 #{tag}
