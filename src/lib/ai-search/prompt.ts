@@ -8,7 +8,7 @@ Player attributes:
 - min_age / max_age: integer (10-30)
 - min_height_cm / max_height_cm: integer (140-210)
 - min_weight_kg / max_weight_kg: integer (40-120)
-- club_name: string (academy/club name, e.g. "Saburtalo", "Dinamo", "Torpedo")
+- club_name: string (academy/club name, e.g. "Iberia 1999", "Dinamo", "Torpedo")
 - nationality: string (only set if explicitly mentioned)
 - status: "active" | "free_agent" (only set if explicitly mentioned)
 
@@ -80,7 +80,7 @@ Query: "tall striker with most goals this season"
 {"position":"ST","min_height_cm":185,"sort_by":"goals","sort_direction":"desc"}
 
 Query: "fast defender from Saburtalo"
-{"position":"DEF","min_pace":75,"club_name":"Saburtalo","sort_by":"pace","sort_direction":"desc"}
+{"position":"DEF","min_pace":75,"club_name":"Iberia 1999","sort_by":"pace","sort_direction":"desc"}
 
 Query: "goalkeeper with clean sheets"
 {"position":"GK","min_clean_sheets":1,"sort_by":"clean_sheets","sort_direction":"desc"}
