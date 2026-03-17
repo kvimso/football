@@ -36,7 +36,7 @@ origin: docs/superpowers/specs/2026-03-16-frontend-redesign-design.md
 
 ## Overview
 
-The final session of the 10-session frontend redesign. Session 10 adds the animation language defined in the design spec, verifies mobile responsiveness, runs a full QA walkthrough of both themes via Playwright, and merges the `redesign/light-navy` branch (25 commits) into `main`.
+The final session of the 10-session frontend redesign. Session 10 adds the animation language defined in the design spec, verifies mobile responsiveness, runs a full QA walkthrough of both themes via Playwright, and merges the `redesign/light-navy` branch (26 commits) into `main`.
 
 **Scope from design spec (line 476):**
 > Animations + Mobile + QA + Merge — Fade-ins, count-up stats, hover effects, Playwright walkthrough both themes, merge to main
@@ -479,7 +479,7 @@ The original plan used `max-height` transition (`max-h-0 → max-h-96`). This is
 
 #### Loading skeletons
 
-**All 33 `loading.tsx` files** — add `animate-skeleton-in` class to the root wrapper:
+**All 31 `loading.tsx` files with skeletons** — replace `animate-pulse` with `animate-skeleton-in` on the root wrapper:
 
 ```tsx
 // Before
@@ -505,7 +505,7 @@ Nielsen Norman Group research shows skeleton screens reduce bounce rates 9-20% v
 **From Next.js docs researcher:**
 `loading.tsx` files are automatically wrapped in a React `<Suspense>` boundary by Next.js. They render instantly on navigation while the page component streams. The 150ms fade-in adds perceived smoothness without delaying content visibility.
 
-**Loading files to update (33 total):**
+**Loading files to update (31 with skeletons — 2 excluded: `admin/requests` and `dashboard/requests` return `null`):**
 
 <details>
 <summary>Full list</summary>
@@ -541,6 +541,10 @@ Nielsen Norman Group research shows skeleton screens reduce bounce rates 9-20% v
 - `src/app/platform/scouts/[id]/loading.tsx`
 - `src/app/platform/scouts/loading.tsx`
 - `src/app/platform/transfers/loading.tsx`
+
+**Excluded (return `null`, no skeleton):**
+- ~~`src/app/admin/requests/loading.tsx`~~
+- ~~`src/app/dashboard/requests/loading.tsx`~~
 
 </details>
 
@@ -608,7 +612,7 @@ Add to `src/app/globals.css`:
 
 ### Step 6: Loading skeleton fade-in
 
-Update all 33 `loading.tsx` files — add `animate-skeleton-in` to root wrapper.
+Update all 31 `loading.tsx` files (those with skeletons) — replace `animate-pulse` with `animate-skeleton-in` on root wrapper.
 
 **Verify:** Navigate between pages — skeletons fade in instead of popping.
 
@@ -670,7 +674,7 @@ Systematic verification matrix:
    ```bash
    npx prettier --write 'src/**/*.{ts,tsx}'
    ```
-   Main branch added Prettier + Husky pre-commit hooks (commit `02180d5`). The 25 commits on `redesign/light-navy` were written WITHOUT Prettier. Running Prettier now prevents formatting conflicts during merge.
+   Main branch added Prettier + Husky pre-commit hooks (commit `02180d5`). The 26 commits on `redesign/light-navy` were written WITHOUT Prettier. Running Prettier now prevents formatting conflicts during merge.
 
 2. **Commit formatting changes** separately (clean diff).
 
@@ -678,11 +682,11 @@ Systematic verification matrix:
 
 4. **`npm run lint`** — must pass (main added lint-staged).
 
-5. **Check stash:** `git stash list` — inspect `stash@{0}` (from Session 1). Drop if no longer needed, apply if it contains meaningful work.
+5. **Check stash:** `git stash list` — there are 4 stashes from old feature branches (`fix/chat-duplicate-key-race-condition`, `feat/split-pane-chat-layout`, `refactor/code-review-remediation-29`, `refactor/security-fixes`). All are from pre-redesign work and can be dropped: `git stash clear`.
 
 ### Step 9: Merge to main
 
-**Strategy:** Merge commit (NOT rebase). With 25+ commits and 176 files, rebasing replays each commit individually — conflicts would need resolution 25 times. A merge commit resolves all conflicts once.
+**Strategy:** Merge commit (NOT rebase). With 26+ commits and 176 files, rebasing replays each commit individually — conflicts would need resolution 25 times. A merge commit resolves all conflicts once.
 
 ```bash
 git checkout main
@@ -720,11 +724,11 @@ git push origin main
 - [x] Mobile menu has `aria-expanded`, closes on Escape key
 - [x] Loading skeletons fade in (150ms) instead of popping
 - [x] CountUpStat has `aria-label` with final value
-- [ ] Both themes visually verified at 1280px and 375px via Playwright
-- [ ] Both languages verified (Georgian text fits)
+- [x] Both themes visually verified at 1280px and 375px via Playwright
+- [x] Both languages verified (Georgian text fits)
 - [x] `useInView` hook shared by FadeInOnScroll and LandingCountUp
 - [x] `npm run build` passes clean
-- [x] `npm run lint` passes clean
+- [x] `npm run lint` passes clean (pre-existing warnings only)
 - [x] `redesign/light-navy` merged to `main` successfully
 - [ ] Vercel deployment succeeds
 
