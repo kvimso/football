@@ -46,7 +46,7 @@ export async function LandingHero() {
           {/* Right — mock player card (dark theme preview of platform) */}
           <div className="flex items-center justify-center lg:justify-end" aria-hidden="true">
             <div
-              className="relative"
+              className="relative hero-parallax"
               style={
                 {
                   '--background': '#12110F',

@@ -19,7 +19,7 @@ export async function SocialProof() {
       label: t('landing.statsCameraVerifiedLabel'),
       qualitativeValue: t('landing.statsCameraVerified'),
     },
-  ]
+  ] as const
 
   return (
     <section className="bg-surface py-8 sm:py-10">
