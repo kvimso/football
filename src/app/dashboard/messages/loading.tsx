@@ -1,6 +1,6 @@
 export default function MessagesLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-7 w-32 rounded bg-elevated" />
       <div className="mt-1 h-4 w-48 rounded bg-elevated" />
       <div className="mt-6 space-y-2">

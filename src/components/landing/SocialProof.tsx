@@ -1,15 +1,23 @@
 import { getServerT } from '@/lib/server-translations'
+import { LandingCountUp } from './LandingCountUp'
 
 export async function SocialProof() {
   const { t } = await getServerT()
 
   const stats = [
-    { value: t('landing.statsYouthPlayers'), label: t('landing.statsYouthPlayersLabel') },
-    { value: t('landing.statsAcademies'), label: t('landing.statsAcademiesLabel') },
     {
-      value: t('landing.statsCameraVerified'),
+      label: t('landing.statsYouthPlayersLabel'),
+      numericValue: 37600,
+      suffix: '+',
+    },
+    {
+      label: t('landing.statsAcademiesLabel'),
+      numericValue: 200,
+      suffix: '+',
+    },
+    {
       label: t('landing.statsCameraVerifiedLabel'),
-      isQualitative: true,
+      qualitativeValue: t('landing.statsCameraVerified'),
     },
   ]
 
@@ -22,12 +30,16 @@ export async function SocialProof() {
               <div className="text-center px-8 sm:px-12">
                 <div
                   className={`font-semibold tracking-tight ${
-                    stat.isQualitative
+                    'qualitativeValue' in stat
                       ? 'text-3xl text-primary sm:text-4xl'
                       : 'text-3xl sm:text-4xl'
                   }`}
                 >
-                  {stat.value}
+                  {'qualitativeValue' in stat ? (
+                    stat.qualitativeValue
+                  ) : (
+                    <LandingCountUp target={stat.numericValue} suffix={stat.suffix} />
+                  )}
                 </div>
                 <div className="mt-1.5 text-xs font-medium uppercase tracking-wider text-foreground-muted">
                   {stat.label}

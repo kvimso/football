@@ -1,6 +1,6 @@
 export default function MatchDetailLoading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 animate-pulse">
+    <div className="mx-auto max-w-7xl px-4 py-8 animate-skeleton-in">
       <div className="h-4 w-32 rounded bg-elevated" />
       <div className="mt-6 card p-6">
         <div className="flex items-center justify-center gap-8">

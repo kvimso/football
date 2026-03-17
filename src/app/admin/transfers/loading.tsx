@@ -1,6 +1,6 @@
 export default function AdminTransfersLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-7 w-32 rounded bg-elevated" />
       <div className="mt-6 h-12 rounded-lg bg-elevated" />
       <div className="mt-8 h-5 w-36 rounded bg-elevated" />

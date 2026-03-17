@@ -1,6 +1,6 @@
 export default function ClubDetailLoading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 animate-pulse">
+    <div className="mx-auto max-w-7xl px-4 py-8 animate-skeleton-in">
       <div className="h-4 w-28 rounded bg-elevated" />
       <div className="mt-4 flex items-start gap-5">
         <div className="h-20 w-20 shrink-0 rounded-2xl bg-elevated" />

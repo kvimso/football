@@ -1,6 +1,6 @@
 export default function PlatformLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-7 w-48 rounded bg-elevated" />
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {Array.from({ length: 6 }).map((_, i) => (

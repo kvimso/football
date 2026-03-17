@@ -1,6 +1,6 @@
 export default function PlayerProfileLoading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 animate-pulse">
+    <div className="mx-auto max-w-7xl px-4 py-8 animate-skeleton-in">
       {/* Back link */}
       <div className="h-4 w-32 rounded bg-elevated" />
 

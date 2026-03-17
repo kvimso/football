@@ -80,8 +80,11 @@ export function LandingNav() {
 
           <button
             onClick={() => setMenuOpen(!menuOpen)}
+            onKeyDown={(e) => e.key === 'Escape' && setMenuOpen(false)}
             className="rounded-md p-1.5 text-foreground-muted hover:text-foreground transition-colors md:hidden"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="landing-mobile-menu"
           >
             <svg
               className="h-5 w-5"
@@ -100,29 +103,38 @@ export function LandingNav() {
         </div>
       </nav>
 
-      {menuOpen && (
-        <div className="border-t border-border bg-nav-bg px-4 py-3 md:hidden">
-          <div className="flex flex-col gap-3">
-            {navLinks.map((link) => (
+      {/* Mobile menu — animated via CSS grid-rows */}
+      <div
+        id="landing-mobile-menu"
+        className={`grid transition-[grid-template-rows] duration-200 ease-out md:hidden ${
+          menuOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}
+        aria-hidden={!menuOpen}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t border-border bg-nav-bg px-4 py-3">
+            <div className="flex flex-col gap-3">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
               <Link
-                key={link.href}
-                href={link.href}
+                href="/contact"
                 onClick={() => setMenuOpen(false)}
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"
               >
-                {link.label}
+                {t('nav.contact')}
               </Link>
-            ))}
-            <Link
-              href="/contact"
-              onClick={() => setMenuOpen(false)}
-              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-            >
-              {t('nav.contact')}
-            </Link>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }

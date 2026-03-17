@@ -1,6 +1,6 @@
 export default function NewPlayerLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="mb-6 h-4 w-28 rounded bg-elevated" />
       <div className="mb-6 h-7 w-36 rounded bg-elevated" />
       <div className="space-y-6">

@@ -1,6 +1,6 @@
 export default function NotificationsLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="h-7 w-36 rounded bg-elevated" />

@@ -1,6 +1,6 @@
 export default function ConversationLoading() {
   return (
-    <div className="flex h-full flex-col animate-pulse">
+    <div className="flex h-full flex-col animate-skeleton-in">
       {/* Header skeleton */}
       <div className="flex items-center gap-3 border-b border-border px-4 py-3">
         <div className="h-8 w-8 rounded-full bg-elevated" />

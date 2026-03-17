@@ -59,7 +59,7 @@ export function CountUpStat({ value, label, suffix = '', accent }: CountUpStatPr
   if (value == null) return null
 
   return (
-    <div ref={ref}>
+    <div ref={ref} aria-label={`${value}${suffix} ${label}`}>
       <div
         className={`text-2xl font-bold tabular-nums sm:text-4xl ${accent ? 'text-primary' : 'text-foreground'}`}
       >

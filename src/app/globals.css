@@ -199,6 +199,19 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* ── Interactive card scale on hover (pointer devices only) ── */
+a.card, button.card {
+  transition: background-color 150ms, box-shadow 150ms, transform 150ms;
+}
+@media (hover: hover) {
+  a.card:hover, button.card:hover {
+    transform: scale(1.02);
+  }
+}
+a.card:focus-within, button.card:focus-within {
+  transform: scale(1.02);
+}
+
 /* ── Enhanced card with position-colored top border ── */
 .card-enhanced {
   background-color: var(--surface);
@@ -353,6 +366,38 @@ html:lang(ka) {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(122, 117, 111, 0.25) transparent;
+}
+
+/* ── Accessibility: respect motion preferences ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Loading skeleton entrance (combined with pulse to avoid animation conflict) ── */
+@keyframes skeleton-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-skeleton-in {
+  animation: skeleton-in 150ms ease-out, pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ── Hero parallax (CSS scroll-driven, progressive enhancement) ── */
+@supports (animation-timeline: scroll()) {
+  .hero-parallax {
+    animation: hero-float linear both;
+    animation-timeline: scroll();
+    animation-range: 0px 400px;
+  }
+  @keyframes hero-float {
+    from { transform: rotate(2deg) translateY(0); }
+    to { transform: rotate(2deg) translateY(-30px); }
+  }
 }
 
 /* Georgian script doesn't benefit from tight letter-spacing — it looks cramped */

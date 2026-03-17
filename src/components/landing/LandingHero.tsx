@@ -61,8 +61,8 @@ export async function LandingHero() {
               {/* Green gradient glow behind card */}
               <div className="absolute -inset-10 rounded-3xl bg-gradient-to-br from-primary/25 via-primary/8 to-transparent blur-3xl" />
 
-              {/* Card — dark platform preview with rotation */}
-              <div className="relative w-72 rotate-2 rounded-xl border border-border border-l-[3px] border-l-pos-mid bg-surface overflow-hidden shadow-2xl shadow-black/40 sm:w-80">
+              {/* Card — dark platform preview with rotation + parallax */}
+              <div className="hero-parallax relative w-72 rotate-2 rounded-xl border border-border border-l-[3px] border-l-pos-mid bg-surface overflow-hidden shadow-2xl shadow-black/40 sm:w-80">
                 {/* Card body */}
                 <div className="p-6">
                   {/* Player silhouette */}
