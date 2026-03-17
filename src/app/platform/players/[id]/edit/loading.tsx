@@ -1,6 +1,6 @@
 export default function PlatformEditPlayerLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-7 w-48 rounded bg-elevated" />
       <div className="mt-6 space-y-6">
         {Array.from({ length: 4 }).map((_, i) => (

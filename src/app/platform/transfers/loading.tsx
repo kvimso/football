@@ -1,6 +1,6 @@
 export default function PlatformTransfersLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-7 w-40 rounded bg-elevated" />
       <div className="mt-4 flex gap-2">
         {Array.from({ length: 5 }).map((_, i) => (

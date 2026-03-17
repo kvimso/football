@@ -1,6 +1,6 @@
 export default function PlayersLoading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 animate-pulse">
+    <div className="mx-auto max-w-7xl px-4 py-8 animate-skeleton-in">
       <div className="mb-8">
         <div className="h-8 w-48 rounded bg-elevated" />
         <div className="mt-2 h-4 w-72 rounded bg-elevated" />

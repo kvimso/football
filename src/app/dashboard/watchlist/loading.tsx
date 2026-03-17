@@ -1,6 +1,6 @@
 export default function WatchlistLoading() {
   return (
-    <div className="flex flex-col gap-4 lg:flex-row animate-pulse">
+    <div className="flex flex-col gap-4 lg:flex-row animate-skeleton-in">
       {/* Sidebar skeleton */}
       <div className="hidden lg:block lg:w-56 shrink-0">
         <div className="rounded-lg border border-border bg-surface p-3 space-y-2">

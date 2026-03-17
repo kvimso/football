@@ -1,6 +1,6 @@
 export default function PlatformNewPlayerLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-7 w-36 rounded bg-elevated" />
       <div className="mt-6 space-y-6">
         {Array.from({ length: 4 }).map((_, i) => (

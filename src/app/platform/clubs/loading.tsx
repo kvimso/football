@@ -1,6 +1,6 @@
 export default function PlatformClubsLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="flex items-center justify-between">
         <div className="h-7 w-32 rounded bg-elevated" />
         <div className="h-9 w-24 rounded bg-elevated" />

@@ -1,6 +1,6 @@
 export default function PlatformScoutDetailLoading() {
   return (
-    <div className="animate-pulse">
+    <div className="animate-skeleton-in">
       <div className="h-4 w-24 rounded bg-elevated" />
       <div className="mt-4 h-7 w-48 rounded bg-elevated" />
       <div className="mt-4 card p-4">
