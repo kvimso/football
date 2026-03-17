@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <Navbar />
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl flex-col px-4 pt-8">
+      <div className="mx-auto flex min-h-[calc(100dvh-var(--navbar-height))] max-w-7xl flex-col px-4 pt-8">
         <div className="flex min-h-0 flex-1 flex-col gap-6 md:flex-row">
           <AdminSidebar clubName={club?.name ?? ''} clubNameKa={club?.name_ka ?? ''} />
           <main className="min-h-0 min-w-0 flex-1">{children}</main>

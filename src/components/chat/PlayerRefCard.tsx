@@ -14,7 +14,7 @@ interface PlayerRefCardProps {
 export function PlayerRefCard({ player, lang, t }: PlayerRefCardProps) {
   if (!player) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-background-secondary/50 px-3 py-2 text-sm text-foreground-muted">
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-surface/50 px-3 py-2 text-sm text-foreground-muted">
         <svg
           className="h-4 w-4 shrink-0"
           fill="none"
@@ -40,9 +40,9 @@ export function PlayerRefCard({ player, lang, t }: PlayerRefCardProps) {
   return (
     <Link
       href={`/players/${player.slug}`}
-      className="flex items-center gap-3 rounded-lg border border-border bg-background-secondary/50 px-3 py-2 transition-colors hover:bg-background-secondary"
+      className="flex items-center gap-3 rounded-lg border border-border bg-surface/50 px-3 py-2 transition-colors hover:bg-surface"
     >
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-background-secondary">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface">
         {player.photo_url ? (
           <Image
             src={player.photo_url}

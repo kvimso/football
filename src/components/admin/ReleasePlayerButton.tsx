@@ -38,11 +38,11 @@ export function ReleasePlayerButton({ playerId, playerName }: ReleasePlayerButto
       <button
         onClick={handleRelease}
         disabled={loading}
-        className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
+        className="text-xs text-danger hover:text-danger disabled:opacity-50"
       >
         {loading ? t('common.loading') : t('admin.transfers.release')}
       </button>
-      {errorMsg && <span className="text-xs text-red-400">{errorMsg}</span>}
+      {errorMsg && <span className="text-xs text-danger">{errorMsg}</span>}
     </>
   )
 }

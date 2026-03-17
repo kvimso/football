@@ -19,9 +19,9 @@ export default function ConversationError({
 
   return (
     <div className="flex min-h-[40vh] flex-col items-center justify-center text-center">
-      <div className="rounded-full bg-red-500/10 p-4">
+      <div className="rounded-full bg-danger-muted p-4">
         <svg
-          className="h-10 w-10 text-red-400"
+          className="h-10 w-10 text-danger"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

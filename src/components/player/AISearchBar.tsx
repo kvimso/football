@@ -47,6 +47,13 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
     fetchHistory()
   }, [fetchHistory])
 
+  // Abort in-flight search on unmount — prevents orphaned requests
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort()
+    }
+  }, [])
+
   // Close history dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -142,7 +149,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
         <div className="relative flex-1">
           {/* AI sparkle icon */}
           <svg
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-400/70"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -164,7 +171,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
             placeholder={t('aiSearch.placeholder')}
             disabled={isSearching}
             aria-label={t('aiSearch.placeholder')}
-            className="w-full rounded-xl border border-purple-500/20 bg-purple-500/[0.04] pl-10 pr-10 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-purple-500/40 focus:shadow-[0_0_12px_rgba(168,85,247,0.08)] disabled:opacity-50"
+            className="w-full rounded-xl border border-primary/20 bg-primary/[0.06] pl-10 pr-10 py-2.5 text-sm text-foreground placeholder-foreground-muted/60 outline-none transition-all focus:border-primary/40 disabled:opacity-50"
           />
           {/* Clear X button */}
           {(query || isActive) && !isSearching && (
@@ -188,7 +195,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
         <button
           onClick={() => handleSearch()}
           disabled={isSearching || !query.trim()}
-          className="inline-flex items-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 px-4 py-2.5 text-sm font-medium text-purple-300 transition-all hover:bg-purple-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition-all hover:bg-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSearching ? (
             <>
@@ -232,19 +239,19 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
 
       {/* Analyzing text */}
       {isSearching && (
-        <p className="mt-2 text-xs text-purple-400/70 animate-pulse">{t('aiSearch.analyzing')}</p>
+        <p className="mt-2 text-xs text-primary animate-pulse">{t('aiSearch.analyzing')}</p>
       )}
 
       {/* Error message */}
       {error && (
-        <div className="mt-2 flex items-center gap-2 text-xs text-red-400">
+        <div className="mt-2 flex items-center gap-2 text-xs text-danger">
           <span>{error}</span>
           <button
             onClick={() => {
               setError(null)
               handleSearch()
             }}
-            className="underline hover:text-red-300 transition-colors"
+            className="underline hover:text-danger/80 transition-colors"
           >
             {t('aiSearch.retry')}
           </button>
@@ -253,7 +260,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
 
       {/* History dropdown */}
       {showHistory && history.length > 0 && !isSearching && (
-        <div className="absolute top-full left-0 right-0 z-20 mt-1 rounded-xl border border-white/[0.08] bg-[#1a2420] p-2 shadow-xl">
+        <div className="absolute top-full left-0 right-0 z-20 mt-1 rounded-xl border border-border bg-surface p-2 shadow-lg">
           <p className="px-2 py-1 text-[11px] uppercase tracking-wider text-foreground-muted/50 font-medium">
             {t('aiSearch.recentSearches')}
           </p>
@@ -264,7 +271,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
                 role="option"
                 aria-selected={false}
                 onClick={() => handleHistoryClick(entry.query_text)}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-foreground-muted hover:bg-white/[0.06] hover:text-foreground transition-colors text-left"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-foreground-muted hover:bg-elevated hover:text-foreground transition-colors text-left"
               >
                 <svg
                   className="h-3.5 w-3.5 shrink-0 text-foreground-muted/40"
@@ -296,10 +303,10 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
             <button
               key={entry.id}
               onClick={() => handleHistoryClick(entry.query_text)}
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1 text-xs text-foreground-muted hover:bg-white/[0.08] hover:text-foreground transition-colors"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs text-foreground-muted hover:bg-elevated hover:text-foreground transition-colors"
             >
               <svg
-                className="h-3 w-3 text-purple-400/50"
+                className="h-3 w-3 text-primary/50"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

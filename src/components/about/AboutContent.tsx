@@ -6,25 +6,27 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold text-foreground">{t('about.title')}</h1>
-      <p className="mt-2 text-foreground-muted">{t('about.subtitle')}</p>
+      <h1 className="text-2xl font-semibold text-foreground">{t('about.title')}</h1>
+      <p className="mt-2 text-foreground-secondary">{t('about.subtitle')}</p>
 
       <section className="mt-10">
-        <h2 className="text-xl font-semibold text-foreground">{t('about.mission')}</h2>
-        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">
+        <h2 className="text-lg font-medium text-foreground">{t('about.mission')}</h2>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
           {t('about.missionText')}
         </p>
       </section>
 
       <section className="mt-8">
-        <h2 className="text-xl font-semibold text-foreground">{t('about.what')}</h2>
-        <p className="mt-3 text-sm leading-relaxed text-foreground-muted">{t('about.whatText')}</p>
+        <h2 className="text-lg font-medium text-foreground">{t('about.what')}</h2>
+        <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
+          {t('about.whatText')}
+        </p>
       </section>
 
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div className="card">
-          <h3 className="text-lg font-semibold text-accent">{t('about.forScouts')}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
+          <h3 className="text-lg font-semibold text-primary">{t('about.forScouts')}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">
             {t('about.forScoutsText')}
           </p>
           {isLoggedIn ? (
@@ -39,8 +41,8 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
         </div>
 
         <div className="card">
-          <h3 className="text-lg font-semibold text-accent">{t('about.forAcademies')}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-foreground-muted">
+          <h3 className="text-lg font-semibold text-primary">{t('about.forAcademies')}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-foreground-secondary">
             {t('about.forAcademiesText')}
           </p>
           {isLoggedIn ? (

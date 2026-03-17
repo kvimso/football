@@ -5,103 +5,78 @@ import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 export async function LandingHero() {
   const { t, lang } = await getServerT()
 
-  // Split the hero title to highlight "Georgian" in light gold
+  // Split the hero title to highlight "Georgian" in green
   const title = t('landing.heroTitle')
   const highlightWord = lang === 'ka' ? 'ქართული' : 'Georgian'
   const parts = title.split(highlightWord)
 
   return (
-    <section className="relative overflow-hidden">
-      {/* Pitch pattern background */}
-      <div className="pitch-pattern absolute inset-0 opacity-40" />
-
-      {/* Corner arc decoration — top-left */}
-      <div className="absolute -top-20 -left-20 h-60 w-60 rounded-full border border-accent/10 hidden lg:block" />
-      <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full border border-accent/[0.07] hidden lg:block" />
-
-      {/* Corner arc decoration — bottom-right */}
-      <div className="absolute -bottom-20 -right-20 h-60 w-60 rounded-full border border-accent/10 hidden lg:block" />
-      <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full border border-accent/[0.07] hidden lg:block" />
-
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-28 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section className="overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:gap-8 lg:py-24">
           {/* Left — content */}
           <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
+            <h1 className="text-4xl font-extrabold tracking-tight leading-[1.1] sm:text-5xl lg:text-6xl">
               {parts.length > 1 ? (
                 <>
                   {parts[0]}
-                  <span className="text-accent">{highlightWord}</span>
+                  <span className="text-primary">{highlightWord}</span>
                   {parts[1]}
                 </>
               ) : (
                 title
               )}
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-foreground-muted sm:text-xl max-w-xl mx-auto lg:mx-0">
+            <p className="mt-6 text-lg leading-relaxed text-foreground-secondary max-w-xl mx-auto lg:mx-0">
               {t('landing.heroSubtitle')}
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start sm:justify-center">
-              <Link href="/register" className="btn-primary px-8 py-3.5 text-base font-semibold">
-                {t('landing.registerScout')}
+              <Link href="/register" className="btn-primary px-8 py-3 text-base font-semibold">
+                {t('nav.getStarted')} &rarr;
               </Link>
-              <Link href="/login" className="btn-secondary px-8 py-3.5 text-base font-semibold">
-                {t('landing.registerAcademy')}
+              <Link
+                href="/about"
+                className="inline-flex items-center justify-center rounded-lg border border-border px-8 py-3 text-base font-semibold text-foreground-secondary transition-colors hover:bg-surface hover:text-foreground"
+              >
+                {t('landing.heroLearnMore')}
               </Link>
-            </div>
-
-            {/* Mobile stat bar — visible below lg only */}
-            <div className="mt-8 flex items-center justify-center gap-4 text-center lg:hidden">
-              <div>
-                <div className="text-lg font-bold text-accent">
-                  {t('landing.statsYouthPlayers')}
-                </div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                  {t('landing.statsYouthPlayersLabel')}
-                </div>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <div className="text-lg font-bold text-accent">
-                  {t('landing.statsTransferValue')}
-                </div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                  {t('landing.statsTransferValueLabel')}
-                </div>
-              </div>
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <div className="text-lg font-bold text-accent">{t('landing.statsAcademies')}</div>
-                <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                  {t('landing.statsAcademiesLabel')}
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Right — mock player card */}
-          <div className="hidden lg:flex items-center justify-center" aria-hidden="true">
-            <div className="relative">
-              {/* Gold gradient glow behind card */}
-              <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-accent/20 via-accent/5 to-transparent blur-2xl" />
+          {/* Right — mock player card (dark theme preview of platform) */}
+          <div className="flex items-center justify-center lg:justify-end" aria-hidden="true">
+            <div
+              className="relative"
+              style={
+                {
+                  '--background': '#12110F',
+                  '--surface': '#1C1A17',
+                  '--foreground': '#EEECE8',
+                  '--foreground-muted': '#9A9590',
+                  '--primary': '#4ADE80',
+                  '--border': '#2A2623',
+                } as React.CSSProperties
+              }
+            >
+              {/* Green gradient glow behind card */}
+              <div className="absolute -inset-10 rounded-3xl bg-gradient-to-br from-primary/25 via-primary/8 to-transparent blur-3xl" />
 
-              {/* Card */}
-              <div className="relative w-72 rounded-xl border border-border bg-card overflow-hidden shadow-2xl shadow-black/30">
-                {/* Position-colored top border (cyan for MID) */}
-                <div className="h-1 bg-pos-mid" />
-
+              {/* Card — dark platform preview with rotation + parallax */}
+              <div className="hero-parallax relative w-72 rotate-2 rounded-xl border border-border border-l-[3px] border-l-pos-mid bg-surface overflow-hidden shadow-2xl shadow-black/40 sm:w-80">
                 {/* Card body */}
                 <div className="p-6">
                   {/* Player silhouette */}
                   <div className="flex justify-center">
-                    <div className="rounded-full bg-background-secondary p-4">
+                    <div className="rounded-full bg-surface p-4">
                       <PlayerSilhouette size="sm" className="h-20 w-20 text-foreground-muted/40" />
                     </div>
                   </div>
 
                   {/* Name & info */}
                   <div className="mt-4 text-center">
-                    <div className="text-lg font-bold">{t('landing.mockPlayerName')}</div>
+                    <div className="text-lg font-bold text-foreground">
+                      {t('landing.mockPlayerName')}
+                    </div>
                     <div className="mt-1 flex items-center justify-center gap-2 text-sm text-foreground-muted">
                       <span className="inline-block h-2 w-2 rounded-full bg-pos-mid" />
                       <span>{t('landing.mockPosition')}</span>
@@ -116,19 +91,19 @@ export async function LandingHero() {
                   {/* Stats bar */}
                   <div className="mt-5 grid grid-cols-3 gap-3 rounded-lg bg-background/60 p-3">
                     <div className="text-center">
-                      <div className="text-xl font-bold text-accent">12</div>
+                      <div className="text-xl font-bold text-primary">12</div>
                       <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
                         {t('landing.mockGoals')}
                       </div>
                     </div>
                     <div className="text-center border-x border-border">
-                      <div className="text-xl font-bold text-accent">8</div>
+                      <div className="text-xl font-bold text-primary">8</div>
                       <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
                         {t('landing.mockAssists')}
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xl font-bold text-accent">24</div>
+                      <div className="text-xl font-bold text-primary">24</div>
                       <div className="text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
                         {t('landing.mockMatches')}
                       </div>
@@ -137,7 +112,7 @@ export async function LandingHero() {
 
                   {/* Verified badge */}
                   <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-foreground-muted">
-                    <svg className="h-3 w-3 text-accent" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="h-3 w-3 text-primary" fill="currentColor" viewBox="0 0 20 20">
                       <path
                         fillRule="evenodd"
                         d="M16.403 12.652a3 3 0 010-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"

@@ -94,7 +94,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             {homeClub?.slug ? (
               <Link
                 href={`/clubs/${homeClub.slug}`}
-                className="text-lg font-bold text-foreground hover:text-accent transition-colors"
+                className="text-lg font-bold text-foreground hover:text-primary transition-colors"
               >
                 <MatchDetailClient
                   type="home_club"
@@ -117,7 +117,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
             {awayClub?.slug ? (
               <Link
                 href={`/clubs/${awayClub.slug}`}
-                className="text-lg font-bold text-foreground hover:text-accent transition-colors"
+                className="text-lg font-bold text-foreground hover:text-primary transition-colors"
               >
                 <MatchDetailClient
                   type="away_club"
@@ -131,6 +131,48 @@ export default async function MatchPage({ params }: MatchPageProps) {
           </div>
         </div>
       </div>
+
+      {/* Video links */}
+      {(match.video_url || match.highlights_url) && (
+        <div className="mt-4 flex flex-wrap gap-3">
+          {match.video_url && (
+            <a
+              href={match.video_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-elevated"
+            >
+              <svg className="h-4 w-4 text-danger" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              {t('matches.watchFullMatch')}
+            </a>
+          )}
+          {match.highlights_url && (
+            <a
+              href={match.highlights_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-elevated"
+            >
+              <svg
+                className="h-4 w-4 text-primary"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                />
+              </svg>
+              {t('matches.highlights')}
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Match report */}
       <MatchDetailClient
@@ -169,7 +211,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                         {ps.player?.slug ? (
                           <Link
                             href={`/players/${ps.player.slug}`}
-                            className="font-medium text-accent hover:underline"
+                            className="font-medium text-primary hover:underline"
                           >
                             {lang === 'ka' ? ps.player.name_ka : ps.player.name}
                           </Link>
@@ -190,7 +232,7 @@ export default async function MatchPage({ params }: MatchPageProps) {
                       <td className="py-2 pr-4">
                         {ps.rating ? (
                           <span
-                            className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-accent' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                            className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-primary' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
                           >
                             {ps.rating}
                           </span>

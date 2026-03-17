@@ -28,7 +28,7 @@ export function MatchFilters({ competitions }: MatchFiltersProps) {
       <select
         value={current}
         onChange={(e) => updateCompetition(e.target.value)}
-        className="rounded-lg border border-border bg-background-secondary px-3 py-2 text-sm text-foreground outline-none focus:border-accent transition-colors"
+        className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary transition-colors"
       >
         <option value="">{t('matches.allCompetitions')}</option>
         {competitions.map((c) => (

@@ -46,7 +46,7 @@ export function RequestActions({ requestId }: RequestActionsProps) {
           placeholder={t('admin.requests.responseMessagePlaceholder')}
           maxLength={500}
           rows={3}
-          className="w-full rounded-lg border border-border bg-surface-alt p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-accent focus:outline-none resize-none"
+          className="w-full rounded-lg border border-border bg-surface p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-primary focus:outline-none resize-none"
         />
         <p className="text-[10px] text-foreground-muted/50">
           {t('admin.requests.responseMessageHint')}
@@ -55,7 +55,7 @@ export function RequestActions({ requestId }: RequestActionsProps) {
           <button
             onClick={handleApproveConfirm}
             disabled={loading}
-            className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+            className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
           >
             {t('admin.requests.confirmApproveWithMessage')}
           </button>
@@ -79,14 +79,14 @@ export function RequestActions({ requestId }: RequestActionsProps) {
       <button
         onClick={() => setShowApproveForm(true)}
         disabled={loading}
-        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+        className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
       >
         {t('admin.requests.approve')}
       </button>
       <button
         onClick={handleReject}
         disabled={loading}
-        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+        className="rounded-lg bg-danger-muted px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger-muted disabled:opacity-50 transition-colors"
       >
         {t('admin.requests.reject')}
       </button>

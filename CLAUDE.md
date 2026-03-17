@@ -45,7 +45,7 @@ A professional marketing page — clean, hrmony.com-style layout. This is what e
 
 ### Part 2: Protected Platform (auth required)
 
-A Transfermarkt-style data marketplace behind login. All player browsing, stats, matches, clubs, scout tools, and admin panel require authentication.
+A warm dark scouting platform with Georgian gold accent, behind login. All player browsing, stats, matches, clubs, scout tools, and admin panel require authentication.
 
 **Protected pages:** Everything under `/players`, `/matches`, `/clubs`, `/dashboard`, `/admin`, `/platform`
 
@@ -316,13 +316,60 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 
 ## Styling System
 
-- **Landing page:** Light/neutral theme, professional, hrmony.com-style
-- **Platform:** Dark theme, data-dense, Transfermarkt-style football pitch aesthetic
-- CSS custom properties in `globals.css` for colors
-- Primary accent: emerald green
-- Position colors: GK=amber, DEF=blue, MID=cyan, ATT=purple, WNG=emerald, ST=red
+### Theme Architecture
+
+Light-first A3 design system with `[data-theme="dark"]` toggle:
+
+- **Light (default):** `:root` — warm off-white (`#FDFCFA`) background, near-black text (`#1A1917`). Green primary accent (`#1B8A4A`).
+- **Dark:** `[data-theme="dark"]` — warm near-black (`#12110F`) background, warm off-white text (`#EEECE8`). Bright green primary (`#4ADE80`).
+- **ThemeProvider** in `src/context/ThemeContext.tsx` — cookie-persisted, FOUC-safe via server-side `data-theme` attribute.
+
+```
+:root (light — default, color-scheme: light)
+  └── [data-theme="dark"] (dark override — color-scheme: dark)
+      └── @theme inline (Tailwind bridge — auto-adapts)
+```
+
+### Primary Accent: Green
+
+- **Light mode:** `#1B8A4A` (forest green)
+- **Dark mode:** `#4ADE80` (bright green)
+- **Button strategy:** `.btn-primary` uses `bg-primary text-btn-primary-text` — accessible in both themes
+- No `.landing` class overrides — single theme system handles all pages
+
+### Token Naming
+
+| Token | Purpose | Light | Dark |
+|-------|---------|-------|------|
+| `--background` | Page background | `#FDFCFA` | `#12110F` |
+| `--surface` | Cards, inputs, secondary bg | `#F4F1EC` | `#1C1A17` |
+| `--elevated` | Hover states, skeletons | `#EAE6DF` | `#2A2623` |
+| `--primary` | Accent/brand color | `#1B8A4A` | `#4ADE80` |
+| `--foreground-secondary` | Body text, descriptions | `#4A4641` | `#C4BFB8` |
+| `--foreground-faint` | Metadata, copyright, disabled | `#A39E97` | `#6B6660` |
+| `--danger` | Error/rejected states | `#CC3333` | `#E05252` |
+
+### Position Colors (theme-aware with explicit bg tokens)
+
+| Position | Light FG | Dark FG | Variable |
+|----------|----------|---------|----------|
+| GK | `#B87A08` | `#FBBF24` | `--pos-gk` / `--pos-gk-bg` |
+| DEF | `#CC3333` | `#F87171` | `--pos-def` / `--pos-def-bg` |
+| MID | `#1B8A4A` | `#4ADE80` | `--pos-mid` / `--pos-mid-bg` |
+| ATT | `#8B3FC7` | `#C084FC` | `--pos-att` / `--pos-att-bg` |
+| WNG | `#0E8585` | `#2DD4BF` | `--pos-wng` / `--pos-wng-bg` |
+| ST | `#2563EB` | `#5B9CF0` | `--pos-st` / `--pos-st-bg` |
+
+**Badge pattern:** `bg-pos-X-bg text-pos-X` (explicit bg token + colored text) — works on both themes.
+
+### Key Conventions
+
+- CSS custom properties in `globals.css` for all colors — never hardcode hex in components
 - Use Tailwind utilities for layout, CSS custom properties for theme colors
 - Check `globals.css` before creating new component classes — most patterns exist
+- `color-scheme: light` on `:root`, `color-scheme: dark` on `[data-theme="dark"]`
+- Loading skeletons: use `bg-elevated` — visible on both themes
+- Green focus-visible ring on all interactive elements
 - Mobile-first — all pages work at 375px+
 - Use `next/image` for all images
 - **Landing page: no placeholder content, use real market numbers (37,600+ youth players, €100M+)**

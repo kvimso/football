@@ -26,7 +26,7 @@ export function PlayerProfileClient({ player }: PlayerProfileClientProps) {
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = lang === 'ka' ? player.club_name_ka : player.club_name
   const scoutingReport = lang === 'ka' ? player.scouting_report_ka : player.scouting_report
-  const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
+  const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-primary/20 text-primary'
   const isFreeAgent = player.status === 'free_agent'
 
   return (
@@ -37,19 +37,20 @@ export function PlayerProfileClient({ player }: PlayerProfileClientProps) {
           {t(`positions.${player.position}`)}
         </span>
         {isFreeAgent && (
-          <span className="rounded-full bg-yellow-500/20 px-2.5 py-1 text-xs font-semibold text-yellow-400">
-            {t('players.freeAgent')}
-          </span>
+          <span className="status-badge status-badge-free_agent">{t('players.freeAgent')}</span>
         )}
         {player.is_featured && (
-          <span className="rounded-full bg-accent/20 px-2.5 py-1 text-xs font-semibold text-accent">
+          <span className="rounded-full bg-primary/20 px-2.5 py-1 text-xs font-semibold text-primary">
             {t('players.featured')}
           </span>
         )}
       </div>
       <div className="mt-1 flex items-center gap-3">
         {clubName && player.club_slug && (
-          <Link href={`/clubs/${player.club_slug}`} className="text-sm text-accent hover:underline">
+          <Link
+            href={`/clubs/${player.club_slug}`}
+            className="text-sm text-primary hover:underline"
+          >
             {clubName}
           </Link>
         )}

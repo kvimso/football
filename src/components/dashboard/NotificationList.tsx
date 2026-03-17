@@ -8,30 +8,36 @@ import { getNotificationsPage, markAsRead, markAllAsRead } from '@/app/actions/n
 import type { NotificationFilters } from '@/app/actions/notifications'
 import type { Notification, NotificationType } from '@/lib/notifications/types'
 
-const TYPE_ICONS: Record<NotificationType, { path: string; color: string }> = {
+const TYPE_ICONS: Record<NotificationType, { path: string; color: string; badge: string }> = {
   goal: {
     path: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 3a7 7 0 1 1 0 14 7 7 0 0 1 0-14Z',
-    color: 'text-green-400',
+    color: 'text-primary',
+    badge: 'bg-primary-muted text-primary',
   },
   assist: {
     path: 'M7.5 3.5 3 8l4.5 4.5M16.5 3.5 21 8l-4.5 4.5M3 8h18M12 8v13',
-    color: 'text-cyan-400',
+    color: 'text-pos-wng',
+    badge: 'bg-pos-wng-bg text-pos-wng',
   },
   club_change: {
     path: 'M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-9L21 12m0 0-4.5 4.5M21 12H7.5',
-    color: 'text-amber-400',
+    color: 'text-pos-gk',
+    badge: 'bg-pos-gk-bg text-pos-gk',
   },
   free_agent: {
     path: 'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z',
-    color: 'text-purple-400',
+    color: 'text-foreground-muted',
+    badge: 'bg-elevated text-foreground-muted',
   },
   new_video: {
     path: 'm15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z',
-    color: 'text-red-400',
+    color: 'text-danger',
+    badge: 'bg-danger-muted text-danger',
   },
   announcement: {
     path: 'M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38a.75.75 0 0 1-1.021-.272 18.152 18.152 0 0 1-1.877-4.129m4.943-2.273c.052.63.091 1.264.117 1.902a.75.75 0 0 1-.363.682 18.09 18.09 0 0 1-1.497.82M16.5 12a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0Z',
-    color: 'text-blue-400',
+    color: 'text-pos-st',
+    badge: 'bg-pos-st-bg text-pos-st',
   },
 }
 
@@ -113,7 +119,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-foreground">{t('notifications.title')}</h1>
         {hasUnread && (
-          <button onClick={handleMarkAllRead} className="text-xs text-accent hover:underline">
+          <button onClick={handleMarkAllRead} className="text-xs text-primary hover:underline">
             {t('notifications.markAllRead')}
           </button>
         )}
@@ -127,7 +133,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
           onChange={(e) =>
             handleTypeChange(e.target.value ? (e.target.value as NotificationType) : undefined)
           }
-          className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground"
         >
           <option value="">{t('notifications.allTypes')}</option>
           {ALL_TYPES.map((type) => (
@@ -141,7 +147,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
         <select
           value={readFilter}
           onChange={(e) => handleReadChange(e.target.value as 'all' | 'unread' | 'read')}
-          className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground"
+          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-foreground"
         >
           <option value="all">{t('notifications.allStatus')}</option>
           <option value="unread">{t('notifications.unreadOnly')}</option>
@@ -154,10 +160,10 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
       </div>
 
       {/* List */}
-      <div className="rounded-lg border border-border bg-card overflow-hidden divide-y divide-border/50">
+      <div className="rounded-lg border border-border bg-surface overflow-hidden divide-y divide-border/50">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="py-12 text-center">
@@ -169,7 +175,7 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
             const icon = TYPE_ICONS[n.type]
             const content = (
               <div
-                className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}
+                className={`flex items-start gap-3 px-4 py-3 transition-colors hover:bg-elevated ${!n.is_read ? 'bg-primary/5' : ''}`}
               >
                 <div className={`mt-0.5 shrink-0 ${icon.color}`}>
                   <svg
@@ -195,12 +201,12 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
                   </div>
                   {n.body && <p className="mt-0.5 text-xs text-foreground-muted/70">{n.body}</p>}
                   <span
-                    className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full ${icon.color} bg-current/10`}
+                    className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full ${icon.badge}`}
                   >
                     {t(TYPE_KEYS[n.type])}
                   </span>
                 </div>
-                {!n.is_read && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />}
+                {!n.is_read && <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />}
               </div>
             )
 

@@ -80,7 +80,7 @@ export default async function PlatformScoutsPage() {
                   <td className="py-3">
                     <Link
                       href={`/platform/scouts/${scout.id}`}
-                      className="text-accent hover:underline"
+                      className="text-primary hover:underline"
                     >
                       {t('common.viewAll')}
                     </Link>

@@ -27,7 +27,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <svg
-          className="h-16 w-16 text-red-400/50"
+          className="h-16 w-16 text-danger/50"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -104,12 +104,12 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
             key={conv.id}
             href={`${basePath}/${conv.id}`}
             role="listitem"
-            className={`flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3.5 transition-all hover:bg-card-hover hover:shadow-md ${
-              conv.unread_count > 0 ? 'border-accent/20' : ''
+            className={`flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3.5 transition-all hover:bg-elevated hover:shadow-md ${
+              conv.unread_count > 0 ? 'border-primary/20' : ''
             } ${conv.is_blocked ? 'opacity-60' : ''}`}
           >
             {/* Avatar */}
-            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent/10">
+            <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10">
               {userRole === 'scout' && conv.club?.logo_url ? (
                 <Image
                   src={conv.club.logo_url}
@@ -119,7 +119,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
                   className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <span className="text-base font-bold text-accent">
+                <span className="text-base font-bold text-primary">
                   {displayName.charAt(0).toUpperCase()}
                 </span>
               )}
@@ -136,7 +136,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
                   </span>
                   {conv.is_blocked && (
                     <svg
-                      className="h-3.5 w-3.5 shrink-0 text-red-400"
+                      className="h-3.5 w-3.5 shrink-0 text-danger"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -151,7 +151,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
                   )}
                 </div>
                 <span
-                  className={`shrink-0 text-[11px] ${conv.unread_count > 0 ? 'font-semibold text-accent' : 'text-foreground-muted'}`}
+                  className={`shrink-0 text-[11px] ${conv.unread_count > 0 ? 'font-semibold text-primary' : 'text-foreground-muted'}`}
                 >
                   {timestamp}
                 </span>
@@ -166,7 +166,7 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
                   {lastMessagePreview}
                 </p>
                 {conv.unread_count > 0 && (
-                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-bold text-white">
+                  <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-background">
                     {conv.unread_count > 99 ? '99+' : conv.unread_count}
                   </span>
                 )}

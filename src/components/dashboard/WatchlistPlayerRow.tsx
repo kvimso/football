@@ -46,7 +46,7 @@ export function WatchlistPlayerRow({
   const player = item.player
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = player.club ? (lang === 'ka' ? player.club.name_ka : player.club.name) : null
-  const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-accent/20 text-accent'
+  const posClasses = POSITION_COLOR_CLASSES[player.position] ?? 'bg-primary/20 text-primary'
   const age = calculateAge(player.date_of_birth)
 
   function handleRemove() {
@@ -122,7 +122,7 @@ export function WatchlistPlayerRow({
           <div className="flex items-center gap-2">
             <Link
               href={`/players/${player.slug}`}
-              className="font-medium text-foreground hover:text-accent transition-colors truncate"
+              className="font-medium text-foreground hover:text-primary transition-colors truncate"
             >
               {displayName}
             </Link>
@@ -166,16 +166,16 @@ export function WatchlistPlayerRow({
                 </svg>
               </button>
               {showFolderMenu && (
-                <div className="absolute right-0 top-full mt-1 z-20 min-w-[140px] rounded-lg border border-border bg-card shadow-lg py-1">
+                <div className="absolute right-0 top-full mt-1 z-20 min-w-[140px] rounded-lg border border-border bg-surface shadow-lg py-1">
                   {folders.map((folder) => (
                     <button
                       key={folder.id}
                       onClick={() => handleToggleFolder(folder.id)}
                       disabled={isPending}
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-xs text-foreground-muted hover:bg-background-secondary hover:text-foreground"
+                      className="flex w-full items-center gap-2 px-3 py-1.5 text-xs text-foreground-muted hover:bg-elevated hover:text-foreground"
                     >
                       <span
-                        className={`h-3 w-3 rounded border ${folderIds.includes(folder.id) ? 'bg-accent border-accent' : 'border-border'}`}
+                        className={`h-3 w-3 rounded border ${folderIds.includes(folder.id) ? 'bg-primary border-primary' : 'border-border'}`}
                       >
                         {folderIds.includes(folder.id) && (
                           <svg className="h-3 w-3 text-white" viewBox="0 0 12 12" fill="none">
@@ -201,7 +201,7 @@ export function WatchlistPlayerRow({
           <button
             onClick={handleRemove}
             disabled={isPending}
-            className="rounded p-1 text-foreground-muted/50 hover:text-red-400 transition-colors disabled:opacity-50"
+            className="rounded p-1 text-foreground-muted/50 hover:text-danger transition-colors disabled:opacity-50"
             title={t('dashboard.removeFromWatchlist')}
           >
             <svg
@@ -222,13 +222,13 @@ export function WatchlistPlayerRow({
         {tags.map((tag) => (
           <span
             key={tag.id}
-            className="inline-flex items-center gap-0.5 rounded-full bg-background-secondary px-2 py-0.5 text-[11px] text-foreground-muted"
+            className="inline-flex items-center gap-0.5 rounded-full bg-elevated px-2 py-0.5 text-[11px] text-foreground-muted"
           >
             #{tag.tag}
             <button
               onClick={() => handleRemoveTag(tag.id)}
               disabled={isPending}
-              className="ml-0.5 hover:text-red-400"
+              className="ml-0.5 hover:text-danger"
             >
               &times;
             </button>
@@ -248,14 +248,14 @@ export function WatchlistPlayerRow({
                 }
               }}
               placeholder={t('dashboard.tagPlaceholder')}
-              className="w-28 rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-foreground outline-none focus:border-accent"
+              className="w-28 rounded border border-border bg-background px-1.5 py-0.5 text-[11px] text-foreground outline-none focus:border-primary"
               maxLength={30}
               autoFocus
             />
             <button
               onClick={handleAddTag}
               disabled={isPending || !tagInput.trim()}
-              className="text-[11px] text-accent"
+              className="text-[11px] text-primary"
             >
               &#10003;
             </button>
@@ -263,7 +263,7 @@ export function WatchlistPlayerRow({
         ) : (
           <button
             onClick={() => setShowTagInput(true)}
-            className="rounded-full border border-dashed border-border px-2 py-0.5 text-[11px] text-foreground-muted/50 hover:text-accent hover:border-accent transition-colors"
+            className="rounded-full border border-dashed border-border px-2 py-0.5 text-[11px] text-foreground-muted/50 hover:text-primary hover:border-primary transition-colors"
           >
             + {t('dashboard.addTag')}
           </button>
@@ -282,14 +282,14 @@ export function WatchlistPlayerRow({
                 if (e.key === 'Enter') handleSaveNote()
                 if (e.key === 'Escape') setEditingNote(false)
               }}
-              className="flex-1 rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none focus:border-accent"
+              className="flex-1 rounded border border-border bg-background px-2 py-1 text-xs text-foreground outline-none focus:border-primary"
               placeholder={t('dashboard.notesPlaceholder')}
               autoFocus
             />
             <button
               onClick={handleSaveNote}
               disabled={isPending}
-              className="text-xs text-accent hover:underline"
+              className="text-xs text-primary hover:underline"
             >
               {t('dashboard.saveNote')}
             </button>
@@ -309,7 +309,7 @@ export function WatchlistPlayerRow({
             ) : null}
             <button
               onClick={() => setEditingNote(true)}
-              className="shrink-0 text-xs text-foreground-muted/50 hover:text-accent"
+              className="shrink-0 text-xs text-foreground-muted/50 hover:text-primary"
             >
               {item.notes ? t('dashboard.editNote') : t('dashboard.addNote')}
             </button>

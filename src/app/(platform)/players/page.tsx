@@ -312,6 +312,9 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     else watchedPlayerIds = (watchlist ?? []).map((w) => w.player_id)
   }
 
+  // Extract featured player from results
+  const featuredPlayer = allCards.find((p) => p.is_featured) ?? null
+
   // Convert Map to plain object for serialization across server/client boundary
   const viewCountObj: Record<string, number> = {}
   for (const [id, count] of viewCountMap) {
@@ -347,7 +350,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
               href={pageUrl(p)}
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                 p === page
-                  ? 'bg-accent/10 text-accent'
+                  ? 'bg-primary/10 text-primary'
                   : 'text-foreground-muted hover:text-foreground'
               }`}
             >
@@ -382,6 +385,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
         watchedPlayerIds={watchedPlayerIds}
         pagination={paginationElement}
         totalCount={total}
+        featuredPlayer={featuredPlayer}
       />
     </div>
   )

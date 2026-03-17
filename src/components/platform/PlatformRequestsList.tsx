@@ -76,7 +76,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
   return (
     <div className="space-y-3">
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+        <div className="rounded-lg border border-danger/30 bg-danger-muted p-3 text-sm text-danger">
           {error}
         </div>
       )}
@@ -102,7 +102,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                   <span className="text-foreground-muted">&rarr;</span>
                   <Link
                     href={`/players/${req.player?.slug ?? ''}`}
-                    className="text-sm text-accent hover:underline"
+                    className="text-sm text-primary hover:underline"
                   >
                     {req.player?.name ?? t('common.unknown')}
                   </Link>
@@ -119,15 +119,15 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                 {req.status === 'pending' && (
                   <div className="mt-1.5 flex items-center gap-2">
                     {expired ? (
-                      <span className="rounded-full bg-gray-500/20 px-2 py-0.5 text-xs font-medium text-gray-400">
+                      <span className="status-badge status-badge-expired">
                         {t('admin.requests.expired')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 1 ? (
-                      <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-400">
+                      <span className="rounded-full bg-danger-muted px-2 py-0.5 text-xs font-medium text-danger">
                         {t('admin.requests.expiresTomorrow')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 7 ? (
-                      <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-400">
+                      <span className="rounded-full bg-pos-gk-bg px-2 py-0.5 text-xs font-medium text-pos-gk">
                         {t('admin.requests.expiringSoon').replace(
                           '{days}',
                           String(daysUntilExpiry)
@@ -143,7 +143,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
 
                 {/* Response message display */}
                 {req.response_message && req.status !== 'pending' && (
-                  <div className="mt-1.5 rounded-lg bg-surface-alt/50 p-2">
+                  <div className="mt-1.5 rounded-lg bg-surface/50 p-2">
                     <p className="text-xs text-foreground-muted">{req.response_message}</p>
                   </div>
                 )}
@@ -163,13 +163,13 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                         placeholder={t('admin.requests.responseMessagePlaceholder')}
                         maxLength={500}
                         rows={3}
-                        className="w-full rounded-lg border border-border bg-surface-alt p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-accent focus:outline-none resize-none"
+                        className="w-full rounded-lg border border-border bg-surface p-2 text-xs text-foreground placeholder:text-foreground-muted/50 focus:border-primary focus:outline-none resize-none"
                       />
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleApproveConfirm(req.id)}
                           disabled={loading === req.id}
-                          className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+                          className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
                         >
                           {t('admin.requests.confirmApproveWithMessage')}
                         </button>
@@ -193,29 +193,27 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                           setResponseMessage('')
                         }}
                         disabled={loading === req.id}
-                        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-400 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+                        className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
                       >
                         {t('admin.requests.approve')}
                       </button>
                       <button
                         onClick={() => handleReject(req.id)}
                         disabled={loading === req.id}
-                        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+                        className="rounded-lg bg-danger-muted px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger-muted disabled:opacity-50 transition-colors"
                       >
                         {t('admin.requests.reject')}
                       </button>
                     </>
                   )
                 ) : req.status === 'pending' && expired ? (
-                  <span className="rounded-full bg-gray-500/10 px-2.5 py-0.5 text-xs font-medium text-gray-400">
+                  <span className="status-badge status-badge-expired">
                     {t('admin.requests.expired')}
                   </span>
                 ) : (
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      req.status === 'approved'
-                        ? 'bg-green-500/10 text-green-400'
-                        : 'bg-red-500/10 text-red-400'
+                    className={`status-badge ${
+                      req.status === 'approved' ? 'status-badge-approved' : 'status-badge-rejected'
                     }`}
                   >
                     {t(`admin.requests.${req.status}`)}

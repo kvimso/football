@@ -9,18 +9,18 @@ export function Footer() {
   const { user } = useAuth()
 
   return (
-    <footer className="border-t border-border bg-background-secondary">
+    <footer className="border-t border-border bg-surface">
       <div className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand */}
           <div>
             <Link
               href="/"
-              className="inline-block rounded bg-accent px-2 py-0.5 text-sm font-bold text-white"
+              className="inline-block rounded bg-primary px-2 py-0.5 text-sm font-bold text-background"
             >
               GFT
             </Link>
-            <p className="mt-2 text-sm text-foreground-muted">{t('footer.platformName')}</p>
+            <p className="mt-2 text-sm text-foreground-secondary">{t('footer.platformName')}</p>
           </div>
 
           {/* Navigation */}
@@ -93,12 +93,12 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h4 className="text-sm font-semibold text-foreground">{t('footer.contact')}</h4>
-            <p className="mt-2 text-sm text-foreground-muted">info@gft.ge</p>
-            <p className="mt-1 text-sm text-foreground-muted">{t('footer.location')}</p>
+            <p className="mt-2 text-sm text-foreground-secondary">info@gft.ge</p>
+            <p className="mt-1 text-sm text-foreground-secondary">{t('footer.location')}</p>
           </div>
         </div>
 
-        <div className="mt-8 border-t border-border pt-6 text-center text-xs text-foreground-muted">
+        <div className="mt-8 border-t border-border pt-6 text-center text-xs text-foreground-faint">
           &copy; {new Date().getFullYear()} {t('footer.platformName')}. {t('footer.rights')}
         </div>
       </div>

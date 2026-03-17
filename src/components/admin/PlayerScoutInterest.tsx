@@ -28,7 +28,7 @@ export function PlayerScoutInterest({ playerName, demand, labels }: PlayerScoutI
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent hover:bg-accent/20 transition-colors"
+        className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
         title={`${labels.scoutInterest}: ${playerName}`}
       >
         <svg
@@ -48,7 +48,7 @@ export function PlayerScoutInterest({ playerName, demand, labels }: PlayerScoutI
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-20 mt-1 w-56 rounded-lg border border-border bg-card p-3 shadow-xl">
+        <div className="absolute right-0 top-full z-20 mt-1 w-56 rounded-lg border border-border bg-surface p-3 shadow-xl">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
             {labels.scoutInterest}
           </p>

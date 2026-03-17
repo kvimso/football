@@ -49,7 +49,7 @@ export function MessageBubble({
   if (message.message_type === 'system') {
     return (
       <div className="flex justify-center py-1">
-        <span className="rounded-full bg-background-secondary px-3 py-1 text-xs text-foreground-muted">
+        <span className="rounded-full bg-surface px-3 py-1 text-xs text-foreground-muted">
           {message.content?.startsWith('chat.') ? t(message.content) : message.content}
         </span>
       </div>
@@ -87,8 +87,8 @@ export function MessageBubble({
         <div
           className={`shadow-sm ${
             isMine
-              ? 'rounded-2xl rounded-br-sm bg-accent text-white'
-              : 'rounded-2xl rounded-bl-sm bg-background-secondary text-foreground'
+              ? 'rounded-2xl rounded-br-sm bg-primary text-background'
+              : 'rounded-2xl rounded-bl-sm bg-surface text-foreground border border-border'
           }`}
         >
           {message.message_type === 'text' &&
@@ -141,7 +141,7 @@ export function MessageBubble({
                   </button>
                   {message.file_name && (
                     <p
-                      className={`mt-1 truncate px-1 text-xs ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}
+                      className={`mt-1 truncate px-1 text-xs ${isMine ? 'text-background/70' : 'text-foreground-muted'}`}
                     >
                       {message.file_name}
                     </p>
@@ -156,12 +156,12 @@ export function MessageBubble({
                   aria-label={t('aria.downloadFile')}
                   className={`flex items-center gap-2 rounded-xl px-3 py-2 ${
                     isMine
-                      ? 'bg-white/10 hover:bg-white/20'
+                      ? 'bg-white/20 hover:bg-white/30'
                       : 'bg-background hover:bg-background/80'
                   } transition-colors`}
                 >
                   <svg
-                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-white/70' : 'text-foreground-muted'}`}
+                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-background/70' : 'text-foreground-muted'}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -175,11 +175,13 @@ export function MessageBubble({
                   </svg>
                   <div className="min-w-0 flex-1">
                     <p
-                      className={`truncate text-sm font-medium ${isMine ? 'text-white' : 'text-foreground'}`}
+                      className={`truncate text-sm font-medium ${isMine ? 'text-background' : 'text-foreground'}`}
                     >
                       {message.file_name ?? t('chat.unnamedFile')}
                     </p>
-                    <p className={`text-xs ${isMine ? 'text-white/60' : 'text-foreground-muted'}`}>
+                    <p
+                      className={`text-xs ${isMine ? 'text-background/60' : 'text-foreground-muted'}`}
+                    >
                       {message.file_size_bytes ? formatFileSize(message.file_size_bytes) : ''}{' '}
                       &middot; {t('chat.downloadFile')}
                     </p>
@@ -204,12 +206,12 @@ export function MessageBubble({
             )}
             {message._status === 'failed' && (
               <span className="flex items-center gap-1">
-                <span className="text-[11px] text-red-400">{t('chat.failedToSend')}</span>
+                <span className="text-[11px] text-danger">{t('chat.failedToSend')}</span>
                 {onRetry && (
                   <button
                     onClick={onRetry}
                     aria-label={t('aria.retrySend')}
-                    className="text-[11px] font-medium text-accent hover:underline"
+                    className="text-[11px] font-medium text-primary hover:underline"
                   >
                     {t('chat.retry')}
                   </button>
@@ -227,7 +229,7 @@ export function MessageBubble({
                 {message.read_at ? (
                   // Double check — read
                   <svg
-                    className="h-3.5 w-3.5 text-accent"
+                    className="h-3.5 w-3.5 text-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

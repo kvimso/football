@@ -83,7 +83,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+        <div className="rounded-lg border border-danger/30 bg-danger-muted p-3 text-sm text-danger">
           {error}
         </div>
       )}
@@ -101,7 +101,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               name="first_name"
               required
               defaultValue={nameParts.first}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-primary focus:outline-none"
             />
           </div>
           <div>
@@ -114,7 +114,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               name="last_name"
               required
               defaultValue={nameParts.last}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-primary focus:outline-none"
             />
           </div>
         </div>
@@ -133,7 +133,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               name="first_name_ka"
               required
               defaultValue={nameKaParts.first}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-primary focus:outline-none"
             />
           </div>
           <div>
@@ -149,7 +149,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               name="last_name_ka"
               required
               defaultValue={nameKaParts.last}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-primary focus:outline-none"
             />
           </div>
         </div>
@@ -171,7 +171,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               name="date_of_birth"
               required
               defaultValue={player?.date_of_birth ?? ''}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
             />
           </div>
           <div>
@@ -183,7 +183,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               name="position"
               required
               defaultValue={player?.position ?? ''}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
             >
               <option value="">{t('players.allPositions')}</option>
               {POSITIONS.map((pos) => (
@@ -204,7 +204,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               id="preferred_foot"
               name="preferred_foot"
               defaultValue={player?.preferred_foot ?? ''}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
             >
               <option value="">{t('players.allFeet')}</option>
               {PREFERRED_FEET.map((foot) => (
@@ -228,7 +228,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               min={100}
               max={220}
               defaultValue={player?.height_cm ?? ''}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
             />
           </div>
           <div>
@@ -242,7 +242,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
               min={30}
               max={150}
               defaultValue={player?.weight_kg ?? ''}
-              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
             />
           </div>
         </div>
@@ -263,7 +263,7 @@ export function PlayerForm({ player }: PlayerFormProps) {
             name="parent_guardian_contact"
             defaultValue={player?.parent_guardian_contact ?? ''}
             placeholder={t('admin.players.parentGuardianContactHint')}
-            className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-accent focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-foreground-muted/50 focus:border-primary focus:outline-none"
           />
           <p className="mt-1 text-xs text-foreground-muted/70">
             {t('admin.players.parentGuardianContactPrivacy')}

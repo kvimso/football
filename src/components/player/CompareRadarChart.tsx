@@ -67,7 +67,10 @@ export function CompareRadarChart({
 
   return (
     <div>
-      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[280px]">
+      <svg
+        viewBox={`0 0 ${SIZE} ${SIZE}`}
+        className="mx-auto w-full max-w-[200px] md:max-w-[280px]"
+      >
         {/* Grid levels */}
         {Array.from({ length: LEVELS }, (_, level) => {
           const gridPoints = Array.from({ length: 6 }, (_, i) => {
@@ -101,32 +104,32 @@ export function CompareRadarChart({
           )
         })}
 
-        {/* Player 1 polygon (emerald/accent) */}
+        {/* Player 1 polygon (primary) */}
         <polygon
           points={toPolygon(skills1, RADIUS)}
-          fill="var(--accent)"
+          fill="var(--primary)"
           fillOpacity={0.15}
-          stroke="var(--accent)"
+          stroke="var(--primary)"
           strokeWidth={2}
         />
 
-        {/* Player 2 polygon (blue) */}
+        {/* Player 2 polygon (gold — secondary player) */}
         <polygon
           points={toPolygon(skills2, RADIUS)}
-          fill="var(--pos-def)"
+          fill="var(--pos-gk)"
           fillOpacity={0.15}
-          stroke="var(--pos-def)"
+          stroke="var(--pos-gk)"
           strokeWidth={2}
         />
 
         {/* Player 1 data points */}
         {p1Points.map(([x, y], i) => (
-          <circle key={`p1-${i}`} cx={x} cy={y} r={3} fill="var(--accent)" />
+          <circle key={`p1-${i}`} cx={x} cy={y} r={3} fill="var(--primary)" />
         ))}
 
         {/* Player 2 data points */}
         {p2Points.map(([x, y], i) => (
-          <circle key={`p2-${i}`} cx={x} cy={y} r={3} fill="var(--pos-def)" />
+          <circle key={`p2-${i}`} cx={x} cy={y} r={3} fill="var(--pos-gk)" />
         ))}
 
         {/* Labels */}
@@ -150,11 +153,11 @@ export function CompareRadarChart({
       {/* Legend */}
       <div className="mt-3 flex items-center justify-center gap-6 text-xs text-foreground-muted">
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" />
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-primary" />
           <span>{player1Name}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--pos-def)]" />
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--pos-gk)]" />
           <span>{player2Name}</span>
         </div>
       </div>

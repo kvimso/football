@@ -21,11 +21,11 @@ interface Transfer {
 function statusBorderColor(status: string | null) {
   switch (status) {
     case 'pending':
-      return 'border-l-yellow-400'
+      return 'border-l-pos-gk'
     case 'accepted':
-      return 'border-l-accent'
+      return 'border-l-primary'
     case 'declined':
-      return 'border-l-red-400'
+      return 'border-l-danger'
     case 'expired':
       return 'border-l-foreground-muted/50'
     default:
@@ -88,7 +88,7 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
   return (
     <div className="space-y-2">
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400 animate-slide-in-down">
+        <div className="flex items-center gap-2 rounded-lg border border-danger/30 bg-danger-muted p-3 text-sm text-danger animate-slide-in-down">
           <svg
             className="h-4 w-4 shrink-0"
             fill="none"
@@ -113,11 +113,11 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
         return (
           <div
             key={transfer.id}
-            className={`flex items-center gap-3 rounded-lg border border-border border-l-4 ${statusBorderColor(transfer.status)} bg-card p-3 transition-all hover:bg-card-hover`}
+            className={`flex items-center gap-3 rounded-lg border border-border border-l-4 ${statusBorderColor(transfer.status)} bg-surface p-3 transition-all hover:bg-elevated`}
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
               <svg
-                className="h-5 w-5 text-accent"
+                className="h-5 w-5 text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -134,7 +134,7 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={`/players/${transfer.player?.slug ?? ''}`}
-                  className="text-sm font-medium text-accent hover:underline"
+                  className="text-sm font-medium text-primary hover:underline"
                 >
                   {playerName ?? t('common.unknown')}
                 </Link>
@@ -175,10 +175,10 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
                   <button
                     onClick={() => handleAction(transfer.id, 'accept')}
                     disabled={loading === transfer.id}
-                    className="inline-flex items-center gap-1 rounded-lg bg-green-500/10 px-2.5 py-1.5 text-xs font-medium text-green-400 transition-colors hover:bg-green-500/20 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-lg bg-primary-muted px-2.5 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary-muted disabled:opacity-50"
                   >
                     {loading === transfer.id ? (
-                      <div className="h-3 w-3 animate-spin rounded-full border border-green-400/30 border-t-green-400" />
+                      <div className="h-3 w-3 animate-spin rounded-full border border-primary/30 border-t-primary" />
                     ) : (
                       <svg
                         className="h-3.5 w-3.5"
@@ -199,10 +199,10 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
                   <button
                     onClick={() => handleAction(transfer.id, 'decline')}
                     disabled={loading === transfer.id}
-                    className="inline-flex items-center gap-1 rounded-lg bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-lg bg-danger-muted px-2.5 py-1.5 text-xs font-medium text-danger transition-colors hover:bg-danger-muted disabled:opacity-50"
                   >
                     {loading === transfer.id ? (
-                      <div className="h-3 w-3 animate-spin rounded-full border border-red-400/30 border-t-red-400" />
+                      <div className="h-3 w-3 animate-spin rounded-full border border-danger/30 border-t-danger" />
                     ) : (
                       <svg
                         className="h-3.5 w-3.5"

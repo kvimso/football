@@ -133,7 +133,7 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
               value={query}
               onChange={handleInputChange}
               placeholder={t('chat.searchPlayers')}
-              className="w-full rounded-lg border border-border bg-background-secondary py-2 pr-3 pl-9 text-sm text-foreground placeholder:text-foreground-muted focus:border-accent focus:outline-none"
+              className="w-full rounded-lg border border-border bg-surface py-2 pr-3 pl-9 text-sm text-foreground placeholder:text-foreground-muted focus:border-primary focus:outline-none"
             />
           </div>
         </div>
@@ -142,7 +142,7 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
         <div className="max-h-72 overflow-y-auto">
           {isSearching && (
             <div className="flex items-center justify-center py-8">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
             </div>
           )}
 
@@ -170,9 +170,9 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
               <button
                 key={player.id}
                 onClick={() => handleSelect(player)}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-background-secondary"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-surface"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-background-secondary">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface">
                   {player.photo_url ? (
                     <Image
                       src={player.photo_url}

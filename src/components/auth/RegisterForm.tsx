@@ -47,12 +47,12 @@ export function RegisterForm() {
 
   if (success) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+      <div className="flex min-h-[calc(100dvh-var(--navbar-height))] items-center justify-center px-4">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-lg text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
+          <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <svg
-                className="h-8 w-8 text-accent"
+                className="h-8 w-8 text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -77,12 +77,12 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-8">
+    <div className="flex min-h-[calc(100dvh-var(--navbar-height))] items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+        <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg">
           {/* GFT branding */}
           <div className="mb-6 text-center">
-            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">
+            <span className="inline-block rounded bg-primary px-3 py-1 text-lg font-bold text-foreground">
               GFT
             </span>
             <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.registerTitle')}</h1>
@@ -91,7 +91,7 @@ export function RegisterForm() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-sm text-danger">
                 {error}
               </div>
             )}
@@ -111,7 +111,7 @@ export function RegisterForm() {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                  className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 />
               </div>
 
@@ -128,7 +128,7 @@ export function RegisterForm() {
                   value={organization}
                   onChange={(e) => setOrganization(e.target.value)}
                   placeholder={t('auth.organizationHint')}
-                  className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                  className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 />
               </div>
 
@@ -143,7 +143,7 @@ export function RegisterForm() {
                   id="country"
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                  className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 >
                   <option value="">{t('auth.countryHint')}</option>
                   {SCOUT_COUNTRIES.map((c) => (
@@ -169,7 +169,7 @@ export function RegisterForm() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                  className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 />
               </div>
 
@@ -187,7 +187,7 @@ export function RegisterForm() {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                  className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 />
               </div>
             </div>
@@ -207,7 +207,7 @@ export function RegisterForm() {
 
           <p className="text-center text-sm text-foreground-muted">
             {t('auth.hasAccount')}{' '}
-            <Link href="/login" className="font-medium text-accent hover:underline">
+            <Link href="/login" className="font-medium text-primary hover:underline">
               {t('auth.signInLink')}
             </Link>
           </p>

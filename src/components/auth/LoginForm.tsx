@@ -42,10 +42,10 @@ export function LoginForm() {
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-lg">
+        <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg">
           {/* GFT branding */}
           <div className="mb-6 text-center">
-            <span className="inline-block rounded bg-accent px-3 py-1 text-lg font-bold text-white">
+            <span className="inline-block rounded bg-primary px-3 py-1 text-lg font-bold text-foreground">
               GFT
             </span>
             <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.welcomeBack')}</h1>
@@ -54,7 +54,7 @@ export function LoginForm() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-sm text-danger">
                 {error}
               </div>
             )}
@@ -69,7 +69,7 @@ export function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
               />
             </div>
 
@@ -83,7 +83,7 @@ export function LoginForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-border bg-background-secondary px-4 py-3 text-sm text-foreground outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-colors"
+                className="mt-1 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
               />
             </div>
 
@@ -100,7 +100,7 @@ export function LoginForm() {
 
           <p className="text-center text-sm text-foreground-muted">
             {t('auth.noAccount')}{' '}
-            <Link href="/register" className="font-medium text-accent hover:underline">
+            <Link href="/register" className="font-medium text-primary hover:underline">
               {t('auth.signUpLink')}
             </Link>
           </p>

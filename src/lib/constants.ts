@@ -5,12 +5,12 @@ export const POSITIONS = ['GK', 'DEF', 'MID', 'ATT', 'WNG', 'ST'] as const
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 
 export const POSITION_COLOR_CLASSES: Record<Position, string> = {
-  GK: 'bg-pos-gk/20 text-pos-gk',
-  DEF: 'bg-pos-def/20 text-pos-def',
-  MID: 'bg-pos-mid/20 text-pos-mid',
-  ATT: 'bg-pos-att/20 text-pos-att',
-  WNG: 'bg-pos-wng/20 text-pos-wng',
-  ST: 'bg-pos-st/20 text-pos-st',
+  GK: 'bg-pos-gk-bg text-pos-gk',
+  DEF: 'bg-pos-def-bg text-pos-def',
+  MID: 'bg-pos-mid-bg text-pos-mid',
+  ATT: 'bg-pos-att-bg text-pos-att',
+  WNG: 'bg-pos-wng-bg text-pos-wng',
+  ST: 'bg-pos-st-bg text-pos-st',
 }
 
 export const POSITION_BORDER_CLASSES: Record<Position, string> = {
@@ -32,12 +32,12 @@ export const POSITION_LEFT_BORDER_CLASSES: Record<Position, string> = {
 }
 
 export const POSITION_GLOW_CLASSES: Record<Position, string> = {
-  GK: 'bg-pos-gk/20 text-pos-gk border-pos-gk/30 shadow-[0_0_8px_rgba(245,158,11,0.15)]',
-  DEF: 'bg-pos-def/20 text-pos-def border-pos-def/30 shadow-[0_0_8px_rgba(59,130,246,0.15)]',
-  MID: 'bg-pos-mid/20 text-pos-mid border-pos-mid/30 shadow-[0_0_8px_rgba(6,182,212,0.15)]',
-  ATT: 'bg-pos-att/20 text-pos-att border-pos-att/30 shadow-[0_0_8px_rgba(168,85,247,0.15)]',
-  WNG: 'bg-pos-wng/20 text-pos-wng border-pos-wng/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]',
-  ST: 'bg-pos-st/20 text-pos-st border-pos-st/30 shadow-[0_0_8px_rgba(239,68,68,0.15)]',
+  GK: 'bg-pos-gk text-btn-primary-text border-pos-gk',
+  DEF: 'bg-pos-def text-btn-primary-text border-pos-def',
+  MID: 'bg-pos-mid text-btn-primary-text border-pos-mid',
+  ATT: 'bg-pos-att text-btn-primary-text border-pos-att',
+  WNG: 'bg-pos-wng text-btn-primary-text border-pos-wng',
+  ST: 'bg-pos-st text-btn-primary-text border-pos-st',
 }
 
 export const AGE_MIN_DEFAULT = 14
@@ -174,6 +174,6 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   Unknown: '🌍',
 }
 
-// Tiny dark placeholder for next/image blur
+// Light surface placeholder for next/image blur (matches surface color)
 export const BLUR_DATA_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGNEYxRUMiLz48L3N2Zz4='

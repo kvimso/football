@@ -87,7 +87,7 @@ export function TransferSearch() {
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+    <div className="rounded-xl border border-border bg-surface shadow-sm overflow-hidden">
       <div className="p-4">
         {/* Search input */}
         <div className="flex gap-2">
@@ -112,16 +112,16 @@ export function TransferSearch() {
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={t('admin.transfers.searchPlaceholder')}
               aria-label={t('admin.transfers.searchTitle')}
-              className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-foreground-muted/40 transition-colors focus:border-accent/40 focus:outline-none"
+              className="w-full rounded-lg border border-border bg-surface py-2.5 pl-10 pr-3 text-sm text-foreground placeholder-foreground-muted/40 transition-colors focus:border-primary/40 focus:outline-none"
             />
           </div>
           <button
             onClick={handleSearch}
             disabled={searching || query.trim().length < 2}
-            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-accent-hover disabled:opacity-40"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-background transition-all hover:bg-primary-hover disabled:opacity-40"
           >
             {searching && !actingOn ? (
-              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-background/30 border-t-background" />
             ) : (
               <svg
                 className="h-3.5 w-3.5"
@@ -143,7 +143,7 @@ export function TransferSearch() {
 
         {/* Action message */}
         {actionMsg && (
-          <div className="mt-3 flex items-center gap-2 rounded-lg border border-accent/20 bg-accent/10 p-3 text-sm text-accent animate-slide-in-down">
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3 text-sm text-primary animate-slide-in-down">
             <svg
               className="h-4 w-4 shrink-0"
               fill="none"
@@ -163,7 +163,7 @@ export function TransferSearch() {
 
         {/* Error message */}
         {errorMsg && (
-          <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400 animate-slide-in-down">
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-muted p-3 text-sm text-danger animate-slide-in-down">
             <svg
               className="h-4 w-4 shrink-0"
               fill="none"
@@ -183,7 +183,7 @@ export function TransferSearch() {
 
         {/* No results */}
         {searched && results.length === 0 && !actionMsg && (
-          <div className="mt-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-white/[0.06] py-8 text-center">
+          <div className="mt-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-8 text-center">
             <svg
               className="h-8 w-8 text-foreground-muted/15"
               fill="none"
@@ -213,14 +213,14 @@ export function TransferSearch() {
                 : null
               const age = calculateAge(player.date_of_birth)
               const posClasses = POSITION_COLOR_CLASSES[player.position] ?? ''
-              const leftBorder = POSITION_LEFT_BORDER_CLASSES[player.position] ?? 'border-l-accent'
+              const leftBorder = POSITION_LEFT_BORDER_CLASSES[player.position] ?? 'border-l-primary'
               const isFreeAgent = player.status === 'free_agent' || !player.club
               const isActing = actingOn === player.id
 
               return (
                 <div
                   key={player.id}
-                  className={`animate-transfer-card-in flex items-center gap-3 rounded-xl border-l-[4px] ${leftBorder} border border-white/[0.06] bg-white/[0.03] px-4 py-3 backdrop-blur-sm transition-all hover:bg-white/[0.07] hover:border-white/[0.12]`}
+                  className={`animate-transfer-card-in flex items-center gap-3 rounded-xl border-l-[4px] ${leftBorder} border border-border bg-surface px-4 py-3 transition-all hover:bg-elevated hover:shadow-sm`}
                   style={{ animationDelay: `${i * 60}ms` }}
                 >
                   {/* Position badge */}
@@ -235,7 +235,7 @@ export function TransferSearch() {
                     <div className="flex items-baseline gap-2">
                       <span className="text-sm font-semibold text-foreground">{displayName}</span>
                       {isFreeAgent ? (
-                        <span className="text-[11px] font-medium text-yellow-400">
+                        <span className="text-[11px] font-medium text-pos-gk">
                           {t('admin.transfers.freeAgent')}
                         </span>
                       ) : (
@@ -257,11 +257,11 @@ export function TransferSearch() {
                       <button
                         onClick={() => handleClaimFreeAgent(player.id)}
                         disabled={searching}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 text-green-400 transition-all hover:bg-green-500/20 hover:shadow-[0_0_12px_rgba(34,197,94,0.15)] disabled:opacity-50"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-muted text-primary transition-all hover:bg-primary-muted disabled:opacity-50"
                         title={t('admin.transfers.claimPlayer')}
                       >
                         {isActing ? (
-                          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-green-400/30 border-t-green-400" />
+                          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
                         ) : (
                           <svg
                             className="h-4 w-4"
@@ -282,11 +282,11 @@ export function TransferSearch() {
                       <button
                         onClick={() => handleRequestTransfer(player.id)}
                         disabled={searching}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent transition-all hover:bg-accent/20 hover:shadow-[0_0_12px_rgba(16,185,129,0.15)] disabled:opacity-50"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary transition-all hover:bg-primary/20 disabled:opacity-50"
                         title={t('admin.transfers.requestTransfer')}
                       >
                         {isActing ? (
-                          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-accent/30 border-t-accent" />
+                          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
                         ) : (
                           <svg
                             className="h-4 w-4"

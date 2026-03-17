@@ -49,7 +49,7 @@ export default async function PlatformScoutDetailPage({
 
   return (
     <div>
-      <Link href="/platform/scouts" className="text-sm text-accent hover:underline">
+      <Link href="/platform/scouts" className="text-sm text-primary hover:underline">
         &larr; {t('admin.common.backToList')}
       </Link>
 
@@ -96,7 +96,7 @@ export default async function PlatformScoutDetailPage({
                   <div>
                     <Link
                       href={`/players/${player?.slug ?? ''}`}
-                      className="text-sm font-medium text-accent hover:underline"
+                      className="text-sm font-medium text-primary hover:underline"
                     >
                       {player?.name ?? t('common.unknown')}
                     </Link>
@@ -134,7 +134,7 @@ export default async function PlatformScoutDetailPage({
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/players/${player?.slug ?? ''}`}
-                      className="text-sm font-medium text-accent hover:underline"
+                      className="text-sm font-medium text-primary hover:underline"
                     >
                       {player?.name ?? t('common.unknown')}
                     </Link>
@@ -151,12 +151,12 @@ export default async function PlatformScoutDetailPage({
                       {req.created_at ? format(new Date(req.created_at), 'MMM d') : ''}
                     </span>
                     <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      className={`status-badge ${
                         req.status === 'approved'
-                          ? 'bg-green-500/10 text-green-400'
+                          ? 'status-badge-approved'
                           : req.status === 'rejected'
-                            ? 'bg-red-500/10 text-red-400'
-                            : 'bg-yellow-500/10 text-yellow-400'
+                            ? 'status-badge-rejected'
+                            : 'status-badge-pending'
                       }`}
                     >
                       {t(`admin.requests.${req.status}`)}

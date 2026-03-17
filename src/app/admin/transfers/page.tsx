@@ -95,9 +95,9 @@ export default async function AdminTransfersPage() {
     <div className="space-y-5">
       {/* Compact header bar */}
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
           <svg
-            className="h-4.5 w-4.5 text-accent"
+            className="h-4.5 w-4.5 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -112,12 +112,12 @@ export default async function AdminTransfersPage() {
         </div>
         <h1 className="text-lg font-bold text-foreground">{t('admin.transfers.title')}</h1>
         {pendingTotal > 0 && (
-          <div className="flex items-center gap-1.5 rounded-full bg-yellow-500/10 px-2.5 py-1">
+          <div className="flex items-center gap-1.5 rounded-full bg-pos-gk-bg px-2.5 py-1">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-yellow-400" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pos-gk opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-pos-gk" />
             </span>
-            <span className="text-xs font-semibold text-yellow-400">{pendingTotal}</span>
+            <span className="text-xs font-semibold text-pos-gk">{pendingTotal}</span>
           </div>
         )}
       </div>

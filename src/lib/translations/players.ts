@@ -76,6 +76,25 @@ export const en = {
     downloadingPdf: 'Generating...',
     similarPlayers: 'Similar Players',
     noResults: 'No results',
+    viewGrid: 'Grid view',
+    viewList: 'List view',
+    name: 'Name',
+    atAGlance: 'At a Glance',
+    attacking: 'Attacking',
+    defensive: 'Defensive',
+    passingCategory: 'Passing',
+    physicalCategory: 'Physical',
+    // Sub-nav labels
+    navOverview: 'Overview',
+    navStats: 'Stats',
+    navMatches: 'Matches',
+    navHistory: 'History',
+    navVideos: 'Videos',
+    // Video section
+    videos: 'Videos',
+    noVideos: 'No video highlights yet',
+    noVideosHint: 'Video clips will appear here once camera coverage is active.',
+    verifiedByPixellot: 'Verified by Pixellot',
   },
   aiSearch: {
     placeholder: "Describe the player you're looking for...",
@@ -187,6 +206,8 @@ export const en = {
     copyLink: 'Copy Link',
     copied: 'Copied!',
     comparePlayer: 'Compare',
+    leadsIn: 'leads in {count} of {total} comparable stats',
+    evenMatch: 'Even match — both players are comparable',
   },
 }
 
@@ -268,6 +289,25 @@ export const ka = {
     downloadingPdf: 'მზადდება...',
     similarPlayers: 'მსგავსი მოთამაშეები',
     noResults: 'შედეგი არ არის',
+    viewGrid: 'ბადის ხედი',
+    viewList: 'სიის ხედი',
+    name: 'სახელი',
+    atAGlance: 'ერთი შეხედვით',
+    attacking: 'შეტევითი',
+    defensive: 'თავდაცვითი',
+    passingCategory: 'პასები',
+    physicalCategory: 'ფიზიკური',
+    // Sub-nav labels
+    navOverview: 'მიმოხილვა',
+    navStats: 'სტატისტიკა',
+    navMatches: 'მატჩები',
+    navHistory: 'ისტორია',
+    navVideos: 'ვიდეოები',
+    // Video section
+    videos: 'ვიდეოები',
+    noVideos: 'ვიდეო ჰაილაითები ჯერ არ არის',
+    noVideosHint: 'ვიდეო კლიპები აქ გამოჩნდება კამერის ინტეგრაციის შემდეგ.',
+    verifiedByPixellot: 'Pixellot-ით დადასტურებული',
   },
   aiSearch: {
     placeholder: 'აღწერეთ მოთამაშე, რომელსაც ეძებთ...',
@@ -379,5 +419,7 @@ export const ka = {
     copyLink: 'ბმულის კოპირება',
     copied: 'დაკოპირებულია!',
     comparePlayer: 'შედარება',
+    leadsIn: 'ლიდერია {count} სტატისტიკაში {total}-დან',
+    evenMatch: 'თანაბარი მატჩი — ორივე მოთამაშე შედარებადია',
   },
 }

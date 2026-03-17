@@ -1,123 +1,78 @@
 'use client'
 
-import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
 import { timeAgo } from '@/lib/utils'
-import { StarIcon, MessageIcon, ArrowsIcon } from '@/components/ui/Icons'
-import type { Notification } from '@/lib/notifications/types'
+import { ActivityFeed } from './ActivityFeed'
+import { WatchlistPanel } from './WatchlistPanel'
+import type { ActivityItem } from './ActivityFeed'
+import type { WatchlistPanelItem } from './WatchlistPanel'
 
 interface DashboardHomeProps {
   fullName: string
+  lastSignInAt: string | null
   watchlistCount: number
-  messageCount: number
   unreadCount: number
-  recentNotifications: Notification[]
+  weeklyViewCount: number
+  activityItems: ActivityItem[]
+  watchlistItems: WatchlistPanelItem[]
 }
 
 export function DashboardHome({
   fullName,
+  lastSignInAt,
   watchlistCount,
-  messageCount,
   unreadCount,
-  recentNotifications,
+  weeklyViewCount,
+  activityItems,
+  watchlistItems,
 }: DashboardHomeProps) {
   const { t } = useLang()
 
+  // Show "last active" only if it's a previous session (not today)
+  const showLastActive =
+    lastSignInAt && new Date(lastSignInAt).toDateString() !== new Date().toDateString()
+
   return (
     <div>
+      {/* Welcome header */}
       <h1 className="text-2xl font-bold text-foreground">
         {t('dashboard.welcome')}, {fullName}
       </h1>
-
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Link href="/dashboard/watchlist" className="card group">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-              <StarIcon className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold text-accent">{watchlistCount}</div>
-              <div className="text-sm font-medium text-foreground">{t('dashboard.watchlist')}</div>
-            </div>
-          </div>
-          <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.watchlistDesc')}</div>
-        </Link>
-
-        <Link href="/dashboard/messages" className="card group">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-              <MessageIcon className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold text-accent">{messageCount}</div>
-              <div className="text-sm font-medium text-foreground">{t('dashboard.messages')}</div>
-            </div>
-          </div>
-          <div className="mt-2 text-xs text-foreground-muted">
-            {unreadCount > 0 ? `${unreadCount} ${t('chat.unread')}` : t('dashboard.messagesDesc')}
-          </div>
-        </Link>
-
-        <Link href="/players/compare" className="card group">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
-              <ArrowsIcon className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <div className="text-2xl font-extrabold text-accent/50">&#8644;</div>
-              <div className="text-sm font-medium text-foreground">{t('dashboard.compare')}</div>
-            </div>
-          </div>
-          <div className="mt-2 text-xs text-foreground-muted">{t('dashboard.compareDesc')}</div>
-        </Link>
-      </div>
-
-      {/* Recent notifications */}
-      {recentNotifications.length > 0 && (
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-foreground">{t('notifications.title')}</h2>
-            <Link href="/dashboard/notifications" className="text-xs text-accent hover:underline">
-              {t('notifications.viewAll')}
-            </Link>
-          </div>
-          <div className="rounded-lg border border-border bg-card overflow-hidden divide-y divide-border/50">
-            {recentNotifications.slice(0, 5).map((n) => (
-              <Link
-                key={n.id}
-                href={n.link ?? '/dashboard/notifications'}
-                className={`flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-background-secondary ${!n.is_read ? 'bg-accent/5' : ''}`}
-              >
-                <div className="min-w-0 flex-1">
-                  <p
-                    className={`text-xs leading-snug truncate ${!n.is_read ? 'text-foreground font-medium' : 'text-foreground-muted'}`}
-                  >
-                    {n.title}
-                  </p>
-                </div>
-                <span className="shrink-0 text-[10px] text-foreground-muted/50">
-                  {timeAgo(n.created_at)}
-                </span>
-                {!n.is_read && <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />}
-              </Link>
-            ))}
-          </div>
-        </div>
+      {showLastActive && (
+        <p className="mt-0.5 text-sm text-foreground-muted">
+          {t('dashboard.lastActive').replace('{time}', timeAgo(lastSignInAt))}
+        </p>
       )}
 
-      {/* Quick links */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">{t('dashboard.quickActions')}</h2>
-        <div className="mt-3 flex flex-wrap gap-3">
-          <Link href="/players" className="btn-primary text-sm">
-            {t('home.browsePlayers')}
-          </Link>
-          <Link href="/matches" className="btn-secondary text-sm">
-            {t('nav.matches')}
-          </Link>
-          <Link href="/clubs" className="btn-secondary text-sm">
-            {t('nav.clubs')}
-          </Link>
+      {/* Stat summary bar */}
+      <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        <span>
+          <span className="font-semibold text-foreground">{watchlistCount}</span>{' '}
+          <span className="text-foreground-muted">{t('dashboard.playersWatched')}</span>
+        </span>
+        <span className="text-border hidden sm:inline">|</span>
+        <span>
+          <span className="font-semibold text-foreground">{unreadCount}</span>{' '}
+          <span className="text-foreground-muted">{t('dashboard.unreadMessages')}</span>
+        </span>
+        <span className="text-border hidden sm:inline">|</span>
+        <span>
+          <span className="font-semibold text-foreground">{weeklyViewCount}</span>{' '}
+          <span className="text-foreground-muted">{t('dashboard.profilesViewed')}</span>
+        </span>
+      </div>
+
+      {/* 60/40 split: Activity feed + Watchlist panel */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[3fr_2fr]">
+        <div>
+          <h2 className="mb-3 text-sm font-semibold text-foreground-muted uppercase tracking-wider">
+            {t('dashboard.activityFeed')}
+          </h2>
+          <ActivityFeed items={activityItems} />
+        </div>
+
+        <div className="hidden md:block">
+          <WatchlistPanel items={watchlistItems} totalCount={watchlistCount} />
         </div>
       </div>
     </div>

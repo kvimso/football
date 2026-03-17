@@ -44,11 +44,11 @@ export default async function PlatformTransfersPage({
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div className="rounded-2xl border border-border bg-card p-6">
+      <div className="rounded-2xl border border-border bg-surface p-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-accent/10">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10">
             <svg
-              className="h-7 w-7 text-accent"
+              className="h-7 w-7 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -71,7 +71,7 @@ export default async function PlatformTransfersPage({
       </div>
 
       {/* Status filter tabs */}
-      <div className="flex gap-1.5 rounded-xl border border-border bg-card p-1.5">
+      <div className="flex gap-1.5 rounded-xl border border-border bg-surface p-1.5">
         {statusFilters.map((s) => {
           const isActive = (params.status ?? 'all') === s
           return (
@@ -80,8 +80,8 @@ export default async function PlatformTransfersPage({
               href={`/platform/transfers${s === 'all' ? '' : `?status=${s}`}`}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                 isActive
-                  ? 'bg-accent/10 text-accent shadow-sm'
-                  : 'text-foreground-muted hover:bg-background-secondary hover:text-foreground'
+                  ? 'bg-primary/10 text-primary shadow-sm'
+                  : 'text-foreground-muted hover:bg-surface hover:text-foreground'
               }`}
             >
               {t(`admin.transfers.${s === 'all' ? 'title' : s}`)}

@@ -5,6 +5,28 @@ export type PlayerStatus = 'active' | 'free_agent'
 export type UserRole = 'scout' | 'academy_admin' | 'platform_admin'
 export type MessageType = 'text' | 'file' | 'player_ref' | 'system'
 export type TransferStatus = 'pending' | 'accepted' | 'declined' | 'expired'
+export type ViewMode = 'grid' | 'list'
+
+/** Player data shape for browse-page components (PlayerCard, PlayerListRow, featured banner). */
+export interface PlayerBrowseData {
+  id: string
+  slug: string
+  name: string
+  name_ka: string
+  position: Position
+  date_of_birth: string
+  height_cm: number | null
+  preferred_foot: string | null
+  is_featured: boolean | null
+  photo_url: string | null
+  status: PlayerStatus
+  club: { name: string; name_ka: string } | null
+  season_stats: {
+    goals: number | null
+    assists: number | null
+    matches_played: number | null
+  } | null
+}
 
 // Chat thread types
 export interface MessageSender {

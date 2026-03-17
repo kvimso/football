@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { useClickOutside } from '@/hooks/useClickOutside'
+import { registerDropdown, clearDropdown } from '@/lib/dropdownManager'
 import {
   getUnreadCount,
   getRecentNotifications,
@@ -40,14 +42,26 @@ export function NotificationBell() {
     }
   }, [enabled])
 
-  // Close on outside click
+  const closeFn = useCallback(() => setOpen(false), [])
+  useClickOutside(ref, closeFn, open)
+
+  // Register/clear with dropdown manager for mutual exclusion
+  useEffect(() => {
+    if (open) {
+      registerDropdown(closeFn)
+    } else {
+      clearDropdown(closeFn)
+    }
+  }, [open, closeFn])
+
+  // Close on Escape key
   useEffect(() => {
     if (!open) return
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
   }, [open])
 
   const handleToggle = useCallback(async () => {
@@ -80,7 +94,7 @@ export function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={handleToggle}
-        className="relative flex items-center justify-center rounded-md p-1.5 text-foreground-muted transition-colors hover:text-foreground hover:bg-background-secondary"
+        className="relative flex items-center justify-center rounded-md p-1.5 text-foreground-muted transition-colors hover:text-foreground hover:bg-surface"
         aria-label="Notifications"
       >
         <svg
@@ -97,7 +111,7 @@ export function NotificationBell() {
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-red-500 px-1 text-[9px] font-bold text-white">
+          <span className="absolute -top-0.5 -right-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-danger px-1 text-[9px] font-bold text-background">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}

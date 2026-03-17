@@ -31,7 +31,7 @@ export function AnnouncementList({ announcements, labels }: AnnouncementListProp
 
   if (announcements.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-12 text-center">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-surface py-12 text-center">
         <svg
           className="h-10 w-10 text-foreground-muted/20"
           fill="none"
@@ -63,14 +63,14 @@ export function AnnouncementList({ announcements, labels }: AnnouncementListProp
         })
 
         return (
-          <div key={a.id} className="rounded-xl border border-border bg-card p-4">
+          <div key={a.id} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-sm text-foreground whitespace-pre-wrap">{a.content}</p>
             <div className="mt-3 flex items-center justify-between">
               <span className="text-xs text-foreground-muted">{formatted}</span>
               <button
                 onClick={() => handleDelete(a.id)}
                 disabled={deletingId === a.id}
-                className="text-xs text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+                className="text-xs text-danger hover:text-danger transition-colors disabled:opacity-50"
               >
                 {deletingId === a.id ? labels.deleting : labels.delete}
               </button>
