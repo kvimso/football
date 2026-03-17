@@ -6,6 +6,7 @@ import { HowItWorks } from '@/components/landing/HowItWorks'
 import { AudiencePanels } from '@/components/landing/AudiencePanels'
 import { Partners } from '@/components/landing/Partners'
 import { CtaBanner } from '@/components/landing/CtaBanner'
+import { FadeInOnScroll } from '@/components/ui/FadeInOnScroll'
 
 export default async function Home() {
   let isLoggedIn = false
@@ -25,10 +26,18 @@ export default async function Home() {
     <>
       <LandingHero />
       <SocialProof />
-      <HowItWorks />
-      <AudiencePanels />
-      <Partners />
-      <CtaBanner />
+      <FadeInOnScroll>
+        <HowItWorks />
+      </FadeInOnScroll>
+      <FadeInOnScroll delay={50}>
+        <AudiencePanels />
+      </FadeInOnScroll>
+      <FadeInOnScroll delay={100}>
+        <Partners />
+      </FadeInOnScroll>
+      <FadeInOnScroll delay={150}>
+        <CtaBanner />
+      </FadeInOnScroll>
     </>
   )
 }

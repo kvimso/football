@@ -175,8 +175,11 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
           {/* Mobile menu button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
+            onKeyDown={(e) => e.key === 'Escape' && setMenuOpen(false)}
             className="md:hidden rounded-md p-1.5 text-foreground-muted hover:text-foreground transition-colors"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
             <svg
               className="h-5 w-5"
@@ -195,66 +198,74 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
         </div>
       </nav>
 
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="border-t border-border bg-nav-bg px-4 py-3 md:hidden">
-          <div className="flex flex-col gap-2">
-            {/* Platform links */}
-            {user && (
-              <>
-                <NavLink href="/players" onClick={closeMobile}>
-                  {t('nav.players')}
-                </NavLink>
-                <NavLink href="/matches" onClick={closeMobile}>
-                  {t('nav.matches')}
-                </NavLink>
-                <NavLink href="/clubs" onClick={closeMobile}>
-                  {t('nav.clubs')}
-                </NavLink>
-              </>
-            )}
-            {showInfoLinks && (
-              <>
-                <NavLink href="/about" onClick={closeMobile}>
-                  {t('nav.about')}
-                </NavLink>
-                <NavLink href="/contact" onClick={closeMobile}>
-                  {t('nav.contact')}
-                </NavLink>
-              </>
-            )}
-
-            {user && (
-              <>
-                {/* Separator */}
-                <div className="border-t border-border my-1" />
-
-                {/* Your Space links */}
-                <NavLink href={dashboardHref} onClick={closeMobile}>
-                  {userRole === 'platform_admin'
-                    ? t('platform.title')
-                    : userRole === 'academy_admin'
-                      ? t('nav.admin')
-                      : t('nav.dashboard')}
-                </NavLink>
-                {userRole === 'scout' && (
-                  <NavLink href="/dashboard/watchlist" onClick={closeMobile}>
-                    {t('watchlist.watching')}
+      {/* Mobile menu — animated via CSS grid-rows */}
+      <div
+        id="mobile-menu"
+        className={`grid transition-[grid-template-rows] duration-200 ease-out md:hidden ${
+          menuOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}
+        aria-hidden={!menuOpen}
+      >
+        <div className="overflow-hidden">
+          <div className="border-t border-border bg-nav-bg px-4 py-3">
+            <div className="flex flex-col gap-2">
+              {/* Platform links */}
+              {user && (
+                <>
+                  <NavLink href="/players" onClick={closeMobile}>
+                    {t('nav.players')}
                   </NavLink>
-                )}
-                {userRole !== 'platform_admin' && (
-                  <NavLink href={messagesHref} onClick={closeMobile}>
-                    {t('nav.messages')}
-                    {unreadCount > 0 && (
-                      <span className="ml-1.5 h-2 w-2 rounded-full bg-primary inline-block" />
-                    )}
+                  <NavLink href="/matches" onClick={closeMobile}>
+                    {t('nav.matches')}
                   </NavLink>
-                )}
-              </>
-            )}
+                  <NavLink href="/clubs" onClick={closeMobile}>
+                    {t('nav.clubs')}
+                  </NavLink>
+                </>
+              )}
+              {showInfoLinks && (
+                <>
+                  <NavLink href="/about" onClick={closeMobile}>
+                    {t('nav.about')}
+                  </NavLink>
+                  <NavLink href="/contact" onClick={closeMobile}>
+                    {t('nav.contact')}
+                  </NavLink>
+                </>
+              )}
+
+              {user && (
+                <>
+                  {/* Separator */}
+                  <div className="border-t border-border my-1" />
+
+                  {/* Your Space links */}
+                  <NavLink href={dashboardHref} onClick={closeMobile}>
+                    {userRole === 'platform_admin'
+                      ? t('platform.title')
+                      : userRole === 'academy_admin'
+                        ? t('nav.admin')
+                        : t('nav.dashboard')}
+                  </NavLink>
+                  {userRole === 'scout' && (
+                    <NavLink href="/dashboard/watchlist" onClick={closeMobile}>
+                      {t('watchlist.watching')}
+                    </NavLink>
+                  )}
+                  {userRole !== 'platform_admin' && (
+                    <NavLink href={messagesHref} onClick={closeMobile}>
+                      {t('nav.messages')}
+                      {unreadCount > 0 && (
+                        <span className="ml-1.5 h-2 w-2 rounded-full bg-primary inline-block" />
+                      )}
+                    </NavLink>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }
