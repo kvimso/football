@@ -108,6 +108,8 @@ export const en = {
     unknown: 'Unknown',
     match: 'match',
     matchPlural: 'matches',
+    watchFullMatch: 'Watch Full Match',
+    highlights: 'Highlights',
   },
   clubs: {
     title: 'Clubs & Academies',
@@ -260,6 +262,8 @@ export const ka = {
     unknown: 'უცნობი',
     match: 'მატჩი',
     matchPlural: 'მატჩი',
+    watchFullMatch: 'სრული მატჩის ყურება',
+    highlights: 'საუკეთესო მომენტები',
   },
   clubs: {
     title: 'კლუბები და აკადემიები',

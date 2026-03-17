@@ -112,12 +112,12 @@ export default async function AdminTransfersPage() {
         </div>
         <h1 className="text-lg font-bold text-foreground">{t('admin.transfers.title')}</h1>
         {pendingTotal > 0 && (
-          <div className="flex items-center gap-1.5 rounded-full bg-yellow-500/10 px-2.5 py-1">
+          <div className="flex items-center gap-1.5 rounded-full bg-pos-gk-bg px-2.5 py-1">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-500 opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-yellow-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-pos-gk opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-pos-gk" />
             </span>
-            <span className="text-xs font-semibold text-yellow-500">{pendingTotal}</span>
+            <span className="text-xs font-semibold text-pos-gk">{pendingTotal}</span>
           </div>
         )}
       </div>

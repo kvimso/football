@@ -163,7 +163,7 @@ export function TransferSearch() {
 
         {/* Error message */}
         {errorMsg && (
-          <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-600 animate-slide-in-down">
+          <div className="mt-3 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-muted p-3 text-sm text-danger animate-slide-in-down">
             <svg
               className="h-4 w-4 shrink-0"
               fill="none"
@@ -235,7 +235,7 @@ export function TransferSearch() {
                     <div className="flex items-baseline gap-2">
                       <span className="text-sm font-semibold text-foreground">{displayName}</span>
                       {isFreeAgent ? (
-                        <span className="text-[11px] font-medium text-yellow-500">
+                        <span className="text-[11px] font-medium text-pos-gk">
                           {t('admin.transfers.freeAgent')}
                         </span>
                       ) : (
@@ -257,11 +257,11 @@ export function TransferSearch() {
                       <button
                         onClick={() => handleClaimFreeAgent(player.id)}
                         disabled={searching}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 text-green-700 transition-all hover:bg-green-500/20 disabled:opacity-50"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-muted text-primary transition-all hover:bg-primary-muted disabled:opacity-50"
                         title={t('admin.transfers.claimPlayer')}
                       >
                         {isActing ? (
-                          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-green-400/30 border-t-green-400" />
+                          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
                         ) : (
                           <svg
                             className="h-4 w-4"

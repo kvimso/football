@@ -273,7 +273,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             {(isPopular || isTrending) && (
               <div className="mt-2 flex items-center gap-2">
                 {isPopular && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-pos-gk-bg px-2.5 py-0.5 text-xs font-semibold text-pos-gk">
                     <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" />
                     </svg>
@@ -317,7 +317,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
             {/* Free agent notice */}
             {isFreeAgent && (
-              <div className="mt-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-3 text-sm text-yellow-500">
+              <div className="mt-3 rounded-lg border border-pos-gk/30 bg-pos-gk-bg p-3 text-sm text-pos-gk">
                 {t('players.freeAgentNotice')}
               </div>
             )}

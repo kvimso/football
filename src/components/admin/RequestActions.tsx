@@ -55,7 +55,7 @@ export function RequestActions({ requestId }: RequestActionsProps) {
           <button
             onClick={handleApproveConfirm}
             disabled={loading}
-            className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+            className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
           >
             {t('admin.requests.confirmApproveWithMessage')}
           </button>
@@ -79,14 +79,14 @@ export function RequestActions({ requestId }: RequestActionsProps) {
       <button
         onClick={() => setShowApproveForm(true)}
         disabled={loading}
-        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+        className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
       >
         {t('admin.requests.approve')}
       </button>
       <button
         onClick={handleReject}
         disabled={loading}
-        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+        className="rounded-lg bg-danger-muted px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger-muted disabled:opacity-50 transition-colors"
       >
         {t('admin.requests.reject')}
       </button>

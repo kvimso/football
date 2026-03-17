@@ -138,7 +138,7 @@ function RequestCard({
 
       {/* Expiry context for pending requests */}
       {group === 'active' && (
-        <p className="mt-2 text-xs text-yellow-500/80">
+        <p className="mt-2 text-xs text-pos-gk/80">
           {t('dashboard.waitingForResponse')} &mdash;{' '}
           {t('dashboard.daysSent').replace('{days}', String(daysSent))}
         </p>
@@ -152,10 +152,10 @@ function RequestCard({
       {/* Approved with response message */}
       {group === 'approved' && (
         <div className="mt-3 space-y-2">
-          <p className="text-xs text-green-700">{t('dashboard.approvedMessage')}</p>
+          <p className="text-xs text-primary">{t('dashboard.approvedMessage')}</p>
           {item.response_message && (
-            <div className="rounded-lg bg-green-500/5 border border-green-500/20 p-3">
-              <p className="text-xs font-medium text-green-700 mb-1">
+            <div className="rounded-lg bg-primary-muted border border-primary/20 p-3">
+              <p className="text-xs font-medium text-primary mb-1">
                 {t('dashboard.adminResponse')}
               </p>
               <p className="text-sm text-foreground-muted">{item.response_message}</p>

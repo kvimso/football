@@ -70,7 +70,7 @@ export function AnnouncementList({ announcements, labels }: AnnouncementListProp
               <button
                 onClick={() => handleDelete(a.id)}
                 disabled={deletingId === a.id}
-                className="text-xs text-red-600 hover:text-red-500 transition-colors disabled:opacity-50"
+                className="text-xs text-danger hover:text-danger transition-colors disabled:opacity-50"
               >
                 {deletingId === a.id ? labels.deleting : labels.delete}
               </button>

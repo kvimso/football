@@ -40,7 +40,7 @@ export function ScoutDemandCard({
         </h2>
         {totalThisMonth > 0 && trendPercent !== 0 && (
           <span
-            className={`text-xs font-medium ${trendPercent > 0 ? 'text-primary' : 'text-red-600'}`}
+            className={`text-xs font-medium ${trendPercent > 0 ? 'text-primary' : 'text-danger'}`}
           >
             {trendPercent > 0 ? '+' : ''}
             {trendPercent}% {trendLabel}
@@ -85,7 +85,7 @@ export function ScoutDemandCard({
                   )}
                   {isDown && (
                     <svg
-                      className="h-3 w-3 text-red-600"
+                      className="h-3 w-3 text-danger"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

@@ -59,7 +59,7 @@ export function AnnouncementForm({ labels }: AnnouncementFormProps) {
         disabled={loading}
       />
       <div className="mt-2 flex items-center justify-between">
-        <span className={`text-xs ${remaining < 50 ? 'text-red-600' : 'text-foreground-muted'}`}>
+        <span className={`text-xs ${remaining < 50 ? 'text-danger' : 'text-foreground-muted'}`}>
           {remaining} {labels.charsRemaining}
         </span>
         <button
@@ -72,7 +72,7 @@ export function AnnouncementForm({ labels }: AnnouncementFormProps) {
       </div>
       {feedback && (
         <p
-          className={`mt-2 text-xs ${feedback.type === 'success' ? 'text-primary' : 'text-red-600'}`}
+          className={`mt-2 text-xs ${feedback.type === 'success' ? 'text-primary' : 'text-danger'}`}
         >
           {feedback.message}
         </p>

@@ -41,7 +41,7 @@ export function DashboardStatCards({
           <p className="mt-0.5 text-xs text-foreground-muted">{stat.label}</p>
           {stat.trend != null && stat.trend !== 0 && (
             <p
-              className={`mt-1 text-xs font-medium ${stat.trend > 0 ? 'text-primary' : 'text-red-600'}`}
+              className={`mt-1 text-xs font-medium ${stat.trend > 0 ? 'text-primary' : 'text-danger'}`}
             >
               {stat.trend > 0 ? '+' : ''}
               {stat.trend}% {trendLabel}

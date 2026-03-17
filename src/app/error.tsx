@@ -20,9 +20,9 @@ export default function GlobalError({
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="mx-auto flex max-w-md flex-col items-center px-4 text-center">
-        <div className="rounded-full bg-red-500/10 p-4">
+        <div className="rounded-full bg-danger-muted p-4">
           <svg
-            className="h-10 w-10 text-red-500"
+            className="h-10 w-10 text-danger"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

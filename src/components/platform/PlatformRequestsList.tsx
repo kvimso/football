@@ -76,7 +76,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
   return (
     <div className="space-y-3">
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-600">
+        <div className="rounded-lg border border-danger/30 bg-danger-muted p-3 text-sm text-danger">
           {error}
         </div>
       )}
@@ -123,11 +123,11 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                         {t('admin.requests.expired')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 1 ? (
-                      <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-600">
+                      <span className="rounded-full bg-danger-muted px-2 py-0.5 text-xs font-medium text-danger">
                         {t('admin.requests.expiresTomorrow')}
                       </span>
                     ) : daysUntilExpiry !== null && daysUntilExpiry <= 7 ? (
-                      <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-500">
+                      <span className="rounded-full bg-pos-gk-bg px-2 py-0.5 text-xs font-medium text-pos-gk">
                         {t('admin.requests.expiringSoon').replace(
                           '{days}',
                           String(daysUntilExpiry)
@@ -169,7 +169,7 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                         <button
                           onClick={() => handleApproveConfirm(req.id)}
                           disabled={loading === req.id}
-                          className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+                          className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
                         >
                           {t('admin.requests.confirmApproveWithMessage')}
                         </button>
@@ -193,14 +193,14 @@ export function PlatformRequestsList({ requests }: { requests: Request[] }) {
                           setResponseMessage('')
                         }}
                         disabled={loading === req.id}
-                        className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-700 hover:bg-green-500/20 disabled:opacity-50 transition-colors"
+                        className="rounded-lg bg-primary-muted px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary-muted disabled:opacity-50 transition-colors"
                       >
                         {t('admin.requests.approve')}
                       </button>
                       <button
                         onClick={() => handleReject(req.id)}
                         disabled={loading === req.id}
-                        className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/20 disabled:opacity-50 transition-colors"
+                        className="rounded-lg bg-danger-muted px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger-muted disabled:opacity-50 transition-colors"
                       >
                         {t('admin.requests.reject')}
                       </button>

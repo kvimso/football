@@ -810,7 +810,7 @@ export function FilterPanel({ clubs }: FilterPanelProps) {
           {/* Clear All */}
           <button
             onClick={clearFilters}
-            className="ml-auto inline-flex items-center gap-1 rounded-full border border-red-500/20 bg-red-500/5 px-2.5 py-1 text-[11px] font-medium text-red-600 transition-colors hover:bg-red-500/10"
+            className="ml-auto inline-flex items-center gap-1 rounded-full border border-danger/20 bg-danger-muted px-2.5 py-1 text-[11px] font-medium text-danger transition-colors hover:bg-danger-muted"
           >
             <svg
               className="h-3 w-3"

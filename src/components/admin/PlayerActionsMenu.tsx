@@ -100,10 +100,10 @@ export function PlayerActionsMenu({ playerId, playerName, isActive }: PlayerActi
             <button
               onClick={handleRelease}
               disabled={releasing}
-              className="flex w-full items-center gap-2.5 border-t border-border px-3.5 py-2.5 text-left text-sm text-red-600 transition-colors hover:bg-red-500/10 disabled:opacity-50"
+              className="flex w-full items-center gap-2.5 border-t border-border px-3.5 py-2.5 text-left text-sm text-danger transition-colors hover:bg-danger-muted disabled:opacity-50"
             >
               {releasing ? (
-                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-600/30 border-t-red-600" />
+                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-danger/30 border-t-danger" />
               ) : (
                 <svg
                   className="h-3.5 w-3.5"
@@ -126,7 +126,7 @@ export function PlayerActionsMenu({ playerId, playerName, isActive }: PlayerActi
       )}
 
       {errorMsg && (
-        <div className="absolute right-0 top-full z-10 mt-1 whitespace-nowrap rounded-lg bg-red-500/10 px-2.5 py-1.5 text-[11px] text-red-600">
+        <div className="absolute right-0 top-full z-10 mt-1 whitespace-nowrap rounded-lg bg-danger-muted px-2.5 py-1.5 text-[11px] text-danger">
           {errorMsg}
         </div>
       )}

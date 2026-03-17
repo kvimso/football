@@ -206,7 +206,7 @@ export function MessageBubble({
             )}
             {message._status === 'failed' && (
               <span className="flex items-center gap-1">
-                <span className="text-[11px] text-red-600">{t('chat.failedToSend')}</span>
+                <span className="text-[11px] text-danger">{t('chat.failedToSend')}</span>
                 {onRetry && (
                   <button
                     onClick={onRetry}

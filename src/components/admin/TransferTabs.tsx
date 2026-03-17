@@ -59,7 +59,7 @@ export function TransferTabs({
           </svg>
           {t('admin.transfers.incoming')}
           {pendingIncoming > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-yellow-500/15 px-1 text-[10px] font-bold text-yellow-500">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-pos-gk-bg px-1 text-[10px] font-bold text-pos-gk">
               {pendingIncoming}
             </span>
           )}
@@ -87,7 +87,7 @@ export function TransferTabs({
           </svg>
           {t('admin.transfers.outgoing')}
           {pendingOutgoing > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-yellow-500/15 px-1 text-[10px] font-bold text-yellow-500">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-pos-gk-bg px-1 text-[10px] font-bold text-pos-gk">
               {pendingOutgoing}
             </span>
           )}

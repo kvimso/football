@@ -33,15 +33,15 @@ export function TransferActions({ requestId }: TransferActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {errorMsg && <span className="text-[10px] text-red-600">{errorMsg}</span>}
+      {errorMsg && <span className="text-[10px] text-danger">{errorMsg}</span>}
       <button
         onClick={() => handleAction('accept')}
         disabled={isLoading}
         title={t('admin.transfers.accept')}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/10 text-green-700 transition-all hover:bg-green-500/20 disabled:opacity-50"
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-muted text-primary transition-all hover:bg-primary-muted disabled:opacity-50"
       >
         {loadingAction === 'accept' ? (
-          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-green-400/30 border-t-green-400" />
+          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
         ) : (
           <svg
             className="h-4 w-4"
@@ -58,10 +58,10 @@ export function TransferActions({ requestId }: TransferActionsProps) {
         onClick={() => handleAction('decline')}
         disabled={isLoading}
         title={t('admin.transfers.decline')}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/10 text-red-600 transition-all hover:bg-red-500/20 disabled:opacity-50"
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-danger-muted text-danger transition-all hover:bg-danger-muted disabled:opacity-50"
       >
         {loadingAction === 'decline' ? (
-          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-400/30 border-t-red-400" />
+          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-danger/30 border-t-danger" />
         ) : (
           <svg
             className="h-4 w-4"

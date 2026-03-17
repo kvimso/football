@@ -217,7 +217,7 @@ export function ChatInput({
   if (isBlocked) {
     return (
       <div className="bg-surface/50 px-4 py-3">
-        <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600">
+        <div className="flex items-center gap-2 rounded-lg bg-danger-muted px-3 py-2 text-sm text-danger">
           <svg
             className="h-4 w-4 shrink-0"
             fill="none"
@@ -242,11 +242,11 @@ export function ChatInput({
       <div className="bg-surface/50 px-3 py-2.5">
         {/* Error */}
         {error && (
-          <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-600 animate-slide-in-down">
+          <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-danger-muted px-3 py-1.5 text-xs text-danger animate-slide-in-down">
             <span>{error}</span>
             <button
               onClick={() => setError(null)}
-              className="shrink-0 hover:text-red-500"
+              className="shrink-0 hover:text-danger"
               aria-label={t('common.dismiss')}
             >
               <svg
@@ -285,7 +285,7 @@ export function ChatInput({
                 URL.revokeObjectURL(pastedPreview.previewUrl)
                 setPastedPreview(null)
               }}
-              className="rounded px-2 py-1 text-xs text-red-600 hover:bg-red-500/10"
+              className="rounded px-2 py-1 text-xs text-danger hover:bg-danger-muted"
             >
               {t('common.cancel')}
             </button>
@@ -396,7 +396,7 @@ export function ChatInput({
         {/* Character counter */}
         {showCharCount && (
           <div
-            className={`mt-1 text-right text-[11px] ${isOverLimit ? 'text-red-600' : 'text-foreground-muted'}`}
+            className={`mt-1 text-right text-[11px] ${isOverLimit ? 'text-danger' : 'text-foreground-muted'}`}
           >
             {CHAT_LIMITS.MAX_MESSAGE_LENGTH - charCount} {t('chat.charCount')}
           </div>

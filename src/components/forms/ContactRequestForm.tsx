@@ -54,7 +54,7 @@ export function ContactRequestForm({ playerId }: ContactRequestFormProps) {
         rows={3}
         className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-primary transition-colors"
       />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger">{error}</p>}
       <div className="flex gap-2">
         <button
           onClick={handleSubmit}
