@@ -71,7 +71,11 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
   }
 
   // 5. Send invitation (new user)
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : 'http://localhost:3000')
   const { error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(parsed.data.email, {
     data: {
       role: 'academy_admin',

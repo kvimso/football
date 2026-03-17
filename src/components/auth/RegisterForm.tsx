@@ -27,6 +27,7 @@ export function RegisterForm() {
       email,
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/callback`,
         data: {
           full_name: fullName,
           organization,
