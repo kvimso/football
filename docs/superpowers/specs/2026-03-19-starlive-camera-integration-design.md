@@ -350,10 +350,11 @@ alter table public.player_videos
 | `match_heatmaps` | public read (`using (true)`) | service role only |
 | `player_videos` | public read (`using (true)`) | service role only |
 
-Note: SELECT policies use `using (true)` consistent with existing RLS patterns in the codebase (matches, players, clubs all use public read). Authentication is enforced at the middleware/layout level, not RLS.
 | `starlive_player_map` | platform_admin only | platform_admin + service role |
 | `starlive_club_map` | platform_admin only | platform_admin + service role |
 | `sync_logs` | platform_admin only | service role only |
+
+Note: SELECT policies use `using (true)` consistent with existing RLS patterns in the codebase (matches, players, clubs all use public read). Authentication is enforced at the middleware/layout level, not RLS.
 
 All camera-sourced tables are write-protected at the DB level. Only the service role (used by the sync process) can insert or update stats. No academy admin, no scout. This enforces the "camera only" rule.
 
