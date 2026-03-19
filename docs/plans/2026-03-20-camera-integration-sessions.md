@@ -40,7 +40,7 @@
    - Remove `player_season_stats` from 9 files (see spec "Full Blast Radius" list)
    - Update `player_skills` references to new column names (attack/defence/fitness instead of pace/shooting/etc.)
    - Update `match_player_stats` references to new schema
-   - Replace old stat displays with simple placeholders — UI rebuilt in sessions 2-3
+   - Replace old stat displays with simple placeholders — UI rebuilt in sessions 3-4
    - `npm run build` must pass with zero errors
 
 ### Deliverable
@@ -90,13 +90,11 @@
 
 ---
 
-## Session 3: Player Profile + Match Report UI
+## Session 3: Player Profile UI ← NEXT
 
-**Goal:** Player pages show camera stats/heatmap. Match pages show full reports.
+**Goal:** Player pages show real camera stats, ratings, heatmap.
 
 ### Tasks (in order)
-
-**Player Profile Components:**
 
 1. **CameraStats component** (`src/components/player/CameraStats.tsx`)
    - Match history table: date, opponent, score, minutes, rating, goals, assists
@@ -124,37 +122,51 @@
 
 6. **Update player list page** — real columns only (no JSONB), show overall rating on cards
 
-**Match Report Components:**
+7. **i18n** — player stats translation keys (en + ka)
 
-7. **MatchReport component** (`src/components/match/MatchReport.tsx`)
-   - Team comparison bars: possession, xG, shots, passes, tackles, corners, fouls
-   - Team "1" = home, "2" = away (mapped via match's club IDs)
-
-8. **ShotMap component** (`src/components/match/ShotMap.tsx`)
-   - SVG pitch with shot locations from shots_zones
-
-9. **AttackDirection component** (`src/components/match/AttackDirection.tsx`)
-   - Left/center/right distribution, counterattacks vs positional
-
-10. **StatsTimeline component** (`src/components/match/StatsTimeline.tsx`)
-    - Stats over 5-minute intervals
-
-11. **Update match detail page** (`src/app/(platform)/matches/[slug]/page.tsx`)
-    - Wire in all match components
-    - Player ratings table (all players, sorted by rating)
-
-12. **Update match list page** — real columns only
-
-13. **i18n** — all camera/stats translation keys (en + ka) for both player and match sections
+8. **Verify with test data** — all components render correctly with sample data
 
 ### Deliverable
-- Player profiles show camera stats, radar, trend, heatmap. Match pages show full reports. All bilingual.
+- Player profiles show camera stats, radar, trend, heatmap. Player list shows ratings.
 
 ---
 
-## Session 4: Comparison + Admin + Polish + Deploy
+## Session 4: Match Report UI
 
-**Goal:** Comparison tool updated, admin pages working, everything deployed.
+**Goal:** Match pages show full team reports with visualizations.
+
+### Tasks (in order)
+
+1. **MatchReport component** (`src/components/match/MatchReport.tsx`)
+   - Team comparison bars: possession, xG, shots, passes, tackles, corners, fouls
+   - Team "1" = home, "2" = away (mapped via match's club IDs)
+
+2. **ShotMap component** (`src/components/match/ShotMap.tsx`)
+   - SVG pitch with shot locations from shots_zones
+
+3. **AttackDirection component** (`src/components/match/AttackDirection.tsx`)
+   - Left/center/right distribution, counterattacks vs positional
+
+4. **StatsTimeline component** (`src/components/match/StatsTimeline.tsx`)
+   - Stats over 5-minute intervals
+   - Shows which team dominated which periods
+
+5. **Update match detail page** (`src/app/(platform)/matches/[slug]/page.tsx`)
+   - Wire in all match components
+   - Player ratings table (all players in the match, sorted by rating, clickable)
+
+6. **Update match list page** — real columns only (no JSONB)
+
+7. **i18n** — match report translation keys (en + ka)
+
+### Deliverable
+- Match pages show full camera reports with visualizations. All bilingual.
+
+---
+
+## Session 5: Comparison Tool + API Routes
+
+**Goal:** Comparison tool uses camera data. All API routes updated.
 
 ### Tasks (in order)
 
@@ -165,41 +177,54 @@
    - Side-by-side heatmaps if available
    - Update `CompareView.tsx`
 
-2. **Player Mappings page** (`src/app/platform/camera/mappings/page.tsx`)
-   - Table of starlive_player_map entries
-   - Add/edit/delete mappings, search by club
-
-3. **Club Mappings page** (`src/app/platform/camera/clubs/page.tsx`)
-   - Table of starlive_club_map entries, add/edit
-
-4. **Sync Dashboard page** (`src/app/platform/camera/sync/page.tsx`)
-   - Manual sync trigger (JSON upload form)
-   - Sync log history, expandable errors
-   - Unmatched players view with quick-map action
-
-5. **Navigation updates** — add Camera section to platform admin sidebar
-
-6. **Update clubs page** (`src/app/(platform)/clubs/[slug]/page.tsx`)
+2. **Update clubs page** (`src/app/(platform)/clubs/[slug]/page.tsx`)
    - Player stats from new schema
 
-7. **Update remaining API routes**
+3. **Update all remaining API routes**
    - `src/app/api/players/[id]/route.ts` — camera data
    - `src/app/api/players/[id]/pdf/route.ts` — PDF export with camera stats
    - `src/app/api/players/ai-search/route.ts` — updated search
    - `src/app/api/clubs/[slug]/route.ts` — remove old references
    - `src/app/api/matches/[slug]/route.ts` — new schema
 
-8. **Empty states** — "No camera data yet" for all components when data missing
+4. **Empty states** — "No camera data yet" for all components when data missing
 
-9. **Constants** — rating color thresholds, stat labels in `constants.ts`
+5. **i18n** — comparison translation keys
 
-10. **Update `seed.sql`** — remove old demo stats
+### Deliverable
+- Comparison tool works with camera data. All API routes serving new schema. Empty states everywhere.
 
-11. **Full build** — `npm run build` clean
+---
 
-12. **Update CLAUDE.md** — mark Phase 7 checklist items done
+## Session 6: Platform Admin + Polish + Deploy
 
-13. **Deploy to Vercel** — verify on production
+**Goal:** Admin can manage mappings and sync. Everything polished and deployed.
+
+### Tasks (in order)
+
+1. **Player Mappings page** (`src/app/platform/camera/mappings/page.tsx`)
+   - Table of starlive_player_map entries
+   - Add/edit/delete mappings, search by club
+
+2. **Club Mappings page** (`src/app/platform/camera/clubs/page.tsx`)
+   - Table of starlive_club_map entries, add/edit
+
+3. **Sync Dashboard page** (`src/app/platform/camera/sync/page.tsx`)
+   - Manual sync trigger (JSON upload form)
+   - Sync log history, expandable errors
+   - Unmatched players view with quick-map action
+
+4. **Navigation updates** — add Camera section to platform admin sidebar
+
+5. **Constants** — rating color thresholds, stat labels in `constants.ts`
+
+6. **Update `seed.sql`** — remove old demo stats
+
+7. **Full build** — `npm run build` clean
+
+8. **Update CLAUDE.md** — mark Phase 7 checklist items done
+
+9. **Deploy to Vercel** — verify on production
 
 ### Deliverable
 - Everything working and deployed. Platform admin can manage mappings and sync. Phase 7 complete.
@@ -208,11 +233,13 @@
 
 ## Summary
 
-| Session | Focus | Key Output |
-|---------|-------|------------|
-| 1 | Database + Types | Schema migrated, types generated, pages compile |
-| 2 | Sync Service + Test Data | Pipeline working, sample data in DB |
-| 3 | Player + Match UI | All camera UI components, bilingual |
-| 4 | Comparison + Admin + Deploy | Admin tools, polish, production deploy |
+| Session | Focus | Status |
+|---------|-------|--------|
+| 1 | Database + Types | ✅ Complete |
+| 2 | Sync Service + Test Data | ✅ Complete |
+| 3 | Player Profile UI | ← Next |
+| 4 | Match Report UI | Pending |
+| 5 | Comparison + API Routes | Pending |
+| 6 | Platform Admin + Polish + Deploy | Pending |
 
 **Execute each session with:** `/work` pointing at this file and the session number. Read the spec for detailed schemas, data mappings, and edge cases.
