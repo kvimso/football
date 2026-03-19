@@ -46,7 +46,7 @@ export function ClubMappingForm({ mapping, clubs }: ClubMappingFormProps) {
     setSaving(false)
 
     if (!result.success) {
-      setError(result.error.startsWith('platform.') ? t(result.error) : result.error)
+      setError(t(result.error))
     } else {
       router.push('/platform/camera/clubs')
       router.refresh()
@@ -102,7 +102,7 @@ export function ClubMappingForm({ mapping, clubs }: ClubMappingFormProps) {
           type="number"
           defaultValue={mapping?.starlive_team_id ?? ''}
           className="input w-full"
-          placeholder="Optional"
+          placeholder={t('platform.camera.sync.optional')}
         />
       </div>
 
@@ -145,6 +145,8 @@ export function DeleteClubMappingButton({
     setDeleting(false)
     if (result.success) {
       router.refresh()
+    } else {
+      alert(t(result.error))
     }
   }
 

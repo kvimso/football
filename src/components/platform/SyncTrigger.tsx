@@ -124,9 +124,9 @@ export function SyncTrigger() {
               onChange={(e) => setSyncType(e.target.value as 'player' | 'match_report' | 'heatmap')}
               className="input w-full"
             >
-              <option value="player">Player Profile</option>
-              <option value="match_report">Match Report</option>
-              <option value="heatmap">Heatmap</option>
+              <option value="player">{t('platform.camera.sync.typePlayer')}</option>
+              <option value="match_report">{t('platform.camera.sync.typeMatchReport')}</option>
+              <option value="heatmap">{t('platform.camera.sync.typeHeatmap')}</option>
             </select>
           </div>
           <div>

@@ -604,7 +604,7 @@ Georgian translations (`ka` object): same structure, Georgian text for all value
 ### Quality Gates
 
 - [x] `npm run build` clean
-- [ ] Code review agent run on all new files (3+ files = self-review per CLAUDE.md)
+- [x] Code review agent run on all new files (3+ files = self-review per CLAUDE.md)
 
 ## Dependencies & Prerequisites
 

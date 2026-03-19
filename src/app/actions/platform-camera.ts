@@ -21,17 +21,20 @@ export async function createPlayerMapping(data: unknown): Promise<ActionResult> 
     return { success: false, error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
   // Auto-populate club_id from the selected player
-  const { data: player } = await admin
+  const { data: player, error: playerError } = await admin
     .from('players')
     .select('club_id')
     .eq('id', parsed.data.player_id)
     .single()
 
+  if (playerError || !player)
+    return { success: false, error: 'platform.camera.errors.playerNotFound' }
+
   const insert: PlayerMapInsert = {
     player_id: parsed.data.player_id,
     starlive_player_id: parsed.data.starlive_player_id,
     starlive_team_id: parsed.data.starlive_team_id ?? null,
-    club_id: player?.club_id ?? null,
+    club_id: player.club_id ?? null,
     jersey_number: parsed.data.jersey_number ?? null,
     mapped_by: userId,
   }
@@ -59,11 +62,14 @@ export async function updatePlayerMapping(id: string, data: unknown): Promise<Ac
   if (!parsed.success)
     return { success: false, error: parsed.error.issues[0]?.message ?? 'errors.invalidInput' }
 
-  const { data: player } = await admin
+  const { data: player, error: playerError } = await admin
     .from('players')
     .select('club_id')
     .eq('id', parsed.data.player_id)
     .single()
+
+  if (playerError || !player)
+    return { success: false, error: 'platform.camera.errors.playerNotFound' }
 
   const { error: updateError } = await admin
     .from('starlive_player_map')
@@ -194,6 +200,7 @@ export async function getSyncLogErrors(
 
   if (error) return { error: 'errors.serverError' }
 
-  const errors = Array.isArray(data?.errors) ? (data.errors as string[]) : []
+  const raw = Array.isArray(data?.errors) ? data.errors : []
+  const errors = raw.map((e) => (typeof e === 'string' ? e : JSON.stringify(e)))
   return { errors }
 }

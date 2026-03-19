@@ -128,7 +128,7 @@ export function PlayerMappingForm({
     setSaving(false)
 
     if (!result.success) {
-      setError(result.error.startsWith('platform.') ? t(result.error) : result.error)
+      setError(t(result.error))
     } else {
       router.push('/platform/camera/mappings')
       router.refresh()
@@ -255,7 +255,7 @@ export function PlayerMappingForm({
             type="number"
             defaultValue={mapping?.starlive_team_id ?? ''}
             className="input w-full"
-            placeholder="Optional"
+            placeholder={t('platform.camera.sync.optional')}
           />
         </div>
       </div>
@@ -303,6 +303,8 @@ export function DeletePlayerMappingButton({ mappingId }: { mappingId: string }) 
     setDeleting(false)
     if (result.success) {
       router.refresh()
+    } else {
+      alert(t(result.error))
     }
   }
 

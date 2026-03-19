@@ -61,7 +61,7 @@ function ExpandableErrors({ logId }: { logId: string }) {
       <div className="mt-2">
         {loading && <p className="text-xs text-foreground-muted">{t('common.loading')}</p>}
         {errors !== null && errors.length === 0 && (
-          <p className="text-xs text-foreground-muted">No errors recorded</p>
+          <p className="text-xs text-foreground-muted">{t('platform.camera.sync.noErrors')}</p>
         )}
         {errors !== null && errors.length > 0 && (
           <ul className="space-y-1 text-xs text-foreground-muted">
@@ -121,7 +121,9 @@ export function SyncLogTable({ logs, page, hasMore }: SyncLogTableProps) {
                 </td>
                 <td className="py-3 pr-4 text-foreground-muted">{log.triggered_by ?? '—'}</td>
                 <td className="py-3">
-                  <ExpandableErrors logId={log.id} />
+                  {(log.status !== 'success' || (log.records_skipped ?? 0) > 0) && (
+                    <ExpandableErrors logId={log.id} />
+                  )}
                 </td>
               </tr>
             ))}
