@@ -14,6 +14,19 @@ export default async function CameraClubMappingsPage() {
 
   if (error) console.error('Failed to fetch club mappings:', error.message)
 
+  // Count player mappings per club for delete confirmation
+  const clubIds = (mappings ?? []).map((m) => m.club_id).filter(Boolean)
+  const playerMapCounts = new Map<string, number>()
+  if (clubIds.length > 0) {
+    const { data: playerMaps } = await admin
+      .from('starlive_player_map')
+      .select('club_id')
+      .in('club_id', clubIds)
+    for (const pm of playerMaps ?? []) {
+      if (pm.club_id) playerMapCounts.set(pm.club_id, (playerMapCounts.get(pm.club_id) ?? 0) + 1)
+    }
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -68,7 +81,10 @@ export default async function CameraClubMappingsPage() {
                         >
                           {t('common.edit')}
                         </Link>
-                        <DeleteClubMappingButton mappingId={m.id} />
+                        <DeleteClubMappingButton
+                          mappingId={m.id}
+                          affectedCount={playerMapCounts.get(m.club_id) ?? 0}
+                        />
                       </div>
                     </td>
                   </tr>

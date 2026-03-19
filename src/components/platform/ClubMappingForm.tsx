@@ -123,13 +123,23 @@ export function ClubMappingForm({ mapping, clubs }: ClubMappingFormProps) {
 }
 
 // Delete button (used in list page)
-export function DeleteClubMappingButton({ mappingId }: { mappingId: string }) {
+export function DeleteClubMappingButton({
+  mappingId,
+  affectedCount = 0,
+}: {
+  mappingId: string
+  affectedCount?: number
+}) {
   const { t } = useLang()
   const router = useRouter()
   const [deleting, setDeleting] = useState(false)
 
   async function handleDelete() {
-    if (!confirm(t('platform.camera.clubs.deleteConfirm'))) return
+    const msg =
+      affectedCount > 0
+        ? `${t('platform.camera.clubs.deleteConfirm')}\n\n${affectedCount} ${t('platform.camera.clubs.affectedPlayerMappings')}`
+        : t('platform.camera.clubs.deleteConfirm')
+    if (!confirm(msg)) return
     setDeleting(true)
     const result = await deleteClubMapping(mappingId)
     setDeleting(false)
