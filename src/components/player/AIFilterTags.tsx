@@ -38,34 +38,24 @@ function useFilterLabel() {
         return t('aiSearch.maxWeight').replace('{value}', v)
       case 'club_name':
         return `${t('aiSearch.club')}: ${v}`
-      case 'min_pace':
-        return t('aiSearch.pace').replace('{value}', v)
-      case 'min_shooting':
-        return t('aiSearch.shooting').replace('{value}', v)
-      case 'min_passing':
-        return t('aiSearch.passing').replace('{value}', v)
+      case 'min_overall':
+        return t('aiSearch.overall').replace('{value}', v)
+      case 'min_attack':
+        return t('aiSearch.attack').replace('{value}', v)
+      case 'min_defence':
+        return t('aiSearch.defence').replace('{value}', v)
+      case 'min_fitness':
+        return t('aiSearch.fitness').replace('{value}', v)
       case 'min_dribbling':
         return t('aiSearch.dribbling').replace('{value}', v)
-      case 'min_defending':
-        return t('aiSearch.defending').replace('{value}', v)
-      case 'min_physical':
-        return t('aiSearch.physical').replace('{value}', v)
-      case 'min_goals':
-        return t('aiSearch.goals').replace('{value}', v)
-      case 'min_assists':
-        return t('aiSearch.assists').replace('{value}', v)
-      case 'min_matches_played':
-        return t('aiSearch.matchesPlayed').replace('{value}', v)
-      case 'min_pass_accuracy':
-        return t('aiSearch.passAccuracy').replace('{value}', v)
-      case 'min_tackles':
-        return t('aiSearch.tackles').replace('{value}', v)
-      case 'min_interceptions':
-        return t('aiSearch.interceptions').replace('{value}', v)
-      case 'min_clean_sheets':
-        return t('aiSearch.cleanSheets').replace('{value}', v)
-      case 'min_shots_on_target':
-        return t('aiSearch.shotsOnTarget').replace('{value}', v)
+      case 'min_shooting':
+        return t('aiSearch.shooting').replace('{value}', v)
+      case 'min_possession':
+        return t('aiSearch.possession').replace('{value}', v)
+      case 'min_tackling':
+        return t('aiSearch.tackling').replace('{value}', v)
+      case 'min_positioning':
+        return t('aiSearch.positioning').replace('{value}', v)
       case 'sort_by':
         return t('aiSearch.sortedBy').replace('{value}', v)
       case 'sort_direction':

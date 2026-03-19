@@ -63,12 +63,7 @@ export async function POST(request: NextRequest) {
         height_cm, weight_kg, preferred_foot, is_featured,
         photo_url, status, nationality,
         club:clubs!players_club_id_fkey (id, name, name_ka),
-        player_skills (pace, shooting, passing, dribbling, defending, physical),
-        season_stats:player_season_stats (
-          season, goals, assists, matches_played, minutes_played,
-          pass_accuracy, tackles, interceptions, clean_sheets,
-          shots_on_target, sprints, distance_covered_km
-        )
+        player_skills (overall, attack, defence, fitness, dribbling, shooting, possession, tackling, positioning, matches_counted)
       `)
 
     // Status filter (default: show both active and free_agent)
@@ -167,61 +162,33 @@ export async function POST(request: NextRequest) {
 
     let filteredPlayers = players ?? []
 
-    // 7. Post-filter by skills (player_skills is an array from join)
+    // 7. Post-filter by skills (player_skills is an array from join, 1-10 scale)
     const hasSkillFilter =
-      filters.min_pace ||
-      filters.min_shooting ||
-      filters.min_passing ||
+      filters.min_overall ||
+      filters.min_attack ||
+      filters.min_defence ||
+      filters.min_fitness ||
       filters.min_dribbling ||
-      filters.min_defending ||
-      filters.min_physical
+      filters.min_shooting ||
+      filters.min_possession ||
+      filters.min_tackling ||
+      filters.min_positioning
 
     if (hasSkillFilter) {
       filteredPlayers = filteredPlayers.filter((player) => {
         const skillsArr = Array.isArray(player.player_skills) ? player.player_skills : []
-        const skills = skillsArr[0]
+        const skills = skillsArr[0] as Record<string, number | null> | undefined
         if (!skills) return false
-        if (filters.min_pace && (skills.pace ?? 0) < filters.min_pace) return false
-        if (filters.min_shooting && (skills.shooting ?? 0) < filters.min_shooting) return false
-        if (filters.min_passing && (skills.passing ?? 0) < filters.min_passing) return false
+        if (filters.min_overall && (skills.overall ?? 0) < filters.min_overall) return false
+        if (filters.min_attack && (skills.attack ?? 0) < filters.min_attack) return false
+        if (filters.min_defence && (skills.defence ?? 0) < filters.min_defence) return false
+        if (filters.min_fitness && (skills.fitness ?? 0) < filters.min_fitness) return false
         if (filters.min_dribbling && (skills.dribbling ?? 0) < filters.min_dribbling) return false
-        if (filters.min_defending && (skills.defending ?? 0) < filters.min_defending) return false
-        if (filters.min_physical && (skills.physical ?? 0) < filters.min_physical) return false
-        return true
-      })
-    }
-
-    // Post-filter by season stats (use latest season)
-    const hasStatFilter =
-      filters.min_goals ||
-      filters.min_assists ||
-      filters.min_matches_played ||
-      filters.min_pass_accuracy ||
-      filters.min_tackles ||
-      filters.min_interceptions ||
-      filters.min_clean_sheets ||
-      filters.min_shots_on_target
-
-    if (hasStatFilter) {
-      filteredPlayers = filteredPlayers.filter((player) => {
-        const statsArr = Array.isArray(player.season_stats) ? player.season_stats : []
-        if (statsArr.length === 0) return false
-        const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
-        if (filters.min_goals && (latest.goals ?? 0) < filters.min_goals) return false
-        if (filters.min_assists && (latest.assists ?? 0) < filters.min_assists) return false
-        if (filters.min_matches_played && (latest.matches_played ?? 0) < filters.min_matches_played)
+        if (filters.min_shooting && (skills.shooting ?? 0) < filters.min_shooting) return false
+        if (filters.min_possession && (skills.possession ?? 0) < filters.min_possession)
           return false
-        if (filters.min_pass_accuracy && (latest.pass_accuracy ?? 0) < filters.min_pass_accuracy)
-          return false
-        if (filters.min_tackles && (latest.tackles ?? 0) < filters.min_tackles) return false
-        if (filters.min_interceptions && (latest.interceptions ?? 0) < filters.min_interceptions)
-          return false
-        if (filters.min_clean_sheets && (latest.clean_sheets ?? 0) < filters.min_clean_sheets)
-          return false
-        if (
-          filters.min_shots_on_target &&
-          (latest.shots_on_target ?? 0) < filters.min_shots_on_target
-        )
+        if (filters.min_tackling && (skills.tackling ?? 0) < filters.min_tackling) return false
+        if (filters.min_positioning && (skills.positioning ?? 0) < filters.min_positioning)
           return false
         return true
       })
@@ -235,38 +202,23 @@ export async function POST(request: NextRequest) {
         let valA = 0
         let valB = 0
 
-        // Skill fields
-        const skillFields = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical']
+        // Skill fields (camera 1-10 scale)
+        const skillFields = [
+          'overall',
+          'attack',
+          'defence',
+          'fitness',
+          'dribbling',
+          'shooting',
+          'possession',
+          'tackling',
+          'positioning',
+        ]
         if (skillFields.includes(sortKey)) {
           const skillsA = Array.isArray(a.player_skills) ? a.player_skills[0] : null
           const skillsB = Array.isArray(b.player_skills) ? b.player_skills[0] : null
           valA = (skillsA as Record<string, number> | null)?.[sortKey] ?? 0
           valB = (skillsB as Record<string, number> | null)?.[sortKey] ?? 0
-        }
-
-        // Season stat fields
-        const statFields = [
-          'goals',
-          'assists',
-          'pass_accuracy',
-          'matches_played',
-          'tackles',
-          'interceptions',
-          'clean_sheets',
-          'minutes_played',
-          'sprints',
-          'distance_covered_km',
-          'shots_on_target',
-        ]
-        if (statFields.includes(sortKey)) {
-          const getLatestStat = (p: typeof a) => {
-            const arr = Array.isArray(p.season_stats) ? p.season_stats : []
-            return arr.sort((x, y) => (y.season ?? '').localeCompare(x.season ?? ''))[0] ?? null
-          }
-          const statA = getLatestStat(a)
-          const statB = getLatestStat(b)
-          valA = statA ? Number((statA as unknown as Record<string, unknown>)[sortKey] ?? 0) : 0
-          valB = statB ? Number((statB as unknown as Record<string, unknown>)[sortKey] ?? 0) : 0
         }
 
         // Player fields

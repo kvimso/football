@@ -75,8 +75,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
       `
       id, slug, name, name_ka, position, date_of_birth, height_cm,
       preferred_foot, is_featured, photo_url, status,
-      club:clubs!players_club_id_fkey ( name, name_ka ),
-      season_stats:player_season_stats ( season, goals, assists, matches_played )
+      club:clubs!players_club_id_fkey ( name, name_ka )
     `
     )
     .eq('club_id', club.id)
@@ -94,21 +93,12 @@ export default async function ClubPage({ params }: ClubPageProps) {
     .order('created_at', { ascending: false })
     .limit(5)
 
-  const playerCards = (players ?? []).map((p) => {
-    const statsArr = Array.isArray(p.season_stats)
-      ? p.season_stats
-      : p.season_stats
-        ? [p.season_stats]
-        : []
-    return {
-      ...p,
-      position: p.position as Position,
-      status: (p.status ?? 'active') as PlayerStatus,
-      club: unwrapRelation(p.club),
-      season_stats:
-        statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null,
-    }
-  })
+  const playerCards = (players ?? []).map((p) => ({
+    ...p,
+    position: p.position as Position,
+    status: (p.status ?? 'active') as PlayerStatus,
+    club: unwrapRelation(p.club),
+  }))
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">

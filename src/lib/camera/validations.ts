@@ -99,11 +99,25 @@ const starliveMatchIndexesSchema = z.object({
 const starliveFitnessSchema = z
   .object({
     distance: z.number(),
+    small_distance: z.number(),
+    middle_distance: z.number(),
+    big_distance: z.number(),
+    sprints_distance: z.number(),
     sprints_count: z.number(),
     speed_avg: z.number(),
+    intense_running: z.number(),
+    // per_minute variants (optional)
+    distance_per_minute: z.number().optional(),
+    small_distance_per_minute: z.number().optional(),
+    middle_distance_per_minute: z.number().optional(),
+    big_distance_per_minute: z.number().optional(),
+    sprints_distance_per_minute: z.number().optional(),
+    sprints_count_per_minute: z.number().optional(),
+    speed_avg_per_minute: z.number().optional(),
+    intense_running_per_minute: z.number().optional(),
     activity_id: z.number(),
   })
-  .passthrough() // Allow all the _per_minute variants and other fields
+  .passthrough() // Allow any additional fields Starlive may add
 
 const starlivePlayerMatchStatsSchema = z.object({
   playing_time: z.object({ minutes: z.number() }),

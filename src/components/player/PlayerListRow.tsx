@@ -90,18 +90,14 @@ export function PlayerListRow({ player, isWatched: initialWatched }: PlayerListR
       {/* Club — hidden on mobile */}
       <span className="hidden w-28 truncate text-foreground-muted sm:block">{clubName || '—'}</span>
 
-      {/* Goals */}
-      <span className="w-8 text-center font-medium">{player.season_stats?.goals ?? '—'}</span>
+      {/* Goals — no longer available without season stats */}
+      <span className="w-8 text-center font-medium text-foreground-muted">—</span>
 
       {/* Assists — hidden on mobile */}
-      <span className="hidden w-8 text-center font-medium sm:block">
-        {player.season_stats?.assists ?? '—'}
-      </span>
+      <span className="hidden w-8 text-center font-medium text-foreground-muted sm:block">—</span>
 
       {/* Matches — hidden below md */}
-      <span className="hidden w-8 text-center font-medium md:block">
-        {player.season_stats?.matches_played ?? '—'}
-      </span>
+      <span className="hidden w-8 text-center font-medium text-foreground-muted md:block">—</span>
 
       {/* Watchlist star */}
       {initialWatched !== undefined && (

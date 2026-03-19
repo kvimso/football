@@ -32,8 +32,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       id, name, position, date_of_birth, nationality, preferred_foot,
       height_cm, weight_kg, platform_id, status,
       club:clubs!players_club_id_fkey ( name ),
-      skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
-      season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, tackles, interceptions ),
+      skills:player_skills ( overall, attack, defence, fitness, dribbling, shooting, possession, tackling, positioning, matches_counted ),
       club_history:player_club_history (
         joined_at, left_at,
         club:clubs!player_club_history_club_id_fkey ( name )
@@ -47,13 +46,20 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ error: 'Player not found' }, { status: 404 })
   }
 
+  type CameraSkills = {
+    overall: number | null
+    attack: number | null
+    defence: number | null
+    fitness: number | null
+    dribbling: number | null
+    shooting: number | null
+    possession: number | null
+    tackling: number | null
+    positioning: number | null
+    matches_counted: number | null
+  }
   const club = unwrapRelation(player.club)
-  const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats)
-    ? player.season_stats
-    : player.season_stats
-      ? [player.season_stats]
-      : []
+  const skills = unwrapRelation(player.skills as unknown as CameraSkills | CameraSkills[])
   const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
     .map((h) => ({ ...h, club: unwrapRelation(h.club) }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
@@ -139,20 +145,26 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   if (skills) {
     doc.x = col1X
     doc.moveDown(0.5)
-    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Skills', col1X)
+    doc
+      .fontSize(13)
+      .font('Helvetica-Bold')
+      .fillColor('#000000')
+      .text('Skills (Camera-Verified, 1-10)', col1X)
     doc.moveDown(0.4)
 
     const skillEntries: [string, number | null][] = [
-      ['Pace', skills.pace],
-      ['Shooting', skills.shooting],
-      ['Passing', skills.passing],
+      ['Overall', skills.overall],
+      ['Attack', skills.attack],
+      ['Defence', skills.defence],
+      ['Fitness', skills.fitness],
       ['Dribbling', skills.dribbling],
-      ['Defending', skills.defending],
-      ['Physical', skills.physical],
+      ['Shooting', skills.shooting],
+      ['Possession', skills.possession],
+      ['Tackling', skills.tackling],
     ]
 
     const skillY = doc.y
-    const skillColWidth = 82
+    const skillColWidth = 62
 
     skillEntries.forEach(([label, value], idx) => {
       const x = col1X + idx * skillColWidth
@@ -170,70 +182,13 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     doc.x = col1X
     doc.y = skillY + 35
-  }
 
-  // --- Season Stats ---
-  if (seasonStats.length > 0) {
-    doc.x = col1X
-    doc.moveDown(0.5)
-    doc.fontSize(13).font('Helvetica-Bold').fillColor('#000000').text('Season Statistics', col1X)
-    doc.moveDown(0.4)
-
-    // Table header
-    const headers = ['Season', 'MP', 'Goals', 'Assists', 'Min', 'Pass%', 'Tackles', 'Int']
-    const colWidths = [75, 45, 50, 55, 55, 55, 55, 45]
-    let tableX = col1X
-    const headerY = doc.y
-
-    headers.forEach((header, idx) => {
+    if (skills.matches_counted && skills.matches_counted > 0) {
       doc
-        .fontSize(8)
-        .font('Helvetica-Bold')
+        .fontSize(9)
+        .font('Helvetica')
         .fillColor('#888888')
-        .text(header, tableX, headerY, { width: colWidths[idx] })
-      tableX += colWidths[idx]
-    })
-
-    // Divider below header
-    doc.x = col1X
-    doc.y = headerY + 14
-    doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#eeeeee').lineWidth(0.5).stroke()
-    doc.moveDown(0.3)
-
-    // Table rows
-    const sortedStats = [...seasonStats].sort((a, b) =>
-      (b.season ?? '').localeCompare(a.season ?? '')
-    )
-    for (const s of sortedStats) {
-      const rowY = doc.y
-      tableX = col1X
-      const rowData = [
-        s.season ?? '-',
-        String(s.matches_played ?? '-'),
-        String(s.goals ?? '-'),
-        String(s.assists ?? '-'),
-        String(s.minutes_played ?? '-'),
-        s.pass_accuracy != null ? `${s.pass_accuracy}%` : '-',
-        String(s.tackles ?? '-'),
-        String(s.interceptions ?? '-'),
-      ]
-
-      rowData.forEach((val, idx) => {
-        doc
-          .fontSize(9)
-          .font('Helvetica')
-          .fillColor('#000000')
-          .text(val, tableX, rowY, { width: colWidths[idx] })
-        tableX += colWidths[idx]
-      })
-
-      doc.x = col1X
-      doc.y = rowY + 16
-
-      // Page break safety
-      if (doc.y > 720) {
-        doc.addPage()
-      }
+        .text(`Based on ${skills.matches_counted} matches`, col1X)
     }
   }
 

@@ -21,36 +21,31 @@ interface PlayerData {
   jersey_number: number | null
   club: { name: string; name_ka: string } | null
   skills: {
-    pace: number | null
-    shooting: number | null
-    passing: number | null
+    overall: number | null
+    attack: number | null
+    defence: number | null
+    fitness: number | null
     dribbling: number | null
-    defending: number | null
-    physical: number | null
-  } | null
-  season_stats: {
-    season: string
-    matches_played: number | null
-    goals: number | null
-    assists: number | null
-    minutes_played: number | null
-    pass_accuracy: number | null
-    tackles: number | null
-    interceptions: number | null
+    shooting: number | null
+    possession: number | null
+    tackling: number | null
+    positioning: number | null
+    matches_counted: number | null
   } | null
 }
 
-type SkillKey = keyof NonNullable<PlayerData['skills']>
-type StatKey = keyof NonNullable<PlayerData['season_stats']>
+type SkillKey = keyof Omit<NonNullable<PlayerData['skills']>, 'matches_counted'>
 
-const SKILL_KEYS: SkillKey[] = ['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical']
-const STAT_KEYS: StatKey[] = [
-  'goals',
-  'assists',
-  'matches_played',
-  'minutes_played',
-  'pass_accuracy',
-  'tackles',
+const SKILL_KEYS: SkillKey[] = [
+  'overall',
+  'attack',
+  'defence',
+  'fitness',
+  'dribbling',
+  'shooting',
+  'possession',
+  'tackling',
+  'positioning',
 ]
 
 interface CompareViewProps {
@@ -94,7 +89,16 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
     return p.club ? (lang === 'ka' ? p.club.name_ka : p.club.name) : '-'
   }
 
-  const radarLabels = SKILL_KEYS.map((k) => t('skills.' + k))
+  // 6 skills for the radar chart (attack, defence, fitness, dribbling, shooting, possession)
+  const RADAR_KEYS: SkillKey[] = [
+    'attack',
+    'defence',
+    'fitness',
+    'dribbling',
+    'shooting',
+    'possession',
+  ]
+  const radarLabels = RADAR_KEYS.map((k) => t('skills.' + k))
   const bothSelected = player1 && player2
 
   const p1Label = player1 ? `${getName(player1)} (${player1.position})` : ''
@@ -194,62 +198,21 @@ export function CompareView({ player1, player2, selectedP1, selectedP2 }: Compar
               />
             </div>
 
-            {/* Skills bars */}
+            {/* Skills bars (camera 1-10 scale) */}
             {player1.skills && player2.skills && (
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3">
                 <div className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-2">
                   {t('players.skills')}
                 </div>
                 {SKILL_KEYS.map((key) => (
                   <CompareBar
                     key={key}
-                    label={t(`compare.${key}`)}
+                    label={t(`skills.${key}`)}
                     v1={player1.skills![key]}
                     v2={player2.skills![key]}
-                    max={100}
+                    max={10}
                   />
                 ))}
-              </div>
-            )}
-
-            {/* Season stats bars */}
-            {player1.season_stats && player2.season_stats && (
-              <div className="space-y-3">
-                <div className="text-xs font-semibold text-foreground-muted uppercase tracking-wider mb-2">
-                  {t('players.seasonStats')}
-                </div>
-                <CompareBar
-                  label={t('compare.matches')}
-                  v1={player1.season_stats.matches_played}
-                  v2={player2.season_stats.matches_played}
-                />
-                <CompareBar
-                  label={t('compare.goals')}
-                  v1={player1.season_stats.goals}
-                  v2={player2.season_stats.goals}
-                />
-                <CompareBar
-                  label={t('compare.assists')}
-                  v1={player1.season_stats.assists}
-                  v2={player2.season_stats.assists}
-                />
-                <CompareBar
-                  label={t('compare.minutes')}
-                  v1={player1.season_stats.minutes_played}
-                  v2={player2.season_stats.minutes_played}
-                />
-                <CompareBar
-                  label={t('compare.passPercent')}
-                  v1={player1.season_stats.pass_accuracy}
-                  v2={player2.season_stats.pass_accuracy}
-                  suffix="%"
-                  max={100}
-                />
-                <CompareBar
-                  label={t('compare.tackles')}
-                  v1={player1.season_stats.tackles}
-                  v2={player2.season_stats.tackles}
-                />
               </div>
             )}
           </div>
@@ -286,15 +249,6 @@ function QuickVerdict({
     const v1 = player1.skills?.[key] ?? null
     const v2 = player2.skills?.[key] ?? null
     if (v1 != null && v2 != null) {
-      totalCompared++
-      if (v1 > v2) p1Wins++
-      else if (v2 > v1) p2Wins++
-    }
-  }
-  for (const key of STAT_KEYS) {
-    const v1 = player1.season_stats?.[key] ?? null
-    const v2 = player2.season_stats?.[key] ?? null
-    if (v1 != null && v2 != null && typeof v1 === 'number' && typeof v2 === 'number') {
       totalCompared++
       if (v1 > v2) p1Wins++
       else if (v2 > v1) p2Wins++

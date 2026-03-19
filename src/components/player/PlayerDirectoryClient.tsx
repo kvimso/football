@@ -35,11 +35,6 @@ interface PlayerDirectoryClientProps {
 /** Map raw AI search player result to PlayerBrowseData */
 function mapAIPlayerToCard(p: Record<string, unknown>): PlayerBrowseData {
   const club = p.club as { name: string; name_ka: string } | null
-  const seasonStatsArr = Array.isArray(p.season_stats) ? p.season_stats : []
-  const latestStats = seasonStatsArr.sort(
-    (a: Record<string, unknown>, b: Record<string, unknown>) =>
-      String(b.season ?? '').localeCompare(String(a.season ?? ''))
-  )[0] as Record<string, unknown> | undefined
 
   return {
     id: String(p.id ?? ''),
@@ -54,14 +49,6 @@ function mapAIPlayerToCard(p: Record<string, unknown>): PlayerBrowseData {
     photo_url: typeof p.photo_url === 'string' ? p.photo_url : null,
     status: (p.status ?? 'active') as PlayerStatus,
     club,
-    season_stats: latestStats
-      ? {
-          goals: typeof latestStats.goals === 'number' ? latestStats.goals : null,
-          assists: typeof latestStats.assists === 'number' ? latestStats.assists : null,
-          matches_played:
-            typeof latestStats.matches_played === 'number' ? latestStats.matches_played : null,
-        }
-      : null,
   }
 }
 
@@ -277,23 +264,6 @@ export function PlayerDirectoryClient({
               <span>{featuredAge}</span>
             </div>
           </div>
-          {/* Stats on sm+ */}
-          {featuredPlayer.season_stats && (
-            <div className="hidden items-center gap-4 sm:flex">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {featuredPlayer.season_stats.goals ?? 0}
-                </div>
-                <div className="text-[10px] text-foreground-muted">{t('players.goals')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {featuredPlayer.season_stats.assists ?? 0}
-                </div>
-                <div className="text-[10px] text-foreground-muted">{t('players.assists')}</div>
-              </div>
-            </div>
-          )}
           {/* Chevron */}
           <svg
             className="h-5 w-5 shrink-0 text-foreground-muted/40 group-hover:text-primary transition-colors"

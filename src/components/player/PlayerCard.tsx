@@ -119,30 +119,6 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
         )}
       </div>
 
-      {/* Stat chips */}
-      {player.season_stats && (
-        <div className="mt-3 flex gap-2">
-          <div className="flex-1 rounded bg-elevated px-2 py-1.5 text-center">
-            <span className="block text-sm font-medium text-foreground">
-              {player.season_stats.goals ?? 0}
-            </span>
-            <span className="text-[9px] text-foreground-faint">{t('players.goals')}</span>
-          </div>
-          <div className="flex-1 rounded bg-elevated px-2 py-1.5 text-center">
-            <span className="block text-sm font-medium text-foreground">
-              {player.season_stats.assists ?? 0}
-            </span>
-            <span className="text-[9px] text-foreground-faint">{t('players.assists')}</span>
-          </div>
-          <div className="flex-1 rounded bg-elevated px-2 py-1.5 text-center">
-            <span className="block text-sm font-medium text-foreground">
-              {player.season_stats.matches_played ?? 0}
-            </span>
-            <span className="text-[9px] text-foreground-faint">{t('players.matches')}</span>
-          </div>
-        </div>
-      )}
-
       {/* Featured badge */}
       {isFeatured && (
         <span className="mt-2 inline-block rounded-full bg-primary-muted px-2 py-0.5 text-[10px] font-semibold text-primary">

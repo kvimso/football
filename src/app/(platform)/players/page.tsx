@@ -29,10 +29,6 @@ interface PlayersPageProps {
     height_max?: string
     weight_min?: string
     weight_max?: string
-    goals_min?: string
-    assists_min?: string
-    matches_min?: string
-    pass_acc_min?: string
   }>
 }
 
@@ -51,10 +47,6 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     height_max,
     weight_min,
     weight_max,
-    goals_min,
-    assists_min,
-    matches_min,
-    pass_acc_min,
   } = params
   const page = Math.max(1, parseInt(params.page ?? '1', 10) || 1)
 
@@ -88,13 +80,6 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
       club:clubs!players_club_id_fkey (
         name,
         name_ka
-      ),
-      season_stats:player_season_stats (
-        season,
-        goals,
-        assists,
-        matches_played,
-        pass_accuracy
       )
     `,
       { count: 'exact' }
@@ -182,9 +167,8 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     query = query.gt('date_of_birth', minDob.toISOString().split('T')[0])
   }
 
-  // Pagination — stat filters and most_viewed sort still need client-side processing
-  const hasStatFilter = !!(goals_min || assists_min || matches_min || pass_acc_min)
-  const needsClientPagination = hasStatFilter || sort === 'most_viewed'
+  // Pagination — most_viewed sort still needs client-side processing
+  const needsClientPagination = sort === 'most_viewed'
   if (!needsClientPagination) {
     const from = (page - 1) * PAGE_SIZE
     query = query.range(from, from + PAGE_SIZE - 1)
@@ -196,45 +180,13 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
 
   if (playersError) console.error('Failed to fetch players:', playersError.message)
 
-  let filteredPlayers = players ?? []
-
-  // Filter by stat minimums — client-side (latest season stats)
-  if (hasStatFilter) {
-    const minGoals = goals_min ? parseInt(goals_min, 10) : 0
-    const minAssists = assists_min ? parseInt(assists_min, 10) : 0
-    const minMatches = matches_min ? parseInt(matches_min, 10) : 0
-    const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
-
-    filteredPlayers = filteredPlayers.filter((p) => {
-      const statsArr = Array.isArray(p.season_stats)
-        ? p.season_stats
-        : p.season_stats
-          ? [p.season_stats]
-          : []
-      const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
-      if (!latest) return false // No stats → excluded when stat filters are active
-      if (minGoals && (latest.goals ?? 0) < minGoals) return false
-      if (minAssists && (latest.assists ?? 0) < minAssists) return false
-      if (minMatches && (latest.matches_played ?? 0) < minMatches) return false
-      if (minPassAcc && (latest.pass_accuracy ?? 0) < minPassAcc) return false
-      return true
-    })
-  }
-
-  // Map to card props — pick the latest season stats
-  const allCards = filteredPlayers.map((p) => {
-    const statsArr = Array.isArray(p.season_stats)
-      ? p.season_stats
-      : p.season_stats
-        ? [p.season_stats]
-        : []
-    const stats = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
+  // Map to card props
+  const allCards = (players ?? []).map((p) => {
     return {
       ...p,
       position: p.position as Position,
       status: (p.status ?? 'active') as PlayerStatus,
       club: unwrapRelation(p.club),
-      season_stats: stats ?? null,
     }
   })
 
@@ -266,7 +218,7 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     allCards.sort((a, b) => (viewCountMap.get(b.id) ?? 0) - (viewCountMap.get(a.id) ?? 0))
   }
 
-  // For age-filtered / most-viewed results, paginate client-side
+  // For most-viewed sort, paginate client-side
   const playerCards = needsClientPagination
     ? allCards.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
     : allCards
@@ -289,10 +241,6 @@ export default async function PlayersPage({ searchParams }: PlayersPageProps) {
     if (height_max) sp.set('height_max', height_max)
     if (weight_min) sp.set('weight_min', weight_min)
     if (weight_max) sp.set('weight_max', weight_max)
-    if (goals_min) sp.set('goals_min', goals_min)
-    if (assists_min) sp.set('assists_min', assists_min)
-    if (matches_min) sp.set('matches_min', matches_min)
-    if (pass_acc_min) sp.set('pass_acc_min', pass_acc_min)
     if (p > 1) sp.set('page', String(p))
     const qs = sp.toString()
     return `/players${qs ? `?${qs}` : ''}`

@@ -47,12 +47,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
     .select(
       `
       id, slug, home_score, away_score, competition, match_date, venue,
-      video_url, highlights_url, match_report, match_report_ka,
+      video_url,
       home_club:clubs!matches_home_club_id_fkey ( name, name_ka, slug ),
       away_club:clubs!matches_away_club_id_fkey ( name, name_ka, slug ),
       player_stats:match_player_stats (
-        minutes_played, goals, assists, pass_accuracy, shots, shots_on_target,
-        tackles, interceptions, distance_km, sprints, top_speed_kmh, rating,
+        minutes_played, goals, assists, pass_success_rate, shots, shots_on_target,
+        tackles, interceptions, distance_m, sprints_count, overall_rating,
         player:players!match_player_stats_player_id_fkey ( name, name_ka, slug, position, club_id )
       )
     `
@@ -66,9 +66,29 @@ export default async function MatchPage({ params }: MatchPageProps) {
 
   const homeClub = unwrapRelation(match.home_club)
   const awayClub = unwrapRelation(match.away_club)
-  const playerStats = (Array.isArray(match.player_stats) ? match.player_stats : []).map((ps) => ({
+  type PlayerStat = {
+    minutes_played: number | null
+    goals: number | null
+    assists: number | null
+    overall_rating: number | null
+    pass_success_rate: number | null
+    shots: number | null
+    shots_on_target: number | null
+    tackles: number | null
+    interceptions: number | null
+    distance_m: number | null
+    player: {
+      name: string
+      name_ka: string
+      slug: string
+      position: string
+      club_id: string
+    } | null
+  }
+  const rawPlayerStats = match.player_stats as unknown as PlayerStat[]
+  const playerStats = (Array.isArray(rawPlayerStats) ? rawPlayerStats : []).map((ps) => ({
     ...ps,
-    player: unwrapRelation(ps.player),
+    player: ps.player,
   }))
 
   const dateFormatted = format(new Date(match.match_date), 'EEEE, dd MMMM yyyy')
@@ -133,53 +153,21 @@ export default async function MatchPage({ params }: MatchPageProps) {
       </div>
 
       {/* Video links */}
-      {(match.video_url || match.highlights_url) && (
+      {match.video_url && (
         <div className="mt-4 flex flex-wrap gap-3">
-          {match.video_url && (
-            <a
-              href={match.video_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-elevated"
-            >
-              <svg className="h-4 w-4 text-danger" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              {t('matches.watchFullMatch')}
-            </a>
-          )}
-          {match.highlights_url && (
-            <a
-              href={match.highlights_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-elevated"
-            >
-              <svg
-                className="h-4 w-4 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
-                />
-              </svg>
-              {t('matches.highlights')}
-            </a>
-          )}
+          <a
+            href={match.video_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-elevated"
+          >
+            <svg className="h-4 w-4 text-danger" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            {t('matches.watchFullMatch')}
+          </a>
         </div>
       )}
-
-      {/* Match report */}
-      <MatchDetailClient
-        type="report"
-        report={match.match_report}
-        report_ka={match.match_report_ka}
-      />
 
       {/* Player stats table */}
       {playerStats.length > 0 && (
@@ -198,13 +186,12 @@ export default async function MatchPage({ params }: MatchPageProps) {
                   <th className="pb-2 pr-4">{t('stats.passPercent')}</th>
                   <th className="pb-2 pr-4">{t('stats.shots')}</th>
                   <th className="pb-2 pr-4">{t('stats.tackles')}</th>
-                  <th className="pb-2 pr-4">{t('stats.dist')}</th>
-                  <th className="pb-2">{t('stats.speed')}</th>
+                  <th className="pb-2">{t('stats.dist')}</th>
                 </tr>
               </thead>
               <tbody>
                 {playerStats
-                  .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0))
+                  .sort((a, b) => (Number(b.overall_rating) || 0) - (Number(a.overall_rating) || 0))
                   .map((ps, i) => (
                     <tr key={i} className="border-b border-border/50">
                       <td className="py-2 pr-4">
@@ -230,28 +217,25 @@ export default async function MatchPage({ params }: MatchPageProps) {
                       <td className="py-2 pr-4 font-semibold text-foreground">{ps.goals}</td>
                       <td className="py-2 pr-4 font-semibold text-foreground">{ps.assists}</td>
                       <td className="py-2 pr-4">
-                        {ps.rating ? (
+                        {ps.overall_rating ? (
                           <span
-                            className={`font-bold ${Number(ps.rating) >= 7.5 ? 'text-primary' : Number(ps.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                            className={`font-bold ${Number(ps.overall_rating) >= 7.5 ? 'text-primary' : Number(ps.overall_rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
                           >
-                            {ps.rating}
+                            {ps.overall_rating}
                           </span>
                         ) : (
                           '-'
                         )}
                       </td>
                       <td className="py-2 pr-4 text-foreground-muted">
-                        {ps.pass_accuracy ? `${ps.pass_accuracy}%` : '-'}
+                        {ps.pass_success_rate ? `${ps.pass_success_rate}%` : '-'}
                       </td>
                       <td className="py-2 pr-4 text-foreground-muted">
                         {ps.shots_on_target}/{ps.shots}
                       </td>
                       <td className="py-2 pr-4 text-foreground-muted">{ps.tackles}</td>
-                      <td className="py-2 pr-4 text-foreground-muted">
-                        {ps.distance_km ? `${ps.distance_km}km` : '-'}
-                      </td>
                       <td className="py-2 text-foreground-muted">
-                        {ps.top_speed_kmh ? `${ps.top_speed_kmh}km/h` : '-'}
+                        {ps.distance_m ? `${Math.round(ps.distance_m / 100) / 10}km` : '-'}
                       </td>
                     </tr>
                   ))}

@@ -5,6 +5,11 @@ import { apiSuccess, apiError } from '@/lib/api-utils'
 import { getPlatformAdminContext } from '@/lib/auth'
 import { syncRequestSchema, MAX_PAYLOAD_SIZE } from '@/lib/camera/validations'
 import { syncPlayerData, syncMatchReport, syncHeatmap } from '@/lib/camera/sync'
+import type {
+  StarlivePlayerProfile,
+  StarliveMatchReport,
+  StarliveHeatmap,
+} from '@/lib/camera/types'
 
 /**
  * POST /api/camera/sync
@@ -51,13 +56,27 @@ export async function POST(request: NextRequest) {
     let result
     switch (payload.type) {
       case 'player':
-        result = await syncPlayerData(payload.data, 'manual', userId)
+        result = await syncPlayerData(
+          payload.data as unknown as StarlivePlayerProfile,
+          'manual',
+          userId
+        )
         break
       case 'match_report':
-        result = await syncMatchReport(payload.data, payload.match_id, 'manual', userId)
+        result = await syncMatchReport(
+          payload.data as unknown as StarliveMatchReport,
+          payload.match_id,
+          'manual',
+          userId
+        )
         break
       case 'heatmap':
-        result = await syncHeatmap(payload.data, payload.match_id, 'manual', userId)
+        result = await syncHeatmap(
+          payload.data as unknown as StarliveHeatmap,
+          payload.match_id,
+          'manual',
+          userId
+        )
         break
     }
 

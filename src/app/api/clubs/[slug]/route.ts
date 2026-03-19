@@ -30,8 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     .select(
       `
       id, slug, name, name_ka, position, date_of_birth, height_cm,
-      preferred_foot, photo_url, status, platform_id,
-      season_stats:player_season_stats ( season, goals, assists, matches_played )
+      preferred_foot, photo_url, status, platform_id
     `
     )
     .eq('club_id', club.id)
@@ -43,20 +42,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     console.error('[api/clubs] Players query error:', playersError.message)
   }
 
-  const squad = (players ?? []).map((p) => {
-    const statsArr = Array.isArray(p.season_stats)
-      ? p.season_stats
-      : p.season_stats
-        ? [p.season_stats]
-        : []
-    const latestStats =
-      statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
-    return {
-      ...p,
-      season_stats: undefined,
-      latest_season_stats: latestStats,
-    }
-  })
+  const squad = (players ?? []).map((p) => ({ ...p }))
 
   return apiSuccess({
     ...club,

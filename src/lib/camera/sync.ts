@@ -13,6 +13,7 @@ import 'server-only'
  */
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import type {
   StarlivePlayerProfile,
   StarliveMatchReport,
@@ -32,6 +33,19 @@ import {
 } from './transform'
 
 // ============================================================
+// Helper: untyped client for camera-specific tables not yet in database.types.ts.
+// Uses the same credentials as createAdminClient() but without the Database generic,
+// so TypeScript accepts table names like 'starlive_player_map' that aren't in the
+// generated types yet. Remove once database.types.ts is regenerated.
+// ============================================================
+
+function createUntypedAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
+  return createSupabaseClient(url, key)
+}
+
+// ============================================================
 // Sync: Player Data (Source 1)
 // ============================================================
 
@@ -41,7 +55,8 @@ export async function syncPlayerData(
   triggeredByUser: string | null
 ): Promise<SyncResult> {
   const startTime = Date.now()
-  const admin = createAdminClient()
+  // Use untyped client — sync.ts uses camera-specific tables not yet in database.types.ts
+  const admin = createUntypedAdminClient()
   const starlivePlayerId = playerProfile.player_data.id
   const starliveIdStr = String(starlivePlayerId)
 
@@ -197,6 +212,13 @@ export async function syncPlayerData(
         matchId = newMatch.id
       }
 
+      // matchId is guaranteed non-null here — all null paths above either assign it or continue
+      if (!matchId) {
+        errors.push(`Unexpected null matchId for ${matchDateStr}`)
+        skipped++
+        continue
+      }
+
       // Extract and upsert match_player_stats
       const statsInsert = extractMatchPlayerStats(
         events,
@@ -289,7 +311,7 @@ export async function syncMatchReport(
   triggeredByUser: string | null
 ): Promise<SyncResult> {
   const startTime = Date.now()
-  const admin = createAdminClient()
+  const admin = createUntypedAdminClient()
 
   try {
     // Validate match exists
@@ -392,7 +414,7 @@ export async function syncHeatmap(
   triggeredByUser: string | null
 ): Promise<SyncResult> {
   const startTime = Date.now()
-  const admin = createAdminClient()
+  const admin = createUntypedAdminClient()
 
   try {
     const extracted = extractHeatmapData(heatmap)
@@ -514,7 +536,7 @@ export async function syncHeatmap(
 // ============================================================
 
 async function logSync(
-  admin: ReturnType<typeof createAdminClient>,
+  admin: ReturnType<typeof createUntypedAdminClient>,
   params: SyncLogInsert
 ): Promise<void> {
   const { error } = await admin.from('sync_logs').insert(params)

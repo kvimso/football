@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { createApiClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError, authenticateRequest } from '@/lib/api-utils'
-import { calculateAge, unwrapRelation, normalizeToArray } from '@/lib/utils'
+import { calculateAge, unwrapRelation } from '@/lib/utils'
 import { uuidSchema } from '@/lib/validations'
 
 // GET /api/players/[id] — Full player profile with stats
@@ -24,11 +24,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       preferred_foot, height_cm, weight_kg, photo_url, jersey_number,
       scouting_report, scouting_report_ka, status, is_featured, platform_id,
       club:clubs!players_club_id_fkey ( id, name, name_ka, slug ),
-      skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
-      season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, shots_on_target, tackles, interceptions, clean_sheets, distance_covered_km, sprints ),
+      skills:player_skills ( overall, attack, defence, fitness, dribbling, shooting, possession, tackling, positioning, matches_counted, last_updated ),
       match_stats:match_player_stats (
-        minutes_played, goals, assists, pass_accuracy, shots, shots_on_target,
-        tackles, interceptions, distance_km, sprints, top_speed_kmh, rating,
+        minutes_played, goals, assists, pass_success_rate, shots, shots_on_target,
+        tackles, interceptions, distance_m, sprints_count, overall_rating,
         match:matches!match_player_stats_match_id_fkey (
           slug, match_date, competition,
           home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
@@ -48,10 +47,52 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return apiError('errors.playerNotFound', 404)
   }
 
+  type CameraSkills = {
+    overall: number | null
+    attack: number | null
+    defence: number | null
+    fitness: number | null
+    dribbling: number | null
+    shooting: number | null
+    possession: number | null
+    tackling: number | null
+    positioning: number | null
+    matches_counted: number | null
+    last_updated: string | null
+  }
+  type RawMatchStat = {
+    minutes_played: number | null
+    goals: number | null
+    assists: number | null
+    pass_success_rate: number | null
+    shots: number | null
+    shots_on_target: number | null
+    tackles: number | null
+    interceptions: number | null
+    distance_m: number | null
+    sprints_count: number | null
+    overall_rating: number | null
+    match:
+      | {
+          slug: string
+          match_date: string
+          competition: string
+          home_club: { name: string; name_ka: string } | { name: string; name_ka: string }[] | null
+          away_club: { name: string; name_ka: string } | { name: string; name_ka: string }[] | null
+        }
+      | {
+          slug: string
+          match_date: string
+          competition: string
+          home_club: null
+          away_club: null
+        }[]
+      | null
+  }
   const club = unwrapRelation(player.club)
-  const skills = unwrapRelation(player.skills)
-  const seasonStats = normalizeToArray(player.season_stats)
-  const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
+  const skills = unwrapRelation(player.skills as unknown as CameraSkills | CameraSkills[])
+  const rawMatchStats = player.match_stats as unknown as RawMatchStat[]
+  const matchStats = (Array.isArray(rawMatchStats) ? rawMatchStats : []).map((ms) => ({
     ...ms,
     match: unwrapRelation(ms.match),
   }))
@@ -129,7 +170,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     is_featured: player.is_featured,
     club,
     skills,
-    season_stats: seasonStats,
     match_stats: matchStats,
     club_history: clubHistory,
     views: { total: totalViews, weekly: weeklyViews },

@@ -25,10 +25,6 @@ export async function GET(request: NextRequest) {
   const height_max = searchParams.get('height_max')
   const weight_min = searchParams.get('weight_min')
   const weight_max = searchParams.get('weight_max')
-  const goals_min = searchParams.get('goals_min')
-  const assists_min = searchParams.get('assists_min')
-  const matches_min = searchParams.get('matches_min')
-  const pass_acc_min = searchParams.get('pass_acc_min')
   const page = parseIntParam(searchParams.get('page'), 1, 1, 1000)
   const limit = parseIntParam(searchParams.get('limit'), PAGE_SIZE, 1, 100)
 
@@ -38,8 +34,7 @@ export async function GET(request: NextRequest) {
       `
       id, slug, name, name_ka, position, date_of_birth, height_cm, weight_kg,
       preferred_foot, is_featured, photo_url, status, platform_id,
-      club:clubs!players_club_id_fkey ( id, name, name_ka, slug ),
-      season_stats:player_season_stats ( season, goals, assists, matches_played, pass_accuracy )
+      club:clubs!players_club_id_fkey ( id, name, name_ka, slug )
     `,
       { count: 'exact' }
     )
@@ -110,9 +105,8 @@ export async function GET(request: NextRequest) {
     query = query.gt('date_of_birth', minDob.toISOString().split('T')[0])
   }
 
-  // Stat filters require client-side filtering, so fetch more rows
-  const hasStatFilter = !!(goals_min || assists_min || matches_min || pass_acc_min)
-  if (!hasStatFilter && sort !== 'most_viewed') {
+  // most_viewed sort requires client-side processing
+  if (sort !== 'most_viewed') {
     const from = (page - 1) * limit
     query = query.range(from, from + limit - 1)
   } else {
@@ -126,61 +120,26 @@ export async function GET(request: NextRequest) {
     return apiError('errors.serverError', 500)
   }
 
-  let filteredPlayers = players ?? []
-
-  // Client-side stat filtering
-  if (hasStatFilter) {
-    const minGoals = goals_min ? parseInt(goals_min, 10) : 0
-    const minAssists = assists_min ? parseInt(assists_min, 10) : 0
-    const minMatches = matches_min ? parseInt(matches_min, 10) : 0
-    const minPassAcc = pass_acc_min ? parseInt(pass_acc_min, 10) : 0
-
-    filteredPlayers = filteredPlayers.filter((p) => {
-      const statsArr = Array.isArray(p.season_stats)
-        ? p.season_stats
-        : p.season_stats
-          ? [p.season_stats]
-          : []
-      const latest = statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
-      if (!latest) return false
-      if (minGoals && (latest.goals ?? 0) < minGoals) return false
-      if (minAssists && (latest.assists ?? 0) < minAssists) return false
-      if (minMatches && (latest.matches_played ?? 0) < minMatches) return false
-      if (minPassAcc && (latest.pass_accuracy ?? 0) < minPassAcc) return false
-      return true
-    })
-  }
-
   // Map results
-  const allPlayers = filteredPlayers.map((p) => {
-    const statsArr = Array.isArray(p.season_stats)
-      ? p.season_stats
-      : p.season_stats
-        ? [p.season_stats]
-        : []
-    const latestStats =
-      statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
-    return {
-      id: p.id,
-      slug: p.slug,
-      name: p.name,
-      name_ka: p.name_ka,
-      platform_id: p.platform_id,
-      position: p.position as Position,
-      date_of_birth: p.date_of_birth,
-      height_cm: p.height_cm,
-      weight_kg: p.weight_kg,
-      preferred_foot: p.preferred_foot,
-      is_featured: p.is_featured,
-      photo_url: p.photo_url,
-      status: (p.status ?? 'active') as PlayerStatus,
-      club: unwrapRelation(p.club),
-      latest_season_stats: latestStats,
-    }
-  })
+  const allPlayers = (players ?? []).map((p) => ({
+    id: p.id,
+    slug: p.slug,
+    name: p.name,
+    name_ka: p.name_ka,
+    platform_id: p.platform_id,
+    position: p.position as Position,
+    date_of_birth: p.date_of_birth,
+    height_cm: p.height_cm,
+    weight_kg: p.weight_kg,
+    preferred_foot: p.preferred_foot,
+    is_featured: p.is_featured,
+    photo_url: p.photo_url,
+    status: (p.status ?? 'active') as PlayerStatus,
+    club: unwrapRelation(p.club),
+  }))
 
-  // Paginate client-side if needed
-  const needsClientPagination = hasStatFilter || sort === 'most_viewed'
+  // Paginate client-side for most_viewed sort
+  const needsClientPagination = sort === 'most_viewed'
   const results = needsClientPagination
     ? allPlayers.slice((page - 1) * limit, page * limit)
     : allPlayers

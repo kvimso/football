@@ -56,11 +56,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       scouting_report, scouting_report_ka, status, is_featured,
       platform_id,
       club:clubs!players_club_id_fkey ( id, name, name_ka, slug ),
-      skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
-      season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, shots_on_target, tackles, interceptions, clean_sheets, distance_covered_km, sprints ),
+      skills:player_skills ( overall, attack, defence, fitness, dribbling, shooting, possession, tackling, positioning, matches_counted, last_updated ),
       match_stats:match_player_stats (
-        minutes_played, goals, assists, pass_accuracy, shots, shots_on_target,
-        tackles, interceptions, distance_km, sprints, top_speed_kmh, rating,
+        minutes_played, goals, assists, pass_success_rate, shots, shots_on_target,
+        tackles, interceptions, distance_m, sprints_count, overall_rating,
         match:matches!match_player_stats_match_id_fkey (
           slug, match_date, competition,
           home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
@@ -84,13 +83,46 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
 
   const age = calculateAge(player.date_of_birth)
   const club = unwrapRelation(player.club)
-  const skills = unwrapRelation(player.skills)
-  const seasonStats = Array.isArray(player.season_stats)
-    ? player.season_stats
-    : player.season_stats
-      ? [player.season_stats]
-      : []
-  const matchStats = (Array.isArray(player.match_stats) ? player.match_stats : []).map((ms) => ({
+
+  // Skills and match_stats use new columns not yet in database.types.ts — cast through unknown
+  type CameraSkills = {
+    overall: number | null
+    attack: number | null
+    defence: number | null
+    fitness: number | null
+    dribbling: number | null
+    shooting: number | null
+    possession: number | null
+    tackling: number | null
+    positioning: number | null
+    matches_counted: number | null
+    last_updated: string | null
+  }
+  type MatchStat = {
+    minutes_played: number | null
+    goals: number | null
+    assists: number | null
+    pass_success_rate: number | null
+    shots: number | null
+    shots_on_target: number | null
+    tackles: number | null
+    interceptions: number | null
+    distance_m: number | null
+    sprints_count: number | null
+    overall_rating: number | null
+    match: {
+      slug: string
+      match_date: string
+      competition: string
+      home_club: { name: string; name_ka: string } | null
+      away_club: { name: string; name_ka: string } | null
+    } | null
+  }
+
+  const skills = unwrapRelation(player.skills as unknown as CameraSkills | CameraSkills[])
+  const matchStats = (
+    Array.isArray(player.match_stats) ? (player.match_stats as unknown as MatchStat[]) : []
+  ).map((ms) => ({
     ...ms,
     match: unwrapRelation(ms.match),
   }))
@@ -100,10 +132,6 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       club: unwrapRelation(h.club),
     }))
     .sort((a, b) => new Date(b.joined_at).getTime() - new Date(a.joined_at).getTime())
-  const latestSeason =
-    seasonStats.length > 0
-      ? [...seasonStats].sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0]
-      : null
   const videos = (Array.isArray(player.videos) ? player.videos : []).filter((v) =>
     v.url.startsWith('https://')
   )
@@ -131,8 +159,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
         `
         id, slug, name, name_ka, position, date_of_birth, height_cm,
         preferred_foot, is_featured, photo_url, status,
-        club:clubs!players_club_id_fkey ( name, name_ka ),
-        season_stats:player_season_stats ( season, goals, assists, matches_played )
+        club:clubs!players_club_id_fkey ( name, name_ka )
       `
       )
       .eq('position', player.position)
@@ -191,19 +218,11 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const similarPlayers = (rawSimilar ?? [])
     .map((p) => {
       const pClub = unwrapRelation(p.club)
-      const statsArr = Array.isArray(p.season_stats)
-        ? p.season_stats
-        : p.season_stats
-          ? [p.season_stats]
-          : []
-      const latestStats =
-        statsArr.sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))[0] ?? null
       return {
         ...p,
         position: p.position as Position,
         status: (p.status ?? 'active') as PlayerStatus,
         club: pClub,
-        season_stats: latestStats,
         _sameClub: pClub?.name === club?.name,
       }
     })
@@ -301,17 +320,19 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               </div>
             )}
 
-            {/* THE BOLD MOVE: 4 oversized stats with count-up */}
-            {latestSeason && (
+            {/* Camera skills summary — show overall + matches counted if available */}
+            {skills && skills.overall != null && (
               <div className="mt-4 flex flex-wrap items-end gap-x-4 gap-y-3 sm:gap-x-8">
-                <CountUpStat value={latestSeason.goals} label={t('compare.goals')} accent />
-                <CountUpStat value={latestSeason.assists} label={t('compare.assists')} accent />
-                <CountUpStat value={latestSeason.matches_played} label={t('compare.matches')} />
-                <CountUpStat
-                  value={latestSeason.pass_accuracy}
-                  label={t('compare.passPercent')}
-                  suffix="%"
-                />
+                <CountUpStat value={skills.overall} label={t('skills.overall')} accent />
+                {skills.attack != null && (
+                  <CountUpStat value={skills.attack} label={t('skills.attack')} />
+                )}
+                {skills.defence != null && (
+                  <CountUpStat value={skills.defence} label={t('skills.defence')} />
+                )}
+                {skills.matches_counted != null && skills.matches_counted > 0 && (
+                  <CountUpStat value={skills.matches_counted} label={t('compare.matches')} />
+                )}
               </div>
             )}
 
@@ -478,7 +499,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
             </div>
             <RadarChart
               skills={skills}
-              labels={['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical'].map(
+              labels={['attack', 'shooting', 'possession', 'dribbling', 'defence', 'fitness'].map(
                 (k) => t('skills.' + k)
               )}
             />
@@ -508,8 +529,9 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </span>
                 </div>
                 <div className="space-y-2.5">
-                  <StatBar label={t('compare.shooting')} value={skills.shooting} />
-                  <StatBar label={t('compare.dribbling')} value={skills.dribbling} />
+                  <StatBar label={t('skills.attack')} value={skills.attack} maxValue={10} />
+                  <StatBar label={t('skills.shooting')} value={skills.shooting} maxValue={10} />
+                  <StatBar label={t('skills.dribbling')} value={skills.dribbling} maxValue={10} />
                 </div>
               </div>
 
@@ -534,7 +556,12 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </span>
                 </div>
                 <div className="space-y-2.5">
-                  <StatBar label={t('compare.passing')} value={skills.passing} />
+                  <StatBar label={t('skills.possession')} value={skills.possession} maxValue={10} />
+                  <StatBar
+                    label={t('skills.positioning')}
+                    value={skills.positioning}
+                    maxValue={10}
+                  />
                 </div>
               </div>
 
@@ -559,7 +586,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </span>
                 </div>
                 <div className="space-y-2.5">
-                  <StatBar label={t('compare.defending')} value={skills.defending} />
+                  <StatBar label={t('skills.defence')} value={skills.defence} maxValue={10} />
+                  <StatBar label={t('skills.tackling')} value={skills.tackling} maxValue={10} />
                 </div>
               </div>
 
@@ -584,62 +612,10 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                   </span>
                 </div>
                 <div className="space-y-2.5">
-                  <StatBar label={t('compare.pace')} value={skills.pace} />
-                  <StatBar label={t('compare.physical')} value={skills.physical} />
+                  <StatBar label={t('skills.fitness')} value={skills.fitness} maxValue={10} />
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Season stats — horizontal scrollable cards */}
-      {seasonStats.length > 0 && (
-        <div className="mt-6">
-          <h3 className="section-header mb-4">{t('players.seasonStats')}</h3>
-          <div
-            className="flex gap-4 overflow-x-auto pb-2"
-            role="region"
-            aria-label={t('players.seasonStats')}
-          >
-            {[...seasonStats]
-              .sort((a, b) => (b.season ?? '').localeCompare(a.season ?? ''))
-              .map((s) => (
-                <div
-                  key={s.season}
-                  className="min-w-[200px] shrink-0 rounded-xl border border-border bg-surface p-4"
-                >
-                  <div className="mb-3 text-sm font-semibold text-foreground">{s.season}</div>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div>
-                      <div className="text-xs text-foreground-muted">{t('stats.mp')}</div>
-                      <div className="font-semibold text-foreground">{s.matches_played ?? '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-foreground-muted">{t('stats.g')}</div>
-                      <div className="font-semibold text-primary">{s.goals ?? '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-foreground-muted">{t('stats.a')}</div>
-                      <div className="font-semibold text-primary">{s.assists ?? '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-foreground-muted">{t('stats.min')}</div>
-                      <div className="font-semibold text-foreground">{s.minutes_played ?? '-'}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-foreground-muted">{t('stats.passPercent')}</div>
-                      <div className="font-semibold text-foreground">
-                        {s.pass_accuracy ? `${s.pass_accuracy}%` : '-'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-foreground-muted">{t('stats.tackles')}</div>
-                      <div className="font-semibold text-foreground">{s.tackles ?? '-'}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
           </div>
         </div>
       )}
@@ -681,11 +657,11 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                       )}
                     </span>
                     {/* Rating */}
-                    {ms.rating && (
+                    {ms.overall_rating && (
                       <span
-                        className={`w-8 text-right text-sm font-bold ${Number(ms.rating) >= 7.5 ? 'text-primary' : Number(ms.rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                        className={`w-8 text-right text-sm font-bold ${Number(ms.overall_rating) >= 7.5 ? 'text-primary' : Number(ms.overall_rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
                       >
-                        {ms.rating}
+                        {ms.overall_rating}
                       </span>
                     )}
                     {/* Chevron */}
@@ -724,19 +700,13 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                         {t('stats.passPercent')}
                       </span>
                       <div className="font-semibold">
-                        {ms.pass_accuracy ? `${ms.pass_accuracy}%` : '-'}
+                        {ms.pass_success_rate ? `${ms.pass_success_rate}%` : '-'}
                       </div>
                     </div>
                     <div>
                       <span className="text-xs text-foreground-muted">{t('stats.dist')}</span>
                       <div className="font-semibold">
-                        {ms.distance_km ? `${ms.distance_km}km` : '-'}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-foreground-muted">{t('stats.speed')}</span>
-                      <div className="font-semibold">
-                        {ms.top_speed_kmh ? `${ms.top_speed_kmh}km/h` : '-'}
+                        {ms.distance_m ? `${Math.round(ms.distance_m / 100) / 10}km` : '-'}
                       </div>
                     </div>
                     <div>

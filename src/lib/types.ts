@@ -21,11 +21,6 @@ export interface PlayerBrowseData {
   photo_url: string | null
   status: PlayerStatus
   club: { name: string; name_ka: string } | null
-  season_stats: {
-    goals: number | null
-    assists: number | null
-    matches_played: number | null
-  } | null
 }
 
 // Chat thread types

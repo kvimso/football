@@ -54,8 +54,7 @@ async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, s
       name, name_ka, slug, position, date_of_birth, height_cm, weight_kg,
       preferred_foot, jersey_number,
       club:clubs!players_club_id_fkey ( name, name_ka ),
-      skills:player_skills ( pace, shooting, passing, dribbling, defending, physical ),
-      season_stats:player_season_stats ( season, matches_played, goals, assists, minutes_played, pass_accuracy, tackles, interceptions )
+      skills:player_skills ( overall, attack, defence, fitness, dribbling, shooting, possession, tackling, positioning, matches_counted )
     `
     )
     .eq('slug', slug)
@@ -66,12 +65,28 @@ async function fetchPlayer(supabase: Awaited<ReturnType<typeof createClient>>, s
     return null
   }
 
+  // Cast through unknown because skills uses new columns not yet in database.types.ts
+  type RawPlayerData = typeof data & {
+    skills: {
+      overall: number | null
+      attack: number | null
+      defence: number | null
+      fitness: number | null
+      dribbling: number | null
+      shooting: number | null
+      possession: number | null
+      tackling: number | null
+      positioning: number | null
+      matches_counted: number | null
+    } | null
+  }
+  const raw = data as unknown as RawPlayerData
+
   return {
-    ...data,
-    position: data.position as Position,
-    club: unwrapRelation(data.club),
-    skills: unwrapRelation(data.skills),
-    season_stats: unwrapRelation(data.season_stats),
+    ...raw,
+    position: raw.position as Position,
+    club: unwrapRelation(raw.club),
+    skills: unwrapRelation(raw.skills),
   }
 }
 
