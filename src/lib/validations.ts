@@ -113,3 +113,27 @@ export const loadMessagesSchema = z.object({
   before: z.string().uuid().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 })
+
+// Camera integration - mapping schemas
+export const playerMappingSchema = z.object({
+  player_id: z.string().uuid('Invalid player ID'),
+  starlive_player_id: z.coerce
+    .number()
+    .int()
+    .positive('Starlive player ID must be a positive integer')
+    .max(2147483647),
+  starlive_team_id: z.coerce.number().int().positive().max(2147483647).optional().nullable(),
+  club_id: z.string().uuid().optional().nullable(),
+  jersey_number: z
+    .string()
+    .max(10)
+    .regex(/^[0-9A-Za-z-]*$/, 'Alphanumeric only')
+    .optional()
+    .nullable(),
+})
+
+export const clubMappingSchema = z.object({
+  club_id: z.string().uuid('Invalid club ID'),
+  starlive_team_name: z.string().min(1, 'Team name is required').max(200).trim(),
+  starlive_team_id: z.coerce.number().int().positive().max(2147483647).optional().nullable(),
+})
