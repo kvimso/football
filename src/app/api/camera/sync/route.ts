@@ -45,8 +45,8 @@ export async function POST(request: NextRequest) {
 
   const parsed = syncRequestSchema.safeParse(body)
   if (!parsed.success) {
-    const issues = parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`)
-    return apiError(`Validation failed: ${issues.join('; ')}`, 400)
+    console.warn('[camera/sync] Validation failed:', parsed.error.issues)
+    return apiError('Invalid payload structure', 400)
   }
 
   // Route to sync function
@@ -56,15 +56,11 @@ export async function POST(request: NextRequest) {
     let result
     switch (payload.type) {
       case 'player':
-        result = await syncPlayerData(
-          payload.data as unknown as StarlivePlayerProfile,
-          'manual',
-          userId
-        )
+        result = await syncPlayerData(payload.data as StarlivePlayerProfile, 'manual', userId)
         break
       case 'match_report':
         result = await syncMatchReport(
-          payload.data as unknown as StarliveMatchReport,
+          payload.data as StarliveMatchReport,
           payload.match_id,
           'manual',
           userId
@@ -72,7 +68,7 @@ export async function POST(request: NextRequest) {
         break
       case 'heatmap':
         result = await syncHeatmap(
-          payload.data as unknown as StarliveHeatmap,
+          payload.data as StarliveHeatmap,
           payload.match_id,
           'manual',
           userId

@@ -360,7 +360,7 @@ export type Database = {
           player_id: string
           shots: number | null
           shots_on_target: number | null
-          source: string | null
+          source: string
           speed_avg: number | null
           sprints_count: number | null
           starlive_player_id: number | null
@@ -389,7 +389,7 @@ export type Database = {
           player_id: string
           shots?: number | null
           shots_on_target?: number | null
-          source?: string | null
+          source?: string
           speed_avg?: number | null
           sprints_count?: number | null
           starlive_player_id?: number | null
@@ -418,7 +418,7 @@ export type Database = {
           player_id?: string
           shots?: number | null
           shots_on_target?: number | null
-          source?: string | null
+          source?: string
           speed_avg?: number | null
           sprints_count?: number | null
           starlive_player_id?: number | null

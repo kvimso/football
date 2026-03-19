@@ -23,8 +23,11 @@ import type {
   StarliveMatchReport,
   StarliveHeatmap,
   StarliveHeatmapEntry,
-  MatchPlayerStatsInsert,
-  PlayerSkillsUpsert,
+  StarliveTeamsData,
+  StarliveWidgets,
+  MpsInsert,
+  SkillsInsert,
+  Json,
 } from './types'
 
 // ============================================================
@@ -88,7 +91,7 @@ export function extractMatchPlayerStats(
   matchId: string,
   playerId: string,
   starlivePlayerId: number
-): MatchPlayerStatsInsert {
+): MpsInsert {
   // Goals come from neutral outcome (quirk: goals are "neutral" events)
   const goals = eventSum(events, 'goal', 'neutral')
   const assists = eventSum(events, 'assist', 'neutral')
@@ -149,10 +152,10 @@ export function extractMatchPlayerStats(
     distance_m: distanceM,
     sprints_count: sprintsCount,
     speed_avg: speedAvg,
-    // Store full JSON for detailed views
-    events: events as unknown as Record<string, unknown>,
-    indexes: indexes as unknown as Record<string, unknown>,
-    fitness: fitness as unknown as Record<string, unknown>,
+    // Store full JSON for detailed views (cast to Json for Supabase JSONB columns)
+    events: events as unknown as Json,
+    indexes: indexes as unknown as Json,
+    fitness: fitness as unknown as Json,
   }
 }
 
@@ -171,7 +174,7 @@ function avgNullable(values: (number | null)[]): number | null {
 export function recalculatePlayerSkills(
   playerId: string,
   allMatchIndexes: StarliveMatchIndexes[]
-): PlayerSkillsUpsert {
+): SkillsInsert {
   return {
     player_id: playerId,
     attack: avgNullable(allMatchIndexes.map((i) => i.attack.total)),
@@ -203,7 +206,14 @@ export function recalculatePlayerSkills(
 // Match report extraction (Source 3 -> matches JSONB columns)
 // ============================================================
 
-export function extractMatchReportData(report: StarliveMatchReport) {
+interface MatchReportData {
+  team_stats: StarliveTeamsData
+  widgets: StarliveWidgets
+  intervals: Record<string, StarliveTeamsData>
+  intervals_widgets: Record<string, StarliveWidgets>
+}
+
+export function extractMatchReportData(report: StarliveMatchReport): MatchReportData {
   return {
     team_stats: report.result.teams_data,
     widgets: report.result.widgets,
@@ -216,7 +226,15 @@ export function extractMatchReportData(report: StarliveMatchReport) {
 // Heatmap extraction (Source 2 -> match_heatmaps)
 // ============================================================
 
-export function extractHeatmapData(heatmapJson: StarliveHeatmap) {
+interface HeatmapData {
+  playerKey: string
+  coords: Record<string, number>
+  fps: number
+  field_step: number
+}
+
+/** Extracts the first player entry from a heatmap payload (one player per API call). */
+export function extractHeatmapData(heatmapJson: StarliveHeatmap): HeatmapData | null {
   const entries = Object.entries(heatmapJson)
   if (entries.length === 0) return null
 

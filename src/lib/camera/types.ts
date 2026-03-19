@@ -189,62 +189,19 @@ export interface StarliveMatchReport {
 }
 
 // ============================================================
-// DB operation types (derived from schema, used by sync)
+// DB operation types (derived from database.types.ts)
 // ============================================================
 
-export interface MatchPlayerStatsInsert {
-  match_id: string
-  player_id: string
-  starlive_player_id: number
-  minutes_played: number | null
-  overall_rating: number | null
-  goals: number
-  assists: number
-  key_passes: number
-  shots: number
-  shots_on_target: number
-  passes_total: number
-  passes_successful: number
-  pass_success_rate: number | null
-  tackles: number
-  interceptions: number
-  dribbles_success: number
-  dribbles_fail: number
-  distance_m: number | null
-  sprints_count: number
-  speed_avg: number | null
-  events: Record<string, unknown> | null
-  indexes: Record<string, unknown> | null
-  fitness: Record<string, unknown> | null
-}
+import type { Database, Json } from '@/lib/database.types'
 
-export interface PlayerSkillsUpsert {
-  player_id: string
-  attack: number | null
-  defence: number | null
-  fitness: number | null
-  overall: number | null
-  forward_play: number | null
-  possession: number | null
-  dribbling: number | null
-  shooting: number | null
-  set_piece: number | null
-  tackling: number | null
-  positioning: number | null
-  duels: number | null
-  pressing: number | null
-  goalkeeping: number | null
-  fitness_distance: number | null
-  fitness_intensity: number | null
-  fitness_speed: number | null
-  matches_counted: number
-  last_updated: string
-}
+export type MpsInsert = Database['public']['Tables']['match_player_stats']['Insert']
+export type SkillsInsert = Database['public']['Tables']['player_skills']['Insert']
 
-export interface SyncLogInsert {
+/** Narrowed sync log type with domain constraints on top of the DB type */
+export interface SyncLogParams {
   sync_type: 'player' | 'match_report' | 'heatmap' | 'full'
   starlive_id: string | null
-  status: 'success' | 'partial' | 'failed'
+  status: 'success' | 'partial' | 'failed' | 'skipped'
   records_synced: number
   records_skipped: number
   errors: string[] | null
@@ -253,17 +210,10 @@ export interface SyncLogInsert {
   duration_ms: number
 }
 
+export type { Json }
+
 export type SyncResult =
   | { status: 'success'; records_synced: number; records_skipped: number; errors: null }
   | { status: 'partial'; records_synced: number; records_skipped: number; errors: string[] }
   | { status: 'failed'; records_synced: 0; records_skipped: number; errors: string[] }
   | { status: 'skipped'; records_synced: 0; records_skipped: number; errors: null; reason: string }
-
-// ============================================================
-// Sync request types (shared by webhook + manual sync routes)
-// ============================================================
-
-export type SyncRequestPayload =
-  | { type: 'player'; data: StarlivePlayerProfile }
-  | { type: 'match_report'; data: StarliveMatchReport; match_id: string }
-  | { type: 'heatmap'; data: StarliveHeatmap; match_id: string }

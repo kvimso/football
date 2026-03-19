@@ -13,18 +13,15 @@ import 'server-only'
  */
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import type { Database, Json } from '@/lib/database.types'
+import type { Json } from '@/lib/database.types'
 import type {
   StarlivePlayerProfile,
   StarliveMatchReport,
   StarliveHeatmap,
   StarliveMatchIndexes,
   SyncResult,
-  SyncLogInsert,
+  SyncLogParams,
 } from './types'
-
-type MpsInsert = Database['public']['Tables']['match_player_stats']['Insert']
-type SkillsInsert = Database['public']['Tables']['player_skills']['Insert']
 import {
   normalizeMatchDate,
   resolveActivityId,
@@ -64,7 +61,7 @@ export async function syncPlayerData(
     await logSync(admin, {
       sync_type: 'player',
       starlive_id: starliveIdStr,
-      status: 'skipped' as 'failed', // skipped stored as status text
+      status: 'skipped',
       records_synced: 0,
       records_skipped: 1,
       errors: [reason],
@@ -81,6 +78,31 @@ export async function syncPlayerData(
     .select('starlive_team_name, club_id')
 
   const clubMap = new Map((clubMappings ?? []).map((m) => [m.starlive_team_name, m.club_id]))
+
+  // Pre-fetch all club slugs (avoids 2 queries per new match creation)
+  const clubIds = [...new Set(clubMap.values())]
+  const { data: clubRows } = await admin.from('clubs').select('id, slug').in('id', clubIds)
+
+  const clubSlugMap = new Map((clubRows ?? []).map((c) => [c.id, c.slug]))
+
+  // Pre-fetch existing matches for relevant clubs (avoids per-iteration lookups)
+  const { data: existingMatches } = await admin
+    .from('matches')
+    .select('id, starlive_activity_id, home_club_id, away_club_id, match_date')
+    .in('home_club_id', clubIds)
+
+  // Build lookup maps for existing matches
+  const matchByActivityId = new Map<number, string>()
+  const matchByClubsDate = new Map<string, string>()
+  for (const m of existingMatches ?? []) {
+    if (m.starlive_activity_id) {
+      matchByActivityId.set(m.starlive_activity_id, m.id)
+    }
+    if (m.home_club_id && m.away_club_id && m.match_date) {
+      const dateKey = normalizeMatchDate(m.match_date)
+      matchByClubsDate.set(`${m.home_club_id}-${m.away_club_id}-${dateKey}`, m.id)
+    }
+  }
 
   let synced = 0
   let skipped = 0
@@ -129,48 +151,22 @@ export async function syncPlayerData(
         continue
       }
 
-      // Find or create match
-      let matchId: string | null = null
+      // Find or create match (using pre-fetched maps instead of per-iteration queries)
+      let matchId: string | undefined
 
       if (activityId) {
-        // Try by starlive_activity_id first
-        const { data: existingMatch } = await admin
-          .from('matches')
-          .select('id')
-          .eq('starlive_activity_id', activityId)
-          .single()
-        matchId = existingMatch?.id ?? null
+        matchId = matchByActivityId.get(activityId)
       }
 
       if (!matchId) {
-        // Try by match_date + clubs
-        const { data: existingMatch } = await admin
-          .from('matches')
-          .select('id')
-          .eq('home_club_id', homeClubId)
-          .eq('away_club_id', awayClubId)
-          .gte('match_date', `${normalizedDate}T00:00:00Z`)
-          .lt('match_date', `${normalizedDate}T23:59:59Z`)
-          .single()
-        matchId = existingMatch?.id ?? null
+        matchId = matchByClubsDate.get(`${homeClubId}-${awayClubId}-${normalizedDate}`)
       }
 
       if (!matchId) {
-        // Create new match — need club slugs for the match slug
-        const { data: homeClub } = await admin
-          .from('clubs')
-          .select('slug')
-          .eq('id', homeClubId)
-          .single()
-        const { data: awayClub } = await admin
-          .from('clubs')
-          .select('slug')
-          .eq('id', awayClubId)
-          .single()
-
+        // Create new match — slugs come from pre-fetched map
         const slug = generateCameraMatchSlug(
-          homeClub?.slug ?? 'unknown',
-          awayClub?.slug ?? 'unknown',
+          clubSlugMap.get(homeClubId) ?? 'unknown',
+          clubSlugMap.get(awayClubId) ?? 'unknown',
           activity.activity_date,
           activityId
         )
@@ -200,13 +196,10 @@ export async function syncPlayerData(
           continue
         }
         matchId = newMatch.id
-      }
 
-      // matchId is guaranteed non-null here — all null paths above either assign it or continue
-      if (!matchId) {
-        errors.push(`Unexpected null matchId for ${matchDateStr}`)
-        skipped++
-        continue
+        // Update maps so subsequent iterations find this match
+        if (activityId) matchByActivityId.set(activityId, matchId)
+        matchByClubsDate.set(`${homeClubId}-${awayClubId}-${normalizedDate}`, matchId)
       }
 
       // Extract and upsert match_player_stats
@@ -222,7 +215,7 @@ export async function syncPlayerData(
 
       const { error: upsertError } = await admin
         .from('match_player_stats')
-        .upsert(statsInsert as unknown as MpsInsert, { onConflict: 'match_id,player_id' })
+        .upsert(statsInsert, { onConflict: 'match_id,player_id' })
 
       if (upsertError) {
         errors.push(`Failed to upsert stats for ${matchDateStr}: ${upsertError.message}`)
@@ -254,7 +247,7 @@ export async function syncPlayerData(
       const skills = recalculatePlayerSkills(mapping.player_id, allIndexes)
       const { error: skillsError } = await admin
         .from('player_skills')
-        .upsert(skills as unknown as SkillsInsert, { onConflict: 'player_id' })
+        .upsert(skills, { onConflict: 'player_id' })
 
       if (skillsError) {
         errors.push(`Failed to upsert skills: ${skillsError.message}`)
@@ -527,9 +520,12 @@ export async function syncHeatmap(
 
 async function logSync(
   admin: ReturnType<typeof createAdminClient>,
-  params: SyncLogInsert
+  params: SyncLogParams
 ): Promise<void> {
-  const { error } = await admin.from('sync_logs').insert(params)
+  const { error } = await admin.from('sync_logs').insert({
+    ...params,
+    errors: params.errors as unknown as Json,
+  })
   if (error) {
     console.error('[camera/sync] Failed to write sync log:', error.message)
   }

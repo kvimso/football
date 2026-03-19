@@ -72,15 +72,11 @@ export async function POST(request: NextRequest) {
     let result
     switch (payload.type) {
       case 'player':
-        result = await syncPlayerData(
-          payload.data as unknown as StarlivePlayerProfile,
-          'webhook',
-          null
-        )
+        result = await syncPlayerData(payload.data as StarlivePlayerProfile, 'webhook', null)
         break
       case 'match_report':
         result = await syncMatchReport(
-          payload.data as unknown as StarliveMatchReport,
+          payload.data as StarliveMatchReport,
           payload.match_id,
           'webhook',
           null
@@ -88,7 +84,7 @@ export async function POST(request: NextRequest) {
         break
       case 'heatmap':
         result = await syncHeatmap(
-          payload.data as unknown as StarliveHeatmap,
+          payload.data as StarliveHeatmap,
           payload.match_id,
           'webhook',
           null
