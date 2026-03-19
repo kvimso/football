@@ -289,66 +289,141 @@ export type Database = {
           },
         ]
       }
+      match_heatmaps: {
+        Row: {
+          coords: Json
+          created_at: string | null
+          field_step: number | null
+          fps: number | null
+          id: string
+          match_id: string
+          player_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          coords: Json
+          created_at?: string | null
+          field_step?: number | null
+          fps?: number | null
+          id?: string
+          match_id: string
+          player_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          coords?: Json
+          created_at?: string | null
+          field_step?: number | null
+          fps?: number | null
+          id?: string
+          match_id?: string
+          player_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_heatmaps_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_heatmaps_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       match_player_stats: {
         Row: {
           assists: number | null
           created_at: string | null
-          distance_km: number | null
+          distance_m: number | null
+          dribbles_fail: number | null
+          dribbles_success: number | null
+          events: Json | null
+          fitness: Json | null
           goals: number | null
-          heat_map_data: Json | null
           id: string
+          indexes: Json | null
           interceptions: number | null
-          match_id: string | null
+          key_passes: number | null
+          match_id: string
           minutes_played: number | null
-          pass_accuracy: number | null
-          player_id: string | null
-          rating: number | null
+          overall_rating: number | null
+          pass_success_rate: number | null
+          passes_successful: number | null
+          passes_total: number | null
+          player_id: string
           shots: number | null
           shots_on_target: number | null
-          source: string
-          sprints: number | null
+          source: string | null
+          speed_avg: number | null
+          sprints_count: number | null
+          starlive_player_id: number | null
           tackles: number | null
-          top_speed_kmh: number | null
+          updated_at: string | null
         }
         Insert: {
           assists?: number | null
           created_at?: string | null
-          distance_km?: number | null
+          distance_m?: number | null
+          dribbles_fail?: number | null
+          dribbles_success?: number | null
+          events?: Json | null
+          fitness?: Json | null
           goals?: number | null
-          heat_map_data?: Json | null
           id?: string
+          indexes?: Json | null
           interceptions?: number | null
-          match_id?: string | null
+          key_passes?: number | null
+          match_id: string
           minutes_played?: number | null
-          pass_accuracy?: number | null
-          player_id?: string | null
-          rating?: number | null
+          overall_rating?: number | null
+          pass_success_rate?: number | null
+          passes_successful?: number | null
+          passes_total?: number | null
+          player_id: string
           shots?: number | null
           shots_on_target?: number | null
-          source: string
-          sprints?: number | null
+          source?: string | null
+          speed_avg?: number | null
+          sprints_count?: number | null
+          starlive_player_id?: number | null
           tackles?: number | null
-          top_speed_kmh?: number | null
+          updated_at?: string | null
         }
         Update: {
           assists?: number | null
           created_at?: string | null
-          distance_km?: number | null
+          distance_m?: number | null
+          dribbles_fail?: number | null
+          dribbles_success?: number | null
+          events?: Json | null
+          fitness?: Json | null
           goals?: number | null
-          heat_map_data?: Json | null
           id?: string
+          indexes?: Json | null
           interceptions?: number | null
-          match_id?: string | null
+          key_passes?: number | null
+          match_id?: string
           minutes_played?: number | null
-          pass_accuracy?: number | null
-          player_id?: string | null
-          rating?: number | null
+          overall_rating?: number | null
+          pass_success_rate?: number | null
+          passes_successful?: number | null
+          passes_total?: number | null
+          player_id?: string
           shots?: number | null
           shots_on_target?: number | null
-          source?: string
-          sprints?: number | null
+          source?: string | null
+          speed_avg?: number | null
+          sprints_count?: number | null
+          starlive_player_id?: number | null
           tackles?: number | null
-          top_speed_kmh?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -371,56 +446,65 @@ export type Database = {
         Row: {
           away_club_id: string | null
           away_score: number | null
-          camera_source: string | null
+          away_team_color: string | null
           competition: string | null
           created_at: string | null
-          external_event_id: string | null
-          highlights_url: string | null
           home_club_id: string | null
           home_score: number | null
+          home_team_color: string | null
           id: string
+          intervals: Json | null
+          intervals_widgets: Json | null
           match_date: string
-          match_report: string | null
-          match_report_ka: string | null
           slug: string
+          source: string | null
+          starlive_activity_id: number | null
+          team_stats: Json | null
           venue: string | null
           video_url: string | null
+          widgets: Json | null
         }
         Insert: {
           away_club_id?: string | null
           away_score?: number | null
-          camera_source?: string | null
+          away_team_color?: string | null
           competition?: string | null
           created_at?: string | null
-          external_event_id?: string | null
-          highlights_url?: string | null
           home_club_id?: string | null
           home_score?: number | null
+          home_team_color?: string | null
           id?: string
+          intervals?: Json | null
+          intervals_widgets?: Json | null
           match_date: string
-          match_report?: string | null
-          match_report_ka?: string | null
           slug: string
+          source?: string | null
+          starlive_activity_id?: number | null
+          team_stats?: Json | null
           venue?: string | null
           video_url?: string | null
+          widgets?: Json | null
         }
         Update: {
           away_club_id?: string | null
           away_score?: number | null
-          camera_source?: string | null
+          away_team_color?: string | null
           competition?: string | null
           created_at?: string | null
-          external_event_id?: string | null
-          highlights_url?: string | null
           home_club_id?: string | null
           home_score?: number | null
+          home_team_color?: string | null
           id?: string
+          intervals?: Json | null
+          intervals_widgets?: Json | null
           match_date?: string
-          match_report?: string | null
-          match_report_ka?: string | null
           slug?: string
+          source?: string | null
+          starlive_activity_id?: number | null
+          team_stats?: Json | null
           venue?: string | null
           video_url?: string | null
+          widgets?: Json | null
         }
         Relationships: [
           {
@@ -623,104 +707,75 @@ export type Database = {
           },
         ]
       }
-      player_season_stats: {
-        Row: {
-          assists: number | null
-          clean_sheets: number | null
-          created_at: string | null
-          distance_covered_km: number | null
-          goals: number | null
-          id: string
-          interceptions: number | null
-          matches_played: number | null
-          minutes_played: number | null
-          pass_accuracy: number | null
-          player_id: string | null
-          season: string
-          shots_on_target: number | null
-          source: string
-          sprints: number | null
-          tackles: number | null
-        }
-        Insert: {
-          assists?: number | null
-          clean_sheets?: number | null
-          created_at?: string | null
-          distance_covered_km?: number | null
-          goals?: number | null
-          id?: string
-          interceptions?: number | null
-          matches_played?: number | null
-          minutes_played?: number | null
-          pass_accuracy?: number | null
-          player_id?: string | null
-          season: string
-          shots_on_target?: number | null
-          source: string
-          sprints?: number | null
-          tackles?: number | null
-        }
-        Update: {
-          assists?: number | null
-          clean_sheets?: number | null
-          created_at?: string | null
-          distance_covered_km?: number | null
-          goals?: number | null
-          id?: string
-          interceptions?: number | null
-          matches_played?: number | null
-          minutes_played?: number | null
-          pass_accuracy?: number | null
-          player_id?: string | null
-          season?: string
-          shots_on_target?: number | null
-          source?: string
-          sprints?: number | null
-          tackles?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "player_season_stats_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "players"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       player_skills: {
         Row: {
-          defending: number | null
+          attack: number | null
+          defence: number | null
           dribbling: number | null
+          duels: number | null
+          fitness: number | null
+          fitness_distance: number | null
+          fitness_intensity: number | null
+          fitness_speed: number | null
+          forward_play: number | null
+          goalkeeping: number | null
           id: string
-          pace: number | null
-          passing: number | null
-          physical: number | null
-          player_id: string | null
+          last_updated: string | null
+          matches_counted: number | null
+          overall: number | null
+          player_id: string
+          positioning: number | null
+          possession: number | null
+          pressing: number | null
+          set_piece: number | null
           shooting: number | null
-          updated_at: string | null
+          tackling: number | null
         }
         Insert: {
-          defending?: number | null
+          attack?: number | null
+          defence?: number | null
           dribbling?: number | null
+          duels?: number | null
+          fitness?: number | null
+          fitness_distance?: number | null
+          fitness_intensity?: number | null
+          fitness_speed?: number | null
+          forward_play?: number | null
+          goalkeeping?: number | null
           id?: string
-          pace?: number | null
-          passing?: number | null
-          physical?: number | null
-          player_id?: string | null
+          last_updated?: string | null
+          matches_counted?: number | null
+          overall?: number | null
+          player_id: string
+          positioning?: number | null
+          possession?: number | null
+          pressing?: number | null
+          set_piece?: number | null
           shooting?: number | null
-          updated_at?: string | null
+          tackling?: number | null
         }
         Update: {
-          defending?: number | null
+          attack?: number | null
+          defence?: number | null
           dribbling?: number | null
+          duels?: number | null
+          fitness?: number | null
+          fitness_distance?: number | null
+          fitness_intensity?: number | null
+          fitness_speed?: number | null
+          forward_play?: number | null
+          goalkeeping?: number | null
           id?: string
-          pace?: number | null
-          passing?: number | null
-          physical?: number | null
-          player_id?: string | null
+          last_updated?: string | null
+          matches_counted?: number | null
+          overall?: number | null
+          player_id?: string
+          positioning?: number | null
+          possession?: number | null
+          pressing?: number | null
+          set_piece?: number | null
           shooting?: number | null
-          updated_at?: string | null
+          tackling?: number | null
         }
         Relationships: [
           {
@@ -739,8 +794,11 @@ export type Database = {
           id: string
           match_id: string | null
           player_id: string | null
+          starlive_event_id: number | null
           title: string
           url: string
+          video_timestamp_end: string | null
+          video_timestamp_start: string | null
           video_type: string | null
         }
         Insert: {
@@ -749,8 +807,11 @@ export type Database = {
           id?: string
           match_id?: string | null
           player_id?: string | null
+          starlive_event_id?: number | null
           title: string
           url: string
+          video_timestamp_end?: string | null
+          video_timestamp_start?: string | null
           video_type?: string | null
         }
         Update: {
@@ -759,8 +820,11 @@ export type Database = {
           id?: string
           match_id?: string | null
           player_id?: string | null
+          starlive_event_id?: number | null
           title?: string
           url?: string
+          video_timestamp_end?: string | null
+          video_timestamp_start?: string | null
           video_type?: string | null
         }
         Relationships: [
@@ -939,6 +1003,146 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      starlive_club_map: {
+        Row: {
+          club_id: string
+          created_at: string | null
+          id: string
+          starlive_team_id: number | null
+          starlive_team_name: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string | null
+          id?: string
+          starlive_team_id?: number | null
+          starlive_team_name: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string | null
+          id?: string
+          starlive_team_id?: number | null
+          starlive_team_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "starlive_club_map_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      starlive_player_map: {
+        Row: {
+          club_id: string | null
+          created_at: string | null
+          id: string
+          jersey_number: string | null
+          mapped_by: string | null
+          player_id: string
+          starlive_player_id: number
+          starlive_team_id: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          club_id?: string | null
+          created_at?: string | null
+          id?: string
+          jersey_number?: string | null
+          mapped_by?: string | null
+          player_id: string
+          starlive_player_id: number
+          starlive_team_id?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          club_id?: string | null
+          created_at?: string | null
+          id?: string
+          jersey_number?: string | null
+          mapped_by?: string | null
+          player_id?: string
+          starlive_player_id?: number
+          starlive_team_id?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "starlive_player_map_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "starlive_player_map_mapped_by_fkey"
+            columns: ["mapped_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "starlive_player_map_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_logs: {
+        Row: {
+          created_at: string | null
+          duration_ms: number | null
+          errors: Json | null
+          id: string
+          records_skipped: number | null
+          records_synced: number | null
+          starlive_id: string | null
+          status: string
+          sync_type: string
+          triggered_by: string | null
+          triggered_by_user: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_ms?: number | null
+          errors?: Json | null
+          id?: string
+          records_skipped?: number | null
+          records_synced?: number | null
+          starlive_id?: string | null
+          status: string
+          sync_type: string
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_ms?: number | null
+          errors?: Json | null
+          id?: string
+          records_skipped?: number | null
+          records_synced?: number | null
+          starlive_id?: string | null
+          status?: string
+          sync_type?: string
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_logs_triggered_by_user_fkey"
+            columns: ["triggered_by_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1140,6 +1344,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_transfer_request: { Args: { p_request_id: string }; Returns: Json }
       get_conversations_with_metadata: {
         Args: { p_user_id: string }
         Returns: {
@@ -1162,6 +1367,10 @@ export type Database = {
           scout_role: string
           unread_count: number
         }[]
+      }
+      get_player_guardian_contact: {
+        Args: { p_player_id: string }
+        Returns: string
       }
       get_player_scout_demand: {
         Args: { p_player_id: string }
@@ -1200,6 +1409,8 @@ export type Database = {
         Args: { p_conversation_id: string }
         Returns: undefined
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       message_type: "text" | "file" | "player_ref" | "system"

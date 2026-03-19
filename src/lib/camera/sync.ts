@@ -13,7 +13,7 @@ import 'server-only'
  */
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import type { Database, Json } from '@/lib/database.types'
 import type {
   StarlivePlayerProfile,
   StarliveMatchReport,
@@ -22,6 +22,9 @@ import type {
   SyncResult,
   SyncLogInsert,
 } from './types'
+
+type MpsInsert = Database['public']['Tables']['match_player_stats']['Insert']
+type SkillsInsert = Database['public']['Tables']['player_skills']['Insert']
 import {
   normalizeMatchDate,
   resolveActivityId,
@@ -31,19 +34,6 @@ import {
   extractHeatmapData,
   generateCameraMatchSlug,
 } from './transform'
-
-// ============================================================
-// Helper: untyped client for camera-specific tables not yet in database.types.ts.
-// Uses the same credentials as createAdminClient() but without the Database generic,
-// so TypeScript accepts table names like 'starlive_player_map' that aren't in the
-// generated types yet. Remove once database.types.ts is regenerated.
-// ============================================================
-
-function createUntypedAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createSupabaseClient(url, key)
-}
 
 // ============================================================
 // Sync: Player Data (Source 1)
@@ -56,7 +46,7 @@ export async function syncPlayerData(
 ): Promise<SyncResult> {
   const startTime = Date.now()
   // Use untyped client — sync.ts uses camera-specific tables not yet in database.types.ts
-  const admin = createUntypedAdminClient()
+  const admin = createAdminClient()
   const starlivePlayerId = playerProfile.player_data.id
   const starliveIdStr = String(starlivePlayerId)
 
@@ -232,7 +222,7 @@ export async function syncPlayerData(
 
       const { error: upsertError } = await admin
         .from('match_player_stats')
-        .upsert(statsInsert, { onConflict: 'match_id,player_id' })
+        .upsert(statsInsert as unknown as MpsInsert, { onConflict: 'match_id,player_id' })
 
       if (upsertError) {
         errors.push(`Failed to upsert stats for ${matchDateStr}: ${upsertError.message}`)
@@ -264,7 +254,7 @@ export async function syncPlayerData(
       const skills = recalculatePlayerSkills(mapping.player_id, allIndexes)
       const { error: skillsError } = await admin
         .from('player_skills')
-        .upsert(skills, { onConflict: 'player_id' })
+        .upsert(skills as unknown as SkillsInsert, { onConflict: 'player_id' })
 
       if (skillsError) {
         errors.push(`Failed to upsert skills: ${skillsError.message}`)
@@ -311,7 +301,7 @@ export async function syncMatchReport(
   triggeredByUser: string | null
 ): Promise<SyncResult> {
   const startTime = Date.now()
-  const admin = createUntypedAdminClient()
+  const admin = createAdminClient()
 
   try {
     // Validate match exists
@@ -346,10 +336,10 @@ export async function syncMatchReport(
     const { error: updateError } = await admin
       .from('matches')
       .update({
-        team_stats: reportData.team_stats,
-        widgets: reportData.widgets,
-        intervals: reportData.intervals,
-        intervals_widgets: reportData.intervals_widgets,
+        team_stats: reportData.team_stats as unknown as Json,
+        widgets: reportData.widgets as unknown as Json,
+        intervals: reportData.intervals as unknown as Json,
+        intervals_widgets: reportData.intervals_widgets as unknown as Json,
       })
       .eq('id', matchId)
 
@@ -414,7 +404,7 @@ export async function syncHeatmap(
   triggeredByUser: string | null
 ): Promise<SyncResult> {
   const startTime = Date.now()
-  const admin = createUntypedAdminClient()
+  const admin = createAdminClient()
 
   try {
     const extracted = extractHeatmapData(heatmap)
@@ -536,7 +526,7 @@ export async function syncHeatmap(
 // ============================================================
 
 async function logSync(
-  admin: ReturnType<typeof createUntypedAdminClient>,
+  admin: ReturnType<typeof createAdminClient>,
   params: SyncLogInsert
 ): Promise<void> {
   const { error } = await admin.from('sync_logs').insert(params)
