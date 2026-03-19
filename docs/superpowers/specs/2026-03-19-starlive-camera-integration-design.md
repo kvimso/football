@@ -1,12 +1,41 @@
 ---
 title: Starlive Camera Integration (Phase 7)
 type: feature
-status: approved
+status: ready-for-planning
 date: 2026-03-19
 approach: Hybrid relational + JSONB (Approach B)
+next-step: Create implementation plan using /superpowers:writing-plans, then execute in ~4 sessions
 ---
 
 # Starlive Camera Integration — Design Spec
+
+## Current Status
+
+**This spec is complete and approved. Next step: create an implementation plan.**
+
+- Brainstorming: done (2026-03-19)
+- Spec review: done (2 rounds, 27 issues found and fixed)
+- Data mappings: verified against real Starlive JSON samples
+- Feature development sessions 3-6 (comparison, filtering, dashboard, performance) are **paused** — they depend on the old data model. Do camera integration first, then revisit them.
+- Starlive sample JSON files are at: `/mnt/c/Users/kvims/OneDrive/Pictures/Saved Pictures/index.json` (player), `index-2.json` (heatmap), `index-3.json` (match report)
+- Questions for Starlive's developer: `docs/starlive-questions-for-developer.md`
+
+### What We Have Now
+
+- 3 sample JSON files from Starlive (stats only — **no video, no live API, no credentials**)
+- These samples contain: per-player match stats + ratings + fitness, heatmap coordinates, full match team reports
+- No API endpoint, no webhook, no auth credentials — all TBD with Starlive
+
+### What We're Building
+
+Everything that can work with JSON data alone. The API connection layer is a thin wrapper added later when Starlive provides credentials. Manual JSON upload is the entry point for now.
+
+### Implementation Constraints
+
+- **Performance**: List pages (player directory, match list) must query real columns only — NEVER fetch JSONB columns (`events`, `indexes`, `fitness`, `team_stats`, `widgets`, `intervals`). JSONB is for detail pages only.
+- **Test data**: Seed the new schema with the 3 sample Starlive JSON files during development. Build manual upload first → push sample data through → verify on UI.
+- **No video**: `player_videos` table stays but won't be populated. Webhook route scaffolded but not called. Video features deferred.
+- **Session budget**: ~120-140k tokens per implementation session, ~4 sessions total.
 
 ## Overview
 
