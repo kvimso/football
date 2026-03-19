@@ -72,6 +72,22 @@ export function normalizeToArray<T>(value: T | T[] | null | undefined): T[] {
 }
 
 /**
+ * Get rating color class and tier label. Returns 'poor' for NaN/negative.
+ */
+import { RATING_THRESHOLDS } from '@/lib/constants'
+
+type RatingTier = (typeof RATING_THRESHOLDS)[number]
+
+const FALLBACK_TIER = RATING_THRESHOLDS[3] // 'poor' tier
+
+export function getRatingColor(rating: number): RatingTier {
+  const tier = Number.isFinite(rating)
+    ? RATING_THRESHOLDS.find((threshold) => rating >= threshold.min)
+    : undefined
+  return tier ?? FALLBACK_TIER
+}
+
+/**
  * Calculate age from a date of birth string.
  */
 export function calculateAge(dateOfBirth: string | Date): number {

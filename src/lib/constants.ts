@@ -174,6 +174,14 @@ export const COUNTRY_FLAGS: Record<string, string> = {
   Unknown: '🌍',
 }
 
+// Rating color thresholds (1-10 scale, descending order)
+export const RATING_THRESHOLDS = [
+  { min: 7.5, class: 'text-primary', label: 'excellent' },
+  { min: 6.5, class: 'text-foreground', label: 'good' },
+  { min: 5.5, class: 'text-pos-gk', label: 'average' },
+  { min: 0, class: 'text-danger', label: 'poor' },
+] as const
+
 // Light surface placeholder for next/image blur (matches surface color)
 export const BLUR_DATA_URL =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNGNEYxRUMiLz48L3N2Zz4='
