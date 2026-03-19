@@ -4,8 +4,9 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
-import { calculateAge, unwrapRelation } from '@/lib/utils'
+import { calculateAge, unwrapRelation, getRatingColor } from '@/lib/utils'
 import type { Position, PlayerStatus } from '@/lib/types'
+import type { Database } from '@/lib/database.types'
 import { format } from 'date-fns'
 import { RadarChart } from '@/components/player/RadarChart'
 import { StatBar } from '@/components/player/StatBar'
@@ -20,6 +21,7 @@ import { BLUR_DATA_URL, POSITION_BORDER_CLASSES, POPULAR_VIEWS_THRESHOLD } from 
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
 import { DownloadPdfButton } from '@/components/player/DownloadPdfButton'
 import { PlayerCard } from '@/components/player/PlayerCard'
+import { MatchStatDetail } from '@/components/player/MatchStatDetail'
 
 interface PlayerPageProps {
   params: Promise<{ slug: string }>
@@ -60,6 +62,7 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
       match_stats:match_player_stats (
         minutes_played, goals, assists, pass_success_rate, shots, shots_on_target,
         tackles, interceptions, distance_m, sprints_count, overall_rating,
+        key_passes, passes_total, passes_successful, dribbles_success, dribbles_fail, speed_avg,
         match:matches!match_player_stats_match_id_fkey (
           slug, match_date, competition,
           home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
@@ -84,32 +87,49 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   const age = calculateAge(player.date_of_birth)
   const club = unwrapRelation(player.club)
 
-  // Skills and match_stats use new columns not yet in database.types.ts — cast through unknown
-  type CameraSkills = {
-    overall: number | null
-    attack: number | null
-    defence: number | null
-    fitness: number | null
-    dribbling: number | null
-    shooting: number | null
-    possession: number | null
-    tackling: number | null
-    positioning: number | null
-    matches_counted: number | null
-    last_updated: string | null
-  }
-  type MatchStat = {
-    minutes_played: number | null
-    goals: number | null
-    assists: number | null
-    pass_success_rate: number | null
-    shots: number | null
-    shots_on_target: number | null
-    tackles: number | null
-    interceptions: number | null
-    distance_m: number | null
-    sprints_count: number | null
-    overall_rating: number | null
+  type PlayerSkillsRow = Database['public']['Tables']['player_skills']['Row']
+  type MatchPlayerStatsRow = Database['public']['Tables']['match_player_stats']['Row']
+
+  // IMPORTANT: These columns must match the select string in the Supabase query above.
+  // Pick<> validates column names against the schema, but does NOT verify they are fetched.
+  type CameraSkills = Pick<
+    PlayerSkillsRow,
+    | 'overall'
+    | 'attack'
+    | 'defence'
+    | 'fitness'
+    | 'dribbling'
+    | 'shooting'
+    | 'possession'
+    | 'tackling'
+    | 'positioning'
+    | 'matches_counted'
+    | 'last_updated'
+  >
+
+  type MatchStatScalars = Pick<
+    MatchPlayerStatsRow,
+    | 'minutes_played'
+    | 'goals'
+    | 'assists'
+    | 'pass_success_rate'
+    | 'shots'
+    | 'shots_on_target'
+    | 'tackles'
+    | 'interceptions'
+    | 'distance_m'
+    | 'sprints_count'
+    | 'overall_rating'
+    | 'key_passes'
+    | 'passes_total'
+    | 'passes_successful'
+    | 'dribbles_success'
+    | 'dribbles_fail'
+    | 'speed_avg'
+  >
+
+  // Combined type for match stats with nested join
+  type MatchStatWithMatch = MatchStatScalars & {
     match: {
       slug: string
       match_date: string
@@ -120,12 +140,20 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
   }
 
   const skills = unwrapRelation(player.skills as unknown as CameraSkills | CameraSkills[])
-  const matchStats = (
-    Array.isArray(player.match_stats) ? (player.match_stats as unknown as MatchStat[]) : []
-  ).map((ms) => ({
-    ...ms,
-    match: unwrapRelation(ms.match),
-  }))
+
+  // Sort match stats by date (most recent first) — client-side sort because
+  // PostgREST nested ordering across match_player_stats → matches join is unreliable
+  const toTime = (d: string | undefined | null) => (d ? new Date(d).getTime() : 0)
+  const rawMatchStats = Array.isArray(player.match_stats)
+    ? (player.match_stats as unknown as MatchStatWithMatch[])
+    : []
+  const matchStats = [...rawMatchStats]
+    .map((ms) => ({
+      ...ms,
+      match: unwrapRelation(ms.match),
+    }))
+    .sort((a, b) => toTime(b.match?.match_date) - toTime(a.match?.match_date))
+
   const clubHistory = (Array.isArray(player.club_history) ? player.club_history : [])
     .map((h) => ({
       ...h,
@@ -136,6 +164,49 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
     v.url.startsWith('https://')
   )
   const isFreeAgent = player.status === 'free_agent'
+
+  // Season aggregation — single-pass, null-safe
+  interface SeasonAccumulator {
+    goals: number
+    assists: number
+    minutes: number
+    distance: number
+    passesTotal: number
+    passesSuccessful: number
+    ratingSum: number
+    ratingCount: number
+  }
+
+  const initial: SeasonAccumulator = {
+    goals: 0,
+    assists: 0,
+    minutes: 0,
+    distance: 0,
+    passesTotal: 0,
+    passesSuccessful: 0,
+    ratingSum: 0,
+    ratingCount: 0,
+  }
+
+  // TODO: Extract to src/lib/camera/stats.ts when PDF route needs camera stats
+  const season = matchStats.reduce<SeasonAccumulator>((acc, ms) => {
+    acc.goals += ms.goals ?? 0
+    acc.assists += ms.assists ?? 0
+    acc.minutes += ms.minutes_played ?? 0
+    acc.distance += ms.distance_m ?? 0
+    acc.passesTotal += ms.passes_total ?? 0
+    acc.passesSuccessful += ms.passes_successful ?? 0
+    if (ms.overall_rating != null) {
+      acc.ratingSum += Number(ms.overall_rating)
+      acc.ratingCount++
+    }
+    return acc
+  }, initial)
+
+  const avgRating = season.ratingCount > 0 ? season.ratingSum / season.ratingCount : null
+  const avgPassAccuracy =
+    season.passesTotal > 0 ? Math.round((season.passesSuccessful / season.passesTotal) * 100) : null
+  const totalDistanceKm = Math.round(season.distance / 100) / 10
 
   // Build similar players query
   const dob = new Date(player.date_of_birth)
@@ -320,18 +391,30 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
               </div>
             )}
 
-            {/* Camera skills summary — show overall + matches counted if available */}
+            {/* Camera skills summary — rating badge + attack/defence/fitness */}
             {skills && skills.overall != null && (
               <div className="mt-4 flex flex-wrap items-end gap-x-4 gap-y-3 sm:gap-x-8">
-                <CountUpStat value={skills.overall} label={t('skills.overall')} accent />
+                <div>
+                  <div
+                    className={`text-3xl font-bold tabular-nums sm:text-5xl ${getRatingColor(skills.overall).class}`}
+                  >
+                    {skills.overall.toFixed(1)}
+                    <span className="sr-only">
+                      {` — ${t(`camera.rating${getRatingColor(skills.overall).label.charAt(0).toUpperCase() + getRatingColor(skills.overall).label.slice(1)}`)}`}
+                    </span>
+                  </div>
+                  <div className="mt-0.5 text-xs text-foreground-muted">
+                    {t('camera.overallRating')}
+                  </div>
+                </div>
                 {skills.attack != null && (
                   <CountUpStat value={skills.attack} label={t('skills.attack')} />
                 )}
                 {skills.defence != null && (
                   <CountUpStat value={skills.defence} label={t('skills.defence')} />
                 )}
-                {skills.matches_counted != null && skills.matches_counted > 0 && (
-                  <CountUpStat value={skills.matches_counted} label={t('compare.matches')} />
+                {skills.fitness != null && (
+                  <CountUpStat value={skills.fitness} label={t('skills.fitness')} />
                 )}
               </div>
             )}
@@ -478,6 +561,49 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
           ...(clubHistory.length === 0 ? ['history' as const] : []),
         ]}
       />
+
+      {/* Season Summary — aggregated camera stats */}
+      {matchStats.length > 0 && (
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+            <div className="text-xs text-foreground-muted">{t('camera.matchesPlayed')}</div>
+            <div className="text-lg font-bold tabular-nums">{matchStats.length}</div>
+          </div>
+          <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+            <div className="text-xs text-foreground-muted">{t('camera.totalGoals')}</div>
+            <div className="text-lg font-bold tabular-nums">{season.goals}</div>
+          </div>
+          <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+            <div className="text-xs text-foreground-muted">{t('camera.totalAssists')}</div>
+            <div className="text-lg font-bold tabular-nums">{season.assists}</div>
+          </div>
+          <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+            <div className="text-xs text-foreground-muted">{t('camera.totalMinutes')}</div>
+            <div className="text-lg font-bold tabular-nums">{season.minutes}</div>
+          </div>
+          {avgRating != null && (
+            <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+              <div className="text-xs text-foreground-muted">{t('camera.avgRating')}</div>
+              <div className={`text-lg font-bold tabular-nums ${getRatingColor(avgRating).class}`}>
+                {avgRating.toFixed(1)}
+                <span className="sr-only">
+                  {` — ${t(`camera.rating${getRatingColor(avgRating).label.charAt(0).toUpperCase() + getRatingColor(avgRating).label.slice(1)}`)}`}
+                </span>
+              </div>
+            </div>
+          )}
+          {avgPassAccuracy != null && (
+            <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+              <div className="text-xs text-foreground-muted">{t('camera.avgPassAccuracy')}</div>
+              <div className="text-lg font-bold tabular-nums">{avgPassAccuracy}%</div>
+            </div>
+          )}
+          <div className="rounded-lg border border-border bg-surface px-3 py-2.5">
+            <div className="text-xs text-foreground-muted">{t('camera.totalDistance')}</div>
+            <div className="text-lg font-bold tabular-nums">{totalDistanceKm} km</div>
+          </div>
+        </div>
+      )}
 
       {/* Skills: Radar + Grouped Stat Bars */}
       {skills && (
@@ -657,11 +783,14 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                       )}
                     </span>
                     {/* Rating */}
-                    {ms.overall_rating && (
+                    {ms.overall_rating != null && (
                       <span
-                        className={`w-8 text-right text-sm font-bold ${Number(ms.overall_rating) >= 7.5 ? 'text-primary' : Number(ms.overall_rating) >= 6 ? 'text-foreground' : 'text-foreground-muted'}`}
+                        className={`w-8 text-right text-sm font-bold ${getRatingColor(Number(ms.overall_rating)).class}`}
                       >
-                        {ms.overall_rating}
+                        {Number(ms.overall_rating).toFixed(1)}
+                        <span className="sr-only">
+                          {` — ${t(`camera.rating${getRatingColor(Number(ms.overall_rating)).label.charAt(0).toUpperCase() + getRatingColor(Number(ms.overall_rating)).label.slice(1)}`)}`}
+                        </span>
                       </span>
                     )}
                     {/* Chevron */}
@@ -679,49 +808,8 @@ export default async function PlayerPage({ params }: PlayerPageProps) {
                       />
                     </svg>
                   </summary>
-                  {/* Expanded stats */}
-                  <div className="grid grid-cols-2 gap-3 border-t border-border px-4 py-3 text-sm sm:grid-cols-4">
-                    {m?.slug && (
-                      <div className="col-span-2 sm:col-span-4">
-                        <Link
-                          href={`/matches/${m.slug}`}
-                          className="text-xs text-primary hover:underline"
-                        >
-                          {t('stats.match')} &rarr;
-                        </Link>
-                      </div>
-                    )}
-                    <div>
-                      <span className="text-xs text-foreground-muted">{t('stats.min')}</span>
-                      <div className="font-semibold">{ms.minutes_played ?? '-'}</div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-foreground-muted">
-                        {t('stats.passPercent')}
-                      </span>
-                      <div className="font-semibold">
-                        {ms.pass_success_rate ? `${ms.pass_success_rate}%` : '-'}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-foreground-muted">{t('stats.dist')}</span>
-                      <div className="font-semibold">
-                        {ms.distance_m ? `${Math.round(ms.distance_m / 100) / 10}km` : '-'}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-foreground-muted">{t('stats.shots')}</span>
-                      <div className="font-semibold">{ms.shots ?? '-'}</div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-foreground-muted">{t('stats.tackles')}</span>
-                      <div className="font-semibold">{ms.tackles ?? '-'}</div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-foreground-muted">{t('stats.int')}</span>
-                      <div className="font-semibold">{ms.interceptions ?? '-'}</div>
-                    </div>
-                  </div>
+                  {/* Expanded stats — categorized breakdown */}
+                  <MatchStatDetail stats={ms} matchSlug={m?.slug ?? null} t={t} />
                 </details>
               )
             })}

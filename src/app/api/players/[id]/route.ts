@@ -28,6 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       match_stats:match_player_stats (
         minutes_played, goals, assists, pass_success_rate, shots, shots_on_target,
         tackles, interceptions, distance_m, sprints_count, overall_rating,
+        key_passes, passes_total, passes_successful, dribbles_success, dribbles_fail, speed_avg,
         match:matches!match_player_stats_match_id_fkey (
           slug, match_date, competition,
           home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
@@ -72,6 +73,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     distance_m: number | null
     sprints_count: number | null
     overall_rating: number | null
+    key_passes: number | null
+    passes_total: number | null
+    passes_successful: number | null
+    dribbles_success: number | null
+    dribbles_fail: number | null
+    speed_avg: number | null
     match:
       | {
           slug: string
