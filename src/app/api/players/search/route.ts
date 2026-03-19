@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     .from('players')
     .select(
       `
-      id, name, name_ka, position, date_of_birth, photo_url, slug, platform_id,
+      id, name, name_ka, position, date_of_birth, photo_url, slug, platform_id, club_id,
       club:clubs!players_club_id_fkey ( name, name_ka )
     `
     )
@@ -62,6 +62,7 @@ export async function GET(request: NextRequest) {
       photo_url: p.photo_url,
       slug: p.slug,
       platform_id: p.platform_id,
+      club_id: p.club_id,
       club_name: club?.name ?? null,
       club_name_ka: club?.name_ka ?? null,
     }
