@@ -1,5 +1,6 @@
 -- Seed data for Georgian Football Talent Platform
--- 3 clubs, 12 players (4 per club), 5 matches, skills, season stats, match stats
+-- 3 clubs, 12 players (4 per club), 5 matches, skills, match stats
+-- NOTE: player_season_stats removed (dropped by camera integration migration)
 
 -- ============================================================
 -- CLUBS (3)
@@ -233,49 +234,16 @@ insert into public.players (id, club_id, name, name_ka, slug, date_of_birth, pos
 );
 
 -- ============================================================
--- PLAYER SKILLS (all 12 players)
+-- PLAYER SKILLS (camera-derived, 1-10 scale)
+-- No seed data — skills are populated by camera sync only.
+-- Empty player_skills table is correct after migration.
 -- ============================================================
-insert into public.player_skills (player_id, pace, shooting, passing, dribbling, defending, physical) values
--- Dinamo
-('b1b2c3d4-0001-4000-8000-000000000001', 78, 85, 62, 72, 28, 70),  -- Giorgi M. (ST)
-('b1b2c3d4-0002-4000-8000-000000000002', 68, 58, 88, 82, 55, 60),  -- Luka Z. (MID)
-('b1b2c3d4-0003-4000-8000-000000000003', 58, 30, 65, 45, 85, 82),  -- Davit L. (DEF)
-('b1b2c3d4-0004-4000-8000-000000000004', 50, 15, 55, 20, 18, 65),  -- Nika K. (GK)
--- Iberia 1999
-('b1b2c3d4-0005-4000-8000-000000000005', 92, 70, 68, 90, 22, 55),  -- Tornike B. (WNG)
-('b1b2c3d4-0006-4000-8000-000000000006', 72, 75, 82, 85, 35, 62),  -- Saba K. (ATT)
-('b1b2c3d4-0007-4000-8000-000000000007', 65, 28, 58, 40, 83, 85),  -- Aleksandre J. (DEF)
-('b1b2c3d4-0008-4000-8000-000000000008', 75, 52, 65, 60, 78, 80),  -- Vakhtang S. (MID)
--- Torpedo
-('b1b2c3d4-0009-4000-8000-000000000009', 88, 60, 65, 85, 20, 52),  -- Zurab D. (WNG)
-('b1b2c3d4-0010-4000-8000-000000000010', 55, 82, 58, 48, 25, 88),  -- Levan S. (ST)
-('b1b2c3d4-0011-4000-8000-000000000011', 52, 45, 86, 72, 50, 58),  -- Giorgi T. (MID)
-('b1b2c3d4-0012-4000-8000-000000000012', 45, 12, 50, 18, 15, 72);  -- Mate T. (GK)
 
 -- ============================================================
--- PLAYER SEASON STATS (2025-26 season)
+-- MATCHES (5) — camera schema (no match_report/highlights_url/camera_source)
+-- match_date is now timestamptz
 -- ============================================================
-insert into public.player_season_stats (player_id, season, matches_played, goals, assists, minutes_played, pass_accuracy, shots_on_target, tackles, interceptions, clean_sheets, distance_covered_km, sprints, source) values
--- Dinamo
-('b1b2c3d4-0001-4000-8000-000000000001', '2025-26', 14, 11, 3, 1180, 72.50, 28, 8, 3, 0, 108.40, 185, 'pixellot'),
-('b1b2c3d4-0002-4000-8000-000000000002', '2025-26', 16, 4, 9, 1385, 88.30, 12, 32, 18, 0, 142.60, 210, 'pixellot'),
-('b1b2c3d4-0003-4000-8000-000000000003', '2025-26', 15, 1, 1, 1350, 82.10, 2, 48, 35, 7, 118.20, 145, 'pixellot'),
-('b1b2c3d4-0004-4000-8000-000000000004', '2025-26', 16, 0, 0, 1440, 65.00, 0, 0, 0, 6, 62.50, 42, 'pixellot'),
--- Iberia 1999
-('b1b2c3d4-0005-4000-8000-000000000005', '2025-26', 15, 7, 8, 1260, 76.40, 22, 6, 2, 0, 138.90, 245, 'pixellot'),
-('b1b2c3d4-0006-4000-8000-000000000006', '2025-26', 14, 8, 6, 1150, 81.20, 20, 12, 5, 0, 125.30, 178, 'pixellot'),
-('b1b2c3d4-0007-4000-8000-000000000007', '2025-26', 16, 2, 0, 1430, 78.50, 4, 52, 38, 8, 120.80, 155, 'pixellot'),
-('b1b2c3d4-0008-4000-8000-000000000008', '2025-26', 15, 3, 4, 1310, 79.60, 10, 42, 28, 0, 152.40, 230, 'pixellot'),
--- Torpedo
-('b1b2c3d4-0009-4000-8000-000000000009', '2025-26', 13, 5, 6, 1050, 74.80, 15, 5, 3, 0, 122.70, 220, 'pixellot'),
-('b1b2c3d4-0010-4000-8000-000000000010', '2025-26', 14, 10, 2, 1200, 68.30, 25, 10, 4, 0, 98.60, 135, 'pixellot'),
-('b1b2c3d4-0011-4000-8000-000000000011', '2025-26', 15, 2, 7, 1290, 87.10, 8, 28, 22, 0, 135.20, 168, 'pixellot'),
-('b1b2c3d4-0012-4000-8000-000000000012', '2025-26', 14, 0, 0, 1260, 62.40, 0, 0, 0, 5, 58.30, 38, 'pixellot');
-
--- ============================================================
--- MATCHES (5)
--- ============================================================
-insert into public.matches (id, home_club_id, away_club_id, slug, home_score, away_score, competition, match_date, venue, match_report, match_report_ka, camera_source) values
+insert into public.matches (id, home_club_id, away_club_id, slug, home_score, away_score, competition, match_date, venue) values
 (
   'c1b2c3d4-0001-4000-8000-000000000001',
   'a1b2c3d4-0001-4000-8000-000000000001',
@@ -283,11 +251,8 @@ insert into public.matches (id, home_club_id, away_club_id, slug, home_score, aw
   'dinamo-vs-iberia1999-2025-09-15',
   3, 1,
   'Erovnuli Liga U19',
-  '2025-09-15',
-  'Dinamo Academy Arena, Tbilisi',
-  'Dinamo dominated from the start with Luka Zarandia pulling the strings in midfield. Giorgi Mikautadze scored a brace, including a brilliant solo goal in the 67th minute. Tornike Basilashvili pulled one back for Iberia 1999 with a trademark cut inside and finish.',
-  'დინამომ თავიდანვე იდომინირა, ლუკა ზარანდიამ შუა მოედანი მართა. გიორგი მიქაუტაძემ ორი გოლი გაიტანა, მათ შორის ბრწყინვალე სოლო გოლი 67-ე წუთზე. თორნიკე ბასილაშვილმა ერთი გოლი გაიტანა საბურთალოსთვის.',
-  'pixellot'
+  '2025-09-15T15:00:00Z',
+  'Dinamo Academy Arena, Tbilisi'
 ),
 (
   'c1b2c3d4-0002-4000-8000-000000000002',
@@ -296,11 +261,8 @@ insert into public.matches (id, home_club_id, away_club_id, slug, home_score, aw
   'torpedo-vs-dinamo-2025-10-03',
   2, 2,
   'Erovnuli Liga U19',
-  '2025-10-03',
-  'Ramaz Shengelia Stadium, Kutaisi',
-  'An intense derby in Kutaisi. Levan Shengelia opened the scoring with a powerful header. Dinamo equalized through Mikautadze before halftime. Zurab Davitashvili restored Torpedo''s lead with a brilliant run, but Zarandia''s late free kick earned Dinamo a point.',
-  'ინტენსიური დერბი ქუთაისში. ლევან შენგელიამ ძლიერი თავით გახსნა ანგარიში. დინამომ მიქაუტაძით გაათანაბრა შესვენებამდე. ზურაბ დავითაშვილმა ბრწყინვალე გარბენით აღადგინა ტორპედოს უპირატესობა, მაგრამ ზარანდიას გვიანმა თავისუფალმა დარტყმამ ქულა მოუტანა დინამოს.',
-  'pixellot'
+  '2025-10-03T14:00:00Z',
+  'Ramaz Shengelia Stadium, Kutaisi'
 ),
 (
   'c1b2c3d4-0003-4000-8000-000000000003',
@@ -309,11 +271,8 @@ insert into public.matches (id, home_club_id, away_club_id, slug, home_score, aw
   'iberia1999-vs-torpedo-2025-10-20',
   2, 0,
   'Erovnuli Liga U19',
-  '2025-10-20',
-  'Bendela Stadium, Tbilisi',
-  'Iberia 1999 controlled possession throughout and were rewarded with goals from Saba Kirtadze and Tornike Basilashvili. Aleksandre Jikia was immense at the back, winning every aerial duel. Torpedo struggled to create chances.',
-  'საბურთალომ მთელი თამაში მართა მფლობელობით და დაჯილდოვდა საბა კირთაძისა და თორნიკე ბასილაშვილის გოლებით. ალექსანდრე ჯიქია შეუჩერებელი იყო უკან, ყველა საჰაერო დუელი მოიგო. ტორპედომ ვერ შექმნა შანსები.',
-  'pixellot'
+  '2025-10-20T16:00:00Z',
+  'Bendela Stadium, Tbilisi'
 ),
 (
   'c1b2c3d4-0004-4000-8000-000000000004',
@@ -322,11 +281,8 @@ insert into public.matches (id, home_club_id, away_club_id, slug, home_score, aw
   'dinamo-vs-torpedo-2025-11-10',
   4, 1,
   'Erovnuli Liga U19',
-  '2025-11-10',
-  'Dinamo Academy Arena, Tbilisi',
-  'A dominant Dinamo performance. Mikautadze scored a hat-trick, taking his season tally to double figures. Zarandia added the fourth with a superb long-range effort. Shengelia scored a consolation for Torpedo from the penalty spot.',
-  'დინამოს დომინანტური თამაში. მიქაუტაძემ ჰეტ-ტრიკი გააკეთა და სეზონის მაჩვენებელი ორნიშნა რიცხვამდე გაზარდა. ზარანდიამ მეოთხე ბრწყინვალე შორეული დარტყმით გაიტანა. შენგელიამ ტორპედოსთვის საპატიო გოლი პენალტიდან გაიტანა.',
-  'pixellot'
+  '2025-11-10T15:00:00Z',
+  'Dinamo Academy Arena, Tbilisi'
 ),
 (
   'c1b2c3d4-0005-4000-8000-000000000005',
@@ -335,53 +291,53 @@ insert into public.matches (id, home_club_id, away_club_id, slug, home_score, aw
   'iberia1999-vs-dinamo-2025-12-01',
   1, 1,
   'Georgian U19 Cup Semifinal',
-  '2025-12-01',
-  'Bendela Stadium, Tbilisi',
-  'A tense cup semifinal. Kirtadze gave Iberia 1999 the lead with a clever chip over the goalkeeper. Dinamo pushed hard and equalized through Lobzhanidze''s towering header from a corner. Both goalkeepers made outstanding saves in the second half.',
-  'დაძაბული თასის ნახევარფინალი. კირთაძემ საბურთალოს უპირატესობა მოიტანა ჭკვიანი ჩიპით მეკარეს ზემოთ. დინამომ ძლიერად იბრძოლა და ლობჟანიძის ძლიერი თავით გაათანაბრა კუთხურიდან. ორივე მეკარემ ბრწყინვალე სეივები გააკეთა მეორე ტაიმში.',
-  'pixellot'
+  '2025-12-01T14:00:00Z',
+  'Bendela Stadium, Tbilisi'
 );
 
 -- ============================================================
--- MATCH PLAYER STATS (key performers from each match)
+-- MATCH PLAYER STATS (camera schema — new column names)
+-- pass_accuracy→pass_success_rate, distance_km→distance_m (unit change),
+-- rating→overall_rating, sprints→sprints_count
+-- Dropped: top_speed_kmh (replaced by speed_avg from fitness)
 -- ============================================================
 
 -- Match 1: Dinamo 3-1 Iberia 1999
-insert into public.match_player_stats (match_id, player_id, minutes_played, goals, assists, pass_accuracy, shots, shots_on_target, tackles, interceptions, distance_km, sprints, top_speed_kmh, rating, source) values
-('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 2, 0, 70.50, 5, 4, 1, 0, 9.80, 18, 31.2, 8.5, 'pixellot'),   -- Mikautadze
-('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0002-4000-8000-000000000002', 90, 0, 2, 91.20, 2, 1, 3, 2, 10.50, 16, 28.5, 8.2, 'pixellot'),  -- Zarandia
-('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 0, 0, 85.00, 0, 0, 5, 4, 8.90, 12, 27.1, 7.3, 'pixellot'),   -- Lobzhanidze
-('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0004-4000-8000-000000000004', 90, 0, 0, 62.00, 0, 0, 0, 0, 4.20, 3, 18.0, 7.0, 'pixellot'),    -- Nika K. (GK)
-('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0005-4000-8000-000000000005', 90, 1, 0, 72.30, 4, 2, 0, 0, 10.20, 22, 33.1, 7.5, 'pixellot'),  -- Basilashvili
-('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0006-4000-8000-000000000006', 85, 0, 1, 78.60, 3, 1, 2, 1, 9.40, 15, 29.8, 6.8, 'pixellot'),   -- Kirtadze
+insert into public.match_player_stats (match_id, player_id, minutes_played, goals, assists, pass_success_rate, shots, shots_on_target, tackles, interceptions, distance_m, sprints_count, overall_rating) values
+('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 2, 0, 70.50, 5, 4, 1, 0, 9800, 18, 8.5),   -- Mikautadze
+('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0002-4000-8000-000000000002', 90, 0, 2, 91.20, 2, 1, 3, 2, 10500, 16, 8.2),  -- Zarandia
+('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 0, 0, 85.00, 0, 0, 5, 4, 8900, 12, 7.3),   -- Lobzhanidze
+('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0004-4000-8000-000000000004', 90, 0, 0, 62.00, 0, 0, 0, 0, 4200, 3, 7.0),    -- Nika K. (GK)
+('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0005-4000-8000-000000000005', 90, 1, 0, 72.30, 4, 2, 0, 0, 10200, 22, 7.5),  -- Basilashvili
+('c1b2c3d4-0001-4000-8000-000000000001', 'b1b2c3d4-0006-4000-8000-000000000006', 85, 0, 1, 78.60, 3, 1, 2, 1, 9400, 15, 6.8),   -- Kirtadze
 
 -- Match 2: Torpedo 2-2 Dinamo
-('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 1, 0, 68.20, 4, 2, 0, 1, 9.60, 17, 31.0, 7.5, 'pixellot'),   -- Mikautadze
-('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0002-4000-8000-000000000002', 90, 1, 0, 85.50, 3, 2, 4, 3, 10.80, 15, 28.0, 7.8, 'pixellot'),  -- Zarandia
-('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0009-4000-8000-000000000009', 90, 1, 0, 70.10, 3, 2, 1, 0, 10.10, 20, 32.5, 7.8, 'pixellot'),  -- Zurab D.
-('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0010-4000-8000-000000000010', 90, 1, 0, 65.40, 4, 2, 2, 1, 8.50, 10, 26.8, 7.2, 'pixellot'),  -- Shengelia
-('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0011-4000-8000-000000000011', 90, 0, 1, 89.20, 1, 0, 3, 3, 10.40, 14, 27.0, 7.4, 'pixellot'),  -- Tsitaishvili
+('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 1, 0, 68.20, 4, 2, 0, 1, 9600, 17, 7.5),   -- Mikautadze
+('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0002-4000-8000-000000000002', 90, 1, 0, 85.50, 3, 2, 4, 3, 10800, 15, 7.8),  -- Zarandia
+('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0009-4000-8000-000000000009', 90, 1, 0, 70.10, 3, 2, 1, 0, 10100, 20, 7.8),  -- Zurab D.
+('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0010-4000-8000-000000000010', 90, 1, 0, 65.40, 4, 2, 2, 1, 8500, 10, 7.2),   -- Shengelia
+('c1b2c3d4-0002-4000-8000-000000000002', 'b1b2c3d4-0011-4000-8000-000000000011', 90, 0, 1, 89.20, 1, 0, 3, 3, 10400, 14, 7.4),  -- Tsitaishvili
 
 -- Match 3: Iberia 1999 2-0 Torpedo
-('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0005-4000-8000-000000000005', 90, 1, 0, 75.00, 3, 2, 1, 0, 10.50, 24, 33.5, 8.0, 'pixellot'),  -- Basilashvili
-('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0006-4000-8000-000000000006', 90, 1, 1, 83.40, 4, 3, 1, 0, 9.80, 16, 30.2, 8.3, 'pixellot'),   -- Kirtadze
-('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0007-4000-8000-000000000007', 90, 0, 0, 80.20, 1, 0, 6, 5, 8.60, 11, 26.5, 7.8, 'pixellot'),   -- Jikia
-('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0008-4000-8000-000000000008', 90, 0, 1, 81.00, 2, 1, 5, 3, 11.20, 19, 29.0, 7.5, 'pixellot'),  -- Vakhtang S.
-('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0010-4000-8000-000000000010', 90, 0, 0, 62.50, 3, 1, 1, 0, 8.20, 9, 26.0, 5.5, 'pixellot'),    -- Shengelia
+('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0005-4000-8000-000000000005', 90, 1, 0, 75.00, 3, 2, 1, 0, 10500, 24, 8.0),  -- Basilashvili
+('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0006-4000-8000-000000000006', 90, 1, 1, 83.40, 4, 3, 1, 0, 9800, 16, 8.3),   -- Kirtadze
+('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0007-4000-8000-000000000007', 90, 0, 0, 80.20, 1, 0, 6, 5, 8600, 11, 7.8),   -- Jikia
+('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0008-4000-8000-000000000008', 90, 0, 1, 81.00, 2, 1, 5, 3, 11200, 19, 7.5),  -- Vakhtang S.
+('c1b2c3d4-0003-4000-8000-000000000003', 'b1b2c3d4-0010-4000-8000-000000000010', 90, 0, 0, 62.50, 3, 1, 1, 0, 8200, 9, 5.5),    -- Shengelia
 
 -- Match 4: Dinamo 4-1 Torpedo
-('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 3, 0, 74.00, 7, 5, 0, 0, 10.00, 20, 31.5, 9.2, 'pixellot'),  -- Mikautadze hat-trick
-('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0002-4000-8000-000000000002', 90, 1, 2, 90.50, 2, 2, 2, 1, 10.60, 14, 28.2, 8.8, 'pixellot'),  -- Zarandia
-('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 0, 0, 88.00, 0, 0, 4, 3, 8.80, 10, 26.8, 7.5, 'pixellot'),   -- Lobzhanidze
-('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0010-4000-8000-000000000010', 90, 1, 0, 60.20, 3, 2, 1, 0, 8.10, 8, 25.5, 6.2, 'pixellot'),    -- Shengelia (pen)
-('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0012-4000-8000-000000000012', 90, 0, 0, 58.00, 0, 0, 0, 0, 4.00, 3, 17.5, 5.0, 'pixellot'),    -- Mate T. (GK)
+('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 3, 0, 74.00, 7, 5, 0, 0, 10000, 20, 9.2),  -- Mikautadze hat-trick
+('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0002-4000-8000-000000000002', 90, 1, 2, 90.50, 2, 2, 2, 1, 10600, 14, 8.8),  -- Zarandia
+('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 0, 0, 88.00, 0, 0, 4, 3, 8800, 10, 7.5),   -- Lobzhanidze
+('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0010-4000-8000-000000000010', 90, 1, 0, 60.20, 3, 2, 1, 0, 8100, 8, 6.2),    -- Shengelia (pen)
+('c1b2c3d4-0004-4000-8000-000000000004', 'b1b2c3d4-0012-4000-8000-000000000012', 90, 0, 0, 58.00, 0, 0, 0, 0, 4000, 3, 5.0),    -- Mate T. (GK)
 
 -- Match 5: Iberia 1999 1-1 Dinamo (Cup Semifinal)
-('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0005-4000-8000-000000000005', 90, 0, 0, 73.50, 3, 1, 0, 1, 10.30, 21, 32.8, 6.8, 'pixellot'),  -- Basilashvili
-('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0006-4000-8000-000000000006', 90, 1, 0, 80.00, 2, 2, 1, 0, 9.50, 14, 29.5, 7.8, 'pixellot'),   -- Kirtadze (chip goal)
-('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 0, 0, 66.80, 4, 1, 1, 0, 9.70, 16, 30.8, 6.5, 'pixellot'),   -- Mikautadze
-('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 1, 0, 82.50, 1, 1, 5, 4, 8.70, 11, 27.0, 7.6, 'pixellot'),   -- Lobzhanidze (header)
-('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0004-4000-8000-000000000004', 90, 0, 0, 60.00, 0, 0, 0, 0, 4.10, 4, 18.2, 7.5, 'pixellot');    -- Nika K. (GK, great saves)
+('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0005-4000-8000-000000000005', 90, 0, 0, 73.50, 3, 1, 0, 1, 10300, 21, 6.8),  -- Basilashvili
+('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0006-4000-8000-000000000006', 90, 1, 0, 80.00, 2, 2, 1, 0, 9500, 14, 7.8),   -- Kirtadze (chip goal)
+('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0001-4000-8000-000000000001', 90, 0, 0, 66.80, 4, 1, 1, 0, 9700, 16, 6.5),   -- Mikautadze
+('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0003-4000-8000-000000000003', 90, 1, 0, 82.50, 1, 1, 5, 4, 8700, 11, 7.6),   -- Lobzhanidze (header)
+('c1b2c3d4-0005-4000-8000-000000000005', 'b1b2c3d4-0004-4000-8000-000000000004', 90, 0, 0, 60.00, 0, 0, 0, 0, 4100, 4, 7.5);    -- Nika K. (GK, great saves)
 
 -- ============================================================
 -- PLAYER CLUB HISTORY (all 12 players — currently at their clubs)
