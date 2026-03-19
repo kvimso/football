@@ -2,7 +2,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-03-19-starlive-camera-integration-design.md`
 **Created:** 2026-03-20
-**Status:** Ready to execute
+**Status:** Sessions 1-2 complete, session 3 next
 
 **Key rules:**
 - List pages (player directory, match list): query real columns ONLY — never fetch JSONB
@@ -13,7 +13,7 @@
 
 ---
 
-## Session 1: Database Migration + TypeScript Types
+## Session 1: Database Migration + TypeScript Types ✅ COMPLETE
 
 **Goal:** New schema live on Supabase, types generated, all existing pages compile.
 
@@ -48,7 +48,7 @@
 
 ---
 
-## Session 2: Sync Service + Test Data
+## Session 2: Sync Service + Test Data ✅ COMPLETE
 
 **Goal:** Sync pipeline working end-to-end, test data in database.
 
