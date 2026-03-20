@@ -1,7 +1,12 @@
+interface DirectionSegment {
+  num: number
+  percent: number
+}
+
 interface DirectionData {
-  left: number
-  center: number
-  right: number
+  left: DirectionSegment
+  center: DirectionSegment
+  right: DirectionSegment
 }
 
 interface AttackDirectionProps {
@@ -23,11 +28,11 @@ function DirectionBar({
   variant: 'home' | 'away'
   t: (key: string) => string
 }) {
-  const total = data.left + data.center + data.right
+  const total = data.left.num + data.center.num + data.right.num
   if (total === 0) return null
 
-  const pctLeft = Math.round((data.left / total) * 100)
-  const pctCenter = Math.round((data.center / total) * 100)
+  const pctLeft = Math.round(data.left.percent)
+  const pctCenter = Math.round(data.center.percent)
   const pctRight = 100 - pctLeft - pctCenter // ensure they sum to 100
 
   const segments = [
