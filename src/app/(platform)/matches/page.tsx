@@ -35,7 +35,7 @@ export default async function MatchesPage({ searchParams }: MatchesPageProps) {
     .from('matches')
     .select(
       `
-      slug, home_score, away_score, competition, match_date,
+      slug, home_score, away_score, competition, match_date, source,
       home_club:clubs!matches_home_club_id_fkey ( name, name_ka ),
       away_club:clubs!matches_away_club_id_fkey ( name, name_ka )
     `
