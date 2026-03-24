@@ -12,12 +12,14 @@ interface AuthUser {
 interface AuthState {
   user: AuthUser | null
   userRole: UserRole | null
+  isApproved: boolean
   signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState>({
   user: null,
   userRole: null,
+  isApproved: false,
   signOut: async () => {},
 })
 
@@ -28,14 +30,17 @@ export function useAuth() {
 export function AuthProvider({
   initialUser,
   initialRole,
+  initialIsApproved,
   children,
 }: {
   initialUser: AuthUser | null
   initialRole: UserRole | null
+  initialIsApproved: boolean
   children: React.ReactNode
 }) {
   const [user, setUser] = useState<AuthUser | null>(initialUser)
   const [userRole, setUserRole] = useState<UserRole | null>(initialRole)
+  const [isApproved, setIsApproved] = useState(initialIsApproved)
 
   useEffect(() => {
     try {
@@ -56,16 +61,20 @@ export function AuthProvider({
             lastUserId = session.user.id
             supabase
               .from('profiles')
-              .select('role')
+              .select('role, is_approved')
               .eq('id', session.user.id)
               .single()
               .then(({ data, error }) => {
-                if (!error) setUserRole((data?.role as UserRole) ?? null)
+                if (!error) {
+                  setUserRole((data?.role as UserRole) ?? null)
+                  setIsApproved(data?.is_approved ?? false)
+                }
               })
           }
         } else {
           lastUserId = null
           setUserRole(null)
+          setIsApproved(false)
         }
       })
 
@@ -81,9 +90,13 @@ export function AuthProvider({
     await supabase.auth.signOut()
     setUser(null)
     setUserRole(null)
+    setIsApproved(false)
   }, [])
 
-  const value = useMemo(() => ({ user, userRole, signOut }), [user, userRole, signOut])
+  const value = useMemo(
+    () => ({ user, userRole, isApproved, signOut }),
+    [user, userRole, isApproved, signOut]
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

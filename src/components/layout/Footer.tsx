@@ -2,91 +2,69 @@
 
 import Link from 'next/link'
 import { useLang } from '@/hooks/useLang'
-import { useAuth } from '@/context/AuthContext'
 
 export function Footer() {
   const { t } = useLang()
-  const { user } = useAuth()
 
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="mx-auto max-w-7xl px-4 py-10">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
           {/* Brand */}
-          <div>
+          <div className="flex items-center gap-3">
             <Link
               href="/"
               className="inline-block rounded bg-primary px-2 py-0.5 text-sm font-bold text-background"
             >
               GFT
             </Link>
-            <p className="mt-2 text-sm text-foreground-secondary">{t('footer.platformName')}</p>
+            <span className="text-xs text-foreground-faint">{t('footer.location')}</span>
           </div>
 
-          {/* Navigation */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('nav.clubs')}</h4>
-            <nav className="mt-2 flex flex-col gap-1.5">
-              <Link
-                href="/clubs"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('nav.clubs')}
-              </Link>
-            </nav>
-          </div>
-
-          {/* Platform */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('nav.about')}</h4>
-            <nav className="mt-2 flex flex-col gap-1.5">
-              <Link
-                href="/about"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('nav.about')}
-              </Link>
-              <Link
-                href="/contact"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('nav.contact')}
-              </Link>
-              {user ? (
-                <Link
-                  href="/dashboard"
-                  className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-                >
-                  {t('nav.dashboard')}
-                </Link>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-                  >
-                    {t('nav.login')}
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-                  >
-                    {t('nav.register')}
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
+          {/* Links */}
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <Link
+              href="/about"
+              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+            >
+              {t('nav.about')}
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+            >
+              {t('nav.contact')}
+            </Link>
+            <Link
+              href="/privacy"
+              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+            >
+              {t('footer.privacy')}
+            </Link>
+            <Link
+              href="/terms"
+              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+            >
+              {t('footer.terms')}
+            </Link>
+            <Link
+              href="/demo"
+              className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+            >
+              {t('footer.requestDemo')}
+            </Link>
+          </nav>
 
           {/* Contact */}
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('footer.contact')}</h4>
-            <p className="mt-2 text-sm text-foreground-secondary">info@gft.ge</p>
-            <p className="mt-1 text-sm text-foreground-secondary">{t('footer.location')}</p>
-          </div>
+          <a
+            href="mailto:info@gft.ge"
+            className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+          >
+            info@gft.ge
+          </a>
         </div>
 
-        <div className="mt-8 border-t border-border pt-6 text-center text-xs text-foreground-faint">
+        <div className="mt-6 border-t border-border pt-4 text-center text-xs text-foreground-faint">
           &copy; {new Date().getFullYear()} {t('footer.platformName')}. {t('footer.rights')}
         </div>
       </div>

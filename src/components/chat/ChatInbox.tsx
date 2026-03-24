@@ -73,8 +73,8 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
             : t('chat.noConversationsHintAdmin')}
         </p>
         {userRole === 'scout' && (
-          <Link href="/clubs" className="btn-primary mt-4 text-sm">
-            {t('nav.exploreClubs')}
+          <Link href="/leagues" className="btn-primary mt-4 text-sm">
+            {t('nav.exploreLeagues')}
           </Link>
         )}
       </div>

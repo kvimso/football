@@ -36,15 +36,18 @@ function NavLink({
   )
 }
 
-interface NavbarProps {
-  showInfoLinks?: boolean
-}
-
-export function Navbar({ showInfoLinks = false }: NavbarProps) {
+export function Navbar() {
   const { t } = useLang()
-  const { user, userRole } = useAuth()
+  const { user, userRole, isApproved } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+
+  // Derive nav visibility flags
+  const showPublicLinks = !user
+  const showRequestDemo = !user || (userRole === 'scout' && !isApproved)
+  const showMessages =
+    !!user && userRole !== 'platform_admin' && !(userRole === 'scout' && !isApproved)
+  const showAdmin = userRole === 'academy_admin'
 
   // Close mobile menu on viewport resize crossing md breakpoint
   useEffect(() => {
@@ -56,9 +59,9 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
     return () => mql.removeEventListener('change', handler)
   }, [])
 
-  // Poll unread message count every 30s
+  // Poll unread message count every 30s — only when Messages link is visible
   useEffect(() => {
-    if (!user || userRole === 'platform_admin') return
+    if (!showMessages) return
     let cancelled = false
     const supabase = createClient()
 
@@ -75,7 +78,7 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
       cancelled = true
       clearInterval(interval)
     }
-  }, [user, userRole])
+  }, [showMessages])
 
   const closeMobile = useCallback(() => setMenuOpen(false), [])
 
@@ -104,17 +107,21 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
 
         {/* Desktop nav links — center */}
         <div className="hidden items-center gap-5 md:flex">
-          {user && (
-            <>
-              <NavLink href="/clubs">{t('nav.clubs')}</NavLink>
-            </>
-          )}
-          {showInfoLinks && (
+          <NavLink href="/leagues">{t('nav.leagues')}</NavLink>
+          {showPublicLinks && (
             <>
               <NavLink href="/about">{t('nav.about')}</NavLink>
               <NavLink href="/contact">{t('nav.contact')}</NavLink>
             </>
           )}
+          {showRequestDemo && <NavLink href="/demo">{t('nav.requestDemo')}</NavLink>}
+          {showMessages && (
+            <NavLink href={messagesHref}>
+              {t('nav.messages')}
+              {unreadCount > 0 && <span className="h-2 w-2 rounded-full bg-primary" />}
+            </NavLink>
+          )}
+          {showAdmin && <NavLink href="/admin">{t('nav.admin')}</NavLink>}
         </div>
 
         {/* Right side actions */}
@@ -123,32 +130,6 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
 
           {user ? (
             <>
-              {/* Messages link with green dot */}
-              {userRole !== 'platform_admin' && (
-                <Link
-                  href={messagesHref}
-                  className="relative hidden items-center gap-1.5 text-sm text-foreground-muted hover:text-foreground transition-colors md:flex"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
-                    />
-                  </svg>
-                  {t('nav.messages')}
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1.5 h-2 w-2 rounded-full bg-primary" />
-                  )}
-                </Link>
-              )}
-
               <ThemeToggle />
               <AvatarDropdown />
             </>
@@ -204,15 +185,10 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
         <div className="overflow-hidden">
           <div className="border-t border-border bg-nav-bg px-4 py-3">
             <div className="flex flex-col gap-2">
-              {/* Platform links */}
-              {user && (
-                <>
-                  <NavLink href="/clubs" onClick={closeMobile}>
-                    {t('nav.clubs')}
-                  </NavLink>
-                </>
-              )}
-              {showInfoLinks && (
+              <NavLink href="/leagues" onClick={closeMobile}>
+                {t('nav.leagues')}
+              </NavLink>
+              {showPublicLinks && (
                 <>
                   <NavLink href="/about" onClick={closeMobile}>
                     {t('nav.about')}
@@ -222,13 +198,15 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
                   </NavLink>
                 </>
               )}
+              {showRequestDemo && (
+                <NavLink href="/demo" onClick={closeMobile}>
+                  {t('nav.requestDemo')}
+                </NavLink>
+              )}
 
               {user && (
                 <>
-                  {/* Separator */}
                   <div className="border-t border-border my-1" />
-
-                  {/* Your Space links */}
                   <NavLink href={dashboardHref} onClick={closeMobile}>
                     {userRole === 'platform_admin'
                       ? t('platform.title')
@@ -236,7 +214,7 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
                         ? t('nav.admin')
                         : t('nav.dashboard')}
                   </NavLink>
-                  {userRole !== 'platform_admin' && (
+                  {showMessages && (
                     <NavLink href={messagesHref} onClick={closeMobile}>
                       {t('nav.messages')}
                       {unreadCount > 0 && (

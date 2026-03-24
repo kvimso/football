@@ -41,6 +41,14 @@ html { scroll-behavior: smooth; }
   --pos-wng-bg: #E0F5F5;
   --pos-st: #2563EB;
   --pos-st-bg: #E8F0FE;
+
+  /* Age group colors (semantic aliases — avoid reusing position tokens directly) */
+  --age-u15: var(--pos-mid);
+  --age-u15-bg: var(--pos-mid-bg);
+  --age-u17: var(--pos-gk);
+  --age-u17-bg: var(--pos-gk-bg);
+  --age-u19: var(--pos-st);
+  --age-u19-bg: var(--pos-st-bg);
 }
 
 /* ── Dark theme (toggled via data-theme attribute) ── */
@@ -108,6 +116,12 @@ html { scroll-behavior: smooth; }
   --color-pos-wng-bg: var(--pos-wng-bg);
   --color-pos-st: var(--pos-st);
   --color-pos-st-bg: var(--pos-st-bg);
+  --color-age-u15: var(--age-u15);
+  --color-age-u15-bg: var(--age-u15-bg);
+  --color-age-u17: var(--age-u17);
+  --color-age-u17-bg: var(--age-u17-bg);
+  --color-age-u19: var(--age-u19);
+  --color-age-u19-bg: var(--age-u19-bg);
 }
 
 /* Non-inline so --font-sans is a real CSS variable, overridable by :lang(ka) */

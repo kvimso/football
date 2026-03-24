@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout/Footer'
 export default function SharedLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <Navbar showInfoLinks />
+      <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

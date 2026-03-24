@@ -27,8 +27,8 @@ export function ChatEmptyState({ userRole }: ChatEmptyStateProps) {
       </svg>
       <p className="mt-4 text-sm text-foreground-muted">{t('chat.selectConversation')}</p>
       {userRole === 'scout' ? (
-        <Link href="/clubs" className="btn-primary mt-4 text-sm">
-          {t('nav.exploreClubs')}
+        <Link href="/leagues" className="btn-primary mt-4 text-sm">
+          {t('nav.exploreLeagues')}
         </Link>
       ) : (
         <p className="mt-2 text-xs text-foreground-muted/60">{t('chat.emptyStateAdminHint')}</p>

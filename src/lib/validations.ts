@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { AGE_GROUPS } from '@/lib/constants'
 
 export const uuidSchema = z.string().uuid()
 
@@ -35,6 +36,27 @@ export const clubFormSchema = z.object({
   description: z.string().max(2000).optional(),
   description_ka: z.string().max(2000).optional(),
   website: z.string().url().max(200).optional().or(z.literal('')),
+})
+
+export const leagueFormSchema = z.object({
+  name: z.string().min(1).max(200),
+  name_ka: z.string().min(1).max(200),
+  age_group: z.enum(AGE_GROUPS),
+  season: z
+    .string()
+    .min(1)
+    .max(20)
+    .regex(/^\d{4}-\d{2}$/, 'Must be YYYY-YY format'),
+  starlive_url: z
+    .string()
+    .url()
+    .max(500)
+    .refine((url) => url.startsWith('https://'), 'URL must use HTTPS'),
+  description: z.string().max(2000).optional().or(z.literal('')),
+  description_ka: z.string().max(2000).optional().or(z.literal('')),
+  logo_url: z.string().url().max(500).optional().or(z.literal('')),
+  is_active: z.boolean().optional(),
+  display_order: z.number().int().min(0).optional(),
 })
 
 export const contactMessageSchema = z.object({

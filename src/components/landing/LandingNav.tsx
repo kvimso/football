@@ -11,7 +11,7 @@ import { ThemeToggle } from '@/components/layout/ThemeToggle'
 export function LandingNav() {
   const { t } = useLang()
   const pathname = usePathname()
-  const { user } = useAuth()
+  const { user, userRole } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Close mobile menu on viewport resize crossing md breakpoint
@@ -24,10 +24,17 @@ export function LandingNav() {
     return () => mql.removeEventListener('change', handler)
   }, [])
 
+  const dashboardHref =
+    userRole === 'platform_admin'
+      ? '/platform'
+      : userRole === 'academy_admin'
+        ? '/admin'
+        : '/dashboard'
+
   const navLinks = [
-    { href: '/#for-scouts', label: t('nav.forScouts') },
-    { href: '/#for-academies', label: t('nav.forAcademies') },
+    { href: '/leagues', label: t('nav.leagues'), isActive: pathname === '/leagues' },
     { href: '/about', label: t('nav.about'), isActive: pathname === '/about' },
+    { href: '/contact', label: t('nav.contact'), isActive: pathname === '/contact' },
   ]
 
   return (
@@ -61,19 +68,19 @@ export function LandingNav() {
           <ThemeToggle />
 
           {user ? (
-            <Link href="/clubs" className="btn-primary text-sm">
-              {t('nav.exploreClubs')}
+            <Link href={dashboardHref} className="btn-primary text-sm">
+              {t('nav.exploreLeagues')}
             </Link>
           ) : (
             <>
+              <Link href="/demo" className="btn-primary text-sm">
+                {t('nav.requestDemo')}
+              </Link>
               <Link
                 href="/login"
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"
               >
                 {t('nav.login')}
-              </Link>
-              <Link href="/register" className="btn-primary text-sm">
-                {t('nav.getStarted')} &rarr;
               </Link>
             </>
           )}
@@ -124,13 +131,15 @@ export function LandingNav() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                href="/contact"
-                onClick={() => setMenuOpen(false)}
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('nav.contact')}
-              </Link>
+              {!user && (
+                <Link
+                  href="/demo"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  {t('nav.requestDemo')}
+                </Link>
+              )}
             </div>
           </div>
         </div>

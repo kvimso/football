@@ -289,6 +289,54 @@ export type Database = {
           },
         ]
       }
+      leagues: {
+        Row: {
+          age_group: string
+          created_at: string
+          description: string | null
+          description_ka: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          name_ka: string
+          season: string
+          starlive_url: string
+          updated_at: string
+        }
+        Insert: {
+          age_group: string
+          created_at?: string
+          description?: string | null
+          description_ka?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          name_ka: string
+          season: string
+          starlive_url: string
+          updated_at?: string
+        }
+        Update: {
+          age_group?: string
+          created_at?: string
+          description?: string | null
+          description_ka?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          name_ka?: string
+          season?: string
+          starlive_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       match_heatmaps: {
         Row: {
           coords: Json
