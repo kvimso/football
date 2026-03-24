@@ -71,6 +71,7 @@ export function PendingPolling({ userId }: PendingPollingProps) {
             ? '/platform'
             : '/dashboard'
       routerRef.current.push(destination)
+      routerRef.current.refresh()
     }
   }, [userId])
 
@@ -161,6 +162,9 @@ export function PendingPolling({ userId }: PendingPollingProps) {
         {t('auth.pendingDescription')}
       </p>
       <p className="mt-4 text-sm text-foreground-secondary">
+        <a href="/demo" className="font-medium text-primary hover:underline">
+          {t('nav.requestDemo')}
+        </a>{' '}
         {t('auth.pendingContact')}{' '}
         <a href="mailto:info@gft.ge" className="font-medium text-primary hover:underline">
           info@gft.ge

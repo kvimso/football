@@ -20,7 +20,10 @@ const notoGeorgian = Noto_Sans_Georgian({
 })
 
 export const metadata: Metadata = {
-  title: 'Georgian Football Talent Platform',
+  title: {
+    default: 'Georgian Football Talent Platform',
+    template: '%s | Georgian Football Talent',
+  },
   description:
     'Discover the next generation of Georgian football talent. A scouting platform connecting academies with international scouts and agents.',
 }
@@ -41,6 +44,7 @@ export default async function RootLayout({
   // Check auth server-side so AuthProvider hydrates with correct state (no flash)
   let initialUser: { id: string; email?: string } | null = null
   let initialRole: UserRole | null = null
+  let initialIsApproved = false
   const hasAuthCookie = cookieStore.getAll().some((c) => c.name.startsWith('sb-'))
   if (hasAuthCookie) {
     try {
@@ -50,8 +54,13 @@ export default async function RootLayout({
       } = await supabase.auth.getUser()
       if (user) {
         initialUser = { id: user.id, email: user.email ?? undefined }
-        const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        const { data } = await supabase
+          .from('profiles')
+          .select('role, is_approved')
+          .eq('id', user.id)
+          .single()
         initialRole = (data?.role as UserRole) ?? null
+        initialIsApproved = data?.is_approved ?? false
       }
     } catch {
       // Auth check failed — hydrate as anonymous
@@ -63,7 +72,11 @@ export default async function RootLayout({
       <body className={`${inter.variable} ${notoGeorgian.variable} font-sans antialiased`}>
         <ThemeProvider initialTheme={initialTheme}>
           <LanguageProvider initialLang={lang as 'en' | 'ka'}>
-            <AuthProvider initialUser={initialUser} initialRole={initialRole}>
+            <AuthProvider
+              initialUser={initialUser}
+              initialRole={initialRole}
+              initialIsApproved={initialIsApproved}
+            >
               {children}
             </AuthProvider>
           </LanguageProvider>

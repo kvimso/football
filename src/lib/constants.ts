@@ -1,6 +1,14 @@
-import type { Position } from '@/lib/types'
+import type { Position, AgeGroup } from '@/lib/types'
 
 export const POSITIONS = ['GK', 'DEF', 'MID', 'ATT', 'WNG', 'ST'] as const
+
+export const AGE_GROUPS = ['U13', 'U15', 'U17', 'U19', 'U21', 'Senior'] as const
+
+export const AGE_GROUP_COLOR_CLASSES: Partial<Record<AgeGroup, string>> = {
+  U15: 'bg-age-u15-bg text-age-u15',
+  U17: 'bg-age-u17-bg text-age-u17',
+  U19: 'bg-age-u19-bg text-age-u19',
+}
 
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 

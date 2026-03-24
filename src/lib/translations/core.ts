@@ -22,6 +22,9 @@ export const en = {
     forAcademies: 'For Academies',
     learnMore: 'Learn More',
     exploreClubs: 'Explore Clubs',
+    exploreLeagues: 'Explore Leagues',
+    leagues: 'Leagues',
+    requestDemo: 'Request Demo',
   },
   common: {
     loading: 'Loading...',
@@ -40,6 +43,7 @@ export const en = {
     noResults: 'No results found',
     dismiss: 'Dismiss',
     send: 'Send',
+    delete: 'Delete',
   },
   roles: {
     scout: 'Scout',
@@ -86,6 +90,21 @@ export const en = {
     platformName: 'Georgian Football Talent Platform',
     contact: 'Contact',
     location: 'Tbilisi, Georgia',
+    privacy: 'Privacy Policy',
+    terms: 'Terms of Service',
+    requestDemo: 'Request Demo',
+  },
+  leagues: {
+    title: 'Georgian Youth Leagues',
+    subtitle:
+      'Live match coverage powered by Starlive cameras across Georgian youth football leagues.',
+    viewOnStarlive: 'View on Starlive',
+    emptyState: 'No leagues available yet.',
+    season: 'Season',
+  },
+  demo: {
+    title: 'Request Demo',
+    comingSoon: 'Demo request form coming soon. Contact us at info@gft.ge to schedule a demo.',
   },
   watchlist: {
     watch: 'Watch',
@@ -181,6 +200,9 @@ export const ka = {
     forAcademies: 'აკადემიებისთვის',
     learnMore: 'გაიგე მეტი',
     exploreClubs: 'კლუბების ნახვა',
+    exploreLeagues: 'ლიგების ნახვა',
+    leagues: 'ლიგები',
+    requestDemo: 'დემოს მოთხოვნა',
   },
   common: {
     loading: 'იტვირთება...',
@@ -199,6 +221,7 @@ export const ka = {
     noResults: 'შედეგები ვერ მოიძებნა',
     dismiss: 'დახურვა',
     send: 'გაგზავნა',
+    delete: 'წაშლა',
   },
   roles: {
     scout: 'სკაუტი',
@@ -246,6 +269,22 @@ export const ka = {
     platformName: 'ქართული ფეხბურთის ტალანტების პლატფორმა',
     contact: 'კონტაქტი',
     location: 'თბილისი, საქართველო',
+    privacy: 'კონფიდენციალურობის პოლიტიკა',
+    terms: 'მომსახურების პირობები',
+    requestDemo: 'დემოს მოთხოვნა',
+  },
+  leagues: {
+    title: 'საქართველოს ახალგაზრდული ლიგები',
+    subtitle:
+      'პირდაპირი მატჩების გაშუქება Starlive კამერებით ქართულ ახალგაზრდულ საფეხბურთო ლიგებში.',
+    viewOnStarlive: 'ნახეთ Starlive-ზე',
+    emptyState: 'ლიგები ჯერ არ არის.',
+    season: 'სეზონი',
+  },
+  demo: {
+    title: 'დემოს მოთხოვნა',
+    comingSoon:
+      'დემოს მოთხოვნის ფორმა მალე იქნება ხელმისაწვდომი. დაგვიკავშირდით info@gft.ge-ზე დემოს დასანიშნად.',
   },
   watchlist: {
     watch: 'თვალყური',

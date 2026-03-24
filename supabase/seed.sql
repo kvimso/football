@@ -361,3 +361,41 @@ insert into public.player_club_history (player_id, club_id, joined_at) values
 
 -- Reset platform_id sequence past seeded players
 select setval('public.player_platform_id_seq', 12);
+
+-- ============================================================
+-- LEAGUES (3 Golden Leagues)
+-- ============================================================
+insert into public.leagues (id, name, name_ka, age_group, season, starlive_url, description, description_ka, display_order) values
+(
+  'd1b2c3d4-0001-4000-8000-000000000001',
+  'Golden League U15',
+  'ოქროს ლიგა U15',
+  'U15',
+  '2025-26',
+  'https://starlive.com',
+  'Premier under-15 youth league in Georgia featuring top academy teams.',
+  'საქართველოს პრემიერ 15-წლამდელთა ახალგაზრდული ლიგა წამყვანი აკადემიების გუნდებით.',
+  1
+),
+(
+  'd1b2c3d4-0002-4000-8000-000000000002',
+  'Golden League U17',
+  'ოქროს ლიგა U17',
+  'U17',
+  '2025-26',
+  'https://starlive.com',
+  'Premier under-17 youth league in Georgia featuring top academy teams.',
+  'საქართველოს პრემიერ 17-წლამდელთა ახალგაზრდული ლიგა წამყვანი აკადემიების გუნდებით.',
+  2
+),
+(
+  'd1b2c3d4-0003-4000-8000-000000000003',
+  'Golden League U19',
+  'ოქროს ლიგა U19',
+  'U19',
+  '2025-26',
+  'https://starlive.com',
+  'Premier under-19 youth league in Georgia featuring top academy teams.',
+  'საქართველოს პრემიერ 19-წლამდელთა ახალგაზრდული ლიგა წამყვანი აკადემიების გუნდებით.',
+  3
+);
