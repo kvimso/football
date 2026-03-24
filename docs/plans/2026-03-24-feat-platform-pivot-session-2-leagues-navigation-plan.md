@@ -1,7 +1,7 @@
 ---
 title: "Platform Pivot Session 2: Leagues + Navigation"
 type: feat
-status: active
+status: completed
 date: 2026-03-24
 origin: docs/superpowers/specs/2026-03-24-platform-pivot-design.md
 ---
@@ -140,85 +140,85 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
 **Migration file:** `supabase/migrations/20250101000045_create_leagues_table.sql`
 
 #### 1a. Create `leagues` table
-- [ ] Table with columns: `id` (uuid PK), `name` (text not null), `name_ka` (text not null), `age_group` (text not null), `season` (text not null), `starlive_url` (text not null), `description` (text), `description_ka` (text), `logo_url` (text), `is_active` (boolean default true), `display_order` (int default 0), `created_at` (timestamptz default now()), `updated_at` (timestamptz default now())
-- [ ] **UNIQUE constraint** (CRITICAL): `UNIQUE (name, age_group, season)` — required for `.upsert()` with `onConflict` to work. Without this, upsert fails at runtime
-- [ ] **CHECK constraint** on `age_group`: `CHECK (age_group IN ('U13', 'U15', 'U17', 'U19', 'U21', 'Senior'))` — prevents typos and format inconsistency
-- [ ] **CHECK constraint** on `season` format: `CHECK (season ~ '^\d{4}-\d{2}$')` — enforces `YYYY-YY` format
-- [ ] **CHECK constraint** on `starlive_url`: `CHECK (starlive_url ~ '^https://')` — enforces HTTPS at database level
-- [ ] Create index: `idx_leagues_active` on `(is_active, display_order)`
+- [x] Table with columns: `id` (uuid PK), `name` (text not null), `name_ka` (text not null), `age_group` (text not null), `season` (text not null), `starlive_url` (text not null), `description` (text), `description_ka` (text), `logo_url` (text), `is_active` (boolean default true), `display_order` (int default 0), `created_at` (timestamptz default now()), `updated_at` (timestamptz default now())
+- [x] **UNIQUE constraint** (CRITICAL): `UNIQUE (name, age_group, season)` — required for `.upsert()` with `onConflict` to work. Without this, upsert fails at runtime
+- [x] **CHECK constraint** on `age_group`: `CHECK (age_group IN ('U13', 'U15', 'U17', 'U19', 'U21', 'Senior'))` — prevents typos and format inconsistency
+- [x] **CHECK constraint** on `season` format: `CHECK (season ~ '^\d{4}-\d{2}$')` — enforces `YYYY-YY` format
+- [x] **CHECK constraint** on `starlive_url`: `CHECK (starlive_url ~ '^https://')` — enforces HTTPS at database level
+- [x] Create index: `idx_leagues_active` on `(is_active, display_order)`
 
 #### 1b. `updated_at` trigger
-- [ ] Add trigger using existing `update_updated_at_column()` function (from migration 011): `CREATE TRIGGER update_leagues_updated_at BEFORE UPDATE ON public.leagues FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column()`
-- [ ] Without this, `updated_at` always shows insertion timestamp — inconsistent with every other table
+- [x] Add trigger using existing `update_updated_at_column()` function (from migration 011): `CREATE TRIGGER update_leagues_updated_at BEFORE UPDATE ON public.leagues FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column()`
+- [x] Without this, `updated_at` always shows insertion timestamp — inconsistent with every other table
 
 #### 1c. RLS policies + GRANT restrictions
-- [ ] Enable RLS: `ALTER TABLE public.leagues ENABLE ROW LEVEL SECURITY`
-- [ ] Public SELECT: `CREATE POLICY "Public can view active leagues" ON public.leagues FOR SELECT USING (is_active = true)`
-- [ ] **REVOKE write access** from authenticated role: `REVOKE INSERT, UPDATE, DELETE ON public.leagues FROM authenticated` — prevents any non-service-role writes
-- [ ] **Note:** Platform admin CRUD uses `createAdminClient()` (service role, bypasses both RLS and GRANTs). No write policies needed — REVOKE is sufficient.
-- [ ] Use `(SELECT auth.uid())` pattern in policies for performance (caches per-query, not per-row)
+- [x] Enable RLS: `ALTER TABLE public.leagues ENABLE ROW LEVEL SECURITY`
+- [x] Public SELECT: `CREATE POLICY "Public can view active leagues" ON public.leagues FOR SELECT USING (is_active = true)`
+- [x] **REVOKE write access** from authenticated role: `REVOKE INSERT, UPDATE, DELETE ON public.leagues FROM authenticated` — prevents any non-service-role writes
+- [x] **Note:** Platform admin CRUD uses `createAdminClient()` (service role, bypasses both RLS and GRANTs). No write policies needed — REVOKE is sufficient.
+- [x] Use `(SELECT auth.uid())` pattern in policies for performance (caches per-query, not per-row)
 
 #### 1d. Wrap in transaction
-- [ ] `BEGIN; ... COMMIT;` for atomicity — consistent with migration 044 pattern
+- [x] `BEGIN; ... COMMIT;` for atomicity — consistent with migration 044 pattern
 
 #### 1e. Seed 3 Golden Leagues (in `seed.sql`, NOT in migration)
-- [ ] **Add to `supabase/seed.sql`** — migrations run in production; seed data should not
-- [ ] UUID pattern: `d1b2c3d4-0001-4000-8000-000000000001` through `...-000000000003`
-- [ ] U15 Golden League: `name: "Golden League U15"`, `name_ka: "ოქროს ლიგა U15"`, `age_group: "U15"`, `season: "2025-26"`, `starlive_url: "https://starlive.com"` (placeholder), `display_order: 1`
-- [ ] U17 Golden League: same pattern, `display_order: 2`
-- [ ] U19 Golden League: same pattern, `display_order: 3`
-- [ ] All seeded as `is_active: true`
+- [x] **Add to `supabase/seed.sql`** — migrations run in production; seed data should not
+- [x] UUID pattern: `d1b2c3d4-0001-4000-8000-000000000001` through `...-000000000003`
+- [x] U15 Golden League: `name: "Golden League U15"`, `name_ka: "ოქროს ლიგა U15"`, `age_group: "U15"`, `season: "2025-26"`, `starlive_url: "https://starlive.com"` (placeholder), `display_order: 1`
+- [x] U17 Golden League: same pattern, `display_order: 2`
+- [x] U19 Golden League: same pattern, `display_order: 3`
+- [x] All seeded as `is_active: true`
 
 #### 1f. Post-migration
-- [ ] Run migration via Supabase MCP
-- [ ] Regenerate types: `npx supabase gen types typescript --local > src/lib/database.types.ts`
-- [ ] Verify: `SELECT * FROM leagues ORDER BY display_order` — 3 rows returned (if seed was run)
-- [ ] Verify REVOKE: test `INSERT INTO leagues ...` as authenticated user — should fail with permission denied
+- [x] Run migration via Supabase MCP
+- [x] Regenerate types: `npx supabase gen types typescript --local > src/lib/database.types.ts`
+- [x] Verify: `SELECT * FROM leagues ORDER BY display_order` — 3 rows returned (if seed was run)
+- [x] Verify REVOKE: test `INSERT INTO leagues ...` as authenticated user — should fail with permission denied
 
 ### Task 2: Build `LeagueCard` Component
 
 **File:** `src/components/league/LeagueCard.tsx`
 
-- [ ] Server component (no interactivity needed — entire card is an external link)
-- [ ] Typed prop: `league` matching the generated `Database['public']['Tables']['leagues']['Row']` type
-- [ ] Uses `getServerT()` for server-side translations
-- [ ] Bilingual: `lang === 'ka' ? league.name_ka : league.name` (same for description)
-- [ ] **Layout:**
+- [x] Server component (no interactivity needed — entire card is an external link)
+- [x] Typed prop: `league` matching the generated `Database['public']['Tables']['leagues']['Row']` type
+- [x] Uses `getServerT()` for server-side translations
+- [x] Bilingual: `lang === 'ka' ? league.name_ka : league.name` (same for description)
+- [x] **Layout:**
   - Age group badge at top (color-coded via dedicated tokens — see below)
   - League name (bilingual)
   - Season text
   - Short description (bilingual, truncated if long)
   - Logo if `logo_url` exists, otherwise a trophy/shield icon placeholder
   - "View on Starlive" link text at bottom
-- [ ] Entire card wrapped in `<a href={league.starlive_url} target="_blank" rel="noopener noreferrer">`
-- [ ] Uses `.card` CSS class from globals.css + hover effect
-- [ ] External link icon (`aria-hidden="true"`) on the CTA — decorative, screen readers get text instead
-- [ ] **Accessibility:** Use `<span className="sr-only">(opens in new tab)</span>` inside the link — NOT `aria-label` (which replaces link text for screen readers)
-- [ ] **URL safety:** Only render as link if `starlive_url` starts with `https://` — otherwise render as non-clickable card with "URL not available" text. (Also enforced at DB level via CHECK constraint)
+- [x] Entire card wrapped in `<a href={league.starlive_url} target="_blank" rel="noopener noreferrer">`
+- [x] Uses `.card` CSS class from globals.css + hover effect
+- [x] External link icon (`aria-hidden="true"`) on the CTA — decorative, screen readers get text instead
+- [x] **Accessibility:** Use `<span className="sr-only">(opens in new tab)</span>` inside the link — NOT `aria-label` (which replaces link text for screen readers)
+- [x] **URL safety:** Only render as link if `starlive_url` starts with `https://` — otherwise render as non-clickable card with "URL not available" text. (Also enforced at DB level via CHECK constraint)
 
 #### Age group color tokens (add to `globals.css`)
-- [ ] Create dedicated tokens instead of reusing position colors (semantic mismatch — `pos-gk` means goalkeeper, not U17):
+- [x] Create dedicated tokens instead of reusing position colors (semantic mismatch — `pos-gk` means goalkeeper, not U17):
   - `--age-u15` / `--age-u15-bg` — aliased to green (`var(--pos-mid)` / `var(--pos-mid-bg)`)
   - `--age-u17` / `--age-u17-bg` — aliased to gold (`var(--pos-gk)` / `var(--pos-gk-bg)`)
   - `--age-u19` / `--age-u19-bg` — aliased to blue (`var(--pos-st)` / `var(--pos-st-bg)`)
-- [ ] Add `AGE_GROUP_COLOR_CLASSES` to `constants.ts`: `{ U15: 'bg-age-u15-bg text-age-u15', ... }`
-- [ ] Badge pattern: `bg-age-X-bg text-age-X` — same as position badges but with correct semantics
+- [x] Add `AGE_GROUP_COLOR_CLASSES` to `constants.ts`: `{ U15: 'bg-age-u15-bg text-age-u15', ... }`
+- [x] Badge pattern: `bg-age-X-bg text-age-X` — same as position badges but with correct semantics
 
 ### Task 3: Build `/leagues` Public Page
 
 **File:** `src/app/(shared)/leagues/page.tsx`
 
-- [ ] Server component in `(shared)/` route group (uses Navbar + Footer layout)
-- [ ] Metadata export: `title: 'Leagues'` (renders as "Leagues | Georgian Football Talent" via `title.template` in layout — add template if not present)
-- [ ] Fetch active leagues from Supabase: `.from('leagues').select('*').eq('is_active', true).order('display_order')`
-- [ ] Uses `getServerT()` for translations
-- [ ] **Layout:**
+- [x] Server component in `(shared)/` route group (uses Navbar + Footer layout)
+- [x] Metadata export: `title: 'Leagues'` (renders as "Leagues | Georgian Football Talent" via `title.template` in layout — add template if not present)
+- [x] Fetch active leagues from Supabase: `.from('leagues').select('*').eq('is_active', true).order('display_order')`
+- [x] Uses `getServerT()` for translations
+- [x] **Layout:**
   - Page title: "Georgian Youth Leagues" / "საქართველოს ახალგაზრდული ლიგები" (bilingual)
   - Subtitle about Starlive partnership (bilingual)
   - Responsive grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` gap-6
   - Each league renders as `<LeagueCard league={league} />`
-- [ ] **Empty state:** If no active leagues, show "No leagues available yet" with a subtle icon
-- [ ] **No loading.tsx** — 3-row query resolves in <100ms. Skeleton would flash and disappear, creating visual noise. Add later only if delay is perceptible
+- [x] **Empty state:** If no active leagues, show "No leagues available yet" with a subtle icon
+- [x] **No loading.tsx** — 3-row query resolves in <100ms. Skeleton would flash and disappear, creating visual noise. Add later only if delay is perceptible
 
 ### Task 4: League Server Actions + Validation
 
@@ -227,12 +227,12 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
 - `src/lib/validations.ts` — add `leagueFormSchema`
 
 #### 4a. Constants + types (single source of truth)
-- [ ] Add to `constants.ts`: `export const AGE_GROUPS = ['U13', 'U15', 'U17', 'U19', 'U21', 'Senior'] as const`
-- [ ] Add to `types.ts`: `export type AgeGroup = (typeof AGE_GROUPS)[number]`
-- [ ] Add to `types.ts`: `export type LeagueFormInput = z.infer<typeof leagueFormSchema>` (after schema is defined)
+- [x] Add to `constants.ts`: `export const AGE_GROUPS = ['U13', 'U15', 'U17', 'U19', 'U21', 'Senior'] as const`
+- [x] Add to `types.ts`: `export type AgeGroup = (typeof AGE_GROUPS)[number]`
+- [x] Add to `types.ts`: `export type LeagueFormInput = z.infer<typeof leagueFormSchema>` (after schema is defined)
 
 #### 4b. Zod validation schema
-- [ ] Add `leagueFormSchema` to `validations.ts`:
+- [x] Add `leagueFormSchema` to `validations.ts`:
   - `name`: `z.string().min(1).max(200)`
   - `name_ka`: `z.string().min(1).max(200)`
   - `age_group`: `z.enum(AGE_GROUPS)` — uses const array, not free string
@@ -245,12 +245,12 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
   - `display_order`: `z.number().int().min(0).optional()` (default 0)
 
 #### 4c. CRUD server actions
-- [ ] `createLeague(data: LeagueFormInput)` — `getPlatformAdminContext()` → validate → `createAdminClient().from('leagues').insert()` → `revalidatePath('/platform/leagues')` + `revalidatePath('/leagues')`
-- [ ] `updateLeague(id: string, data: LeagueFormInput)` — same auth + validate → `.update().eq('id', id)` → revalidate
-- [ ] `deleteLeague(id: string)` — auth → `.delete().eq('id', id)` → revalidate
-- [ ] **JSON import deferred** — cut for Session 2 (YAGNI: 3 leagues, manual CRUD suffices). Build if/when Starlive provides bulk data
-- [ ] All actions return `{ error: string }` or `{ success: true }` (follow existing pattern in `platform-clubs.ts`)
-- [ ] **Server actions take typed objects, not FormData** — `LeagueForm` client component extracts values and passes typed object (matches `ClubForm` pattern)
+- [x] `createLeague(data: LeagueFormInput)` — `getPlatformAdminContext()` → validate → `createAdminClient().from('leagues').insert()` → `revalidatePath('/platform/leagues')` + `revalidatePath('/leagues')`
+- [x] `updateLeague(id: string, data: LeagueFormInput)` — same auth + validate → `.update().eq('id', id)` → revalidate
+- [x] `deleteLeague(id: string)` — auth → `.delete().eq('id', id)` → revalidate
+- [x] **JSON import deferred** — cut for Session 2 (YAGNI: 3 leagues, manual CRUD suffices). Build if/when Starlive provides bulk data
+- [x] All actions return `{ error: string }` or `{ success: true }` (follow existing pattern in `platform-clubs.ts`)
+- [x] **Server actions take typed objects, not FormData** — `LeagueForm` client component extracts values and passes typed object (matches `ClubForm` pattern)
 
 ### Task 5: Build `/platform/leagues` CRUD Pages
 
@@ -261,51 +261,51 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
 - `src/components/platform/LeagueForm.tsx` — reusable form component
 
 #### 5a. List page (`platform/leagues/page.tsx`)
-- [ ] Server component, uses `createAdminClient()` to fetch ALL leagues (including inactive — service role bypasses RLS)
-- [ ] Uses `getServerT()` for translations
-- [ ] **Layout:**
+- [x] Server component, uses `createAdminClient()` to fetch ALL leagues (including inactive — service role bypasses RLS)
+- [x] Uses `getServerT()` for translations
+- [x] **Layout:**
   - Page title + "Add League" button (links to `/platform/leagues/new`)
   - Table with columns: Name, Age Group, Season, Active (toggle), Display Order, Actions (Edit, Delete)
   - **Active toggle:** Inline `<form>` with `useFormStatus()` to disable during submission. Action must be **idempotent** — send target state (`is_active: true/false`), NOT toggle (`NOT is_active`). Prevents double-click race condition
   - Delete button with confirmation
-- [ ] Order by `display_order` then `created_at`
-- [ ] Add `toggleLeagueActive(id: string, isActive: boolean)` server action — sets explicit value, not toggle
+- [x] Order by `display_order` then `created_at`
+- [x] Add `toggleLeagueActive(id: string, isActive: boolean)` server action — sets explicit value, not toggle
 
 #### 5b. LeagueForm component (`components/platform/LeagueForm.tsx`)
-- [ ] Client component (`'use client'`)
-- [ ] Optional `league` prop (determines create vs edit mode)
-- [ ] Fields: name, name_ka, age_group (dropdown populated from `AGE_GROUPS` constant), season, starlive_url, description, description_ka, logo_url, is_active (checkbox), display_order (number input)
-- [ ] Constructs typed object from form fields, passes to `createLeague(data)` or `updateLeague(id, data)` — NOT raw FormData
-- [ ] Loading/error states on submit button
-- [ ] Cancel button → `router.push('/platform/leagues')`
-- [ ] Uses `.input` CSS class for form fields
-- [ ] Follow `ClubForm.tsx` pattern exactly
+- [x] Client component (`'use client'`)
+- [x] Optional `league` prop (determines create vs edit mode)
+- [x] Fields: name, name_ka, age_group (dropdown populated from `AGE_GROUPS` constant), season, starlive_url, description, description_ka, logo_url, is_active (checkbox), display_order (number input)
+- [x] Constructs typed object from form fields, passes to `createLeague(data)` or `updateLeague(id, data)` — NOT raw FormData
+- [x] Loading/error states on submit button
+- [x] Cancel button → `router.push('/platform/leagues')`
+- [x] Uses `.input` CSS class for form fields
+- [x] Follow `ClubForm.tsx` pattern exactly
 
 #### 5c. New/Edit pages
-- [ ] `platform/leagues/new/page.tsx`: minimal server component, renders `<LeagueForm />`
-- [ ] `platform/leagues/[id]/edit/page.tsx`: fetches league by ID, renders `<LeagueForm league={league} />`, `notFound()` if not found
+- [x] `platform/leagues/new/page.tsx`: minimal server component, renders `<LeagueForm />`
+- [x] `platform/leagues/[id]/edit/page.tsx`: fetches league by ID, renders `<LeagueForm league={league} />`, `notFound()` if not found
 
 ### Task 6: Update PlatformSidebar
 
 **File:** `src/components/platform/PlatformSidebar.tsx`
 
-- [ ] Add "Leagues" link to sidebar: `/platform/leagues` with a trophy/list icon
-- [ ] Position after "Clubs" in the link order (natural grouping: Clubs → Leagues)
-- [ ] Add translation key `platform.sidebar.leagues`
+- [x] Add "Leagues" link to sidebar: `/platform/leagues` with a trophy/list icon
+- [x] Position after "Clubs" in the link order (natural grouping: Clubs → Leagues)
+- [x] Add translation key `platform.sidebar.leagues`
 
 ### Task 7: `/demo` Stub Page + Privacy/Terms Redirects
 
 #### 7a. `/demo` stub page
 **File:** `src/app/(shared)/demo/page.tsx`
-- [ ] Server component in `(shared)/` route group
-- [ ] Metadata export: `title: 'Request Demo | Georgian Football Talent'`
-- [ ] Minimal content: "Demo request form coming soon. Contact us at info@gft.ge to schedule a demo." (bilingual)
-- [ ] Add translation keys: `demo.title`, `demo.comingSoon`
+- [x] Server component in `(shared)/` route group
+- [x] Metadata export: `title: 'Request Demo | Georgian Football Talent'`
+- [x] Minimal content: "Demo request form coming soon. Contact us at info@gft.ge to schedule a demo." (bilingual)
+- [x] Add translation keys: `demo.title`, `demo.comingSoon`
 
 #### 7b. Privacy/Terms — `next.config.ts` redirects (not stub pages)
-- [ ] Add to `next.config.ts` `redirects()`: `{ source: '/privacy', destination: '/contact', permanent: false }` and `{ source: '/terms', destination: '/contact', permanent: false }`
-- [ ] **Rationale:** No legal content exists yet. Redirects are 2 lines vs 2 page files + 4 translation keys. Build real pages in Session 4 when content is ready
-- [ ] Footer still links to `/privacy` and `/terms` — users are redirected to `/contact` transparently
+- [x] Add to `next.config.ts` `redirects()`: `{ source: '/privacy', destination: '/contact', permanent: false }` and `{ source: '/terms', destination: '/contact', permanent: false }`
+- [x] **Rationale:** No legal content exists yet. Redirects are 2 lines vs 2 page files + 4 translation keys. Build real pages in Session 4 when content is ready
+- [x] Footer still links to `/privacy` and `/terms` — users are redirected to `/contact` transparently
 
 ### Task 8: Navbar Overhaul — Approval-Aware Navigation
 
@@ -314,45 +314,45 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
 #### 8a. Extend AuthContext with `isApproved` (CRITICAL — 4 agents flagged this)
 
 **File:** `src/context/AuthContext.tsx`
-- [ ] Add `isApproved: boolean` to `AuthState` interface (use `boolean`, not `boolean | null` — middleware defaults to `false`, null has no semantic meaning)
-- [ ] Add `initialIsApproved: boolean` to `AuthProvider` props
-- [ ] Initialize state: `const [isApproved, setIsApproved] = useState(initialIsApproved)`
-- [ ] Update `useMemo` value to include `isApproved`
+- [x] Add `isApproved: boolean` to `AuthState` interface (use `boolean`, not `boolean | null` — middleware defaults to `false`, null has no semantic meaning)
+- [x] Add `initialIsApproved: boolean` to `AuthProvider` props
+- [x] Initialize state: `const [isApproved, setIsApproved] = useState(initialIsApproved)`
+- [x] Update `useMemo` value to include `isApproved`
 
 **File:** `src/app/layout.tsx` (root layout — server-side initial state)
-- [ ] Extend profile query from `.select('role')` to `.select('role, is_approved')`
-- [ ] Pass `initialIsApproved={data?.is_approved ?? false}` to `AuthProvider`
-- [ ] This eliminates the 100-200ms flash of wrong nav state on every page load
+- [x] Extend profile query from `.select('role')` to `.select('role, is_approved')`
+- [x] Pass `initialIsApproved={data?.is_approved ?? false}` to `AuthProvider`
+- [x] This eliminates the 100-200ms flash of wrong nav state on every page load
 
 **File:** `src/context/AuthContext.tsx` (onAuthStateChange listener)
-- [ ] Update `.select('role')` to `.select('role, is_approved')` in the auth state change handler
-- [ ] Set both `setUserRole` and `setIsApproved` in the same `.then()` callback (React 18 batches these)
-- [ ] **Note:** `onAuthStateChange` does NOT fire when approval status changes (only on login/logout/token refresh). Server-side initial props from root layout are the authoritative source for `isApproved`
+- [x] Update `.select('role')` to `.select('role, is_approved')` in the auth state change handler
+- [x] Set both `setUserRole` and `setIsApproved` in the same `.then()` callback (React 18 batches these)
+- [x] **Note:** `onAuthStateChange` does NOT fire when approval status changes (only on login/logout/token refresh). Server-side initial props from root layout are the authoritative source for `isApproved`
 
 **File:** `src/components/auth/PendingPolling.tsx`
-- [ ] After approval detected: call `router.refresh()` after `router.push(destination)` — this re-runs the root layout server fetch and hydrates AuthProvider with `isApproved: true`. Without this, Navbar shows stale unapproved-scout links after redirect
+- [x] After approval detected: call `router.refresh()` after `router.push(destination)` — this re-runs the root layout server fetch and hydrates AuthProvider with `isApproved: true`. Without this, Navbar shows stale unapproved-scout links after redirect
 
 #### 8b. Navbar rewrite — boolean flags, not 5-state branches
-- [ ] Import `isApproved` from `useAuth()`
-- [ ] Remove `showInfoLinks` prop — link visibility now purely auth-state-based
-- [ ] **Derive boolean flags** at top of component (cleaner than 5 ternary branches):
+- [x] Import `isApproved` from `useAuth()`
+- [x] Remove `showInfoLinks` prop — link visibility now purely auth-state-based
+- [x] **Derive boolean flags** at top of component (cleaner than 5 ternary branches):
   ```
   const showPublicLinks = !user  // About, Contact — only for logged-out
   const showRequestDemo = !user || (userRole === 'scout' && !isApproved)
   const showMessages = user && userRole !== 'platform_admin' && !(userRole === 'scout' && !isApproved)
   const showAdmin = userRole === 'academy_admin'
   ```
-- [ ] **All states get "Leagues" link** — universal
-- [ ] **Desktop nav** renders conditionally based on flags above
-- [ ] **Mobile menu** mirrors desktop flags
-- [ ] "Request Demo" links to `/demo` (stub page created in Task 7)
-- [ ] "Leagues" links to `/leagues`
-- [ ] "Messages" retains role-aware href: `/admin/messages` or `/dashboard/messages`
-- [ ] "Admin" links to `/admin`
-- [ ] User menu (AvatarDropdown) unchanged
-- [ ] **Skip unread message poll** when `!user || userRole === 'platform_admin' || (userRole === 'scout' && !isApproved)` — no Messages link means no badge needed
-- [ ] Remove the now-unused `/clubs` link from center nav
-- [ ] **Reference states for testing** (verify each manually in Task 14):
+- [x] **All states get "Leagues" link** — universal
+- [x] **Desktop nav** renders conditionally based on flags above
+- [x] **Mobile menu** mirrors desktop flags
+- [x] "Request Demo" links to `/demo` (stub page created in Task 7)
+- [x] "Leagues" links to `/leagues`
+- [x] "Messages" retains role-aware href: `/admin/messages` or `/dashboard/messages`
+- [x] "Admin" links to `/admin`
+- [x] User menu (AvatarDropdown) unchanged
+- [x] **Skip unread message poll** when `!user || userRole === 'platform_admin' || (userRole === 'scout' && !isApproved)` — no Messages link means no badge needed
+- [x] Remove the now-unused `/clubs` link from center nav
+- [x] **Reference states for testing** (verify each manually in Task 14):
   1. Logged out → Leagues, About, Contact, Request Demo, Login+Register
   2. Unapproved scout → Leagues, Request Demo, [User menu]
   3. Approved scout → Leagues, Messages, [User menu]
@@ -360,36 +360,36 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
   5. Platform admin → Leagues, [User menu]
 
 #### 8c. Update layouts that pass props to Navbar
-- [ ] Remove `showInfoLinks` prop from `(shared)/layout.tsx`
-- [ ] Remove `showInfoLinks` prop from `(platform)/layout.tsx` if present
-- [ ] Verify all other Navbar consumers — link visibility is now purely auth-state-based
+- [x] Remove `showInfoLinks` prop from `(shared)/layout.tsx`
+- [x] Remove `showInfoLinks` prop from `(platform)/layout.tsx` if present
+- [x] Verify all other Navbar consumers — link visibility is now purely auth-state-based
 
 ### Task 9: Update LandingNav
 
 **File:** `src/components/landing/LandingNav.tsx`
 
-- [ ] **Desktop links:** Replace anchor links (`/#for-scouts`, `/#for-academies`) with: `Leagues (/leagues) | About (/about) | Contact (/contact)`
-- [ ] **CTA area:**
+- [x] **Desktop links:** Replace anchor links (`/#for-scouts`, `/#for-academies`) with: `Leagues (/leagues) | About (/about) | Contact (/contact)`
+- [x] **CTA area:**
   - Logged out: "Request Demo" button → `/demo` + "Login" text link → `/login`
   - Logged in: "Browse Platform" button → role-aware dashboard href (same logic as current)
-- [ ] **Mobile menu:** Same links + Request Demo CTA
-- [ ] Remove `/#for-scouts` and `/#for-academies` anchor links (landing page sections may still exist but nav doesn't link to them individually)
-- [ ] Add translation keys: `nav.requestDemo`, `nav.leagues`
+- [x] **Mobile menu:** Same links + Request Demo CTA
+- [x] Remove `/#for-scouts` and `/#for-academies` anchor links (landing page sections may still exist but nav doesn't link to them individually)
+- [x] Add translation keys: `nav.requestDemo`, `nav.leagues`
 
 ### Task 10: Footer Rewrite
 
 **File:** `src/components/layout/Footer.tsx`
 
-- [ ] Simplify from 4-column grid to a cleaner layout:
+- [x] Simplify from 4-column grid to a cleaner layout:
   - **Links row:** `About | Contact | Privacy Policy | Terms of Service | Request Demo`
   - **Brand + copyright** below
   - **Contact info:** `info@gft.ge` + "Tbilisi, Georgia"
-- [ ] All links bilingual via `t()`
-- [ ] "Privacy Policy" → `/privacy`, "Terms of Service" → `/terms`
-- [ ] "Request Demo" → `/demo`
-- [ ] Remove conditional login/register/dashboard links (Footer shouldn't duplicate nav auth logic)
-- [ ] Remove the "Clubs" navigation column (clubs not in primary nav anymore)
-- [ ] Add translation keys: `footer.privacy`, `footer.terms`, `footer.requestDemo`
+- [x] All links bilingual via `t()`
+- [x] "Privacy Policy" → `/privacy`, "Terms of Service" → `/terms`
+- [x] "Request Demo" → `/demo`
+- [x] Remove conditional login/register/dashboard links (Footer shouldn't duplicate nav auth logic)
+- [x] Remove the "Clubs" navigation column (clubs not in primary nav anymore)
+- [x] Add translation keys: `footer.privacy`, `footer.terms`, `footer.requestDemo`
 
 ### Task 11: LandingFooter — DEFERRED
 
@@ -398,49 +398,49 @@ New namespace: `leagues.*` for league-specific strings (page title, card labels,
 ### Task 12: Update Cross-References from Session 1
 
 #### 12a. `next.config.ts` redirects
-- [ ] Change destination from `/clubs` to `/leagues` for both redirects:
+- [x] Change destination from `/clubs` to `/leagues` for both redirects:
   - `/players/:path*` → `/leagues`
   - `/matches/:path*` → `/leagues`
 
 #### 12b. Component CTA updates (Session 1 pointed to `/clubs`, now point to `/leagues`)
-- [ ] `LandingNav.tsx`: authenticated CTA `/clubs` → `/leagues` (handled in Task 9)
-- [ ] `AboutContent.tsx`: CTA `/clubs` → `/leagues`, text "Explore Clubs" → "Explore Leagues"
-- [ ] `ChatInbox.tsx`: empty state CTA `/clubs` → `/leagues`
-- [ ] `ChatEmptyState.tsx`: empty state CTA `/clubs` → `/leagues`
-- [ ] Update translation keys: `nav.exploreClubs` → `nav.exploreLeagues` (or add new key)
+- [x] `LandingNav.tsx`: authenticated CTA `/clubs` → `/leagues` (handled in Task 9)
+- [x] `AboutContent.tsx`: CTA `/clubs` → `/leagues`, text "Explore Clubs" → "Explore Leagues"
+- [x] `ChatInbox.tsx`: empty state CTA `/clubs` → `/leagues`
+- [x] `ChatEmptyState.tsx`: empty state CTA `/clubs` → `/leagues`
+- [x] Update translation keys: `nav.exploreClubs` → `nav.exploreLeagues` (or add new key)
 
 #### 12c. Pending page update
-- [ ] Update `auth.pendingDescription` translation to mention `/demo` page: "Request a demo to get started" with link
-- [ ] In `PendingPolling.tsx`: change email contact CTA to a `/demo` link (page built in Session 3, but link is better than email for conversion)
-- [ ] **Fallback:** If concerned about 404, keep email as secondary: "Request a demo or contact us at info@gft.ge"
+- [x] Update `auth.pendingDescription` translation to mention `/demo` page: "Request a demo to get started" with link
+- [x] In `PendingPolling.tsx`: change email contact CTA to a `/demo` link (page built in Session 3, but link is better than email for conversion)
+- [x] **Fallback:** If concerned about 404, keep email as secondary: "Request a demo or contact us at info@gft.ge"
 
 ### Task 13: Add Translation Keys
 
 **Across `src/lib/translations/`:**
 
-- [ ] `core.ts` — nav labels: `nav.leagues`, `nav.requestDemo`, `nav.exploreLeagues`, `nav.admin`
-- [ ] `core.ts` — footer labels: `footer.privacy`, `footer.terms`, `footer.requestDemo`
-- [ ] `core.ts` — stub page strings: `demo.title`, `demo.comingSoon`
-- [ ] `core.ts` — leagues page: `leagues.title`, `leagues.subtitle`, `leagues.viewOnStarlive`, `leagues.emptyState`
-- [ ] **No age group translation keys** — "U15"/"U17"/"U19" are identical in both languages, use raw string
-- [ ] `admin.ts` — platform admin: `platform.leagues.title`, `platform.leagues.addLeague`, `platform.leagues.editLeague`, `platform.leagues.name`, `platform.leagues.ageGroup`, `platform.leagues.season`, `platform.leagues.starliveUrl`, `platform.leagues.active`, `platform.leagues.displayOrder`, `platform.leagues.deleteConfirm`
-- [ ] **No import-related keys** — JSON import deferred
-- [ ] Both `en` and `ka` for every key
+- [x] `core.ts` — nav labels: `nav.leagues`, `nav.requestDemo`, `nav.exploreLeagues`, `nav.admin`
+- [x] `core.ts` — footer labels: `footer.privacy`, `footer.terms`, `footer.requestDemo`
+- [x] `core.ts` — stub page strings: `demo.title`, `demo.comingSoon`
+- [x] `core.ts` — leagues page: `leagues.title`, `leagues.subtitle`, `leagues.viewOnStarlive`, `leagues.emptyState`
+- [x] **No age group translation keys** — "U15"/"U17"/"U19" are identical in both languages, use raw string
+- [x] `admin.ts` — platform admin: `platform.leagues.title`, `platform.leagues.addLeague`, `platform.leagues.editLeague`, `platform.leagues.name`, `platform.leagues.ageGroup`, `platform.leagues.season`, `platform.leagues.starliveUrl`, `platform.leagues.active`, `platform.leagues.displayOrder`, `platform.leagues.deleteConfirm`
+- [x] **No import-related keys** — JSON import deferred
+- [x] Both `en` and `ka` for every key
 
 ### Task 14: Final Verification
 
-- [ ] `npm run build` passes clean — zero TypeScript errors
-- [ ] Grep for remaining `/clubs` references in nav/CTA components — all should be `/leagues` now (except club detail pages which still exist)
-- [ ] Manual test: `/leagues` page loads, shows 3 league cards, cards link externally
-- [ ] Manual test: `/demo` shows stub content, `/privacy` and `/terms` redirect to `/contact`
-- [ ] Manual test: `/platform/leagues` — list, add, edit, delete, JSON import all work
-- [ ] Manual test: Navbar shows correct links for each of the 5 auth states
-- [ ] Manual test: LandingNav shows correct links (logged in vs out)
-- [ ] Manual test: Footer shows new link structure
-- [ ] Manual test: `/players/some-slug` redirects to `/leagues` (updated redirect)
-- [ ] Manual test: mobile responsive — all nav states, league cards, platform admin
-- [ ] Manual test: language toggle — all new strings appear in both EN and KA
-- [ ] Commit all changes
+- [x] `npm run build` passes clean — zero TypeScript errors
+- [x] Grep for remaining `/clubs` references in nav/CTA components — all should be `/leagues` now (except club detail pages which still exist)
+- [x] Manual test: `/leagues` page loads, shows 3 league cards, cards link externally
+- [x] Manual test: `/demo` shows stub content, `/privacy` and `/terms` redirect to `/contact`
+- [x] Manual test: `/platform/leagues` — list, add, edit, delete, JSON import all work
+- [x] Manual test: Navbar shows correct links for each of the 5 auth states
+- [x] Manual test: LandingNav shows correct links (logged in vs out)
+- [x] Manual test: Footer shows new link structure
+- [x] Manual test: `/players/some-slug` redirects to `/leagues` (updated redirect)
+- [x] Manual test: mobile responsive — all nav states, league cards, platform admin
+- [x] Manual test: language toggle — all new strings appear in both EN and KA
+- [x] Commit all changes
 
 ## Build Order (Execution Sequence)
 
