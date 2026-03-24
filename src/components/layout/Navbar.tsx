@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useAuth } from '@/context/AuthContext'
 import { createClient } from '@/lib/supabase/client'
-import { NotificationBell } from './NotificationBell'
 import { ThemeToggle } from './ThemeToggle'
 import { AvatarDropdown } from './AvatarDropdown'
 import { LanguageToggle } from '@/components/ui/LanguageToggle'
@@ -107,8 +106,6 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
         <div className="hidden items-center gap-5 md:flex">
           {user && (
             <>
-              <NavLink href="/players">{t('nav.players')}</NavLink>
-              <NavLink href="/matches">{t('nav.matches')}</NavLink>
               <NavLink href="/clubs">{t('nav.clubs')}</NavLink>
             </>
           )}
@@ -126,8 +123,6 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
 
           {user ? (
             <>
-              <NotificationBell />
-
               {/* Messages link with green dot */}
               {userRole !== 'platform_admin' && (
                 <Link
@@ -212,12 +207,6 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
               {/* Platform links */}
               {user && (
                 <>
-                  <NavLink href="/players" onClick={closeMobile}>
-                    {t('nav.players')}
-                  </NavLink>
-                  <NavLink href="/matches" onClick={closeMobile}>
-                    {t('nav.matches')}
-                  </NavLink>
                   <NavLink href="/clubs" onClick={closeMobile}>
                     {t('nav.clubs')}
                   </NavLink>
@@ -247,11 +236,6 @@ export function Navbar({ showInfoLinks = false }: NavbarProps) {
                         ? t('nav.admin')
                         : t('nav.dashboard')}
                   </NavLink>
-                  {userRole === 'scout' && (
-                    <NavLink href="/dashboard/watchlist" onClick={closeMobile}>
-                      {t('watchlist.watching')}
-                    </NavLink>
-                  )}
                   {userRole !== 'platform_admin' && (
                     <NavLink href={messagesHref} onClick={closeMobile}>
                       {t('nav.messages')}

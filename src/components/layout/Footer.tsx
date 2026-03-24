@@ -25,20 +25,8 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h4 className="text-sm font-semibold text-foreground">{t('nav.players')}</h4>
+            <h4 className="text-sm font-semibold text-foreground">{t('nav.clubs')}</h4>
             <nav className="mt-2 flex flex-col gap-1.5">
-              <Link
-                href="/players"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('players.title')}
-              </Link>
-              <Link
-                href="/matches"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('nav.matches')}
-              </Link>
               <Link
                 href="/clubs"
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"

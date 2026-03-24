@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import Image from 'next/image'
 import type { ReferencedPlayer } from '@/lib/types'
 import type { Lang } from '@/lib/translations'
@@ -38,10 +37,7 @@ export function PlayerRefCard({ player, lang, t }: PlayerRefCardProps) {
   const posClass = player.position ? POSITION_COLOR_CLASSES[player.position as Position] : ''
 
   return (
-    <Link
-      href={`/players/${player.slug}`}
-      className="flex items-center gap-3 rounded-lg border border-border bg-surface/50 px-3 py-2 transition-colors hover:bg-surface"
-    >
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-surface/50 px-3 py-2">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface">
         {player.photo_url ? (
           <Image
@@ -78,15 +74,6 @@ export function PlayerRefCard({ player, lang, t }: PlayerRefCardProps) {
         </div>
         {clubName && <p className="truncate text-xs text-foreground-muted">{clubName}</p>}
       </div>
-      <svg
-        className="h-4 w-4 shrink-0 text-foreground-muted"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={1.5}
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-      </svg>
-    </Link>
+    </div>
   )
 }

@@ -1,26 +1,19 @@
 'use client'
 
-import { useState, useEffect, useRef, useTransition } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
 import { calculateAge } from '@/lib/utils'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import { PlayerSilhouette } from '@/components/ui/PlayerSilhouette'
-import { addToWatchlist, removeFromWatchlist } from '@/app/actions/watchlist'
 import type { PlayerBrowseData } from '@/lib/types'
 
 interface PlayerCardProps {
   player: PlayerBrowseData
   viewCount?: number
-  isWatched?: boolean
 }
 
-export function PlayerCard({ player, viewCount, isWatched: initialWatched }: PlayerCardProps) {
+export function PlayerCard({ player, viewCount }: PlayerCardProps) {
   const { t, lang } = useLang()
-  const actionInFlightRef = useRef(false)
-  const [isWatched, setIsWatched] = useState(initialWatched ?? false)
-  const [isPending, startTransition] = useTransition()
   const age = calculateAge(player.date_of_birth)
   const displayName = lang === 'ka' ? player.name_ka : player.name
   const clubName = player.club ? (lang === 'ka' ? player.club.name_ka : player.club.name) : null
@@ -28,37 +21,9 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
   const isFreeAgent = player.status === 'free_agent'
   const isFeatured = player.is_featured
 
-  // Sync from server only when no local action is pending
-  useEffect(() => {
-    if (!actionInFlightRef.current && initialWatched !== undefined) {
-      setIsWatched(initialWatched)
-    }
-  }, [initialWatched])
-
-  function handleWatch(e: React.MouseEvent) {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!player.id) return
-    const playerId = player.id
-    actionInFlightRef.current = true
-    startTransition(async () => {
-      try {
-        if (isWatched) {
-          const result = await removeFromWatchlist(playerId)
-          if (!result.error) setIsWatched(false)
-        } else {
-          const result = await addToWatchlist(playerId)
-          if (!result.error) setIsWatched(true)
-        }
-      } finally {
-        actionInFlightRef.current = false
-      }
-    })
-  }
-
   return (
-    <Link href={`/players/${player.slug}`} className="card group block overflow-hidden">
-      {/* Top row: photo + info + star */}
+    <div className="card overflow-hidden">
+      {/* Top row: photo + info */}
       <div className="flex gap-3">
         {/* Photo — 56px rounded square */}
         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-elevated">
@@ -78,9 +43,7 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
         {/* Name + meta */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-              {displayName}
-            </h3>
+            <h3 className="truncate text-sm font-semibold text-foreground">{displayName}</h3>
             <span
               className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}
             >
@@ -103,20 +66,6 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
             )}
           </div>
         </div>
-
-        {/* Watchlist star */}
-        {initialWatched !== undefined && (
-          <button
-            onClick={handleWatch}
-            disabled={isPending}
-            className={`shrink-0 text-lg leading-none transition-colors ${
-              isWatched ? 'text-primary' : 'text-foreground-muted/40 hover:text-primary/70'
-            } disabled:opacity-50`}
-            aria-label={isWatched ? t('watchlist.unwatch') : t('watchlist.watch')}
-          >
-            {isWatched ? '★' : '☆'}
-          </button>
-        )}
       </div>
 
       {/* Featured badge */}
@@ -125,6 +74,6 @@ export function PlayerCard({ player, viewCount, isWatched: initialWatched }: Pla
           {t('players.featured')}
         </span>
       )}
-    </Link>
+    </div>
   )
 }

@@ -21,6 +21,7 @@ export const en = {
     forScouts: 'For Scouts',
     forAcademies: 'For Academies',
     learnMore: 'Learn More',
+    exploreClubs: 'Explore Clubs',
   },
   common: {
     loading: 'Loading...',
@@ -173,6 +174,7 @@ export const ka = {
     forScouts: 'სკაუტებისთვის',
     forAcademies: 'აკადემიებისთვის',
     learnMore: 'გაიგე მეტი',
+    exploreClubs: 'კლუბების ნახვა',
   },
   common: {
     loading: 'იტვირთება...',

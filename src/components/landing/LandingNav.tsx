@@ -61,8 +61,8 @@ export function LandingNav() {
           <ThemeToggle />
 
           {user ? (
-            <Link href="/players" className="btn-primary text-sm">
-              {t('landing.footerBrowsePlayers')}
+            <Link href="/clubs" className="btn-primary text-sm">
+              {t('nav.exploreClubs')}
             </Link>
           ) : (
             <>
