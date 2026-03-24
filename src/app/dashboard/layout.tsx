@@ -12,9 +12,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!user) notFound()
 
   // Defense-in-depth: middleware handles role routing, but guard here too
-  const [profileResult, watchlistResult, unreadResult] = await Promise.all([
+  const [profileResult, unreadResult] = await Promise.all([
     supabase.from('profiles').select('role').eq('id', user.id).single(),
-    supabase.from('watchlist').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
     supabase.rpc('get_total_unread_count'),
   ])
 
@@ -24,10 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <>
       <Navbar />
       <div className="mx-auto flex min-h-[calc(100dvh-var(--navbar-height))] max-w-7xl">
-        <DashboardSidebar
-          watchlistCount={watchlistResult.count ?? 0}
-          unreadCount={Number(unreadResult.data ?? 0)}
-        />
+        <DashboardSidebar unreadCount={Number(unreadResult.data ?? 0)} />
         <main className="flex-1 min-w-0 px-4 pt-8 pb-20 md:pb-8">{children}</main>
       </div>
       <Footer />

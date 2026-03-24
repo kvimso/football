@@ -12,21 +12,31 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // For invited academy admins, redirect to /admin instead of /dashboard
-      if (safeNext === '/dashboard') {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (user) {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-          if (profile?.role === 'academy_admin') {
-            return NextResponse.redirect(`${origin}/admin`)
-          }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, is_approved')
+          .eq('id', user.id)
+          .single()
+
+        const role = profile?.role ?? 'scout'
+        const isApproved = profile?.is_approved ?? false
+
+        // Route directly based on role + approval status
+        if (role === 'platform_admin') {
+          return NextResponse.redirect(`${origin}/platform`)
         }
+        if (role === 'academy_admin') {
+          return NextResponse.redirect(`${origin}/admin`)
+        }
+        // Scout: check approval
+        if (!isApproved) {
+          return NextResponse.redirect(`${origin}/pending`)
+        }
+        return NextResponse.redirect(`${origin}${safeNext}`)
       }
       return NextResponse.redirect(`${origin}${safeNext}`)
     }

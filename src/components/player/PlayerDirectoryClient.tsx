@@ -286,7 +286,6 @@ export function PlayerDirectoryClient({
                 key={player.slug}
                 player={player}
                 viewCount={viewCountMap[player.id] ?? 0}
-                isWatched={watchedPlayerIds.includes(player.id)}
               />
             ))}
           </div>
@@ -310,7 +309,6 @@ export function PlayerDirectoryClient({
                 key={player.slug}
                 player={player}
                 viewCount={viewCountMap[player.id] ?? 0}
-                isWatched={watchedPlayerIds.includes(player.id)}
               />
             ))}
           </div>

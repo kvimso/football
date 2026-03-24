@@ -12,7 +12,12 @@ export function apiError(message: string, status: number) {
   return NextResponse.json({ data: null, meta: null, error: message }, { status })
 }
 
-type AuthProfile = { role: string; club_id: string | null; full_name: string | null }
+type AuthProfile = {
+  role: string
+  club_id: string | null
+  full_name: string | null
+  is_approved: boolean
+}
 
 export type AuthResult =
   | { ok: true; user: User; profile: AuthProfile }
@@ -30,12 +35,17 @@ export async function authenticateRequest(supabase: SupabaseClient<Database>): P
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('role, club_id, full_name')
+    .select('role, club_id, full_name, is_approved')
     .eq('id', user.id)
     .single()
 
   if (profileError || !profile) {
     return { ok: false, error: apiError('errors.profileNotFound', 403) }
+  }
+
+  // Approval gate: unapproved scouts cannot access API routes
+  if (profile.role === 'scout' && !profile.is_approved) {
+    return { ok: false, error: apiError('errors.accountPendingApproval', 403) }
   }
 
   return { ok: true, user, profile }

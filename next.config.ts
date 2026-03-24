@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -6,26 +6,32 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "*.supabase.co",
+        protocol: 'https',
+        hostname: '*.supabase.co',
       },
       {
-        protocol: "https",
-        hostname: "*.supabase.in",
+        protocol: 'https',
+        hostname: '*.supabase.in',
       },
     ],
   },
-  serverExternalPackages: ["pdfkit"],
+  serverExternalPackages: ['pdfkit'],
   experimental: {
-    optimizePackageImports: ["date-fns"],
+    optimizePackageImports: ['date-fns'],
+  },
+  async redirects() {
+    return [
+      { source: '/players/:path*', destination: '/clubs', permanent: false },
+      { source: '/matches/:path*', destination: '/clubs', permanent: false },
+    ]
   },
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: '/(.*)',
         headers: [
           {
-            key: "Content-Security-Policy",
+            key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
               `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
@@ -36,24 +42,24 @@ const nextConfig: NextConfig = {
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
-            ].join("; "),
+            ].join('; '),
           },
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "X-DNS-Prefetch-Control", value: "on" },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
           {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
           {
-            key: "Strict-Transport-Security",
-            value: "max-age=31536000; includeSubDomains",
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
           },
         ],
       },
-    ];
+    ]
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
