@@ -53,7 +53,7 @@ export async function AudiencePanels() {
           </ul>
 
           <div className="mt-8">
-            <Link href="/register" className="btn-primary px-6 py-2.5 text-sm font-semibold">
+            <Link href="/demo" className="btn-primary px-6 py-2.5 text-sm font-semibold">
               {t('landing.scoutCta')} &rarr;
             </Link>
           </div>

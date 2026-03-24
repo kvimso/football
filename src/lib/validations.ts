@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AGE_GROUPS } from '@/lib/constants'
+import { AGE_GROUPS, DEMO_ROLES } from '@/lib/constants'
 
 export const uuidSchema = z.string().uuid()
 
@@ -57,6 +57,15 @@ export const leagueFormSchema = z.object({
   logo_url: z.string().url().max(500).optional().or(z.literal('')),
   is_active: z.boolean().optional(),
   display_order: z.number().int().min(0).optional(),
+})
+
+export const demoRequestFormSchema = z.object({
+  full_name: z.string().min(1).max(100),
+  email: z.string().email().max(200),
+  organization: z.string().min(1).max(200),
+  role: z.enum(DEMO_ROLES),
+  country: z.string().min(1).max(100),
+  message: z.string().max(2000).optional().or(z.literal('')),
 })
 
 export const contactMessageSchema = z.object({

@@ -5,14 +5,16 @@ import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { useAuth } from '@/context/AuthContext'
 import { createClient } from '@/lib/supabase/client'
+import type { DemoRequestSummary } from '@/lib/types'
 
 const POLL_INTERVAL = 30_000 // 30 seconds
 
 interface PendingPollingProps {
   userId: string
+  initialDemoRequest?: DemoRequestSummary | null
 }
 
-export function PendingPolling({ userId }: PendingPollingProps) {
+export function PendingPolling({ userId, initialDemoRequest }: PendingPollingProps) {
   const { t } = useLang()
   const { signOut } = useAuth()
   const router = useRouter()
@@ -71,6 +73,9 @@ export function PendingPolling({ userId }: PendingPollingProps) {
             ? '/platform'
             : '/dashboard'
       routerRef.current.push(destination)
+      routerRef.current.refresh()
+    } else {
+      // Refresh server component to pick up demo request status changes
       routerRef.current.refresh()
     }
   }, [userId])
@@ -140,6 +145,11 @@ export function PendingPolling({ userId }: PendingPollingProps) {
     )
   }
 
+  // Demo request status display
+  const demoStatusMessage = initialDemoRequest
+    ? getDemoStatusMessage(initialDemoRequest.status, t)
+    : null
+
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center px-4">
       {/* Clock icon */}
@@ -158,18 +168,38 @@ export function PendingPolling({ userId }: PendingPollingProps) {
       </svg>
 
       <h1 className="mt-6 text-xl font-semibold text-foreground">{t('auth.pendingTitle')}</h1>
-      <p className="mt-3 max-w-md text-sm text-foreground-muted leading-relaxed">
-        {t('auth.pendingDescription')}
-      </p>
-      <p className="mt-4 text-sm text-foreground-secondary">
-        <a href="/demo" className="font-medium text-primary hover:underline">
-          {t('nav.requestDemo')}
-        </a>{' '}
-        {t('auth.pendingContact')}{' '}
-        <a href="mailto:info@gft.ge" className="font-medium text-primary hover:underline">
-          info@gft.ge
-        </a>
-      </p>
+
+      {demoStatusMessage ? (
+        /* Has demo request — show status */
+        <div className="mt-4 max-w-md">
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <p className="text-sm text-foreground-secondary leading-relaxed">{demoStatusMessage}</p>
+          </div>
+          {initialDemoRequest?.status === 'declined' && (
+            <p className="mt-3 text-sm text-foreground-muted">
+              <a href="mailto:info@gft.ge" className="font-medium text-primary hover:underline">
+                info@gft.ge
+              </a>
+            </p>
+          )}
+        </div>
+      ) : (
+        /* No demo request — show default message + CTA */
+        <>
+          <p className="mt-3 max-w-md text-sm text-foreground-muted leading-relaxed">
+            {t('auth.pendingDescription')}
+          </p>
+          <p className="mt-4 text-sm text-foreground-secondary">
+            <a href="/demo" className="font-medium text-primary hover:underline">
+              {t('nav.requestDemo')}
+            </a>{' '}
+            {t('auth.pendingContact')}{' '}
+            <a href="mailto:info@gft.ge" className="font-medium text-primary hover:underline">
+              info@gft.ge
+            </a>
+          </p>
+        </>
+      )}
 
       <button
         onClick={handleLogout}
@@ -180,4 +210,19 @@ export function PendingPolling({ userId }: PendingPollingProps) {
       </button>
     </div>
   )
+}
+
+function getDemoStatusMessage(status: string, t: (key: string) => string): string {
+  switch (status) {
+    case 'new':
+      return t('demo.statusNew')
+    case 'contacted':
+      return t('demo.statusContacted')
+    case 'demo_done':
+      return t('demo.statusDemoDone')
+    case 'declined':
+      return t('demo.statusDeclined')
+    default:
+      return t('demo.statusNew')
+  }
 }

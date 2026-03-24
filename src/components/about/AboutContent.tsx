@@ -34,8 +34,8 @@ export async function AboutContent({ isLoggedIn }: { isLoggedIn: boolean }) {
               {t('nav.exploreLeagues')}
             </Link>
           ) : (
-            <Link href="/register" className="btn-primary mt-4 inline-block text-sm">
-              {t('nav.register')}
+            <Link href="/demo" className="btn-primary mt-4 inline-block text-sm">
+              {t('nav.requestDemo')}
             </Link>
           )}
         </div>

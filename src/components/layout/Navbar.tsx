@@ -142,8 +142,8 @@ export function Navbar() {
               >
                 {t('nav.login')}
               </Link>
-              <Link href="/register" className="btn-primary text-sm">
-                {t('nav.register')}
+              <Link href="/demo" className="btn-primary text-sm">
+                {t('nav.requestDemo')}
               </Link>
             </>
           )}
