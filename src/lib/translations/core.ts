@@ -67,6 +67,11 @@ export const en = {
     orContinue: 'Scout registration — browse players, build your watchlist, and contact academies.',
     error: 'Something went wrong. Please try again.',
     checkEmail: 'Check your email for a confirmation link.',
+    pendingTitle: 'Account Pending Approval',
+    pendingDescription:
+      'Your account has been created but requires approval before you can access the platform. Contact us to schedule a demo and get started.',
+    pendingContact: 'Contact us at',
+    approved: 'Your account has been approved! Redirecting...',
   },
   home: {
     browsePlayers: 'Browse Players',
@@ -93,6 +98,7 @@ export const en = {
     invalidPlayerId: 'Invalid player ID',
     invalidInput: 'Invalid input',
     notAuthenticated: 'Not authenticated',
+    accountPendingApproval: 'Your account is pending approval',
     playerNotFound: 'Player not found',
     playerNotFoundOrFreeAgent: 'Player not found or is a free agent',
     requestNotFound: 'Request not found',
@@ -221,6 +227,11 @@ export const ka = {
       'სკაუტის რეგისტრაცია — დაათვალიერეთ მოთამაშეები, შექმენით სიები და დაუკავშირდით აკადემიებს.',
     error: 'რაღაც შეცდომა მოხდა. სცადეთ ხელახლა.',
     checkEmail: 'შეამოწმეთ ელ. ფოსტა დადასტურების ბმულისთვის.',
+    pendingTitle: 'ანგარიში მოლოდინის რეჟიმშია',
+    pendingDescription:
+      'თქვენი ანგარიში შექმნილია, მაგრამ საჭიროებს დამტკიცებას პლატფორმაზე წვდომისთვის. დაგვიკავშირდით დემოს დასანიშნად.',
+    pendingContact: 'დაგვიკავშირდით',
+    approved: 'თქვენი ანგარიში დამტკიცებულია! გადამისამართება...',
   },
   home: {
     browsePlayers: 'მოთამაშეების ნახვა',
@@ -247,6 +258,7 @@ export const ka = {
     invalidPlayerId: 'არასწორი მოთამაშის ID',
     invalidInput: 'არასწორი მონაცემები',
     notAuthenticated: 'არ ხართ ავტორიზებული',
+    accountPendingApproval: 'თქვენი ანგარიში მოლოდინის რეჟიმშია',
     playerNotFound: 'მოთამაშე ვერ მოიძებნა',
     playerNotFoundOrFreeAgent: 'მოთამაშე ვერ მოიძებნა ან თავისუფალი აგენტია',
     requestNotFound: 'მოთხოვნა ვერ მოიძებნა',

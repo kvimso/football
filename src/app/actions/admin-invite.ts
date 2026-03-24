@@ -58,7 +58,7 @@ export async function inviteAcademyAdmin(data: { email: string; clubId: string }
     // User exists but is a scout — promote directly
     const { error: updateError } = await adminClient
       .from('profiles')
-      .update({ role: 'academy_admin', club_id: parsed.data.clubId })
+      .update({ role: 'academy_admin', club_id: parsed.data.clubId, is_approved: true })
       .eq('id', existingProfile.id)
 
     if (updateError) {

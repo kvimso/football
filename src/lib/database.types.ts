@@ -968,6 +968,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          is_approved: boolean
           organization: string | null
           phone: string | null
           role: string
@@ -980,6 +981,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          is_approved?: boolean
           organization?: string | null
           phone?: string | null
           role?: string
@@ -992,6 +994,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          is_approved?: boolean
           organization?: string | null
           phone?: string | null
           role?: string
