@@ -558,8 +558,8 @@ Changes:
 
 ### Non-Functional
 - [x] `npm run build` passes with zero errors
-- [ ] All pages responsive at 375px+
-- [ ] All action buttons have disabled/loading states
+- [x] All pages responsive at 375px+
+- [x] All action buttons have disabled/loading states
 - [ ] Deployed to Vercel and verified
 
 ---
