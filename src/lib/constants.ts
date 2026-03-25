@@ -10,6 +10,15 @@ export const AGE_GROUP_COLOR_CLASSES: Partial<Record<AgeGroup, string>> = {
   U19: 'bg-age-u19-bg text-age-u19',
 }
 
+export const DEMO_ROLES = [
+  'Scout',
+  'Club Sporting Director',
+  'Agent',
+  'Academy Director',
+  'Other',
+] as const
+export const DEMO_STATUSES = ['new', 'contacted', 'demo_done', 'converted', 'declined'] as const
+
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 
 export const POSITION_COLOR_CLASSES: Record<Position, string> = {

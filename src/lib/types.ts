@@ -7,6 +7,14 @@ export type UserRole = 'scout' | 'academy_admin' | 'platform_admin'
 export type MessageType = 'text' | 'file' | 'player_ref' | 'system'
 export type TransferStatus = 'pending' | 'accepted' | 'declined' | 'expired'
 export type ViewMode = 'grid' | 'list'
+export type DemoRole = 'Scout' | 'Club Sporting Director' | 'Agent' | 'Academy Director' | 'Other'
+export type DemoStatus = 'new' | 'contacted' | 'demo_done' | 'converted' | 'declined'
+
+export interface DemoRequestSummary {
+  id: string
+  status: DemoStatus
+  created_at: string
+}
 
 /** Player data shape for browse-page components (PlayerCard, PlayerListRow, featured banner). */
 export interface PlayerBrowseData {

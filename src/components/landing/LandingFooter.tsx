@@ -23,6 +23,12 @@ export async function LandingFooter() {
             <h4 className="text-sm font-semibold">{t('landing.footerPlatform')}</h4>
             <nav className="mt-3 flex flex-col gap-2">
               <Link
+                href="/leagues"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
+                {t('nav.leagues')}
+              </Link>
+              <Link
                 href="/about"
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"
               >
@@ -34,36 +40,24 @@ export async function LandingFooter() {
               >
                 {t('nav.contact')}
               </Link>
+            </nav>
+          </div>
+
+          {/* Get Started */}
+          <div>
+            <h4 className="text-sm font-semibold">{t('landing.footerForScouts')}</h4>
+            <nav className="mt-3 flex flex-col gap-2">
+              <Link
+                href="/demo"
+                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+              >
+                {t('nav.requestDemo')}
+              </Link>
               <Link
                 href="/login"
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"
               >
                 {t('nav.login')}
-              </Link>
-              <Link
-                href="/register"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('nav.register')}
-              </Link>
-            </nav>
-          </div>
-
-          {/* For Scouts */}
-          <div>
-            <h4 className="text-sm font-semibold">{t('landing.footerForScouts')}</h4>
-            <nav className="mt-3 flex flex-col gap-2">
-              <Link
-                href="/register"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('landing.footerCreateAccount')}
-              </Link>
-              <Link
-                href="/login"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
-              >
-                {t('landing.footerBrowsePlayers')}
               </Link>
             </nav>
           </div>

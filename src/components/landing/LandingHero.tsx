@@ -31,8 +31,8 @@ export async function LandingHero() {
               {t('landing.heroSubtitle')}
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start sm:justify-center">
-              <Link href="/register" className="btn-primary px-8 py-3 text-base font-semibold">
-                {t('nav.getStarted')} &rarr;
+              <Link href="/demo" className="btn-primary px-8 py-3 text-base font-semibold">
+                {t('nav.requestDemo')} &rarr;
               </Link>
               <Link
                 href="/about"

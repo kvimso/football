@@ -289,6 +289,48 @@ export type Database = {
           },
         ]
       }
+      demo_requests: {
+        Row: {
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string | null
+          organization: string
+          role: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message?: string | null
+          organization: string
+          role: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string | null
+          organization?: string
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       leagues: {
         Row: {
           age_group: string
@@ -1396,6 +1438,10 @@ export type Database = {
     }
     Functions: {
       accept_transfer_request: { Args: { p_request_id: string }; Returns: Json }
+      backfill_demo_request: {
+        Args: { p_email: string; p_user_id: string }
+        Returns: undefined
+      }
       get_conversations_with_metadata: {
         Args: { p_user_id: string }
         Returns: {
@@ -1600,3 +1646,4 @@ export const Constants = {
     },
   },
 } as const
+
