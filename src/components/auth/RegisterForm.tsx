@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/hooks/useLang'
 import { SCOUT_COUNTRIES } from '@/lib/constants'
@@ -16,6 +17,7 @@ export function RegisterForm() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -32,6 +34,7 @@ export function RegisterForm() {
           full_name: fullName,
           organization,
           country: country || undefined,
+          terms_accepted_at: 'true', // Signal only — trigger uses now() for the actual timestamp
         },
       },
     })
@@ -195,9 +198,39 @@ export function RegisterForm() {
 
             <p className="text-xs text-foreground-muted">{t('auth.orContinue')}</p>
 
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                required
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-border accent-primary"
+              />
+              <span className="text-xs text-foreground-muted">
+                {t('auth.agreePrefix')}{' '}
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  {t('footer.terms')}
+                </Link>{' '}
+                {t('auth.agreeAnd')}{' '}
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  {t('footer.privacy')}
+                </Link>
+              </span>
+            </label>
+
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !agreedToTerms}
               className="btn-primary w-full py-3 text-base disabled:opacity-50"
             >
               {loading ? t('common.loading') : t('auth.registerButton')}

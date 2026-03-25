@@ -23,8 +23,6 @@ const nextConfig: NextConfig = {
     return [
       { source: '/players/:path*', destination: '/leagues', permanent: false },
       { source: '/matches/:path*', destination: '/leagues', permanent: false },
-      { source: '/privacy', destination: '/contact', permanent: false },
-      { source: '/terms', destination: '/contact', permanent: false },
     ]
   },
   async headers() {

@@ -68,7 +68,10 @@ export const en = {
     hasAccount: 'Already have an account?',
     signUpLink: 'Sign up',
     signInLink: 'Sign in',
-    orContinue: 'Scout registration — browse players, build your watchlist, and contact academies.',
+    orContinue:
+      'Scout registration — explore leagues, message academies, and discover Georgian talent.',
+    agreePrefix: 'I agree to the',
+    agreeAnd: 'and',
     error: 'Something went wrong. Please try again.',
     checkEmail: 'Check your email for a confirmation link.',
     pendingTitle: 'Account Pending Approval',
@@ -101,6 +104,14 @@ export const en = {
     viewOnStarlive: 'View on Starlive',
     emptyState: 'No leagues available yet.',
     season: 'Season',
+  },
+  privacy: {
+    title: 'Privacy Policy',
+    lastUpdated: 'Last Updated',
+  },
+  terms: {
+    title: 'Terms of Service',
+    lastUpdated: 'Last Updated',
   },
   demo: {
     title: 'Request Demo',
@@ -276,7 +287,9 @@ export const ka = {
     signUpLink: 'დარეგისტრირდი',
     signInLink: 'შედი',
     orContinue:
-      'სკაუტის რეგისტრაცია — დაათვალიერეთ მოთამაშეები, შექმენით სიები და დაუკავშირდით აკადემიებს.',
+      'სკაუტის რეგისტრაცია — გაეცანით ლიგებს, დაუკავშირდით აკადემიებს და აღმოაჩინეთ ქართული ტალანტი.',
+    agreePrefix: 'ვეთანხმები',
+    agreeAnd: 'და',
     error: 'რაღაც შეცდომა მოხდა. სცადეთ ხელახლა.',
     checkEmail: 'შეამოწმეთ ელ. ფოსტა დადასტურების ბმულისთვის.',
     pendingTitle: 'ანგარიში მოლოდინის რეჟიმშია',
@@ -309,6 +322,14 @@ export const ka = {
     viewOnStarlive: 'ნახეთ Starlive-ზე',
     emptyState: 'ლიგები ჯერ არ არის.',
     season: 'სეზონი',
+  },
+  privacy: {
+    title: 'კონფიდენციალურობის პოლიტიკა',
+    lastUpdated: 'ბოლო განახლება',
+  },
+  terms: {
+    title: 'მომსახურების პირობები',
+    lastUpdated: 'ბოლო განახლება',
   },
   demo: {
     title: 'დემოს მოთხოვნა',

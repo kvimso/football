@@ -7,6 +7,8 @@ export type UserRole = 'scout' | 'academy_admin' | 'platform_admin'
 export type MessageType = 'text' | 'file' | 'player_ref' | 'system'
 export type TransferStatus = 'pending' | 'accepted' | 'declined' | 'expired'
 export type ViewMode = 'grid' | 'list'
+export type ActionResult<T = void> = { success: true; data?: T } | { success: false; error: string }
+
 export type DemoRole = 'Scout' | 'Club Sporting Director' | 'Agent' | 'Academy Director' | 'Other'
 export type DemoStatus = 'new' | 'contacted' | 'demo_done' | 'converted' | 'declined'
 
