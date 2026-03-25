@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
@@ -14,17 +13,18 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
-
   const { t } = await getServerT()
 
-  const [{ data: profile }, { data: leagues }, { data: unreadCount }] = await Promise.all([
-    supabase.from('profiles').select('full_name').eq('id', user.id).single(),
+  // Layout already guards auth + scout role. Parallel fetch profile + leagues only.
+  const [profileResult, leaguesResult] = await Promise.all([
+    user
+      ? supabase.from('profiles').select('full_name').eq('id', user.id).single()
+      : Promise.resolve({ data: null, error: null }),
     supabase.from('leagues').select('*').eq('is_active', true).order('display_order').limit(3),
-    supabase.rpc('get_total_unread_count'),
   ])
 
-  const displayName = profile?.full_name || user.email || 'Scout'
+  const displayName = profileResult.data?.full_name || user?.email || 'Scout'
+  const leagues = leaguesResult.data ?? []
 
   return (
     <div className="py-8 space-y-8">
@@ -40,11 +40,6 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-foreground">{t('dashboard.messagesCard')}</h2>
-            {typeof unreadCount === 'number' && unreadCount > 0 && (
-              <p className="mt-1 text-sm text-primary font-medium">
-                {unreadCount} {t('dashboard.unreadCount')}
-              </p>
-            )}
           </div>
           <Link href="/dashboard/messages" className="btn-primary text-sm">
             {t('dashboard.viewMessages')}
@@ -61,9 +56,9 @@ export default async function DashboardPage() {
           </Link>
         </div>
 
-        {(leagues ?? []).length > 0 ? (
+        {leagues.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {(leagues ?? []).map((league) => (
+            {leagues.map((league) => (
               <a
                 key={league.id}
                 href={league.starlive_url}
