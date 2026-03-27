@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.supabase.in',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.starliveball.com',
+      },
     ],
   },
   serverExternalPackages: ['pdfkit'],
