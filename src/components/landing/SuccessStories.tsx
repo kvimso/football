@@ -10,14 +10,14 @@ const KVARATSKHELIA_TIMELINE: TimelineEntry[] = [
   { years: '2017–2018', club: 'Dinamo Tbilisi' },
   { years: '2019', club: 'Rubin Kazan' },
   { years: '2022–2024', club: 'SSC Napoli' },
-  { years: '2025–', club: 'Paris Saint-Germain', isCurrent: true },
+  { years: '2025', club: 'Paris Saint-Germain', isCurrent: true },
 ]
 
 const MAMARDASHVILI_TIMELINE: TimelineEntry[] = [
   { years: '2016–2019', club: 'Dinamo Tbilisi' },
   { years: '2019–2021', club: 'Locomotive Tbilisi' },
   { years: '2021–2025', club: 'Valencia CF' },
-  { years: '2025–', club: 'Liverpool FC', isCurrent: true },
+  { years: '2025', club: 'Liverpool FC', isCurrent: true },
 ]
 
 export async function SuccessStories() {
