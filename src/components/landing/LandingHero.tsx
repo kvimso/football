@@ -51,12 +51,15 @@ export async function LandingHero({ players }: Props) {
 
             {/* CTAs */}
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start sm:justify-center">
-              <Link href="/demo" className="btn-primary px-7 py-3 text-sm font-semibold">
+              <Link
+                href="/demo"
+                className="btn-primary min-w-[160px] px-7 py-3 text-sm font-semibold text-center"
+              >
                 {t('landing.heroGetStarted')} &rarr;
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center justify-center rounded-lg border-2 border-foreground-faint/40 px-7 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-surface"
+                className="inline-flex items-center justify-center rounded-lg border-2 border-foreground-faint/40 min-w-[160px] px-7 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-surface"
               >
                 {t('landing.heroLearnMore')}
               </Link>
