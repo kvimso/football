@@ -39,15 +39,19 @@ export function LandingNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav-bg shadow-sm">
-      <nav className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4">
-        <Link
-          href="/"
-          className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-btn-primary-text"
-        >
-          GFT
-        </Link>
+      <nav className="mx-auto grid h-12 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4">
+        {/* Logo — left */}
+        <div className="flex items-center">
+          <Link
+            href="/"
+            className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-btn-primary-text"
+          >
+            GFT
+          </Link>
+        </div>
 
-        <div className="hidden items-center gap-6 md:flex">
+        {/* Center nav links */}
+        <div className="hidden items-center gap-5 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -63,17 +67,24 @@ export function LandingNav() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2.5">
+        {/* Right side actions */}
+        <div className="flex items-center justify-end gap-2">
           <LanguageToggle />
           <ThemeToggle />
 
           {user ? (
-            <Link href={dashboardHref} className="btn-primary text-sm">
+            <Link
+              href={dashboardHref}
+              className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90"
+            >
               {t('nav.exploreLeagues')}
             </Link>
           ) : (
             <>
-              <Link href="/demo" className="btn-primary text-sm">
+              <Link
+                href="/demo"
+                className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90"
+              >
                 {t('nav.requestDemo')}
               </Link>
               <Link

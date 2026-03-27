@@ -18,7 +18,7 @@ export default async function LeaguesPage() {
     .order('display_order')
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="mx-auto min-h-[80vh] max-w-7xl px-4 py-10">
       <h1 className="text-2xl font-bold text-foreground">{t('leagues.title')}</h1>
       <p className="mt-2 max-w-2xl text-sm text-foreground-muted">{t('leagues.subtitle')}</p>
 

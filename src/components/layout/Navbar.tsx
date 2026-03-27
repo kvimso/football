@@ -10,6 +10,24 @@ import { ThemeToggle } from './ThemeToggle'
 import { AvatarDropdown } from './AvatarDropdown'
 import { LanguageToggle } from '@/components/ui/LanguageToggle'
 
+/** Desktop center link — plain styling matching LandingNav exactly */
+function CenterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isActive = pathname === href || pathname.startsWith(href + '/')
+
+  return (
+    <Link
+      href={href}
+      className={`text-sm transition-colors ${
+        isActive ? 'font-medium text-primary' : 'text-foreground-muted hover:text-foreground'
+      }`}
+    >
+      {children}
+    </Link>
+  )
+}
+
+/** Mobile menu link — keeps underline indicator + onClick */
 function NavLink({
   href,
   children,
@@ -26,12 +44,9 @@ function NavLink({
     <Link
       href={href}
       onClick={onClick}
-      className={`relative flex items-center gap-1.5 py-1 text-sm transition-colors ${isActive ? 'text-primary font-medium' : 'text-foreground-muted hover:text-foreground'}`}
+      className={`text-sm transition-colors ${isActive ? 'text-primary font-medium' : 'text-foreground-muted hover:text-foreground'}`}
     >
       {children}
-      {isActive && (
-        <span className="absolute -bottom-[13px] left-0 right-0 h-0.5 bg-primary rounded-full" />
-      )}
     </Link>
   )
 }
@@ -105,23 +120,25 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop nav links — center */}
+        {/* Desktop nav links — center (plain Links to match LandingNav exactly) */}
         <div className="hidden items-center gap-5 md:flex">
-          <NavLink href="/leagues">{t('nav.leagues')}</NavLink>
+          <CenterLink href="/leagues">{t('nav.leagues')}</CenterLink>
           {showPublicLinks && (
             <>
-              <NavLink href="/about">{t('nav.about')}</NavLink>
-              <NavLink href="/contact">{t('nav.contact')}</NavLink>
+              <CenterLink href="/about">{t('nav.about')}</CenterLink>
+              <CenterLink href="/contact">{t('nav.contact')}</CenterLink>
             </>
           )}
-          {showRequestDemo && <NavLink href="/demo">{t('nav.requestDemo')}</NavLink>}
+          {showRequestDemo && user && <CenterLink href="/demo">{t('nav.requestDemo')}</CenterLink>}
           {showMessages && (
-            <NavLink href={messagesHref}>
+            <CenterLink href={messagesHref}>
               {t('nav.messages')}
-              {unreadCount > 0 && <span className="h-2 w-2 rounded-full bg-primary" />}
-            </NavLink>
+              {unreadCount > 0 && (
+                <span className="ml-1 h-2 w-2 rounded-full bg-primary inline-block" />
+              )}
+            </CenterLink>
           )}
-          {showAdmin && <NavLink href="/admin">{t('nav.admin')}</NavLink>}
+          {showAdmin && <CenterLink href="/admin">{t('nav.admin')}</CenterLink>}
         </div>
 
         {/* Right side actions */}
@@ -137,13 +154,16 @@ export function Navbar() {
             <>
               <ThemeToggle />
               <Link
+                href="/demo"
+                className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90"
+              >
+                {t('nav.requestDemo')}
+              </Link>
+              <Link
                 href="/login"
                 className="text-sm text-foreground-muted hover:text-foreground transition-colors"
               >
                 {t('nav.login')}
-              </Link>
-              <Link href="/demo" className="btn-primary text-sm">
-                {t('nav.requestDemo')}
               </Link>
             </>
           )}
@@ -198,7 +218,7 @@ export function Navbar() {
                   </NavLink>
                 </>
               )}
-              {showRequestDemo && (
+              {showRequestDemo && user && (
                 <NavLink href="/demo" onClick={closeMobile}>
                   {t('nav.requestDemo')}
                 </NavLink>
