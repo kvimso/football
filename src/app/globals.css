@@ -384,17 +384,34 @@ a.card:focus-within, button.card:focus-within {
   animation: skeleton-in 150ms ease-out, pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* ── Hero parallax (CSS scroll-driven, progressive enhancement) ── */
-@supports (animation-timeline: scroll()) {
-  .hero-parallax {
-    animation: hero-float linear both;
-    animation-timeline: scroll();
-    animation-range: 0px 400px;
+/* ── Club logo infinite scroll slider ── */
+.club-scroll-container {
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+}
+.club-scroll-track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: club-scroll 25s linear infinite;
+  will-change: transform;
+}
+.club-scroll-container:hover .club-scroll-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .club-scroll-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
   }
-  @keyframes hero-float {
-    from { transform: rotate(2deg) translateY(0); }
-    to { transform: rotate(2deg) translateY(-30px); }
-  }
+}
+@keyframes club-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 /* ── Georgian typography adjustments ── */
@@ -422,38 +439,6 @@ html:lang(ka) {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(122, 117, 111, 0.25) transparent;
-}
-
-/* ── Accessibility: respect motion preferences ── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ── Loading skeleton entrance (combined with pulse to avoid animation conflict) ── */
-@keyframes skeleton-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.animate-skeleton-in {
-  animation: skeleton-in 150ms ease-out, pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* ── Hero parallax (CSS scroll-driven, progressive enhancement) ── */
-@supports (animation-timeline: scroll()) {
-  .hero-parallax {
-    animation: hero-float linear both;
-    animation-timeline: scroll();
-    animation-range: 0px 400px;
-  }
-  @keyframes hero-float {
-    from { transform: rotate(2deg) translateY(0); }
-    to { transform: rotate(2deg) translateY(-30px); }
-  }
 }
 
 /* Georgian script doesn't benefit from tight letter-spacing — it looks cramped */

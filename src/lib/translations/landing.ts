@@ -1,75 +1,56 @@
 // Landing page and public content translations
 export const en = {
   landing: {
-    heroTitle: 'The Gateway to Georgian Football Talent',
+    // Hero
+    heroBadge: 'Elite Georgian Talent',
+    heroTitle: 'Connecting International Scouts with the Future of Georgian Football',
     heroSubtitle:
-      "The talent portal for Georgia's 37,600+ youth players — league coverage, verified camera stats, direct academy access.",
+      'The definitive digital bridge to Georgian youth talent. Access verified player data, camera-powered statistics, and direct club connections.',
+    heroGetStarted: 'Get Started',
     heroLearnMore: 'Learn More',
     statsYouthPlayers: '37,600+',
-    statsYouthPlayersLabel: 'Registered Youth Players',
-    statsCameraVerified: '✓',
-    statsCameraVerifiedLabel: 'Camera-Verified Stats',
-    statsAcademies: '200+',
-    statsAcademiesLabel: 'Football Academies',
-    whatWeDoTitle: 'What We Do',
-    whatWeDoSubtitle:
-      'We bridge the gap between Georgian football academies and the international scouting community.',
-    feature1Title: 'Centralized Scouting',
-    feature1Desc:
-      'One platform for all Georgian youth player data — profiles, stats, career history, and contact information.',
-    feature2Title: 'Verified Camera Stats',
-    feature2Desc:
-      'Automated match statistics from Pixellot cameras installed at partner academies. No manual data entry.',
-    feature3Title: 'Direct Academy Contact',
-    feature3Desc:
-      'Send contact requests directly to academy administrators. Track request status in your dashboard.',
-    servicesTitle: 'Our Services',
-    servicesSubtitle: 'Everything scouts and academies need in one platform.',
-    service1Title: 'Player Database',
-    service1Desc:
-      'Comprehensive profiles with physical attributes, position, preferred foot, career history, and current club affiliation.',
-    service2Title: 'Verified Camera Stats',
-    service2Desc:
-      'Match statistics captured automatically by Pixellot cameras — goals, assists, pass accuracy, distance covered, and more.',
-    service3Title: 'Highlight Reels',
-    service3Desc:
-      'Auto-generated highlight clips from match footage, linked to individual player profiles.',
-    service4Title: 'Scout Contact System',
-    service4Desc:
-      'Send contact requests to academies, track responses, and manage your scouting pipeline from one dashboard.',
-    service5Title: 'Academy Management',
-    service5Desc:
-      'Register players, manage your squad, handle transfer requests, and respond to scout inquiries.',
-    forScoutsTitle: 'For Scouts & Agents',
-    forScoutsSubtitle: 'Discover the next Kvaratskhelia before anyone else.',
-    scoutBenefit1: 'Access to Georgian youth league analytics and standings',
-    scoutBenefit2: 'Verified match statistics from camera systems',
-    scoutBenefit3: 'Direct messaging with academy administrators',
-    scoutBenefit4: 'Player profiles with camera-verified performance data',
-    scoutCta: 'Request Demo',
+    statsYouthPlayersLabel: 'Youth Players',
+    statsTransfers: '€100M+',
+    statsTransfersLabel: 'In Transfers',
+    statsVerified: '✓ Verified',
+    statsVerifiedLabel: 'By Starlive',
+
+    // Club slider
+    clubSliderLabel: 'Featured Clubs',
+
+    // Success stories
+    successTitle: 'Georgian Talent on the World Stage',
+
+    // Audience panels
+    forScoutsTitle: 'For Scouts',
+    forScoutsDesc:
+      'Access verified performance data and direct communication with Georgian clubs. Streamline your scouting workflow.',
+    scoutBenefit1: 'Direct messaging with academies',
+    scoutBenefit2: 'Camera-verified player statistics',
+    scoutBenefit3: 'Shortlists and comparison tools',
+    scoutCta: 'Register as Scout',
     forAcademiesTitle: 'For Academies',
-    forAcademiesSubtitle: 'Showcase your talent to the world.',
-    academyBenefit1: 'Manage player profiles and squad roster',
-    academyBenefit2: 'Verified statistics from camera systems',
-    academyBenefit3: 'Handle transfer requests between clubs',
-    academyBenefit4: "Build your academy's international reputation",
-    academyCta: 'Register Academy',
-    howItWorksTitle: 'How It Works',
-    howItWorksSubtitle: 'From demo to access in three simple steps.',
-    step1Title: 'Request Demo',
-    step1Desc: 'Explore the platform with a personal walkthrough',
-    step2Title: 'Explore Leagues',
-    step2Desc: 'Browse Georgian youth leagues with Starlive camera coverage',
-    step3Title: 'Connect',
-    step3Desc: 'Message academies directly through the platform',
-    ctaTitle: 'Ready to Discover Georgian Talent?',
-    ctaSubtitle: 'Join the platform trusted by international scouts and Georgian academies.',
-    ctaCta: 'Request Demo',
+    forAcademiesDesc:
+      'Put your talent on the global stage. Manage inquiries and showcase players to international scouts.',
+    academyBenefit1: 'Global visibility for your players',
+    academyBenefit2: 'Scout inquiry management',
+    academyBenefit3: 'Verified profiles with camera data',
+    academyCta: 'Register Your Academy',
+
+    // Partners
     partnersTitle: 'Our Partners',
-    partnersSubtitle: 'Powered by industry-leading camera technology.',
-    poweredBy: 'Powered by Pixellot',
-    pixellotDesc:
-      'AI-powered sports camera technology providing automated match footage and player statistics at partner academies across Georgia.',
+
+    // Mock player card (fallback when no featured players)
+    mockPlayerName: 'Giorgi B.',
+    mockPosition: 'MF',
+    mockAge: '17 yrs',
+    mockClub: 'FC Dinamo Tbilisi',
+    verifiedStats: 'Verified Stats',
+    mockGoals: 'Goals',
+    mockAssists: 'Assists',
+    mockMatches: 'Matches',
+
+    // Footer
     footerTagline: 'Connecting Georgian football talent with the world.',
     footerPlatform: 'Platform',
     footerForScouts: 'For Scouts',
@@ -83,14 +64,6 @@ export const en = {
     footerRegister: 'Register Academy',
     footerManagePlayers: 'Manage Players',
     footerLearnMore: 'Learn More',
-    mockPlayerName: 'Giorgi B.',
-    mockPosition: 'MF',
-    mockAge: '17 yrs',
-    mockClub: 'FC Dinamo Tbilisi',
-    verifiedStats: 'Verified Stats',
-    mockGoals: 'Goals',
-    mockAssists: 'Assists',
-    mockMatches: 'Matches',
   },
   matches: {
     title: 'Match Library',
@@ -172,76 +145,56 @@ export const en = {
 
 export const ka = {
   landing: {
-    heroTitle: 'ქართული ფეხბურთის ტალანტის კარიბჭე',
+    // Hero
+    heroBadge: 'ელიტარული ქართული ტალანტი',
+    heroTitle: 'საერთაშორისო სკაუტების დაკავშირება ქართული ფეხბურთის მომავალთან',
     heroSubtitle:
-      'ტალანტის პორტალი საქართველოს 37,600+ ახალგაზრდა მოთამაშისთვის — ლიგის გაშუქება, დამოწმებული კამერის სტატისტიკა, პირდაპირი წვდომა აკადემიებთან.',
+      'ციფრული ხიდი ქართულ ახალგაზრდა ტალანტთან. წვდომა დამოწმებულ მოთამაშეთა მონაცემებზე, კამერის სტატისტიკასა და პირდაპირ კავშირზე კლუბებთან.',
+    heroGetStarted: 'დაწყება',
     heroLearnMore: 'გაიგე მეტი',
     statsYouthPlayers: '37,600+',
-    statsYouthPlayersLabel: 'რეგისტრირებული ახალგაზრდა მოთამაშე',
-    statsCameraVerified: '✓',
-    statsCameraVerifiedLabel: 'კამერით დამოწმებული სტატისტიკა',
-    statsAcademies: '200+',
-    statsAcademiesLabel: 'ფეხბურთის აკადემია',
-    whatWeDoTitle: 'რას ვაკეთებთ',
-    whatWeDoSubtitle:
-      'ჩვენ ვაკავშირებთ ქართულ ფეხბურთის აკადემიებს საერთაშორისო სკაუტინგის საზოგადოებასთან.',
-    feature1Title: 'ცენტრალიზებული სკაუტინგი',
-    feature1Desc:
-      'ერთი პლატფორმა ყველა ქართველი ახალგაზრდა მოთამაშის მონაცემებისთვის — პროფილები, სტატისტიკა, კარიერის ისტორია და საკონტაქტო ინფორმაცია.',
-    feature2Title: 'დამოწმებული კამერის სტატისტიკა',
-    feature2Desc:
-      'მატჩის ავტომატური სტატისტიკა Pixellot კამერებიდან პარტნიორ აკადემიებში. ხელით მონაცემების შეყვანა არ არის.',
-    feature3Title: 'პირდაპირი კონტაქტი აკადემიასთან',
-    feature3Desc:
-      'გაგზავნეთ საკონტაქტო მოთხოვნები პირდაპირ აკადემიის ადმინისტრატორებთან. თვალყური ადევნეთ მოთხოვნის სტატუსს.',
-    servicesTitle: 'ჩვენი სერვისები',
-    servicesSubtitle: 'ყველაფერი, რაც სკაუტებსა და აკადემიებს სჭირდებათ ერთ პლატფორმაზე.',
-    service1Title: 'მოთამაშეთა ბაზა',
-    service1Desc:
-      'სრული პროფილები ფიზიკური მახასიათებლებით, პოზიცია, სასურველი ფეხი, კარიერის ისტორია და მიმდინარე კლუბი.',
-    service2Title: 'დამოწმებული კამერის სტატისტიკა',
-    service2Desc:
-      'მატჩის სტატისტიკა ავტომატურად Pixellot კამერებიდან — გოლები, ასისტები, პასების სიზუსტე, გავლილი მანძილი.',
-    service3Title: 'ჰაილაითების რგოლები',
-    service3Desc:
-      'ავტომატურად გენერირებული ჰაილაითების კლიპები მატჩის კადრებიდან, მიბმული თითოეული მოთამაშის პროფილთან.',
-    service4Title: 'სკაუტის საკონტაქტო სისტემა',
-    service4Desc:
-      'გაგზავნეთ მოთხოვნები აკადემიებს, თვალყური ადევნეთ პასუხებს და მართეთ სკაუტინგი ერთი პანელიდან.',
-    service5Title: 'აკადემიის მართვა',
-    service5Desc:
-      'დაარეგისტრირეთ მოთამაშეები, მართეთ შემადგენლობა, მართეთ ტრანსფერის მოთხოვნები და უპასუხეთ სკაუტებს.',
-    forScoutsTitle: 'სკაუტებისა და აგენტებისთვის',
-    forScoutsSubtitle: 'აღმოაჩინეთ შემდეგი კვარაცხელია ყველაზე ადრე.',
-    scoutBenefit1: 'წვდომა ქართული ახალგაზრდული ლიგის ანალიტიკასა და ცხრილებზე',
-    scoutBenefit2: 'დამოწმებული მატჩის სტატისტიკა კამერის სისტემებიდან',
-    scoutBenefit3: 'პირდაპირი კომუნიკაცია აკადემიის ადმინისტრატორებთან',
-    scoutBenefit4: 'მოთამაშეთა პროფილები კამერით დამოწმებული მაჩვენებლებით',
-    scoutCta: 'დემოს მოთხოვნა',
+    statsYouthPlayersLabel: 'ახალგაზრდა მოთამაშე',
+    statsTransfers: '€100M+',
+    statsTransfersLabel: 'ტრანსფერებში',
+    statsVerified: '✓ დამოწმებული',
+    statsVerifiedLabel: 'Starlive-ის მიერ',
+
+    // Club slider
+    clubSliderLabel: 'გამორჩეული კლუბები',
+
+    // Success stories
+    successTitle: 'ქართული ტალანტი მსოფლიო სცენაზე',
+
+    // Audience panels
+    forScoutsTitle: 'სკაუტებისთვის',
+    forScoutsDesc:
+      'წვდომა დამოწმებულ მაჩვენებლებსა და პირდაპირ კომუნიკაციაზე ქართულ კლუბებთან. გაამარტივეთ სკაუტინგის პროცესი.',
+    scoutBenefit1: 'პირდაპირი კომუნიკაცია აკადემიებთან',
+    scoutBenefit2: 'კამერით დამოწმებული მოთამაშეთა სტატისტიკა',
+    scoutBenefit3: 'თვალყურის სიები და შედარების ინსტრუმენტები',
+    scoutCta: 'რეგისტრაცია სკაუტად',
     forAcademiesTitle: 'აკადემიებისთვის',
-    forAcademiesSubtitle: 'წარადგინეთ თქვენი ტალანტი მსოფლიოს წინაშე.',
-    academyBenefit1: 'მართეთ მოთამაშეთა პროფილები და შემადგენლობა',
-    academyBenefit2: 'დამოწმებული სტატისტიკა კამერის სისტემებიდან',
-    academyBenefit3: 'მართეთ კლუბებს შორის ტრანსფერის მოთხოვნები',
-    academyBenefit4: 'ააშენეთ თქვენი აკადემიის საერთაშორისო რეპუტაცია',
-    academyCta: 'აკადემიის რეგისტრაცია',
-    howItWorksTitle: 'როგორ მუშაობს',
-    howItWorksSubtitle: 'დემოდან წვდომამდე სამ მარტივ ნაბიჯში.',
-    step1Title: 'დემოს მოთხოვნა',
-    step1Desc: 'დაათვალიერეთ პლატფორმა პერსონალური ტურით',
-    step2Title: 'ლიგების დათვალიერება',
-    step2Desc: 'დაათვალიერეთ ქართული ახალგაზრდული ლიგები Starlive კამერის გაშუქებით',
-    step3Title: 'დაუკავშირდი',
-    step3Desc: 'მიწერეთ აკადემიებს პირდაპირ პლატფორმის მეშვეობით',
-    ctaTitle: 'მზად ხართ ქართული ტალანტის აღმოსაჩენად?',
-    ctaSubtitle:
-      'შეუერთდით პლატფორმას, რომელსაც ენდობიან საერთაშორისო სკაუტები და ქართული აკადემიები.',
-    ctaCta: 'დემოს მოთხოვნა',
+    forAcademiesDesc:
+      'წარადგინეთ თქვენი ტალანტი გლობალურ სცენაზე. მართეთ მოთხოვნები და აჩვენეთ მოთამაშეები საერთაშორისო სკაუტებს.',
+    academyBenefit1: 'გლობალური ხილვადობა თქვენი მოთამაშეებისთვის',
+    academyBenefit2: 'სკაუტების მოთხოვნების მართვა',
+    academyBenefit3: 'დამოწმებული პროფილები კამერის მონაცემებით',
+    academyCta: 'დაარეგისტრირეთ თქვენი აკადემია',
+
+    // Partners
     partnersTitle: 'ჩვენი პარტნიორები',
-    partnersSubtitle: 'მხარდაჭერილია ინდუსტრიის წამყვანი კამერის ტექნოლოგიით.',
-    poweredBy: 'Pixellot-ის მხარდაჭერით',
-    pixellotDesc:
-      'AI-ზე დაფუძნებული სპორტული კამერის ტექნოლოგია, რომელიც უზრუნველყოფს ავტომატურ მატჩის კადრებს და მოთამაშეთა სტატისტიკას პარტნიორ აკადემიებში საქართველოში.',
+
+    // Mock player card (fallback)
+    mockPlayerName: 'გიორგი ბ.',
+    mockPosition: 'ნშმ',
+    mockAge: '17 წ.',
+    mockClub: 'დინამო თბილისი',
+    verifiedStats: 'ვერიფიცირებული სტატისტიკა',
+    mockGoals: 'გოლი',
+    mockAssists: 'ასისტი',
+    mockMatches: 'მატჩი',
+
+    // Footer
     footerTagline: 'ქართული ფეხბურთის ტალანტის მსოფლიოსთან დაკავშირება.',
     footerPlatform: 'პლატფორმა',
     footerForScouts: 'სკაუტებისთვის',
@@ -255,14 +208,6 @@ export const ka = {
     footerRegister: 'აკადემიის რეგისტრაცია',
     footerManagePlayers: 'მოთამაშეების მართვა',
     footerLearnMore: 'გაიგე მეტი',
-    mockPlayerName: 'გიორგი ბ.',
-    mockPosition: 'ნშმ',
-    mockAge: '17 წ.',
-    mockClub: 'დინამო თბილისი',
-    verifiedStats: 'ვერიფიცირებული სტატისტიკა',
-    mockGoals: 'გოლი',
-    mockAssists: 'ასისტი',
-    mockMatches: 'მატჩი',
   },
   matches: {
     title: 'მატჩების ბიბლიოთეკა',
