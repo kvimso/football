@@ -58,22 +58,33 @@ Redesign the Binocly landing page to follow a new section layout inspired by a p
 **Section heading:** "Georgian Talent on the World Stage" with green underline bar.
 
 **Each card (Kvaratskhelia + Mamardashvili):**
-- **Photo area** (top): Player photo with gradient overlay. Name, position (flag 🇬🇪), and transfer fee (€70M / €30M in bright green) overlaid at bottom.
-- **Timeline area** (bottom): Vertical timeline with dots showing career path.
+- **Photo area** (top, 200px): Player photo with gradient overlay. Name, position (flag 🇬🇪), and transfer fee (€70M / €30M in #4ADE80 bright green) overlaid at bottom.
+- **Card body** (below photo): Two-column split layout — Career Path on LEFT, Achievements on RIGHT. Both columns MUST be equal height (use flexbox stretch + space-between).
 
-**Kvaratskhelia timeline:**
-1. 2017–2018 — Dinamo Tbilisi
-2. 2019 — Rubin Kazan
-3. 2022–2024 — SSC Napoli
-4. 2025– — Paris Saint-Germain (current, green dot + green text)
+**Career Path (left column):** Vertical timeline with dots and connecting line.
+- Dots: 10px diameter, centered on a 2px vertical line
+- Line connects dot-center to dot-center only (no overshoot above first or below last dot)
+- Implementation: Use separate `tl-line-up` and `tl-line-down` segments per item, both centered with `left: 50%; transform: translateX(-50%)` — same centering method as the dot. First item has line-down only, middle items have both, last item has line-up only.
+- Last dot is green (#1B8A4A) with subtle glow, others are gray (#C4BFB8) with white fill
+- Last club name in green
 
-**Mamardashvili timeline:**
-1. 2016–2019 — Dinamo Tbilisi
-2. 2019–2021 — Locomotive Tbilisi
-3. 2021–2025 — Valencia CF
-4. 2025– — Liverpool FC (current, green dot + green text)
+**Achievements (right column):** Stacked badge rows with green left border.
+- Each badge: `background: #F4F1EC`, `border-left: 3px solid #1B8A4A`, `border-radius: 0.5rem`
+- Title (bold, dark) + description line (smaller, gray)
+- No emojis, no icons — text only with green left accent
+- Use `justify-content: space-between` to distribute evenly and match timeline height
+
+**Kvaratskhelia:**
+- Timeline: Dinamo Tbilisi (2017–2018) → Rubin Kazan (2019) → SSC Napoli (2022–2024) → Paris Saint-Germain (2025–, current)
+- Achievements: Serie A Champion (2022-23 with Napoli), Serie A MVP (2022-23 Season), 40+ International Caps (Georgia National Team)
+
+**Mamardashvili:**
+- Timeline: Dinamo Tbilisi (2016–2019) → Locomotive Tbilisi (2019–2021) → Valencia CF (2021–2025) → Liverpool FC (2025–, current)
+- Achievements: La Liga Best Goalkeeper (2023-24 Season), Most Saves at Euro 2024 (29 saves — tournament leader), Record Georgian Transfer (€30M to Liverpool FC)
 
 **Photos:** Use real player photos (editorial/press images). Source during implementation.
+
+**Visual reference:** `.superpowers/brainstorm/12170-1774630259/content/timeline-fix.html`
 
 **Note:** This section is static/hardcoded content — not database-driven. These are specific real-world success stories used for marketing.
 
