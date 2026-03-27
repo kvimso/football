@@ -53,7 +53,7 @@ export async function LandingHero({ players }: Props) {
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start sm:justify-center">
               <Link
                 href="/demo"
-                className="btn-primary min-w-[160px] px-7 py-3 text-sm font-semibold text-center"
+                className="inline-flex items-center justify-center rounded-lg bg-primary text-btn-primary-text min-w-[160px] px-7 py-3 text-sm font-semibold transition-colors hover:bg-primary-hover"
               >
                 {t('landing.heroGetStarted')} &rarr;
               </Link>
