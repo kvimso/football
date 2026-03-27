@@ -10,13 +10,18 @@ export async function Partners() {
           {t('landing.partnersTitle')}
         </span>
 
-        <div className="mt-5 flex items-center justify-center gap-10 sm:gap-16 opacity-50 transition-opacity hover:opacity-80">
-          <span className="text-lg font-extrabold tracking-wide text-foreground sm:text-xl">
-            FREE FOOTBALL AGENCY
-          </span>
-          <span className="text-xl font-extrabold tracking-wider text-foreground sm:text-2xl">
-            STARLIVE
-          </span>
+        <div className="mt-6 flex items-center justify-center gap-6 sm:gap-10">
+          <div className="flex-1 text-right">
+            <span className="text-base font-extrabold tracking-wide text-foreground opacity-50 transition-opacity hover:opacity-80 sm:text-lg">
+              FREE FOOTBALL AGENCY
+            </span>
+          </div>
+          <div className="h-6 w-px bg-border flex-shrink-0" />
+          <div className="flex-1 text-left">
+            <span className="text-base font-extrabold tracking-wide text-foreground opacity-50 transition-opacity hover:opacity-80 sm:text-lg">
+              STARLIVE
+            </span>
+          </div>
         </div>
       </div>
     </section>

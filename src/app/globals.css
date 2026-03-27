@@ -384,35 +384,7 @@ a.card:focus-within, button.card:focus-within {
   animation: skeleton-in 150ms ease-out, pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* ── Club logo infinite scroll slider ── */
-.club-scroll-container {
-  width: 100%;
-  overflow: hidden;
-  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-}
-.club-scroll-track {
-  display: flex;
-  gap: 2.5rem;
-  width: max-content;
-  animation: club-scroll 25s linear infinite;
-  will-change: transform;
-}
-.club-scroll-container:hover .club-scroll-track {
-  animation-play-state: paused;
-}
-@media (prefers-reduced-motion: reduce) {
-  .club-scroll-track {
-    animation: none;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: auto;
-  }
-}
-@keyframes club-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
+/* (Club slider uses static flexbox layout — no CSS animation) */
 
 /* ── Georgian typography adjustments ── */
 html:lang(ka) {

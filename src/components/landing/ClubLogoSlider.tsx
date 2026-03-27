@@ -12,29 +12,25 @@ export async function ClubLogoSlider({ clubs }: Props) {
   // Hide entirely if fewer than 3 clubs
   if (clubs.length < 3) return null
 
-  // Duplicate for seamless infinite scroll
-  const allClubs = [...clubs, ...clubs]
-
   return (
-    <section className="bg-surface border-y border-border py-6 sm:py-8 overflow-hidden">
-      <div className="text-center mb-4">
+    <section className="bg-surface border-y border-border py-6 sm:py-8">
+      <div className="text-center mb-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground-faint">
           {t('landing.clubSliderLabel')}
         </span>
       </div>
 
-      <div className="club-scroll-container group" aria-label={t('landing.clubSliderLabel')}>
-        <div className="club-scroll-track">
-          {allClubs.map((club, i) => {
-            const isOriginal = i < clubs.length
+      <div className="mx-auto max-w-4xl px-4">
+        <div
+          className="flex flex-wrap items-center justify-center gap-8 sm:gap-12"
+          role="list"
+          aria-label={t('landing.clubSliderLabel')}
+        >
+          {clubs.map((club) => {
             const name = lang === 'ka' && club.name_ka ? club.name_ka : club.name
             return (
-              <div
-                key={`${club.id}-${i}`}
-                className="flex-shrink-0 flex items-center justify-center"
-                aria-hidden={!isOriginal}
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-background shadow-sm sm:h-16 sm:w-16">
+              <div key={club.id} role="listitem" className="flex flex-col items-center gap-2">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-background shadow-sm border border-border-subtle sm:h-[72px] sm:w-[72px]">
                   {club.logo_url ? (
                     <Image
                       src={club.logo_url}
@@ -44,11 +40,14 @@ export async function ClubLogoSlider({ clubs }: Props) {
                       className="h-10 w-10 rounded-full object-contain sm:h-12 sm:w-12"
                     />
                   ) : (
-                    <span className="text-xs font-bold text-foreground-faint select-none">
+                    <span className="text-sm font-bold text-foreground-faint select-none sm:text-base">
                       {name.charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
+                <span className="text-[10px] font-medium text-foreground-faint sm:text-[11px]">
+                  {name}
+                </span>
               </div>
             )
           })}

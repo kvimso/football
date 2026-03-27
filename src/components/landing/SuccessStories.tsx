@@ -119,7 +119,7 @@ function StoryCard({
                     : 'bg-foreground-faint'
                 }`}
               />
-              <div className="text-[11px] font-bold uppercase tracking-wider text-foreground-faint">
+              <div className="text-[11px] font-bold tracking-wider text-foreground-secondary">
                 {entry.years}
               </div>
               <div
