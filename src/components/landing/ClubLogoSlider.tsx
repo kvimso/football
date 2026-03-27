@@ -30,14 +30,14 @@ export async function ClubLogoSlider({ clubs }: Props) {
             const name = lang === 'ka' && club.name_ka ? club.name_ka : club.name
             return (
               <div key={club.id} role="listitem" className="flex flex-col items-center gap-2">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-background shadow-sm border border-border-subtle sm:h-[72px] sm:w-[72px]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm sm:h-[72px] sm:w-[72px]">
                   {club.logo_url ? (
                     <Image
                       src={club.logo_url}
                       alt={name}
                       width={48}
                       height={48}
-                      className="h-10 w-10 rounded-full object-contain sm:h-12 sm:w-12"
+                      className="h-10 w-10 object-contain sm:h-12 sm:w-12"
                     />
                   ) : (
                     <span className="text-sm font-bold text-foreground-faint select-none sm:text-base">
