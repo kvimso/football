@@ -51,7 +51,7 @@ export async function LandingHero({ players }: Props) {
 
             {/* CTAs */}
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start sm:justify-center">
-              <Link href="/register" className="btn-primary px-7 py-3 text-sm font-semibold">
+              <Link href="/demo" className="btn-primary px-7 py-3 text-sm font-semibold">
                 {t('landing.heroGetStarted')} &rarr;
               </Link>
               <Link
