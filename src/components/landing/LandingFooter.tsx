@@ -86,7 +86,21 @@ export async function LandingFooter() {
           <p className="text-xs text-foreground-faint">
             &copy; {new Date().getFullYear()} {t('footer.platformName')}. {t('footer.rights')}
           </p>
-          <p className="text-xs text-foreground-faint">{t('footer.location')}</p>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/privacy"
+              className="text-xs text-foreground-faint hover:text-foreground-muted transition-colors"
+            >
+              {t('footer.privacy')}
+            </Link>
+            <Link
+              href="/terms"
+              className="text-xs text-foreground-faint hover:text-foreground-muted transition-colors"
+            >
+              {t('footer.terms')}
+            </Link>
+            <span className="text-xs text-foreground-faint">{t('footer.location')}</span>
+          </div>
         </div>
       </div>
     </footer>

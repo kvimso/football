@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getServerT } from '@/lib/server-translations'
@@ -14,28 +13,74 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name')
-    .eq('id', user.id)
-    .single()
-
   const { t } = await getServerT()
-  const displayName = profile?.full_name || user.email || 'Scout'
+
+  // Layout already guards auth + scout role. Parallel fetch profile + leagues only.
+  const [profileResult, leaguesResult] = await Promise.all([
+    user
+      ? supabase.from('profiles').select('full_name').eq('id', user.id).single()
+      : Promise.resolve({ data: null, error: null }),
+    supabase.from('leagues').select('*').eq('is_active', true).order('display_order').limit(3),
+  ])
+
+  const displayName = profileResult.data?.full_name || user?.email || 'Scout'
+  const leagues = leaguesResult.data ?? []
 
   return (
-    <div className="py-8">
+    <div className="py-8 space-y-8">
       {/* Welcome card */}
-      <div className="card">
+      <div className="card p-6">
         <h1 className="text-xl font-semibold text-foreground">
           {t('dashboard.welcome')}, {displayName}
         </h1>
-        <p className="mt-2 text-sm text-foreground-muted">{t('dashboard.comingSoon')}</p>
-        <Link href="/dashboard/messages" className="btn-primary mt-4 inline-block text-sm">
-          {t('dashboard.goToMessages')}
-        </Link>
+      </div>
+
+      {/* Messages card */}
+      <div className="card p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">{t('dashboard.messagesCard')}</h2>
+          </div>
+          <Link href="/dashboard/messages" className="btn-primary text-sm">
+            {t('dashboard.viewMessages')}
+          </Link>
+        </div>
+      </div>
+
+      {/* Leagues section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-foreground">{t('dashboard.leaguesSection')}</h2>
+          <Link href="/leagues" className="text-sm text-primary hover:underline">
+            {t('dashboard.viewAllLeagues')}
+          </Link>
+        </div>
+
+        {leagues.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {leagues.map((league) => (
+              <a
+                key={league.id}
+                href={league.starlive_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card p-4 hover:border-primary/30 transition-colors"
+              >
+                <h3 className="font-medium text-foreground">{league.name}</h3>
+                {league.age_group && (
+                  <p className="mt-1 text-xs text-foreground-muted">{league.age_group}</p>
+                )}
+                {league.season && (
+                  <p className="mt-0.5 text-xs text-foreground-muted">
+                    {t('leagues.season')}: {league.season}
+                  </p>
+                )}
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-foreground-muted">{t('dashboard.noLeagues')}</p>
+        )}
       </div>
     </div>
   )

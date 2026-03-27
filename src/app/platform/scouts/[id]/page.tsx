@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { getServerT } from '@/lib/server-translations'
 import { unwrapRelation } from '@/lib/utils'
 import { format } from 'date-fns'
+import { ApprovalButton } from '@/components/platform/ApprovalButton'
 
 export default async function PlatformScoutDetailPage({
   params,
@@ -16,7 +17,7 @@ export default async function PlatformScoutDetailPage({
 
   const { data: scout, error } = await admin
     .from('profiles')
-    .select('id, full_name, email, organization, phone, created_at')
+    .select('id, full_name, email, organization, phone, country, is_approved, created_at')
     .eq('id', id)
     .eq('role', 'scout')
     .single()
@@ -57,7 +58,7 @@ export default async function PlatformScoutDetailPage({
 
       {/* Scout info */}
       <div className="mt-4 card p-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div>
             <p className="text-xs text-foreground-muted">{t('platform.scouts.name')}</p>
             <p className="mt-0.5 text-sm font-medium text-foreground">{scout.full_name ?? '—'}</p>
@@ -77,6 +78,19 @@ export default async function PlatformScoutDetailPage({
             <p className="mt-0.5 text-sm font-medium text-foreground">
               {scout.created_at ? format(new Date(scout.created_at), 'MMM d, yyyy') : '—'}
             </p>
+          </div>
+          <div>
+            <p className="text-xs text-foreground-muted">{t('platform.scouts.status')}</p>
+            <div className="mt-0.5 flex items-center gap-2">
+              <span
+                className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                  scout.is_approved ? 'bg-pos-mid-bg text-pos-mid' : 'bg-pos-gk-bg text-pos-gk'
+                }`}
+              >
+                {scout.is_approved ? t('platform.scouts.approved') : t('platform.scouts.pending')}
+              </span>
+              <ApprovalButton scoutId={scout.id} isApproved={scout.is_approved ?? false} />
+            </div>
           </div>
         </div>
       </div>
