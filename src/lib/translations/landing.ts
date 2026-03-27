@@ -20,6 +20,23 @@ export const en = {
 
     // Success stories
     successTitle: 'Georgian Talent on the World Stage',
+    successCareerPath: 'Career Path',
+    successAchievements: 'Achievements',
+    successPresent: 'Present',
+    // Kvaratskhelia achievements
+    kvaraAch1Title: 'Serie A Champion',
+    kvaraAch1Desc: '2022-23 with Napoli',
+    kvaraAch2Title: 'Serie A MVP',
+    kvaraAch2Desc: '2022-23 Season',
+    kvaraAch3Title: '40+ International Caps',
+    kvaraAch3Desc: 'Georgia National Team',
+    // Mamardashvili achievements
+    mamaAch1Title: 'La Liga Best Goalkeeper',
+    mamaAch1Desc: '2023-24 Season',
+    mamaAch2Title: 'Most Saves at Euro 2024',
+    mamaAch2Desc: '29 saves — tournament leader',
+    mamaAch3Title: 'Record Georgian Transfer',
+    mamaAch3Desc: '€30M to Liverpool FC',
 
     // Audience panels
     forScoutsTitle: 'For Scouts',
@@ -164,6 +181,21 @@ export const ka = {
 
     // Success stories
     successTitle: 'ქართული ტალანტი მსოფლიო სცენაზე',
+    successCareerPath: 'კარიერის გზა',
+    successAchievements: 'მიღწევები',
+    successPresent: 'დღემდე',
+    kvaraAch1Title: 'სერია A-ს ჩემპიონი',
+    kvaraAch1Desc: '2022-23 ნაპოლისთან',
+    kvaraAch2Title: 'სერია A-ს MVP',
+    kvaraAch2Desc: '2022-23 სეზონი',
+    kvaraAch3Title: '40+ საერთაშორისო მატჩი',
+    kvaraAch3Desc: 'საქართველოს ნაკრები',
+    mamaAch1Title: 'ლა ლიგის საუკეთესო მეკარე',
+    mamaAch1Desc: '2023-24 სეზონი',
+    mamaAch2Title: 'ევრო 2024-ის ყველაზე მეტი სეივი',
+    mamaAch2Desc: '29 სეივი — ტურნირის ლიდერი',
+    mamaAch3Title: 'ქართული ტრანსფერის რეკორდი',
+    mamaAch3Desc: '€30M ლივერპულში',
 
     // Audience panels
     forScoutsTitle: 'სკაუტებისთვის',
