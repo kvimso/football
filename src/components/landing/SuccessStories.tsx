@@ -30,7 +30,7 @@ const STORIES: PlayerStory[] = [
     fee: '€70M',
     gradient: 'linear-gradient(135deg, #0D3B2E 0%, #1B8A4A 40%, #4ADE80 100%)',
     photo: '/images/landing/kvaratskhelia.jpg',
-    photoPosition: 'center 20%',
+    photoPosition: '40% 20%',
     timeline: [
       { years: '2017 – 2018', club: 'Dinamo Tbilisi' },
       { years: '2019', club: 'Rubin Kazan' },
