@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { LandingHero } from '@/components/landing/LandingHero'
 import { ClubLogoSlider } from '@/components/landing/ClubLogoSlider'
@@ -49,22 +50,24 @@ const DEMO_SLIDER_PLAYERS: FeaturedPlayer[] = [
 ]
 
 export default async function Home() {
-  const supabase = await createClient()
+  // Skip expensive getUser() call if no auth cookie — most visitors are anonymous
+  const cookieStore = await cookies()
+  const hasAuthCookie = cookieStore.getAll().some((c) => c.name.startsWith('sb-'))
 
-  // Auth check — redirect logged-in users to platform
-  let isLoggedIn = false
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    isLoggedIn = !!user
-  } catch {
-    // Auth check failed — show landing page
+  if (hasAuthCookie) {
+    try {
+      const supabase = await createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) redirect('/players')
+    } catch {
+      // Auth check failed — show landing page
+    }
   }
 
-  if (isLoggedIn) redirect('/players')
-
   // Fetch clubs for logo slider
+  const supabase = await createClient()
   const { data: clubs } = await supabase
     .from('clubs')
     .select('id, name, name_ka, slug, logo_url')
