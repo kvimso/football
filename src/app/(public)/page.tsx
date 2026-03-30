@@ -75,12 +75,12 @@ export default async function Home() {
         },
         {
           id: 'static-3',
-          name: 'Aleko Basiladze',
-          name_ka: 'ალეკო ბასილაძე',
-          position: 'ATT',
-          date_of_birth: '2007-01-10',
-          photo_url: '/images/landing/slider-3.png',
-          club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+          name: 'Luka Gozalishvili',
+          name_ka: 'ლუკა გოზალიშვილი',
+          position: 'MID',
+          date_of_birth: '2005-09-12',
+          photo_url: '/images/landing/slider-3.jpg',
+          club: { name: 'Locomotive Tbilisi', name_ka: 'ლოკომოტივი თბილისი' },
         },
         {
           id: 'static-4',
