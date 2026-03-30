@@ -89,6 +89,11 @@ export function HeroPlayerSlider({ players }: Props) {
         </div>
       ))}
 
+      {/* Screen reader announcement for slide changes */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {playerName} — {current.position} · {age} · {clubName}
+      </div>
+
       {/* Gradient overlay at bottom */}
       <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
