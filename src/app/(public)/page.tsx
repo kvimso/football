@@ -42,12 +42,55 @@ export default async function Home() {
   if (isLoggedIn) redirect('/players')
 
   // Fetch featured players for hero slider
-  const { data: players } = await supabase
+  const { data: dbPlayers } = await supabase
     .from('players')
     .select('id, name, name_ka, position, date_of_birth, photo_url, club:clubs(name, name_ka)')
     .eq('is_featured', true)
     .limit(5)
     .order('name')
+
+  // Use DB players if available, otherwise show static showcase players
+  const players: FeaturedPlayer[] =
+    dbPlayers && dbPlayers.length >= 2
+      ? (dbPlayers as FeaturedPlayer[])
+      : [
+          {
+            id: 'static-1',
+            name: 'Amiran Tkeshelashvili',
+            name_ka: 'ამირან ტყეშელაშვილი',
+            position: 'MID',
+            date_of_birth: '2007-03-15',
+            photo_url: '/images/landing/slider-1.png',
+            club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+          },
+          {
+            id: 'static-2',
+            name: 'Dimitri Maisuradze',
+            name_ka: 'დიმიტრი მაისურაძე',
+            position: 'DEF',
+            date_of_birth: '2006-07-22',
+            photo_url: '/images/landing/slider-2.png',
+            club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+          },
+          {
+            id: 'static-3',
+            name: 'Aleko Basiladze',
+            name_ka: 'ალეკო ბასილაძე',
+            position: 'ATT',
+            date_of_birth: '2007-01-10',
+            photo_url: '/images/landing/slider-3.png',
+            club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+          },
+          {
+            id: 'static-4',
+            name: 'Giorgi Cereteli',
+            name_ka: 'გიორგი ცერეთელი',
+            position: 'MID',
+            date_of_birth: '2005-11-05',
+            photo_url: '/images/landing/slider-4.jpg',
+            club: { name: 'Locomotive Tbilisi', name_ka: 'ლოკომოტივი თბილისი' },
+          },
+        ]
 
   // Fetch clubs for logo slider
   const { data: clubs } = await supabase
@@ -57,7 +100,7 @@ export default async function Home() {
 
   return (
     <>
-      <LandingHero players={(players as FeaturedPlayer[]) ?? []} />
+      <LandingHero players={players} />
       <FadeInOnScroll>
         <ClubLogoSlider clubs={(clubs as FeaturedClub[]) ?? []} />
       </FadeInOnScroll>

@@ -71,7 +71,7 @@ export function HeroPlayerSlider({ players }: Props) {
       role="region"
       aria-label={t('landing.heroBadge')}
       aria-roledescription="carousel"
-      className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-br from-elevated to-border mx-auto lg:mx-0"
+      className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-2xl bg-gradient-to-b from-surface via-elevated to-foreground-faint/30 mx-auto lg:mx-0"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
@@ -79,18 +79,18 @@ export function HeroPlayerSlider({ players }: Props) {
       onKeyDown={handleKeyDown}
     >
       {/* Player image / silhouette */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0">
         {player.photo_url ? (
           <Image
             src={player.photo_url}
             alt={playerName}
             fill
-            className="object-cover"
+            className="object-cover object-top"
             priority={currentIndex === 0}
             sizes="(max-width: 768px) 100vw, 384px"
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full bg-gradient-to-b from-elevated to-foreground-faint/20">
+          <div className="flex items-center justify-center w-full h-full">
             <PlayerSilhouette size="lg" className="text-foreground-faint/30" />
           </div>
         )}
