@@ -11,7 +11,7 @@ export async function LandingFooter() {
           {/* Brand */}
           <div>
             <Link href="/" className="text-lg font-bold text-primary">
-              GFT
+              Binocly
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-foreground-secondary">
               {t('landing.footerTagline')}

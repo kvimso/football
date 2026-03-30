@@ -57,29 +57,25 @@ export const en = {
     // Partners
     partnersTitle: 'Our Partners',
 
-    // Mock player card (fallback when no featured players)
-    mockPlayerName: 'Giorgi B.',
-    mockPosition: 'MF',
-    mockAge: '17 yrs',
-    mockClub: 'FC Dinamo Tbilisi',
-    verifiedStats: 'Verified Stats',
-    mockGoals: 'Goals',
-    mockAssists: 'Assists',
-    mockMatches: 'Matches',
+    // Success stories — positions
+    posLeftWinger: 'Left Winger',
+    posGoalkeeper: 'Goalkeeper',
+
+    // Carousel aria labels
+    carouselLabel: 'Featured players',
+    slidesLabel: 'Slides',
+    slideLabel: 'Slide',
+
+    // Nav aria labels
+    menuOpen: 'Open menu',
+    menuClose: 'Close menu',
 
     // Footer
     footerTagline: 'Connecting Georgian football talent with the world.',
     footerPlatform: 'Platform',
     footerForScouts: 'For Scouts',
     footerForAcademies: 'For Academies',
-    footerBrowsePlayers: 'Browse Players',
-    footerMatchLibrary: 'Match Library',
-    footerClubDirectory: 'Club Directory',
-    footerCreateAccount: 'Create Account',
-    footerMyDashboard: 'My Dashboard',
-    footerShortlist: 'Watchlist',
     footerRegister: 'Register Academy',
-    footerManagePlayers: 'Manage Players',
     footerLearnMore: 'Learn More',
   },
   matches: {
@@ -216,29 +212,25 @@ export const ka = {
     // Partners
     partnersTitle: 'ჩვენი პარტნიორები',
 
-    // Mock player card (fallback)
-    mockPlayerName: 'გიორგი ბ.',
-    mockPosition: 'ნშმ',
-    mockAge: '17 წ.',
-    mockClub: 'დინამო თბილისი',
-    verifiedStats: 'ვერიფიცირებული სტატისტიკა',
-    mockGoals: 'გოლი',
-    mockAssists: 'ასისტი',
-    mockMatches: 'მატჩი',
+    // Success stories — positions
+    posLeftWinger: 'მარცხენა ფრთა',
+    posGoalkeeper: 'მეკარე',
+
+    // Carousel aria labels
+    carouselLabel: 'გამორჩეული მოთამაშეები',
+    slidesLabel: 'სლაიდები',
+    slideLabel: 'სლაიდი',
+
+    // Nav aria labels
+    menuOpen: 'მენიუს გახსნა',
+    menuClose: 'მენიუს დახურვა',
 
     // Footer
     footerTagline: 'ქართული ფეხბურთის ტალანტის მსოფლიოსთან დაკავშირება.',
     footerPlatform: 'პლატფორმა',
     footerForScouts: 'სკაუტებისთვის',
     footerForAcademies: 'აკადემიებისთვის',
-    footerBrowsePlayers: 'მოთამაშეების ნახვა',
-    footerMatchLibrary: 'მატჩების ბიბლიოთეკა',
-    footerClubDirectory: 'კლუბების კატალოგი',
-    footerCreateAccount: 'ანგარიშის შექმნა',
-    footerMyDashboard: 'ჩემი პანელი',
-    footerShortlist: 'თვალყურის სია',
     footerRegister: 'აკადემიის რეგისტრაცია',
-    footerManagePlayers: 'მოთამაშეების მართვა',
     footerLearnMore: 'გაიგე მეტი',
   },
   matches: {

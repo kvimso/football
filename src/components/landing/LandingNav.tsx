@@ -46,7 +46,7 @@ export function LandingNav() {
             href="/"
             className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-btn-primary-text"
           >
-            GFT
+            Binocly
           </Link>
         </div>
 
@@ -75,7 +75,7 @@ export function LandingNav() {
           {user ? (
             <Link
               href={dashboardHref}
-              className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90"
+              className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {t('nav.exploreLeagues')}
             </Link>
@@ -83,7 +83,7 @@ export function LandingNav() {
             <>
               <Link
                 href="/demo"
-                className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90"
+                className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 {t('nav.requestDemo')}
               </Link>
@@ -100,7 +100,7 @@ export function LandingNav() {
             onClick={() => setMenuOpen(!menuOpen)}
             onKeyDown={(e) => e.key === 'Escape' && setMenuOpen(false)}
             className="rounded-md p-1.5 text-foreground-muted hover:text-foreground transition-colors md:hidden"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={menuOpen ? t('landing.menuClose') : t('landing.menuOpen')}
             aria-expanded={menuOpen}
             aria-controls="landing-mobile-menu"
           >
@@ -137,7 +137,11 @@ export function LandingNav() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+                  className={`text-sm transition-colors ${
+                    link.isActive
+                      ? 'font-medium text-primary'
+                      : 'text-foreground-muted hover:text-foreground'
+                  }`}
                 >
                   {link.label}
                 </Link>

@@ -14,10 +14,10 @@ interface Achievement {
 
 interface PlayerStory {
   name: string
-  position: string
+  positionKey: string
   fee: string
   gradient: string
-  photo: string | null
+  photo: string
   photoPosition: string
   timeline: TimelineEntry[]
   achievements: Achievement[]
@@ -26,7 +26,7 @@ interface PlayerStory {
 const STORIES: PlayerStory[] = [
   {
     name: 'Khvicha Kvaratskhelia',
-    position: 'Left Winger',
+    positionKey: 'landing.posLeftWinger',
     fee: '€70M',
     gradient: 'linear-gradient(135deg, #0D3B2E 0%, #1B8A4A 40%, #4ADE80 100%)',
     photo: '/images/landing/kvaratskhelia.jpg',
@@ -45,7 +45,7 @@ const STORIES: PlayerStory[] = [
   },
   {
     name: 'Giorgi Mamardashvili',
-    position: 'Goalkeeper',
+    positionKey: 'landing.posGoalkeeper',
     fee: '€30M',
     gradient: 'linear-gradient(135deg, #5C1A1A 0%, #CC3333 40%, #F87171 100%)',
     photo: '/images/landing/mamardashvili.jpg',
@@ -96,21 +96,14 @@ function StoryCard({ story, t }: { story: PlayerStory; t: (key: string) => strin
     <div className="overflow-hidden rounded-2xl border border-elevated bg-background shadow-sm shadow-black/[0.04]">
       {/* Photo area — 200px */}
       <div className="relative h-[200px] overflow-hidden" style={{ background: story.gradient }}>
-        {/* Player photo or silhouette fallback */}
-        {story.photo ? (
-          <Image
-            src={story.photo}
-            alt={story.name}
-            fill
-            className="object-cover"
-            style={{ objectPosition: story.photoPosition }}
-            sizes="(max-width: 768px) 100vw, 640px"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-32 w-24 rounded-[45%_45%_0_0] bg-white/[0.07] mt-6" />
-          </div>
-        )}
+        <Image
+          src={story.photo}
+          alt={story.name}
+          fill
+          className="object-cover"
+          style={{ objectPosition: story.photoPosition }}
+          sizes="(max-width: 768px) 100vw, 640px"
+        />
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
@@ -125,15 +118,15 @@ function StoryCard({ story, t }: { story: PlayerStory; t: (key: string) => strin
               </span>
             </div>
             <div className="text-xs font-medium uppercase tracking-wider text-white/75">
-              {story.position}
+              {t(story.positionKey)}
             </div>
           </div>
-          <div className="text-xl font-extrabold text-[#4ADE80] sm:text-2xl">{story.fee}</div>
+          <div className="text-xl font-extrabold text-primary sm:text-2xl">{story.fee}</div>
         </div>
       </div>
 
       {/* Card body — two-column split */}
-      <div className="grid grid-cols-2 gap-5 p-5" style={{ alignItems: 'stretch' }}>
+      <div className="grid grid-cols-2 gap-5 p-5">
         {/* Career Path */}
         <div className="flex flex-col">
           <h3 className="mb-3 text-[0.65rem] font-bold uppercase tracking-[0.1em] text-foreground-faint">

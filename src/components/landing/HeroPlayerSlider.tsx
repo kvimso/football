@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function HeroPlayerSlider({ players }: Props) {
-  const { lang } = useLang()
+  const { lang, t } = useLang()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const prefersReducedMotion = useRef(false)
@@ -68,7 +68,7 @@ export function HeroPlayerSlider({ players }: Props) {
     <div
       role="region"
       aria-roledescription="carousel"
-      aria-label="Featured players"
+      aria-label={t('landing.carouselLabel')}
       className="relative aspect-[3/4] w-full max-w-sm overflow-hidden rounded-2xl bg-elevated mx-auto lg:mx-0"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -110,7 +110,7 @@ export function HeroPlayerSlider({ players }: Props) {
         {players.length > 1 && (
           <div
             role="tablist"
-            aria-label="Slides"
+            aria-label={t('landing.slidesLabel')}
             className="mt-3 flex items-center gap-1.5 justify-center"
           >
             {players.map((p, i) => (
@@ -118,7 +118,7 @@ export function HeroPlayerSlider({ players }: Props) {
                 key={p.id}
                 role="tab"
                 aria-selected={i === currentIndex}
-                aria-label={`Slide ${i + 1}`}
+                aria-label={`${t('landing.slideLabel')} ${i + 1}`}
                 tabIndex={i === currentIndex ? 0 : -1}
                 onClick={() => goTo(i)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
