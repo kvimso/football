@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { getServerT } from '@/lib/server-translations'
 
 interface TimelineEntry {
@@ -16,6 +17,8 @@ interface PlayerStory {
   position: string
   fee: string
   gradient: string
+  photo: string | null
+  photoPosition: string
   timeline: TimelineEntry[]
   achievements: Achievement[]
 }
@@ -26,6 +29,8 @@ const STORIES: PlayerStory[] = [
     position: 'Left Winger',
     fee: '€70M',
     gradient: 'linear-gradient(135deg, #0D3B2E 0%, #1B8A4A 40%, #4ADE80 100%)',
+    photo: '/images/landing/kvaratskhelia.jpg',
+    photoPosition: 'center 20%',
     timeline: [
       { years: '2017 – 2018', club: 'Dinamo Tbilisi' },
       { years: '2019', club: 'Rubin Kazan' },
@@ -43,6 +48,8 @@ const STORIES: PlayerStory[] = [
     position: 'Goalkeeper',
     fee: '€30M',
     gradient: 'linear-gradient(135deg, #5C1A1A 0%, #CC3333 40%, #F87171 100%)',
+    photo: '/images/landing/mamardashvili.jpg',
+    photoPosition: 'center 20%',
     timeline: [
       { years: '2016 – 2019', club: 'Dinamo Tbilisi' },
       { years: '2019 – 2021', club: 'Locomotive Tbilisi' },
@@ -62,7 +69,7 @@ export async function SuccessStories() {
 
   return (
     <section className="py-16 sm:py-20">
-      <div className="mx-auto max-w-[850px] px-4">
+      <div className="mx-auto max-w-7xl px-4">
         {/* Section heading — centered */}
         <div className="text-center mb-10">
           <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
@@ -89,10 +96,21 @@ function StoryCard({ story, t }: { story: PlayerStory; t: (key: string) => strin
     <div className="overflow-hidden rounded-2xl border border-elevated bg-background shadow-sm shadow-black/[0.04]">
       {/* Photo area — 200px */}
       <div className="relative h-[200px] overflow-hidden" style={{ background: story.gradient }}>
-        {/* Silhouette placeholder */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-32 w-24 rounded-[45%_45%_0_0] bg-white/[0.07] mt-6" />
-        </div>
+        {/* Player photo or silhouette fallback */}
+        {story.photo ? (
+          <Image
+            src={story.photo}
+            alt={story.name}
+            fill
+            className="object-cover"
+            style={{ objectPosition: story.photoPosition }}
+            sizes="(max-width: 768px) 100vw, 640px"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-32 w-24 rounded-[45%_45%_0_0] bg-white/[0.07] mt-6" />
+          </div>
+        )}
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
