@@ -7,11 +7,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*.supabase.co',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.supabase.in',
+        hostname: 'jodnjhqnoawsxigrxqgv.supabase.co',
       },
       {
         protocol: 'https',
@@ -43,6 +39,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' https://*.supabase.co data: blob:",
               "font-src 'self'",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              "object-src 'none'",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
