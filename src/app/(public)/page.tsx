@@ -6,24 +6,7 @@ import { SuccessStories } from '@/components/landing/SuccessStories'
 import { AudiencePanels } from '@/components/landing/AudiencePanels'
 import { Partners } from '@/components/landing/Partners'
 import { FadeInOnScroll } from '@/components/ui/FadeInOnScroll'
-
-export interface FeaturedPlayer {
-  id: string
-  name: string
-  name_ka: string
-  position: string
-  date_of_birth: string
-  photo_url: string | null
-  club: { name: string; name_ka: string } | null
-}
-
-export interface FeaturedClub {
-  id: string
-  name: string
-  name_ka: string
-  slug: string
-  logo_url: string | null
-}
+import type { FeaturedPlayer, FeaturedClub } from '@/components/landing/types'
 
 // Static demo players for hero slider (used when no DB players are featured)
 const DEMO_SLIDER_PLAYERS: FeaturedPlayer[] = [
@@ -91,7 +74,7 @@ export default async function Home() {
     <>
       <LandingHero players={DEMO_SLIDER_PLAYERS} />
       <FadeInOnScroll>
-        <ClubLogoSlider clubs={(clubs as FeaturedClub[]) ?? []} />
+        <ClubLogoSlider clubs={clubs ?? []} />
       </FadeInOnScroll>
       <FadeInOnScroll delay={50}>
         <SuccessStories />

@@ -3,16 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { useLang } from '@/hooks/useLang'
-import type { FeaturedPlayer } from '@/app/(public)/page'
-
-function getAge(dob: string): number {
-  const birth = new Date(dob)
-  const now = new Date()
-  let age = now.getFullYear() - birth.getFullYear()
-  const m = now.getMonth() - birth.getMonth()
-  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--
-  return age
-}
+import { calculateAge } from '@/lib/utils'
+import type { FeaturedPlayer } from '@/components/landing/types'
 
 interface Props {
   players: FeaturedPlayer[]
@@ -59,7 +51,7 @@ export function HeroPlayerSlider({ players }: Props) {
   if (!players.length) return null
 
   const current = players[currentIndex]
-  const age = getAge(current.date_of_birth)
+  const age = calculateAge(current.date_of_birth)
   const clubName =
     lang === 'ka' && current.club?.name_ka ? current.club.name_ka : current.club?.name
   const playerName = lang === 'ka' ? current.name_ka : current.name

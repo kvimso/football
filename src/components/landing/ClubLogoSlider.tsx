@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { getServerT } from '@/lib/server-translations'
-import type { FeaturedClub } from '@/app/(public)/page'
+import type { FeaturedClub } from '@/components/landing/types'
 
 interface Props {
   clubs: FeaturedClub[]

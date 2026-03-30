@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getServerT } from '@/lib/server-translations'
 import { HeroPlayerSlider } from '@/components/landing/HeroPlayerSlider'
-import type { FeaturedPlayer } from '@/app/(public)/page'
+import type { FeaturedPlayer } from '@/components/landing/types'
 
 interface Props {
   players: FeaturedPlayer[]
