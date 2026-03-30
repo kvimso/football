@@ -81,18 +81,6 @@ export default async function Home() {
 
   if (isLoggedIn) redirect('/players')
 
-  // Fetch featured players for hero slider
-  const { data: dbPlayers } = await supabase
-    .from('players')
-    .select('id, name, name_ka, position, date_of_birth, photo_url, club:clubs(name, name_ka)')
-    .eq('is_featured', true)
-    .limit(5)
-    .order('name')
-
-  // Use DB featured players if available, otherwise use static demo players
-  const players =
-    dbPlayers && dbPlayers.length >= 2 ? (dbPlayers as FeaturedPlayer[]) : DEMO_SLIDER_PLAYERS
-
   // Fetch clubs for logo slider
   const { data: clubs } = await supabase
     .from('clubs')
@@ -101,7 +89,7 @@ export default async function Home() {
 
   return (
     <>
-      <LandingHero players={players} />
+      <LandingHero players={DEMO_SLIDER_PLAYERS} />
       <FadeInOnScroll>
         <ClubLogoSlider clubs={(clubs as FeaturedClub[]) ?? []} />
       </FadeInOnScroll>
