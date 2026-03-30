@@ -37,6 +37,7 @@ export async function ClubLogoSlider({ clubs }: Props) {
                       alt={name}
                       width={48}
                       height={48}
+                      sizes="48px"
                       className="h-10 w-10 object-contain sm:h-12 sm:w-12"
                     />
                   ) : (

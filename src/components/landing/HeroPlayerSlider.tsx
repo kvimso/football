@@ -82,6 +82,7 @@ export function HeroPlayerSlider({ players }: Props) {
               fill
               className="object-cover object-[center_10%]"
               priority={i === 0}
+              loading={i === 0 ? 'eager' : 'lazy'}
               sizes="(max-width: 768px) 100vw, 384px"
             />
           )}

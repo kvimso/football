@@ -100,6 +100,7 @@ function StoryCard({ story, t }: { story: PlayerStory; t: (key: string) => strin
           src={story.photo}
           alt={story.name}
           fill
+          loading="lazy"
           className="object-cover"
           style={{ objectPosition: story.photoPosition }}
           sizes="(max-width: 768px) 100vw, 640px"

@@ -16,7 +16,7 @@ const DEMO_SLIDER_PLAYERS: FeaturedPlayer[] = [
     name_ka: 'ამირან ტყეშელაშვილი',
     position: 'MID',
     date_of_birth: '2007-03-15',
-    photo_url: '/images/landing/slider-1.png',
+    photo_url: '/images/landing/slider-1.jpg',
     club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
   },
   {
@@ -25,7 +25,7 @@ const DEMO_SLIDER_PLAYERS: FeaturedPlayer[] = [
     name_ka: 'დიმიტრი მაისურაძე',
     position: 'DEF',
     date_of_birth: '2006-08-22',
-    photo_url: '/images/landing/slider-2.png',
+    photo_url: '/images/landing/slider-2.jpg',
     club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
   },
   {
