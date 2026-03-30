@@ -25,6 +25,46 @@ export interface FeaturedClub {
   logo_url: string | null
 }
 
+// Static demo players for hero slider (used when no DB players are featured)
+const DEMO_SLIDER_PLAYERS: FeaturedPlayer[] = [
+  {
+    id: 'demo-1',
+    name: 'Amiran Tkeshelashvili',
+    name_ka: 'ამირან ტყეშელაშვილი',
+    position: 'MID',
+    date_of_birth: '2007-03-15',
+    photo_url: '/images/landing/slider-1.png',
+    club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+  },
+  {
+    id: 'demo-2',
+    name: 'Dimitri Maisuradze',
+    name_ka: 'დიმიტრი მაისურაძე',
+    position: 'DEF',
+    date_of_birth: '2006-08-22',
+    photo_url: '/images/landing/slider-2.png',
+    club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+  },
+  {
+    id: 'demo-3',
+    name: 'Aleko Basiladze',
+    name_ka: 'ალეკო ბასილაძე',
+    position: 'ATT',
+    date_of_birth: '2007-01-10',
+    photo_url: '/images/landing/slider-3.jpg',
+    club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+  },
+  {
+    id: 'demo-4',
+    name: 'Giorgi Cereteli',
+    name_ka: 'გიორგი ცერეთელი',
+    position: 'MID',
+    date_of_birth: '2005-11-05',
+    photo_url: '/images/landing/slider-4.jpg',
+    club: { name: 'Locomotive Tbilisi', name_ka: 'ლოკომოტივი თბილისი' },
+  },
+]
+
 export default async function Home() {
   const supabase = await createClient()
 
@@ -49,49 +89,9 @@ export default async function Home() {
     .limit(5)
     .order('name')
 
-  // Use DB players if available (with photos), otherwise show static showcase players
-  const hasDbPlayersWithPhotos =
-    dbPlayers && dbPlayers.length >= 2 && dbPlayers.some((p) => p.photo_url)
-  const players: FeaturedPlayer[] = hasDbPlayersWithPhotos
-    ? (dbPlayers as FeaturedPlayer[])
-    : [
-        {
-          id: 'b1b2c3d4-0001-4000-8000-000000000001',
-          name: 'Giorgi Mikautadze',
-          name_ka: 'გიორგი მიქაუტაძე',
-          position: 'ST',
-          date_of_birth: '2008-03-15',
-          photo_url: '/images/landing/slider-1.png',
-          club: { name: 'Dinamo Tbilisi Academy', name_ka: 'დინამო თბილისის აკადემია' },
-        },
-        {
-          id: 'b1b2c3d4-0002-4000-8000-000000000002',
-          name: 'Luka Zarandia',
-          name_ka: 'ლუკა ზარანდია',
-          position: 'MID',
-          date_of_birth: '2007-07-22',
-          photo_url: '/images/landing/slider-2.png',
-          club: { name: 'Dinamo Tbilisi Academy', name_ka: 'დინამო თბილისის აკადემია' },
-        },
-        {
-          id: 'b1b2c3d4-0005-4000-8000-000000000005',
-          name: 'Tornike Basilashvili',
-          name_ka: 'თორნიკე ბასილაშვილი',
-          position: 'WNG',
-          date_of_birth: '2007-05-10',
-          photo_url: '/images/landing/slider-3.jpg',
-          club: { name: 'Iberia 1999 Tbilisi Academy', name_ka: 'იბერია 1999 თბილისის აკადემია' },
-        },
-        {
-          id: 'b1b2c3d4-0006-4000-8000-000000000006',
-          name: 'Saba Kirtadze',
-          name_ka: 'საბა კირთაძე',
-          position: 'ATT',
-          date_of_birth: '2008-09-14',
-          photo_url: '/images/landing/slider-4.jpg',
-          club: { name: 'Iberia 1999 Tbilisi Academy', name_ka: 'იბერია 1999 თბილისის აკადემია' },
-        },
-      ]
+  // Use DB featured players if available, otherwise use static demo players
+  const players =
+    dbPlayers && dbPlayers.length >= 2 ? (dbPlayers as FeaturedPlayer[]) : DEMO_SLIDER_PLAYERS
 
   // Fetch clubs for logo slider
   const { data: clubs } = await supabase
