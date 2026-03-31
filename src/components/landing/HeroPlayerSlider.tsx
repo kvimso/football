@@ -30,7 +30,7 @@ export function HeroPlayerSlider({ players }: Props) {
   // Auto-rotation
   useEffect(() => {
     if (players.length < 2 || isPaused || prefersReducedMotion.current) return
-    const timer = setInterval(() => goTo(currentIndex + 1), 5000)
+    const timer = setInterval(() => goTo(currentIndex + 1), 4000)
     return () => clearInterval(timer)
   }, [currentIndex, isPaused, goTo, players.length])
 
