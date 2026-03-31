@@ -12,7 +12,7 @@ export async function LeagueCTA({ isLoggedIn }: Props) {
   const label = isLoggedIn ? t('leagues.cta.buttonAuth') : t('leagues.cta.button')
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4">
         <div className="relative overflow-hidden rounded-2xl bg-primary-hover px-6 py-14 text-center sm:px-12 sm:py-20">
           {/* Dot-grid texture overlay */}

@@ -46,7 +46,7 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
             blurDataURL={BLUR_DATA_URL}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-elevated via-surface to-elevated" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-surface to-elevated" />
         )}
 
         {/* Gradient overlay */}

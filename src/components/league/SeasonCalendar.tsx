@@ -76,7 +76,7 @@ export async function SeasonCalendar({ leagues }: Props) {
   }
 
   return (
-    <section className="bg-surface py-16 sm:py-24">
+    <section className="bg-surface py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4">
         {/* Section heading */}
         <div className="text-center mb-10">

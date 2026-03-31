@@ -7,9 +7,9 @@ export async function LeagueHero() {
   const isKa = lang === 'ka'
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-12">
           {/* Left — content */}
           <div className="text-center lg:text-left">
             {/* Eyebrow */}
@@ -33,7 +33,7 @@ export async function LeagueHero() {
           </div>
 
           {/* Right — photo collage */}
-          <div className="relative mx-auto w-full max-w-md lg:mx-0">
+          <div className="relative mx-auto w-full max-w-lg lg:mx-0">
             {/* CSS Grid overlap layout */}
             <div
               className="grid"
@@ -44,7 +44,7 @@ export async function LeagueHero() {
             >
               {/* Main photo — larger, spans cols 4-12 */}
               <div
-                className="relative aspect-[4/5] overflow-hidden rounded-2xl"
+                className="relative aspect-[3/4] overflow-hidden rounded-2xl"
                 style={{ gridColumn: '4 / 13', gridRow: '1 / 3' }}
               >
                 <Image
@@ -53,25 +53,23 @@ export async function LeagueHero() {
                   fill
                   priority
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 400px"
+                  sizes="(max-width: 768px) 100vw, 450px"
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
                 />
               </div>
 
-              {/* Accent photo — smaller, overlapping, cols 1-7 */}
+              {/* Accent photo (Pixellot camera) — smaller, overlapping */}
               <div
-                className="relative z-10 hidden aspect-[3/4] overflow-hidden rounded-xl border-4 border-background md:block"
-                style={{ gridColumn: '1 / 7', gridRow: '1 / 3', alignSelf: 'center' }}
+                className="relative z-10 hidden aspect-square overflow-hidden rounded-xl border-4 border-background shadow-xl md:block"
+                style={{ gridColumn: '1 / 6', gridRow: '1 / 3', alignSelf: 'center' }}
               >
                 <Image
                   src="/images/leagues/collage-accent.jpg"
-                  alt=""
+                  alt="Pixellot camera"
                   fill
-                  className="object-cover"
-                  sizes="160px"
-                  placeholder="blur"
-                  blurDataURL={BLUR_DATA_URL}
+                  className="object-contain bg-[#12110F]"
+                  sizes="200px"
                 />
               </div>
             </div>

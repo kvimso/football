@@ -11,7 +11,7 @@ export async function HowItWorks() {
   const isKa = lang === 'ka'
 
   return (
-    <section className="bg-surface py-16 sm:py-24">
+    <section className="bg-surface py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-4">
         {/* Section heading */}
         <div className="text-center mb-12">
@@ -30,7 +30,7 @@ export async function HowItWorks() {
             <div key={step.num} className="relative text-center">
               {/* Oversized serif numeral — editorial accent */}
               <div
-                className="mx-auto mb-3 text-[4rem] font-extrabold leading-none text-primary/10 select-none"
+                className="mx-auto mb-3 text-[4rem] font-extrabold leading-none text-primary/20 select-none"
                 aria-hidden="true"
                 style={
                   !isKa ? { fontFamily: 'var(--font-noto-serif, var(--font-sans))' } : undefined

@@ -60,21 +60,15 @@ export default async function LeaguesPage() {
       </FadeInOnScroll>
 
       <FadeInOnScroll delay={100}>
-        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 600px' }}>
-          <HowItWorks />
-        </div>
+        <HowItWorks />
       </FadeInOnScroll>
 
       <FadeInOnScroll delay={150}>
-        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 400px' }}>
-          <SeasonCalendar leagues={activeLeagues} />
-        </div>
+        <SeasonCalendar leagues={activeLeagues} />
       </FadeInOnScroll>
 
       <FadeInOnScroll delay={200}>
-        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 300px' }}>
-          <LeagueCTA isLoggedIn={isLoggedIn} />
-        </div>
+        <LeagueCTA isLoggedIn={isLoggedIn} />
       </FadeInOnScroll>
     </div>
   )

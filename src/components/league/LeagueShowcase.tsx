@@ -55,7 +55,7 @@ export async function LeagueShowcase({ leagues }: Props) {
 
   if (leagues.length === 0) {
     return (
-      <section className="py-16 sm:py-24">
+      <section className="py-10 sm:py-14">
         <div className="mx-auto max-w-7xl px-4 text-center">
           <p className="text-sm text-foreground-muted">{t('leagues.emptyState')}</p>
         </div>
@@ -71,7 +71,7 @@ export async function LeagueShowcase({ leagues }: Props) {
   const restSlots = slots.filter((s) => s !== heroSlot && s.span === 'full')
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-10 sm:py-14">
       <div className="mx-auto max-w-7xl px-4 space-y-6">
         {/* Hero card — full width */}
         <LeagueShowcaseCard league={heroSlot.league} variant={heroSlot.variant} />
