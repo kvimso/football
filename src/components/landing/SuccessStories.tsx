@@ -112,12 +112,7 @@ function StoryCard({ story, t }: { story: PlayerStory; t: (key: string) => strin
         {/* Info overlay */}
         <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4 sm:p-5">
           <div>
-            <div className="text-[1.15rem] font-bold text-white leading-tight">
-              {story.name}{' '}
-              <span role="img" aria-label="Georgian flag">
-                &#127468;&#127466;
-              </span>
-            </div>
+            <div className="text-[1.15rem] font-bold text-white leading-tight">{story.name}</div>
             <div className="text-xs font-medium uppercase tracking-wider text-white/75">
               {t(story.positionKey)}
             </div>
