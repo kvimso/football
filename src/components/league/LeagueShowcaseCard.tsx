@@ -59,6 +59,9 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10" />
 
+        {/* Color tint overlay — visible only on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#15703C]/70 via-[#15703C]/40 to-[#15703C]/15 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
         {/* Content — above gradient */}
         <div className="relative z-10 p-6 sm:p-8">
           <span
@@ -91,7 +94,12 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
   }
 
   // Warm and Green variants — now with photo backgrounds too
-  const isGreen = variant === 'green'
+  const HOVER_TINTS: Record<CardVariant, string> = {
+    hero: '',
+    warm: 'from-[#B87A08]/70 via-[#B87A08]/40 to-[#B87A08]/15',
+    green: 'from-[#15703C]/80 via-[#15703C]/50 to-[#15703C]/20',
+  }
+  const hoverTint = HOVER_TINTS[variant]
 
   return (
     <Wrapper
@@ -115,9 +123,11 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
       {/* Dark gradient overlay (default state) */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/20 transition-opacity duration-300" />
 
-      {/* Green tint overlay — visible only on hover for green variant */}
-      {isGreen && (
-        <div className="absolute inset-0 bg-gradient-to-t from-[#15703C]/80 via-[#15703C]/50 to-[#15703C]/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {/* Color tint overlay — visible only on hover */}
+      {hoverTint && (
+        <div
+          className={`absolute inset-0 bg-gradient-to-t ${hoverTint} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+        />
       )}
 
       {/* Content */}
