@@ -61,8 +61,8 @@ export async function LeagueHero() {
 
               {/* Accent photo (Pixellot camera) — smaller, overlapping */}
               <div
-                className="relative z-10 hidden aspect-square overflow-hidden rounded-xl border-4 border-background shadow-xl md:block"
-                style={{ gridColumn: '1 / 6', gridRow: '1 / 3', alignSelf: 'center' }}
+                className="relative z-10 hidden aspect-[3/2] overflow-hidden rounded-xl border-4 border-background shadow-xl md:block"
+                style={{ gridColumn: '1 / 7', gridRow: '1 / 3', alignSelf: 'center' }}
               >
                 <Image
                   src="/images/leagues/collage-accent.jpg"
