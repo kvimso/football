@@ -97,7 +97,7 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
   const HOVER_TINTS: Record<CardVariant, string> = {
     hero: '',
     warm: 'from-[#B87A08]/70 via-[#B87A08]/40 to-[#B87A08]/15',
-    green: 'from-[#15703C]/80 via-[#15703C]/50 to-[#15703C]/20',
+    green: 'from-[#1E40AF]/80 via-[#1E40AF]/50 to-[#1E40AF]/20',
   }
   const hoverTint = HOVER_TINTS[variant]
 
