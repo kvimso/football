@@ -23,6 +23,9 @@ export async function createLeague(data: LeagueFormInput) {
     description: parsed.data.description || null,
     description_ka: parsed.data.description_ka || null,
     logo_url: parsed.data.logo_url || null,
+    photo_url: parsed.data.photo_url || null,
+    season_start: parsed.data.season_start || null,
+    season_end: parsed.data.season_end || null,
     is_active: parsed.data.is_active ?? true,
     display_order: parsed.data.display_order ?? 0,
   })
@@ -56,6 +59,9 @@ export async function updateLeague(leagueId: string, data: LeagueFormInput) {
       description: parsed.data.description || null,
       description_ka: parsed.data.description_ka || null,
       logo_url: parsed.data.logo_url || null,
+      photo_url: parsed.data.photo_url || null,
+      season_start: parsed.data.season_start || null,
+      season_end: parsed.data.season_end || null,
       is_active: parsed.data.is_active ?? true,
       display_order: parsed.data.display_order ?? 0,
     })

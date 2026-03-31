@@ -38,26 +38,61 @@ export const clubFormSchema = z.object({
   website: z.string().url().max(200).optional().or(z.literal('')),
 })
 
-export const leagueFormSchema = z.object({
-  name: z.string().min(1).max(200),
-  name_ka: z.string().min(1).max(200),
-  age_group: z.enum(AGE_GROUPS),
-  season: z
-    .string()
-    .min(1)
-    .max(20)
-    .regex(/^\d{4}-\d{2}$/, 'Must be YYYY-YY format'),
-  starlive_url: z
-    .string()
-    .url()
-    .max(500)
-    .refine((url) => url.startsWith('https://'), 'URL must use HTTPS'),
-  description: z.string().max(2000).optional().or(z.literal('')),
-  description_ka: z.string().max(2000).optional().or(z.literal('')),
-  logo_url: z.string().url().max(500).optional().or(z.literal('')),
-  is_active: z.boolean().optional(),
-  display_order: z.number().int().min(0).optional(),
-})
+export const leagueFormSchema = z
+  .object({
+    name: z.string().min(1).max(200),
+    name_ka: z.string().min(1).max(200),
+    age_group: z.enum(AGE_GROUPS),
+    season: z
+      .string()
+      .min(1)
+      .max(20)
+      .regex(/^\d{4}-\d{2}$/, 'Must be YYYY-YY format'),
+    starlive_url: z
+      .string()
+      .url()
+      .max(500)
+      .refine((url) => url.startsWith('https://'), 'URL must use HTTPS'),
+    description: z.string().max(2000).optional().or(z.literal('')),
+    description_ka: z.string().max(2000).optional().or(z.literal('')),
+    logo_url: z
+      .string()
+      .url()
+      .max(500)
+      .refine((url) => url.startsWith('https://'), 'URL must use HTTPS')
+      .optional()
+      .or(z.literal('')),
+    photo_url: z
+      .union([
+        z
+          .string()
+          .url()
+          .max(2048)
+          .refine((url) => url.startsWith('https://'), 'URL must use HTTPS'),
+        z.literal(''),
+      ])
+      .optional()
+      .transform((v) => v || undefined),
+    season_start: z
+      .union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD format'), z.literal('')])
+      .optional()
+      .transform((v) => v || undefined),
+    season_end: z
+      .union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD format'), z.literal('')])
+      .optional()
+      .transform((v) => v || undefined),
+    is_active: z.boolean().optional(),
+    display_order: z.number().int().min(0).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.season_start && data.season_end) {
+        return new Date(data.season_start) < new Date(data.season_end)
+      }
+      return true
+    },
+    { message: 'Season start must be before season end', path: ['season_end'] }
+  )
 
 export const demoRequestFormSchema = z.object({
   full_name: z.string().min(1).max(100),

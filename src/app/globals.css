@@ -420,3 +420,57 @@ html:lang(ka) h3 {
   letter-spacing: 0;
   line-height: 1.15;
 }
+
+/* ── League page components (layered for Tailwind override) ── */
+@layer components {
+  /* Photo-driven league card with gradient overlay */
+  .league-showcase {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .league-showcase:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+  /* Photo zoom on hover — not card scale (avoids layout shift on tall cards) */
+  @media (hover: hover) {
+    .league-showcase .league-photo {
+      transition: transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .league-showcase:hover .league-photo {
+      transform: scale(1.04);
+    }
+  }
+
+  /* Season calendar bar */
+  .calendar-bar {
+    border-radius: 9999px;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--btn-primary-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Dot-grid texture overlay (radial-gradient, theme-aware) */
+  .dot-texture {
+    background-image: radial-gradient(
+      circle,
+      var(--foreground-faint) 0.75px,
+      transparent 0.75px
+    );
+    background-size: 20px 20px;
+    opacity: 0.15;
+  }
+}
+
+/* Reduced motion for league page */
+@media (prefers-reduced-motion: reduce) {
+  .league-showcase,
+  .league-showcase .league-photo {
+    transition: none !important;
+  }
+}

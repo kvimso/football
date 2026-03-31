@@ -17,6 +17,9 @@ interface LeagueFormProps {
     description: string | null
     description_ka: string | null
     logo_url: string | null
+    photo_url: string | null
+    season_start: string | null
+    season_end: string | null
     is_active: boolean
     display_order: number
   }
@@ -43,6 +46,9 @@ export function LeagueForm({ league }: LeagueFormProps) {
       description: String(formData.get('description') ?? ''),
       description_ka: String(formData.get('description_ka') ?? ''),
       logo_url: String(formData.get('logo_url') ?? ''),
+      photo_url: String(formData.get('photo_url') ?? ''),
+      season_start: String(formData.get('season_start') ?? ''),
+      season_end: String(formData.get('season_end') ?? ''),
       is_active: formData.get('is_active') === 'on',
       display_order: Number(formData.get('display_order') ?? 0),
     }
@@ -188,6 +194,44 @@ export function LeagueForm({ league }: LeagueFormProps) {
           className="input w-full"
           placeholder="https://"
         />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-foreground">
+          {t('platform.leagues.photoUrl')}
+        </label>
+        <input
+          name="photo_url"
+          type="url"
+          defaultValue={league?.photo_url ?? ''}
+          className="input w-full"
+          placeholder="https://"
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {t('platform.leagues.seasonStart')}
+          </label>
+          <input
+            name="season_start"
+            type="date"
+            defaultValue={league?.season_start ?? ''}
+            className="input w-full"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium text-foreground">
+            {t('platform.leagues.seasonEnd')}
+          </label>
+          <input
+            name="season_end"
+            type="date"
+            defaultValue={league?.season_end ?? ''}
+            className="input w-full"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-2">

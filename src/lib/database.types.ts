@@ -343,7 +343,10 @@ export type Database = {
           logo_url: string | null
           name: string
           name_ka: string
+          photo_url: string | null
           season: string
+          season_end: string | null
+          season_start: string | null
           starlive_url: string
           updated_at: string
         }
@@ -358,7 +361,10 @@ export type Database = {
           logo_url?: string | null
           name: string
           name_ka: string
+          photo_url?: string | null
           season: string
+          season_end?: string | null
+          season_start?: string | null
           starlive_url: string
           updated_at?: string
         }
@@ -373,7 +379,10 @@ export type Database = {
           logo_url?: string | null
           name?: string
           name_ka?: string
+          photo_url?: string | null
           season?: string
+          season_end?: string | null
+          season_start?: string | null
           starlive_url?: string
           updated_at?: string
         }

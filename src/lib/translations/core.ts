@@ -104,6 +104,39 @@ export const en = {
     viewOnStarlive: 'View on Starlive',
     emptyState: 'No leagues available yet.',
     season: 'Season',
+    hero: {
+      eyebrow: 'Youth Football Leagues',
+      title: 'Discover ',
+      titleAccent: 'Georgian Talent',
+      description:
+        'Every match tracked by Pixellot cameras. Browse live leagues, watch highlights, and connect with academies across Georgia.',
+      badgeMain: 'Powered by Starlive',
+      badgeSub: 'Pixellot Camera Systems',
+    },
+    howItWorks: {
+      title: 'How It Works',
+      step1Title: 'Browse Leagues',
+      step1Desc: 'Explore youth leagues by age group with live stats and standings.',
+      step2Title: 'Watch Matches',
+      step2Desc: 'Full match footage and highlights captured by Pixellot cameras.',
+      step3Title: 'Connect',
+      step3Desc: 'Message academies directly and discover emerging talent.',
+    },
+    calendar: {
+      title: 'Season Calendar',
+      subtitle: 'Active season timelines by age group',
+    },
+    cta: {
+      title: 'Ready to Scout Georgian Talent?',
+      subtitle: 'Get full access to leagues, player profiles, and direct academy messaging.',
+      button: 'Request a Demo',
+      buttonAuth: 'Browse Players',
+    },
+    showcase: {
+      pixellotTracked: 'Pixellot Tracked',
+      clubsCount: 'clubs',
+      matchesCount: 'matches',
+    },
   },
   privacy: {
     title: 'Privacy Policy',
@@ -322,6 +355,39 @@ export const ka = {
     viewOnStarlive: 'ნახეთ Starlive-ზე',
     emptyState: 'ლიგები ჯერ არ არის.',
     season: 'სეზონი',
+    hero: {
+      eyebrow: 'ახალგაზრდული საფეხბურთო ლიგები',
+      title: 'აღმოაჩინე ',
+      titleAccent: 'ქართული ტალანტი',
+      description:
+        'ყოველი მატჩი Pixellot კამერებით ფიქსირდება. დაათვალიერე ლიგები, უყურე ჰაილაითებს და დაუკავშირდი აკადემიებს მთელ საქართველოში.',
+      badgeMain: 'Starlive-ის მხარდაჭერით',
+      badgeSub: 'Pixellot კამერა სისტემები',
+    },
+    howItWorks: {
+      title: 'როგორ მუშაობს',
+      step1Title: 'დაათვალიერე ლიგები',
+      step1Desc: 'შეისწავლე ახალგაზრდული ლიგები ასაკობრივი ჯგუფების მიხედვით.',
+      step2Title: 'უყურე მატჩებს',
+      step2Desc: 'სრული მატჩები და ჰაილაითები Pixellot კამერებით ჩაწერილი.',
+      step3Title: 'დაუკავშირდი',
+      step3Desc: 'პირდაპირ მიწერე აკადემიებს და აღმოაჩინე ახალი ტალანტები.',
+    },
+    calendar: {
+      title: 'სეზონის კალენდარი',
+      subtitle: 'აქტიური სეზონის ვადები ასაკობრივი ჯგუფების მიხედვით',
+    },
+    cta: {
+      title: 'მზად ხარ ქართული ტალანტის სკაუტინგისთვის?',
+      subtitle: 'მიიღე სრული წვდომა ლიგებზე, მოთამაშეთა პროფილებზე და აკადემიებთან კომუნიკაციაზე.',
+      button: 'დემოს მოთხოვნა',
+      buttonAuth: 'მოთამაშეების ნახვა',
+    },
+    showcase: {
+      pixellotTracked: 'Pixellot-ით ფიქსირებული',
+      clubsCount: 'კლუბი',
+      matchesCount: 'მატჩი',
+    },
   },
   privacy: {
     title: 'კონფიდენციალურობის პოლიტიკა',

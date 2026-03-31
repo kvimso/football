@@ -4,10 +4,12 @@ const isDev = process.env.NODE_ENV === 'development'
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'jodnjhqnoawsxigrxqgv.supabase.co',
+        pathname: '/storage/v1/object/public/**',
       },
       {
         protocol: 'https',
@@ -36,7 +38,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' https://*.supabase.co data: blob:",
+              "img-src 'self' https://*.supabase.co https://api.starliveball.com data: blob:",
               "font-src 'self'",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
               "object-src 'none'",
