@@ -66,9 +66,9 @@ export async function LeagueHero() {
               >
                 <Image
                   src="/images/leagues/collage-accent.jpg"
-                  alt="Pixellot camera"
+                  alt=""
                   fill
-                  className="object-contain bg-[#12110F]"
+                  className="object-cover"
                   sizes="200px"
                 />
               </div>

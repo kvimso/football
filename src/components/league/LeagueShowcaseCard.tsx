@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { getServerT } from '@/lib/server-translations'
-import { AGE_GROUP_COLOR_CLASSES } from '@/lib/constants'
-import { BLUR_DATA_URL } from '@/lib/constants'
+import { AGE_GROUP_COLOR_CLASSES, BLUR_DATA_URL } from '@/lib/constants'
 import type { AgeGroup } from '@/lib/types'
 import type { Database } from '@/lib/database.types'
 
@@ -14,6 +13,13 @@ interface Props {
   variant: CardVariant
 }
 
+/** Static fallback photos by age group — used when league has no photo_url */
+const FALLBACK_PHOTOS: Record<string, string> = {
+  U15: '/images/leagues/league-u15.jpg',
+  U17: '/images/leagues/league-u17.jpg',
+  U19: '/images/leagues/league-u19.jpg',
+}
+
 export async function LeagueShowcaseCard({ league, variant }: Props) {
   const { t, lang } = await getServerT()
   const displayName = lang === 'ka' ? league.name_ka : league.name
@@ -21,6 +27,7 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
   const ageClasses =
     AGE_GROUP_COLOR_CLASSES[league.age_group as AgeGroup] ?? 'bg-primary/10 text-primary'
   const isValidUrl = league.starlive_url.startsWith('https://')
+  const photoSrc = league.photo_url || FALLBACK_PHOTOS[league.age_group]
 
   const Wrapper = isValidUrl ? 'a' : 'div'
   const linkProps = isValidUrl
@@ -31,16 +38,16 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
     return (
       <Wrapper
         {...linkProps}
-        className="league-showcase group relative flex min-h-[380px] flex-col justify-end"
+        className="league-showcase group relative flex min-h-[340px] flex-col justify-end sm:min-h-[400px]"
       >
         {/* Photo background */}
-        {league.photo_url ? (
+        {photoSrc ? (
           <Image
-            src={league.photo_url}
+            src={photoSrc}
             alt=""
             fill
             className="league-photo object-cover"
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1200px"
             priority
             placeholder="blur"
             blurDataURL={BLUR_DATA_URL}
@@ -50,7 +57,7 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
         )}
 
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10" />
 
         {/* Content — above gradient */}
         <div className="relative z-10 p-6 sm:p-8">
@@ -61,7 +68,7 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
           </span>
           <h3 className="mt-3 text-xl font-extrabold text-white sm:text-2xl">{displayName}</h3>
           {desc && (
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/70 line-clamp-2">
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/75 line-clamp-2">
               {desc}
             </p>
           )}
@@ -73,7 +80,7 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
             <span>{t('leagues.showcase.pixellotTracked')}</span>
           </div>
           {isValidUrl && (
-            <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary">
+            <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-primary">
               {t('leagues.viewOnStarlive')}
               <ExternalLinkIcon />
             </div>
@@ -83,38 +90,58 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
     )
   }
 
-  // Warm and Green variants
+  // Warm and Green variants — now with photo backgrounds too
   const isGreen = variant === 'green'
-  const bgClass = isGreen ? 'bg-primary-hover' : 'bg-surface'
-  const textClass = isGreen ? 'text-white' : 'text-foreground'
-  const subtextClass = isGreen ? 'text-white/70' : 'text-foreground-secondary'
-  const linkClass = isGreen ? 'text-white font-medium' : 'text-primary font-medium'
 
   return (
     <Wrapper
       {...linkProps}
-      className={`league-showcase group flex flex-col justify-between p-6 ${bgClass} border ${isGreen ? 'border-transparent' : 'border-border'}`}
+      className="league-showcase group relative flex min-h-[220px] flex-col justify-end overflow-hidden"
     >
-      <div>
+      {/* Photo background for all variants */}
+      {photoSrc ? (
+        <Image
+          src={photoSrc}
+          alt=""
+          fill
+          className="league-photo object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL={BLUR_DATA_URL}
+        />
+      ) : null}
+
+      {/* Color overlay — tinted by variant */}
+      <div
+        className={`absolute inset-0 ${
+          isGreen
+            ? 'bg-gradient-to-t from-[#15703C]/95 via-[#15703C]/70 to-[#15703C]/40'
+            : 'bg-gradient-to-t from-black/90 via-black/60 to-black/20'
+        }`}
+      />
+
+      {/* Content */}
+      <div className="relative z-10 p-5 sm:p-6">
         <span
           className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${ageClasses}`}
         >
           {league.age_group}
         </span>
-        <h3 className={`mt-3 text-lg font-bold ${textClass}`}>{displayName}</h3>
+        <h3 className="mt-2 text-lg font-bold text-white">{displayName}</h3>
         {desc && (
-          <p className={`mt-2 text-sm leading-relaxed line-clamp-3 ${subtextClass}`}>{desc}</p>
+          <p className="mt-1.5 text-sm leading-relaxed line-clamp-2 text-white/70">{desc}</p>
         )}
-        <div className={`mt-2 text-xs ${subtextClass}`}>
+        <div className="mt-1.5 text-xs text-white/50">
           {t('leagues.season')}: {league.season}
         </div>
+        {isValidUrl && (
+          <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-white">
+            {t('leagues.viewOnStarlive')}
+            <ExternalLinkIcon />
+          </div>
+        )}
       </div>
-      {isValidUrl && (
-        <div className={`mt-4 flex items-center gap-1 text-sm ${linkClass}`}>
-          {t('leagues.viewOnStarlive')}
-          <ExternalLinkIcon />
-        </div>
-      )}
     </Wrapper>
   )
 }
