@@ -112,14 +112,13 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
         />
       ) : null}
 
-      {/* Color overlay — tinted by variant */}
-      <div
-        className={`absolute inset-0 ${
-          isGreen
-            ? 'bg-gradient-to-t from-[#15703C]/95 via-[#15703C]/70 to-[#15703C]/40'
-            : 'bg-gradient-to-t from-black/90 via-black/60 to-black/20'
-        }`}
-      />
+      {/* Dark gradient overlay (default state) */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/20 transition-opacity duration-300" />
+
+      {/* Green tint overlay — visible only on hover for green variant */}
+      {isGreen && (
+        <div className="absolute inset-0 bg-gradient-to-t from-[#15703C]/80 via-[#15703C]/50 to-[#15703C]/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      )}
 
       {/* Content */}
       <div className="relative z-10 p-5 sm:p-6">
