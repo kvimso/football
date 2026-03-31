@@ -80,8 +80,9 @@ export async function LandingHero({ players }: Props) {
                 </div>
               </div>
               <div>
-                <div className="text-2xl font-extrabold sm:text-3xl">
-                  {t('landing.statsVerified')}
+                <div className="flex items-center gap-1 text-2xl font-extrabold sm:text-3xl">
+                  <span className="text-primary">&#10003;</span>
+                  <span>{t('landing.statsVerifiedText')}</span>
                 </div>
                 <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-foreground-faint">
                   {t('landing.statsVerifiedLabel')}

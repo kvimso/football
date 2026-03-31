@@ -13,6 +13,7 @@ export const en = {
     statsTransfers: '€100M+',
     statsTransfersLabel: 'In Transfers',
     statsVerified: '✓ Verified',
+    statsVerifiedText: 'Verified',
     statsVerifiedLabel: 'By Starlive',
 
     // Club slider
@@ -170,6 +171,7 @@ export const ka = {
     statsTransfers: '€100M+',
     statsTransfersLabel: 'ტრანსფერებში',
     statsVerified: '✓ დამოწმებული',
+    statsVerifiedText: 'დამოწმებული',
     statsVerifiedLabel: 'Starlive-ის მიერ',
 
     // Club slider
