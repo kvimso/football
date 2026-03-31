@@ -68,8 +68,8 @@ export async function LeagueHero() {
                   src="/images/leagues/collage-accent.jpg"
                   alt=""
                   fill
-                  className="object-cover"
-                  sizes="200px"
+                  className="object-contain"
+                  sizes="250px"
                 />
               </div>
             </div>
