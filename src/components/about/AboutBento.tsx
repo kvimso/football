@@ -111,7 +111,7 @@ export async function AboutBento() {
           <div className="relative overflow-hidden rounded-2xl lg:row-span-2">
             <div className="relative h-64 sm:h-80 lg:h-full">
               <Image
-                src="/images/about/bento-camera.jpg"
+                src="/images/about/bento-camera.png"
                 alt=""
                 fill
                 className="object-cover"
