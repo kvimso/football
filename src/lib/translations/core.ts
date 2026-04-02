@@ -112,6 +112,16 @@ export const en = {
         'Every match tracked by Pixellot cameras. Browse live leagues, watch highlights, and connect with academies across Georgia.',
       badgeMain: 'Powered by Starlive',
       badgeSub: 'Pixellot Camera Systems',
+      features: {
+        hdFootage: 'HD Footage',
+        hdFootageDesc: 'Full match recordings captured automatically',
+        aiStats: 'AI Statistics',
+        aiStatsDesc: 'Starlive verified player performance data',
+        highlights: 'Highlights',
+        highlightsDesc: 'Auto-generated player highlight clips',
+        directChat: 'Direct Chat',
+        directChatDesc: 'Message academies without gatekeepers',
+      },
     },
     howItWorks: {
       title: 'How It Works',
@@ -363,6 +373,16 @@ export const ka = {
         'ყოველი მატჩი Pixellot კამერებით ფიქსირდება. დაათვალიერე ლიგები, უყურე ჰაილაითებს და დაუკავშირდი აკადემიებს მთელ საქართველოში.',
       badgeMain: 'Starlive-ის მხარდაჭერით',
       badgeSub: 'Pixellot კამერა სისტემები',
+      features: {
+        hdFootage: 'HD ჩანაწერი',
+        hdFootageDesc: 'სრული მატჩის ავტომატური ჩაწერა',
+        aiStats: 'AI სტატისტიკა',
+        aiStatsDesc: 'Starlive-ით ვერიფიცირებული მონაცემები',
+        highlights: 'ჰაილაითები',
+        highlightsDesc: 'ავტომატურად გენერირებული კლიპები',
+        directChat: 'პირდაპირი ჩატი',
+        directChatDesc: 'მიწერე აკადემიებს პირდაპირ',
+      },
     },
     howItWorks: {
       title: 'როგორ მუშაობს',
