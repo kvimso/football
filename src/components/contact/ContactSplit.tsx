@@ -84,16 +84,37 @@ export async function ContactSplit({ defaultSubject }: { defaultSubject?: string
                 <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
                   {t('contact.responseLabel')}
                 </div>
-                <div className="mt-1.5 text-sm" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                <div className="mt-1.5 text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
                   {t('contact.responseValue')}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right — Form card */}
-          <div className="rounded-xl border border-border/30 bg-surface p-7 sm:p-11">
-            <ContactForm defaultEmail={userEmail} defaultSubject={defaultSubject} />
+          {/* Right — Dark form card */}
+          <div
+            className="relative overflow-hidden p-7 sm:p-10"
+            style={{
+              background: 'linear-gradient(155deg, #1A1917 0%, #12110F 100%)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '14px',
+            }}
+          >
+            {/* Green glow orb — decorative */}
+            <div
+              className="pointer-events-none absolute"
+              style={{
+                top: '-80px',
+                right: '-80px',
+                width: '250px',
+                height: '250px',
+                background: 'radial-gradient(circle, rgba(74,222,128,0.05) 0%, transparent 70%)',
+              }}
+              aria-hidden="true"
+            />
+            <div className="relative">
+              <ContactForm defaultEmail={userEmail} defaultSubject={defaultSubject} />
+            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { ContactHero } from '@/components/contact/ContactHero'
 import { ContactSplit } from '@/components/contact/ContactSplit'
-import { ContactPartners } from '@/components/contact/ContactPartners'
-import { ContactFAQ } from '@/components/contact/ContactFAQ'
+import { ContactHelp } from '@/components/contact/ContactHelp'
 import { FadeInOnScroll } from '@/components/ui/FadeInOnScroll'
 
 export const metadata: Metadata = {
@@ -27,11 +26,20 @@ export default async function ContactPage({
     <>
       <ContactHero />
       <ContactSplit defaultSubject={defaultSubject} />
+      {/* Gradient divider */}
       <FadeInOnScroll>
-        <ContactPartners />
+        <div className="mx-auto max-w-[1200px] px-6">
+          <div
+            className="h-px"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent)',
+            }}
+          />
+        </div>
       </FadeInOnScroll>
       <FadeInOnScroll delay={50}>
-        <ContactFAQ />
+        <ContactHelp />
       </FadeInOnScroll>
     </>
   )

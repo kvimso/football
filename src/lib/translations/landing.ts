@@ -282,29 +282,34 @@ export const en = {
     emailAddress: 'hello@binocly.ge',
     responseLabel: 'Response Time',
     responseValue: 'Within 24 hours',
-    partnersLabel: 'Strategic Technical Partners',
+    formTitle: 'Send us a message',
+    formBadge: '24h Response',
+    privacy: 'Your data is encrypted and never shared with third parties',
+    partnersLabel: 'Strategic Partners',
     subject: 'Subject',
     subjectGeneral: 'General Inquiry',
     subjectAcademy: 'Academy Partnership',
     subjectScout: 'Scouting Access',
     subjectCamera: 'Camera Technology / Starlive',
     subjectMedia: 'Media & Press',
-    demoTitle: 'Professional Demo',
-    demoDesc:
-      'Want to see our talent database and scouting analytics in real-time? Request a personalized walkthrough.',
-    demoLink: 'Request Access',
-    faq0Title: 'Are you an academy?',
-    faq0Desc:
-      'We digitize local talent and connect your players with verified European scouts. Camera-powered stats give your academy international visibility.',
-    faq1Title: 'Scouting requests?',
-    faq1Desc:
-      'Our platform provides verified data across all Georgian leagues and age groups. Search, filter, compare — all in one place.',
-    faq2Title: 'Camera technology?',
-    faq2Desc:
-      'Through our partner Starlive, we deploy Pixellot cameras at academies — automated match recording, individual stats, and highlight clips.',
-    faq3Title: 'Media inquiries?',
-    faq3Desc:
-      'For press, interviews, and partnership proposals, reach out through the form or email us directly.',
+    helpHeading: 'How Can We Help?',
+    helpSubtitle: 'Choose a topic or send us a general message above',
+    tile0Title: 'Academy Partnerships',
+    tile0Desc:
+      'We digitize local talent and connect you with European scouts. Partner with us for visibility and camera infrastructure.',
+    tile0Link: 'Learn more',
+    tile1Title: 'Scouting & Platform Access',
+    tile1Desc:
+      'Verified data on Georgian youth players across all major leagues. Request a demo or subscribe.',
+    tile1Link: 'Request demo',
+    tile2Title: 'Camera Technology',
+    tile2Desc:
+      'Through our partner Starlive, we deploy Pixellot cameras for automated match recording and player statistics.',
+    tile2Link: 'Learn more',
+    tile3Title: 'Media & Press',
+    tile3Desc:
+      'For press, interviews, or partnership opportunities, reach out via the form or email us directly.',
+    tile3Link: 'Press kit',
     heroImageAlt: 'Football stadium at dusk',
   },
 }
@@ -590,29 +595,34 @@ export const ka = {
     emailAddress: 'hello@binocly.ge',
     responseLabel: 'პასუხის დრო',
     responseValue: '24 საათის განმავლობაში',
-    partnersLabel: 'სტრატეგიული ტექნიკური პარტნიორები',
+    formTitle: 'მოგვწერეთ',
+    formBadge: '24 სთ პასუხი',
+    privacy: 'თქვენი მონაცემები დაშიფრულია და არასდროს გაზიარდება მესამე პირებთან',
+    partnersLabel: 'სტრატეგიული პარტნიორები',
     subject: 'თემა',
     subjectGeneral: 'ზოგადი შეკითხვა',
     subjectAcademy: 'აკადემიის პარტნიორობა',
     subjectScout: 'სკაუტინგის წვდომა',
     subjectCamera: 'კამერის ტექნოლოგია / Starlive',
     subjectMedia: 'მედია და პრესა',
-    demoTitle: 'პროფესიონალური დემო',
-    demoDesc:
-      'გსურთ ნახოთ ჩვენი ტალანტების ბაზა და სკაუტინგის ანალიტიკა რეალურ დროში? მოითხოვეთ პერსონალიზებული გასეირნება.',
-    demoLink: 'მოითხოვეთ წვდომა',
-    faq0Title: 'აკადემია ხართ?',
-    faq0Desc:
-      'ჩვენ ვაციფრებთ ადგილობრივ ტალანტს და ვაკავშირებთ თქვენს მოთამაშეებს ევროპელ სკაუტებთან. კამერით მიღებული სტატისტიკა საერთაშორისო ხილვადობას აძლევს.',
-    faq1Title: 'სკაუტინგის მოთხოვნები?',
-    faq1Desc:
-      'ჩვენი პლატფორმა უზრუნველყოფს ვერიფიცირებულ მონაცემებს ყველა ქართული ლიგისა და ასაკობრივი ჯგუფისთვის.',
-    faq2Title: 'კამერის ტექნოლოგია?',
-    faq2Desc:
-      'ჩვენი პარტნიორი Starlive-ის მეშვეობით ვაყენებთ Pixellot კამერებს აკადემიებში — ავტომატური ჩაწერა, ინდივიდუალური სტატისტიკა.',
-    faq3Title: 'მედია შეკითხვები?',
-    faq3Desc:
-      'პრესისთვის, ინტერვიუებისთვის და პარტნიორობის წინადადებებისთვის, დაგვიკავშირდით ფორმით ან ელ. ფოსტით.',
+    helpHeading: 'როგორ დაგეხმაროთ?',
+    helpSubtitle: 'აირჩიეთ თემა ან გამოგვიგზავნეთ ზოგადი შეტყობინება ზემოთ',
+    tile0Title: 'აკადემიის პარტნიორობა',
+    tile0Desc:
+      'ჩვენ ვაციფრებთ ადგილობრივ ტალანტს და გაკავშირებთ ევროპელ სკაუტებთან. შემოგვიერთდით ხილვადობისა და კამერის ინფრასტრუქტურისთვის.',
+    tile0Link: 'გაიგეთ მეტი',
+    tile1Title: 'სკაუტინგი და პლატფორმა',
+    tile1Desc:
+      'ვერიფიცირებული მონაცემები ქართველ ახალგაზრდა მოთამაშეებზე ყველა მთავარ ლიგაში. მოითხოვეთ დემო ან გამოიწერეთ.',
+    tile1Link: 'მოითხოვეთ დემო',
+    tile2Title: 'კამერის ტექნოლოგია',
+    tile2Desc:
+      'ჩვენი პარტნიორი Starlive-ის მეშვეობით ვაყენებთ Pixellot კამერებს ავტომატური მატჩის ჩაწერისა და სტატისტიკისთვის.',
+    tile2Link: 'გაიგეთ მეტი',
+    tile3Title: 'მედია და პრესა',
+    tile3Desc:
+      'პრესისთვის, ინტერვიუებისთვის ან პარტნიორობის შესაძლებლობებისთვის, დაგვიკავშირდით ფორმით ან ელ. ფოსტით.',
+    tile3Link: 'პრესკიტი',
     heroImageAlt: 'საფეხბურთო სტადიონი',
   },
 }
