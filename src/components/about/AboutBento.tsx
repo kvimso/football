@@ -10,7 +10,7 @@ export async function AboutBento() {
   const isKa = lang === 'ka'
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-10 sm:py-14">
       <div className="mx-auto max-w-[1200px] px-4">
         {/* Header row */}
         <div className="mb-10 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
@@ -32,8 +32,8 @@ export async function AboutBento() {
           </div>
 
           {/* Pull quote */}
-          <blockquote className="max-w-[280px] border-l-2 border-primary pl-5">
-            <p className="text-sm leading-relaxed text-foreground-secondary italic">
+          <blockquote className="max-w-[300px] border-l-2 border-primary pl-5">
+            <p className="text-[0.95rem] leading-relaxed text-foreground italic">
               {t('about.bentoPullQuote')}
             </p>
           </blockquote>
@@ -142,13 +142,13 @@ export async function AboutBento() {
             {/* Bottom content */}
             <div className="absolute bottom-0 left-0 right-0 z-10 p-5 sm:p-6">
               {/* Tag */}
-              <div className="mb-3 inline-flex items-center gap-1.5 rounded-md bg-primary/20 px-2.5 py-1">
+              <div className="mb-3 inline-flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={2}
-                  className="h-3.5 w-3.5 text-primary"
+                  className="h-3.5 w-3.5 text-white"
                 >
                   <path
                     strokeLinecap="round"
@@ -156,7 +156,7 @@ export async function AboutBento() {
                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                   />
                 </svg>
-                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-primary">
+                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-white">
                   {t('about.bentoImageTag')}
                 </span>
               </div>

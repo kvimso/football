@@ -7,7 +7,7 @@ export async function AboutPrinciples() {
   const isKa = lang === 'ka'
 
   return (
-    <section className="py-16 sm:py-24" style={{ contentVisibility: 'auto' }}>
+    <section className="py-10 sm:py-14" style={{ contentVisibility: 'auto' }}>
       <div className="mx-auto max-w-[1200px] px-4">
         <div className="grid gap-12 border-t border-border pt-12 lg:grid-cols-2 lg:gap-20">
           {/* Left: Principles */}

@@ -12,7 +12,7 @@ export async function AboutCTA({ isLoggedIn }: Props) {
   const primaryLabel = isLoggedIn ? t('about.ctaPrimaryAuth') : t('about.ctaPrimary')
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-10 sm:py-14">
       <div className="mx-auto max-w-[1200px] px-4">
         <div className="card-dark relative overflow-hidden rounded-[20px] px-8 py-12 sm:px-12 sm:py-16">
           {/* Decorative green circle */}

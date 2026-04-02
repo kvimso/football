@@ -106,13 +106,13 @@ function RadarChart() {
         />
       ))}
       {/* Player 1 (green solid) */}
-      <path d={toPath(p1)} fill="rgba(74,222,128,0.15)" stroke="#4ADE80" strokeWidth={1.5} />
+      <path d={toPath(p1)} fill="rgba(74,222,128,0.12)" stroke="#4ADE80" strokeWidth={1} />
       {/* Player 2 (blue dashed) */}
       <path
         d={toPath(p2)}
         fill="rgba(96,165,250,0.1)"
         stroke="#60A5FA"
-        strokeWidth={1.5}
+        strokeWidth={1}
         strokeDasharray="4 3"
       />
     </svg>
@@ -172,7 +172,7 @@ export async function AboutFeatures() {
   const isKa = lang === 'ka'
 
   return (
-    <section className="py-16 sm:py-24" style={{ contentVisibility: 'auto' }}>
+    <section className="py-10 sm:py-14" style={{ contentVisibility: 'auto' }}>
       <div className="mx-auto max-w-[1200px] px-4">
         {/* Header */}
         <div className="mb-10">

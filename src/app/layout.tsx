@@ -21,8 +21,8 @@ const notoGeorgian = Noto_Sans_Georgian({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Georgian Football Talent Platform',
-    template: '%s | Georgian Football Talent',
+    default: 'Binocly — Georgian Football Talent Platform',
+    template: '%s | Binocly',
   },
   description:
     'Discover the next generation of Georgian football talent. A scouting platform connecting academies with international scouts and agents.',
