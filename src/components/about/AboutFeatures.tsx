@@ -206,17 +206,6 @@ export async function AboutFeatures() {
               >
                 <div className={isLarge && mockup ? 'grid gap-6 lg:grid-cols-[1fr_200px]' : ''}>
                   <div>
-                    {/* Badge */}
-                    <span
-                      className={`inline-block rounded-full px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider ${
-                        isDark
-                          ? 'bg-[rgba(74,222,128,0.15)] text-[#4ADE80]'
-                          : 'bg-primary/10 text-primary'
-                      }`}
-                    >
-                      {t(`about.feature${index}Badge`)}
-                    </span>
-
                     {/* Icon */}
                     <div
                       className={`mt-4 flex h-10 w-10 items-center justify-center rounded-xl ${
