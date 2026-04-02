@@ -38,8 +38,8 @@ export async function AboutPrinciples() {
             <div className="relative">
               {/* Large faded quote mark */}
               <span
-                className="pointer-events-none absolute -left-1 -top-4 text-[6rem] font-serif leading-none text-primary"
-                style={{ opacity: 0.12 }}
+                className="pointer-events-none absolute -left-3 -top-8 select-none font-serif text-[5rem] leading-none text-primary"
+                style={{ opacity: 0.1 }}
                 aria-hidden="true"
               >
                 &ldquo;
