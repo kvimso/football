@@ -447,12 +447,18 @@ html:lang(ka) h3 {
   /* Feature card hover lift */
   .feature-card {
     transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
   @media (hover: hover) {
     .feature-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.25);
+    }
+    /* Green-tinted shadow for dark comparison card */
+    .feature-card.feature-card-dark:hover {
+      border-color: rgba(74, 222, 128, 0.15);
+      box-shadow: 0 12px 32px -8px rgba(74, 222, 128, 0.15);
     }
   }
 }

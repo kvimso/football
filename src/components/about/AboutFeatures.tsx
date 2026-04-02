@@ -61,9 +61,11 @@ const ICONS = {
   ),
 }
 
+/* Stat labels for radar chart */
+const RADAR_LABELS = ['PAC', 'SHO', 'PAS', 'DEF', 'PHY', 'DRI']
+
 /* Decorative radar chart SVG for comparison card */
 function RadarChart() {
-  // Hexagonal grid points (6 vertices)
   const cx = 80,
     cy = 80,
     r = 60
@@ -71,6 +73,7 @@ function RadarChart() {
     const angle = (Math.PI / 3) * i - Math.PI / 2
     return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)]
   })
+  // 3 concentric rings
   const gridLines = [0.33, 0.66, 1].map((s) =>
     points.map(([x, y]) => [cx + (x - cx) * s, cy + (y - cy) * s])
   )
@@ -87,23 +90,30 @@ function RadarChart() {
     cy + (points[i][1] - cy) * s,
   ])
 
+  // Label positions (pushed slightly outside outermost ring)
+  const labelPts = points.map(([x, y]) => [cx + (x - cx) * 1.22, cy + (y - cy) * 1.22])
+
   return (
     <svg viewBox="0 0 160 160" className="h-full w-full" aria-hidden="true">
-      {/* Grid */}
+      {/* 3 concentric hex rings */}
       {gridLines.map((g, i) => (
         <path key={i} d={toPath(g)} fill="none" stroke="rgba(238,236,232,0.08)" strokeWidth={1} />
       ))}
-      {/* Axis lines */}
-      {points.map(([x, y], i) => (
+      {/* 3 axis lines through center */}
+      {[0, 1, 2].map((i) => (
         <line
           key={i}
-          x1={cx}
-          y1={cy}
-          x2={x}
-          y2={y}
+          x1={points[i][0]}
+          y1={points[i][1]}
+          x2={points[i + 3][0]}
+          y2={points[i + 3][1]}
           stroke="rgba(238,236,232,0.06)"
           strokeWidth={1}
         />
+      ))}
+      {/* Vertex dots on outermost ring */}
+      {points.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={2} fill="rgba(238,236,232,0.15)" />
       ))}
       {/* Player 1 (green solid) */}
       <path d={toPath(p1)} fill="rgba(74,222,128,0.12)" stroke="#4ADE80" strokeWidth={1} />
@@ -115,6 +125,21 @@ function RadarChart() {
         strokeWidth={1}
         strokeDasharray="4 3"
       />
+      {/* Stat labels */}
+      {labelPts.map(([x, y], i) => (
+        <text
+          key={i}
+          x={x}
+          y={y}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="rgba(238,236,232,0.35)"
+          fontSize={7}
+          fontWeight={600}
+        >
+          {RADAR_LABELS[i]}
+        </text>
+      ))}
     </svg>
   )
 }
@@ -123,9 +148,13 @@ function RadarChart() {
 function SearchMockup() {
   const pills = ['U17', 'Midfielder', 'Tbilisi', '170cm+']
   return (
-    <div className="flex flex-col gap-2.5" aria-hidden="true">
+    <div
+      className="flex flex-col gap-2.5 rounded-xl border border-border p-3"
+      style={{ background: 'rgba(255,255,255,0.02)' }}
+      aria-hidden="true"
+    >
       {/* Search input */}
-      <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-elevated/50 px-3 py-2">
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-elevated/50 px-3 py-2">
         <svg
           fill="none"
           viewBox="0 0 24 24"
@@ -159,6 +188,8 @@ function SearchMockup() {
     </div>
   )
 }
+
+const AUDIENCE_LABELS = ['Scouts', 'Scouts', 'Scouts & Academies', 'Scouts'] as const
 
 const FEATURES = [
   { index: 0, icon: ICONS.search, span: 'large', variant: 'light' as const, mockup: true },
@@ -200,12 +231,60 @@ export async function AboutFeatures() {
             return (
               <div
                 key={index}
-                className={`feature-card overflow-hidden rounded-2xl p-6 sm:p-7 ${
+                className={`feature-card relative overflow-hidden rounded-2xl p-6 sm:p-7 ${
                   isLarge ? 'sm:col-span-2 lg:col-span-2' : ''
-                } ${isDark ? 'card-dark' : 'border border-white/[0.06] bg-surface'}`}
+                } ${
+                  isDark
+                    ? 'feature-card-dark border border-[rgba(74,222,128,0.08)]'
+                    : 'border border-border bg-surface'
+                }`}
+                style={
+                  isDark ? { background: 'linear-gradient(155deg, #141310, #0A0908)' } : undefined
+                }
               >
-                <div className={isLarge && mockup ? 'grid gap-6 lg:grid-cols-[1fr_200px]' : ''}>
+                {/* Decorative elements — dark card only */}
+                {isDark && (
+                  <>
+                    {/* Top-right green gradient slice */}
+                    <div
+                      className="pointer-events-none absolute -right-10 -top-10 h-[140px] w-[140px] rounded-full"
+                      style={{
+                        background:
+                          'radial-gradient(circle, rgba(74,222,128,0.08) 0%, transparent 70%)',
+                      }}
+                      aria-hidden="true"
+                    />
+                    {/* Bottom-left blue glow orb */}
+                    <div
+                      className="pointer-events-none absolute -bottom-10 -left-10 h-[140px] w-[140px] rounded-full"
+                      style={{
+                        background:
+                          'radial-gradient(circle, rgba(96,165,250,0.06) 0%, transparent 70%)',
+                      }}
+                      aria-hidden="true"
+                    />
+                  </>
+                )}
+
+                <div
+                  className={`relative z-10 ${isLarge && mockup ? 'grid gap-6 lg:grid-cols-[1fr_200px]' : ''}`}
+                >
                   <div>
+                    {/* Dot + audience label */}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-[5px] w-[5px] shrink-0 rounded-full bg-primary"
+                        aria-hidden="true"
+                      />
+                      <span
+                        className={`text-[0.65rem] font-bold uppercase tracking-widest ${
+                          isDark ? 'text-[rgba(238,236,232,0.4)]' : 'text-foreground-faint'
+                        }`}
+                      >
+                        {AUDIENCE_LABELS[index]}
+                      </span>
+                    </div>
+
                     {/* Icon */}
                     <div
                       className={`mt-4 flex h-10 w-10 items-center justify-center rounded-xl ${
@@ -215,13 +294,23 @@ export async function AboutFeatures() {
                       {icon}
                     </div>
 
-                    {/* Text */}
-                    <h3 className={`mt-4 text-base font-bold ${isDark ? '' : 'text-foreground'}`}>
+                    {/* Title with green underline */}
+                    <h3
+                      className={`mt-4 text-base font-bold ${isDark ? 'text-[#EEECE8]' : 'text-foreground'}`}
+                    >
                       {t(`about.feature${index}Title`)}
+                      <span
+                        className="mt-1.5 block h-[2px] w-[50px]"
+                        style={{
+                          background: `linear-gradient(90deg, ${isDark ? '#4ADE80' : 'var(--primary)'} 0%, transparent 100%)`,
+                          opacity: isDark ? 0.6 : 0.5,
+                        }}
+                        aria-hidden="true"
+                      />
                     </h3>
                     <p
-                      className={`mt-1.5 text-[0.85rem] leading-relaxed ${
-                        isDark ? 'opacity-55' : 'text-foreground-secondary'
+                      className={`mt-2 text-[0.85rem] leading-relaxed ${
+                        isDark ? 'text-[rgba(238,236,232,0.55)]' : 'text-foreground-secondary'
                       }`}
                     >
                       {t(`about.feature${index}Desc`)}
@@ -232,7 +321,13 @@ export async function AboutFeatures() {
                   {isLarge && mockup && (
                     <div className="hidden items-center justify-center lg:flex">
                       {isDark ? (
-                        <div className="h-[140px] w-[140px]">
+                        <div
+                          className="flex h-[150px] w-[150px] items-center justify-center rounded-xl border"
+                          style={{
+                            background: 'rgba(74,222,128,0.02)',
+                            borderColor: 'rgba(74,222,128,0.06)',
+                          }}
+                        >
                           <RadarChart />
                         </div>
                       ) : (
