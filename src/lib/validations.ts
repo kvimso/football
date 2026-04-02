@@ -106,6 +106,7 @@ export const demoRequestFormSchema = z.object({
 export const contactMessageSchema = z.object({
   name: z.string().min(1).max(100),
   email: z.string().email(),
+  subject: z.enum(['general', 'academy', 'scouting', 'camera', 'media']).default('general'),
   message: z.string().min(10).max(2000),
 })
 

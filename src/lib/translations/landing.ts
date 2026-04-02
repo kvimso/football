@@ -270,6 +270,42 @@ export const en = {
     send: 'Send Message',
     sent: 'Message Sent',
     sentDesc: "Thank you for reaching out. We'll get back to you soon.",
+    // Editorial layout keys
+    label: 'Contact',
+    heading: "Let's Talk",
+    heroSubtitle:
+      'Questions about scouting, academy partnerships, or camera technology? We respond within 24 hours.',
+    officeLabel: 'Tbilisi Office',
+    officeAddress1: 'Rustaveli Avenue 14',
+    officeAddress2: '0108 Tbilisi, Georgia',
+    emailLabel: 'Direct Inquiry',
+    emailAddress: 'hello@binocly.ge',
+    responseLabel: 'Response Time',
+    responseValue: 'Within 24 hours',
+    partnersLabel: 'Strategic Technical Partners',
+    subject: 'Subject',
+    subjectGeneral: 'General Inquiry',
+    subjectAcademy: 'Academy Partnership',
+    subjectScout: 'Scouting Access',
+    subjectCamera: 'Camera Technology / Starlive',
+    subjectMedia: 'Media & Press',
+    demoTitle: 'Professional Demo',
+    demoDesc:
+      'Want to see our talent database and scouting analytics in real-time? Request a personalized walkthrough.',
+    demoLink: 'Request Access',
+    faq0Title: 'Are you an academy?',
+    faq0Desc:
+      'We digitize local talent and connect your players with verified European scouts. Camera-powered stats give your academy international visibility.',
+    faq1Title: 'Scouting requests?',
+    faq1Desc:
+      'Our platform provides verified data across all Georgian leagues and age groups. Search, filter, compare — all in one place.',
+    faq2Title: 'Camera technology?',
+    faq2Desc:
+      'Through our partner Starlive, we deploy Pixellot cameras at academies — automated match recording, individual stats, and highlight clips.',
+    faq3Title: 'Media inquiries?',
+    faq3Desc:
+      'For press, interviews, and partnership proposals, reach out through the form or email us directly.',
+    heroImageAlt: 'Football stadium at dusk',
   },
 }
 
@@ -542,5 +578,41 @@ export const ka = {
     send: 'შეტყობინების გაგზავნა',
     sent: 'შეტყობინება გაგზავნილია',
     sentDesc: 'მადლობა დაკავშირებისთვის. მალე დაგიბრუნდებით.',
+    // Editorial layout keys
+    label: 'კონტაქტი',
+    heading: 'მოდი, ვისაუბროთ',
+    heroSubtitle:
+      'შეკითხვები სკაუტინგის, აკადემიის პარტნიორობის ან კამერის ტექნოლოგიის შესახებ? 24 საათის განმავლობაში გიპასუხებთ.',
+    officeLabel: 'თბილისის ოფისი',
+    officeAddress1: 'რუსთაველის გამზირი 14',
+    officeAddress2: '0108 თბილისი, საქართველო',
+    emailLabel: 'პირდაპირი კავშირი',
+    emailAddress: 'hello@binocly.ge',
+    responseLabel: 'პასუხის დრო',
+    responseValue: '24 საათის განმავლობაში',
+    partnersLabel: 'სტრატეგიული ტექნიკური პარტნიორები',
+    subject: 'თემა',
+    subjectGeneral: 'ზოგადი შეკითხვა',
+    subjectAcademy: 'აკადემიის პარტნიორობა',
+    subjectScout: 'სკაუტინგის წვდომა',
+    subjectCamera: 'კამერის ტექნოლოგია / Starlive',
+    subjectMedia: 'მედია და პრესა',
+    demoTitle: 'პროფესიონალური დემო',
+    demoDesc:
+      'გსურთ ნახოთ ჩვენი ტალანტების ბაზა და სკაუტინგის ანალიტიკა რეალურ დროში? მოითხოვეთ პერსონალიზებული გასეირნება.',
+    demoLink: 'მოითხოვეთ წვდომა',
+    faq0Title: 'აკადემია ხართ?',
+    faq0Desc:
+      'ჩვენ ვაციფრებთ ადგილობრივ ტალანტს და ვაკავშირებთ თქვენს მოთამაშეებს ევროპელ სკაუტებთან. კამერით მიღებული სტატისტიკა საერთაშორისო ხილვადობას აძლევს.',
+    faq1Title: 'სკაუტინგის მოთხოვნები?',
+    faq1Desc:
+      'ჩვენი პლატფორმა უზრუნველყოფს ვერიფიცირებულ მონაცემებს ყველა ქართული ლიგისა და ასაკობრივი ჯგუფისთვის.',
+    faq2Title: 'კამერის ტექნოლოგია?',
+    faq2Desc:
+      'ჩვენი პარტნიორი Starlive-ის მეშვეობით ვაყენებთ Pixellot კამერებს აკადემიებში — ავტომატური ჩაწერა, ინდივიდუალური სტატისტიკა.',
+    faq3Title: 'მედია შეკითხვები?',
+    faq3Desc:
+      'პრესისთვის, ინტერვიუებისთვის და პარტნიორობის წინადადებებისთვის, დაგვიკავშირდით ფორმით ან ელ. ფოსტით.',
+    heroImageAlt: 'საფეხბურთო სტადიონი',
   },
 }

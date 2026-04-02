@@ -19,6 +19,9 @@ export const DEMO_ROLES = [
 ] as const
 export const DEMO_STATUSES = ['new', 'contacted', 'demo_done', 'converted', 'declined'] as const
 
+export const CONTACT_SUBJECTS = ['general', 'academy', 'scouting', 'camera', 'media'] as const
+export type ContactSubject = (typeof CONTACT_SUBJECTS)[number]
+
 export const PREFERRED_FEET = ['Left', 'Right', 'Both'] as const
 
 export const POSITION_COLOR_CLASSES: Record<Position, string> = {

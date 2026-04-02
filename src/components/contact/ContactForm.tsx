@@ -3,12 +3,32 @@
 import { useState, useTransition } from 'react'
 import { useLang } from '@/hooks/useLang'
 import { submitContactMessage } from '@/app/actions/contact-message'
+import { CONTACT_SUBJECTS, type ContactSubject } from '@/lib/constants'
 
-export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
+const SUBJECT_KEYS: Record<ContactSubject, string> = {
+  general: 'contact.subjectGeneral',
+  academy: 'contact.subjectAcademy',
+  scouting: 'contact.subjectScout',
+  camera: 'contact.subjectCamera',
+  media: 'contact.subjectMedia',
+}
+
+export function ContactForm({
+  defaultEmail,
+  defaultSubject,
+}: {
+  defaultEmail?: string
+  defaultSubject?: string
+}) {
   const { t } = useLang()
   const [isPending, startTransition] = useTransition()
   const [name, setName] = useState('')
   const [email, setEmail] = useState(defaultEmail ?? '')
+  const [subject, setSubject] = useState<ContactSubject>(
+    CONTACT_SUBJECTS.includes(defaultSubject as ContactSubject)
+      ? (defaultSubject as ContactSubject)
+      : 'general'
+  )
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [sent, setSent] = useState(false)
@@ -18,7 +38,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
     setError('')
 
     startTransition(async () => {
-      const result = await submitContactMessage({ name, email, message })
+      const result = await submitContactMessage({ name, email, subject, message })
       if (result.error) {
         setError(result.error)
       } else {
@@ -29,7 +49,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
 
   if (sent) {
     return (
-      <div className="text-center py-8">
+      <div className="py-8 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
           <svg
             className="h-8 w-8 text-primary"
@@ -47,64 +67,85 @@ export function ContactForm({ defaultEmail }: { defaultEmail?: string }) {
     )
   }
 
+  const labelClass = 'block text-[10px] font-bold uppercase tracking-[0.15em] text-foreground-faint'
+  const inputClass =
+    'mt-1.5 w-full rounded-md border border-border bg-background p-[13px] text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-3 focus:ring-primary/8'
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5" id="contact-form">
       {error && (
         <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
 
-      <div>
-        <label htmlFor="contact-name" className="block text-sm font-medium text-foreground-muted">
-          {t('contact.name')}
-        </label>
-        <input
-          id="contact-name"
-          type="text"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-        />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <label htmlFor="contact-name" className={labelClass}>
+            {t('contact.name')}
+          </label>
+          <input
+            id="contact-name"
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="contact-email" className={labelClass}>
+            {t('contact.email')}
+          </label>
+          <input
+            id="contact-email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+        </div>
       </div>
 
       <div>
-        <label htmlFor="contact-email" className="block text-sm font-medium text-foreground-muted">
-          {t('contact.email')}
+        <label htmlFor="contact-subject" className={labelClass}>
+          {t('contact.subject')}
         </label>
-        <input
-          id="contact-email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="contact-message"
-          className="block text-sm font-medium text-foreground-muted"
+        <select
+          id="contact-subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value as ContactSubject)}
+          className={inputClass}
         >
+          {CONTACT_SUBJECTS.map((s) => (
+            <option key={s} value={s}>
+              {t(SUBJECT_KEYS[s])}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="contact-message" className={labelClass}>
           {t('contact.message')}
         </label>
         <textarea
           id="contact-message"
           required
-          rows={5}
+          rows={6}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={t('contact.messagePlaceholder')}
-          className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder-foreground-muted outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
+          className={`${inputClass} resize-none placeholder-foreground-muted`}
         />
       </div>
 
       <button
         type="submit"
         disabled={isPending}
-        className="btn-primary w-full py-3 text-base disabled:opacity-50"
+        className="btn-primary w-full py-3.5 text-sm font-bold uppercase tracking-[0.2em] disabled:opacity-50"
+        style={{ boxShadow: '0 4px 16px rgba(27,138,74,0.2)' }}
       >
         {isPending ? t('common.loading') : t('contact.send')}
       </button>
