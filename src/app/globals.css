@@ -421,6 +421,46 @@ html:lang(ka) h3 {
   line-height: 1.15;
 }
 
+/* ── About page components (layered for Tailwind override) ── */
+@layer components {
+  /* Dark content card — hardcoded dark bg (NOT var(--foreground) which flips in dark mode) */
+  .card-dark {
+    background-color: #1A1917;
+    color: #EEECE8;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Green gradient card (Solution / always green in both themes) */
+  .card-solution {
+    background: linear-gradient(135deg, #1B8A4A 0%, #0F6B35 40%, #0A4F28 100%);
+    color: white;
+    border-radius: 1rem;
+  }
+
+  /* Stats strip with top/bottom borders */
+  .stats-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Feature card hover lift */
+  .feature-card {
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @media (hover: hover) {
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-card { transition: none !important; }
+}
+
 /* ── League page components (layered for Tailwind override) ── */
 @layer components {
   /* Photo-driven league card with gradient overlay */

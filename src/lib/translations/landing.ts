@@ -129,6 +129,7 @@ export const en = {
     noAnnouncements: 'No announcements yet.',
   },
   about: {
+    // Legacy (kept for back-compat)
     title: 'About the Platform',
     subtitle: 'Connecting Georgian football talent with the world',
     mission: 'Our Mission',
@@ -143,6 +144,121 @@ export const en = {
     forAcademies: 'For Academies',
     forAcademiesText:
       'Manage your player roster, upload match data, showcase your talent to international scouts, and handle contact requests — all from a simple admin panel.',
+
+    // ── Hero ──
+    label: 'ABOUT BINOCLY',
+    heroTitle: 'The scouting platform ',
+    heroTitleAccent: 'Georgian football',
+    heroTitleEnd: ' has been missing.',
+    heroDescription:
+      'Georgian talent is making headlines — Kvaratskhelia at PSG, Mamardashvili headed to Liverpool. But behind the breakout stars, thousands of young players remain invisible to the world. Binocly changes that.',
+    heroImageAlt: 'Stadium view from the stands during a Georgian football match',
+
+    // ── Stats Strip ──
+    statsPlayersNumber: '37,600+',
+    statsPlayersLabel: 'Registered Youth Players',
+    statsTransfersNumber: '€100M+',
+    statsTransfersLabel: 'In Recent Transfers',
+    statsAcademiesNumber: '200+',
+    statsAcademiesLabel: 'Academies Nationwide',
+    statsPlatformsNumber: '0',
+    statsPlatformsLabel: 'Centralized Scouting Platforms',
+
+    // ── Bento Header ──
+    bentoLabel: 'WHY BINOCLY EXISTS',
+    bentoHeading: 'Georgian talent is booming.',
+    bentoHeadingLine2: "The infrastructure isn't.",
+    bentoPullQuote:
+      'The next Kvaratskhelia is training right now at a Georgian academy. The question is whether the world will find them in time.',
+
+    // ── Problem Card ──
+    problemLabel: 'THE PROBLEM',
+    problemTitle: 'Scouts are flying blind',
+    problemSubtitle:
+      'International scouts interested in Georgian talent face the same obstacles over and over.',
+    problemItem0Title: 'Fragmented Data',
+    problemItem0Desc:
+      'Player info scattered across academy websites, PDFs, and word of mouth. No single source of truth.',
+    problemItem1Title: 'No Verified Stats',
+    problemItem1Desc:
+      'Self-reported numbers with no way to verify without attending matches in person.',
+    problemItem2Title: 'Scattered Footage',
+    problemItem2Desc:
+      'Match clips on random YouTube channels, or not recorded at all. Finding footage means knowing someone.',
+    problemItem3Title: 'Communication Gap',
+    problemItem3Desc:
+      'No direct channel between international scouts and Georgian academies. Language and logistics block deals.',
+
+    // ── Solution Card ──
+    solutionLabel: 'THE BINOCLY SOLUTION',
+    solutionTitle: 'One platform. Every player. Verified data.',
+    solutionSubtitle:
+      'Everything scouts need to discover Georgian talent — and everything academies need to be discovered.',
+    solutionItem0Title: 'Centralized Directory',
+    solutionItem0Desc:
+      'Search every registered player by position, age, club, and camera-verified performance metrics.',
+    solutionItem1Title: 'Camera-Verified Stats',
+    solutionItem1Desc:
+      "Starlive's Pixellot cameras extract stats automatically. No manual entry, no bias — just data.",
+    solutionItem2Title: 'Direct Messaging',
+    solutionItem2Desc:
+      'Real-time chat between scouts and academy admins. Discuss, share files, negotiate — all in one place.',
+    solutionItem3Title: 'Fully Bilingual',
+    solutionItem3Desc:
+      'Complete English and Georgian support. International scouts and local academies on the same platform.',
+
+    // ── Bento Image Card ──
+    bentoImageTag: 'VERIFIED BY STARLIVE',
+    bentoImageDesc:
+      'AI-powered Pixellot cameras at partner academies capture every match. Stats extracted automatically — zero manual entry.',
+
+    // ── Features ──
+    featuresLabel: 'PLATFORM CAPABILITIES',
+    featuresHeading: 'What you get',
+    featuresSubtitle: 'Every tool scouts and academies need — in one place.',
+    feature0Title: 'Advanced Player Search',
+    feature0Desc:
+      'Filter by position, age group, region, physical attributes, and camera-verified performance metrics. Find exactly the player you need.',
+    feature0Badge: 'FOR SCOUTS',
+    feature1Title: 'Trending Players',
+    feature1Desc:
+      'See which players are getting the most views from scouts this week. Discover rising talent before the crowd.',
+    feature1Badge: 'FOR SCOUTS',
+    feature2Title: 'Scout-Academy Chat',
+    feature2Desc:
+      'Direct messaging with file sharing and embedded player references. No middlemen.',
+    feature2Badge: 'BOTH',
+    feature3Title: 'Player Comparison',
+    feature3Desc:
+      'Side-by-side radar charts, stat differentials, and shareable comparison URLs. Make data-driven decisions.',
+    feature3Badge: 'FOR SCOUTS',
+
+    // ── Principles ──
+    principle0Title: 'Every stat verified by camera',
+    principle0Desc:
+      "No self-reported data. Starlive's Pixellot cameras record matches and extract statistics automatically using AI. What you see on Binocly is what happened on the pitch.",
+    principle1Title: 'Built bilingual from day one',
+    principle1Desc:
+      'Full English and Georgian throughout — not a translation layer bolted on later. International scouts and local academy admins both work in their preferred language.',
+    principle2Title: 'Direct connections, no gatekeepers',
+    principle2Desc:
+      'Scouts message academies directly. No agents in the middle, no approval gates. Subscribe, search, connect. The platform gets out of the way.',
+
+    // ── Quote ──
+    quoteText:
+      'Georgian football produced a €70M forward and a €30M goalkeeper in two years. Imagine what happens when the world can actually see the next generation.',
+    quoteHighlight1: '€70M',
+    quoteHighlight2: '€30M',
+    quoteHighlight3: 'see',
+    quoteSource: 'The Binocly Thesis',
+    quoteSourceDesc: "The talent exists. The infrastructure didn't — until now.",
+
+    // ── CTA ──
+    ctaHeading: 'Ready to discover Georgian talent?',
+    ctaSubtitle: 'Join as a scout or register your academy.',
+    ctaPrimary: 'Create Account',
+    ctaPrimaryAuth: 'Explore Leagues',
+    ctaSecondary: 'Contact Us',
   },
   contact: {
     title: 'Contact Us',
@@ -285,6 +401,7 @@ export const ka = {
     noAnnouncements: 'განცხადებები ჯერ არ არის.',
   },
   about: {
+    // Legacy
     title: 'პლატფორმის შესახებ',
     subtitle: 'ქართული ფეხბურთის ტალანტების მსოფლიოსთან დაკავშირება',
     mission: 'ჩვენი მისია',
@@ -299,6 +416,121 @@ export const ka = {
     forAcademies: 'აკადემიებისთვის',
     forAcademiesText:
       'მართეთ თქვენი შემადგენლობა, ატვირთეთ მატჩების მონაცემები, წარადგინეთ ტალანტი საერთაშორისო სკაუტებისთვის და მართეთ კონტაქტის მოთხოვნები ადმინ პანელიდან.',
+
+    // ── Hero ──
+    label: 'BINOCLY-ს შესახებ',
+    heroTitle: 'სკაუტინგის პლატფორმა, რომელიც ',
+    heroTitleAccent: 'ქართულ ფეხბურთს',
+    heroTitleEnd: ' აკლდა.',
+    heroDescription:
+      'ქართული ტალანტი სათაურებს იქმნის — კვარაცხელია PSG-ში, მამარდაშვილი ლივერპულისკენ მიემართება. მაგრამ წარმატებულ ვარსკვლავებს მიღმა, ათასობით ახალგაზრდა მოთამაშე მსოფლიოსთვის უხილავი რჩება. Binocly ამას ცვლის.',
+    heroImageAlt: 'სტადიონის ხედი ტრიბუნებიდან ქართული ფეხბურთის მატჩის დროს',
+
+    // ── Stats Strip ──
+    statsPlayersNumber: '37,600+',
+    statsPlayersLabel: 'რეგისტრირებული ახალგაზრდა მოთამაშე',
+    statsTransfersNumber: '€100M+',
+    statsTransfersLabel: 'ბოლო ტრანსფერებში',
+    statsAcademiesNumber: '200+',
+    statsAcademiesLabel: 'აკადემია ქვეყნის მასშტაბით',
+    statsPlatformsNumber: '0',
+    statsPlatformsLabel: 'ცენტრალიზებული სკაუტინგის პლატფორმა',
+
+    // ── Bento Header ──
+    bentoLabel: 'რატომ არსებობს BINOCLY',
+    bentoHeading: 'ქართული ტალანტი აყვავებულია.',
+    bentoHeadingLine2: 'ინფრასტრუქტურა — არა.',
+    bentoPullQuote:
+      'მომავალი კვარაცხელია ახლა ვარჯიშობს ქართულ აკადემიაში. კითხვა ისაა, იპოვის თუ არა მას მსოფლიო დროულად.',
+
+    // ── Problem Card ──
+    problemLabel: 'პრობლემა',
+    problemTitle: 'სკაუტები ბრმად მოქმედებენ',
+    problemSubtitle:
+      'ქართული ტალანტით დაინტერესებული საერთაშორისო სკაუტები იგივე დაბრკოლებებს აწყდებიან.',
+    problemItem0Title: 'ფრაგმენტული მონაცემები',
+    problemItem0Desc:
+      'მოთამაშეთა ინფორმაცია მიმოფანტულია აკადემიების ვებგვერდებზე, PDF-ებსა და ზეპირ გადმოცემებში. ერთიანი წყარო არ არსებობს.',
+    problemItem1Title: 'არავერიფიცირებული სტატისტიკა',
+    problemItem1Desc:
+      'თვითშეფასებული რიცხვები, რომლების შემოწმებაც მხოლოდ მატჩზე დასწრებით შეიძლება.',
+    problemItem2Title: 'მიმოფანტული ვიდეოები',
+    problemItem2Desc:
+      'მატჩის კლიპები შემთხვევით YouTube არხებზე, ან საერთოდ არ არის ჩაწერილი. ვიდეოს პოვნა ნაცნობობას მოითხოვს.',
+    problemItem3Title: 'კომუნიკაციის ბარიერი',
+    problemItem3Desc:
+      'პირდაპირი არხი საერთაშორისო სკაუტებსა და ქართულ აკადემიებს შორის არ არსებობს. ენა და ლოგისტიკა ხელშეკრულებებს ბლოკავს.',
+
+    // ── Solution Card ──
+    solutionLabel: 'BINOCLY-ს გადაწყვეტა',
+    solutionTitle: 'ერთი პლატფორმა. ყველა მოთამაშე. დადასტურებული მონაცემები.',
+    solutionSubtitle:
+      'ყველაფერი, რაც სკაუტებს სჭირდებათ ქართული ტალანტის აღმოსაჩენად — და ყველაფერი, რაც აკადემიებს სჭირდებათ აღმოჩენილი იყვნენ.',
+    solutionItem0Title: 'ცენტრალიზებული დირექტორია',
+    solutionItem0Desc:
+      'მოძებნეთ ყველა რეგისტრირებული მოთამაშე პოზიციის, ასაკის, კლუბისა და კამერით დადასტურებული მაჩვენებლების მიხედვით.',
+    solutionItem1Title: 'კამერით დადასტურებული სტატისტიკა',
+    solutionItem1Desc:
+      'Starlive-ის Pixellot კამერები სტატისტიკას ავტომატურად ამოიღებს. ხელით შეყვანა არ არის, მიკერძოება არ არის — მხოლოდ მონაცემები.',
+    solutionItem2Title: 'პირდაპირი მესიჯები',
+    solutionItem2Desc:
+      'რეალურ დროში ჩატი სკაუტებსა და აკადემიის ადმინებს შორის. განიხილეთ, გააზიარეთ ფაილები, მოილაპარაკეთ — ერთ ადგილას.',
+    solutionItem3Title: 'სრულად ორენოვანი',
+    solutionItem3Desc:
+      'სრული ინგლისური და ქართული მხარდაჭერა. საერთაშორისო სკაუტები და ადგილობრივი აკადემიები ერთ პლატფორმაზე.',
+
+    // ── Bento Image Card ──
+    bentoImageTag: 'STARLIVE-ით ვერიფიცირებული',
+    bentoImageDesc:
+      'AI-ით აღჭურვილი Pixellot კამერები პარტნიორ აკადემიებში ყველა მატჩს იღებს. სტატისტიკა ავტომატურად ამოიღება — ხელით შეყვანა ნულოვანია.',
+
+    // ── Features ──
+    featuresLabel: 'პლატფორმის შესაძლებლობები',
+    featuresHeading: 'რას მიიღებთ',
+    featuresSubtitle: 'ყველა ინსტრუმენტი, რაც სკაუტებსა და აკადემიებს სჭირდებათ — ერთ ადგილას.',
+    feature0Title: 'გაფართოებული ძიება',
+    feature0Desc:
+      'გაფილტრეთ პოზიციის, ასაკობრივი ჯგუფის, რეგიონის, ფიზიკური მონაცემებისა და კამერით დადასტურებული მაჩვენებლების მიხედვით.',
+    feature0Badge: 'სკაუტებისთვის',
+    feature1Title: 'ტრენდული მოთამაშეები',
+    feature1Desc:
+      'ნახეთ, რომელ მოთამაშეებს ათვალიერებენ სკაუტები ყველაზე მეტად ამ კვირაში. აღმოაჩინეთ ახალი ტალანტი ადრე.',
+    feature1Badge: 'სკაუტებისთვის',
+    feature2Title: 'სკაუტ-აკადემიის ჩატი',
+    feature2Desc:
+      'პირდაპირი მესიჯები ფაილების გაზიარებითა და ჩაშენებული მოთამაშეთა მითითებებით. შუამავლების გარეშე.',
+    feature2Badge: 'ორივესთვის',
+    feature3Title: 'მოთამაშეთა შედარება',
+    feature3Desc:
+      'რადარული დიაგრამები, სტატისტიკის სხვაობები და გასაზიარებელი შედარების ბმულები. მონაცემებზე დაფუძნებული გადაწყვეტილებები.',
+    feature3Badge: 'სკაუტებისთვის',
+
+    // ── Principles ──
+    principle0Title: 'ყველა სტატისტიკა კამერით დადასტურებული',
+    principle0Desc:
+      'თვითშეფასებული მონაცემები არ არის. Starlive-ის Pixellot კამერები მატჩებს იწერს და სტატისტიკას AI-ით ავტომატურად ამოიღებს. რასაც Binocly-ზე ხედავთ, მოედანზე მოხდა.',
+    principle1Title: 'ორენოვანი პირველი დღიდან',
+    principle1Desc:
+      'სრული ინგლისური და ქართული მხარდაჭერა — არა მოგვიანებით მიმაგრებული თარგმანი. საერთაშორისო სკაუტებიც და ადგილობრივი ადმინებიც სასურველ ენაზე მუშაობენ.',
+    principle2Title: 'პირდაპირი კავშირები, შუამავლების გარეშე',
+    principle2Desc:
+      'სკაუტები აკადემიებს პირდაპირ წერენ. აგენტები შუაში არ არიან, დამტკიცების ბარიერი არ არის. გამოიწერე, მოძებნე, დაუკავშირდი.',
+
+    // ── Quote ──
+    quoteText:
+      'ქართულმა ფეხბურთმა ორ წელიწადში €70M-იანი ფორვარდი და €30M-იანი მეკარე გამოუშვა. წარმოიდგინეთ, რა მოხდება, როცა მსოფლიო მომავალ თაობას ნამდვილად დაინახავს.',
+    quoteHighlight1: '€70M',
+    quoteHighlight2: '€30M',
+    quoteHighlight3: 'დაინახავს',
+    quoteSource: 'Binocly-ს თეზისი',
+    quoteSourceDesc: 'ტალანტი არსებობს. ინფრასტრუქტურა არ არსებობდა — აქამდე.',
+
+    // ── CTA ──
+    ctaHeading: 'მზად ხართ ქართული ტალანტის აღმოსაჩენად?',
+    ctaSubtitle: 'შემოგვიერთდით სკაუტად ან დაარეგისტრირეთ თქვენი აკადემია.',
+    ctaPrimary: 'ანგარიშის შექმნა',
+    ctaPrimaryAuth: 'ლიგების ნახვა',
+    ctaSecondary: 'დაგვიკავშირდით',
   },
   contact: {
     title: 'დაგვიკავშირდით',
