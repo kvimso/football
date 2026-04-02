@@ -32,46 +32,19 @@ export async function LeagueHero() {
             </p>
           </div>
 
-          {/* Right — photo collage */}
+          {/* Right — hero photo */}
           <div className="relative mx-auto w-full max-w-lg lg:mx-0">
-            {/* CSS Grid overlap layout */}
-            <div
-              className="grid"
-              style={{
-                gridTemplateColumns: 'repeat(12, 1fr)',
-                gridTemplateRows: '1fr 1fr',
-              }}
-            >
-              {/* Main photo — larger, spans cols 4-12 */}
-              <div
-                className="relative aspect-[3/4] overflow-hidden rounded-2xl"
-                style={{ gridColumn: '4 / 13', gridRow: '1 / 3' }}
-              >
-                <Image
-                  src="/images/leagues/collage-main.jpg"
-                  alt=""
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 450px"
-                  placeholder="blur"
-                  blurDataURL={BLUR_DATA_URL}
-                />
-              </div>
-
-              {/* Accent photo (Pixellot camera) — smaller, overlapping */}
-              <div
-                className="relative z-10 hidden aspect-[5/4] overflow-hidden rounded-xl border-4 border-background shadow-xl md:block"
-                style={{ gridColumn: '1 / 7', gridRow: '1 / 3', alignSelf: 'center' }}
-              >
-                <Image
-                  src="/images/leagues/collage-accent.jpg"
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="250px"
-                />
-              </div>
+            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
+              <Image
+                src="/images/leagues/collage-main.jpg"
+                alt=""
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 500px"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+              />
             </div>
 
             {/* Floating Starlive badge */}
