@@ -51,7 +51,8 @@ interface Props {
 }
 
 export async function LeagueShowcase({ leagues }: Props) {
-  const { t } = await getServerT()
+  const { t, lang } = await getServerT()
+  const isKa = lang === 'ka'
 
   if (leagues.length === 0) {
     return (
@@ -69,31 +70,70 @@ export async function LeagueShowcase({ leagues }: Props) {
     (s) => s !== heroSlot && (s.span === 'narrow' || s.span === 'wide')
   )
   const restSlots = slots.filter((s) => s !== heroSlot && s.span === 'full')
+  const season = leagues[0]?.season ?? ''
 
   return (
     <section className="py-10 sm:py-14">
-      <div className="mx-auto max-w-7xl px-4 space-y-6">
-        {/* Hero card — full width */}
-        <LeagueShowcaseCard league={heroSlot.league} variant={heroSlot.variant} />
-
-        {/* Second row — 5:7 split or single card */}
-        {secondRow.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-            {secondRow.map((slot) => (
-              <div
-                key={slot.league.id}
-                className={slot.span === 'narrow' ? 'md:col-span-5' : 'md:col-span-7'}
-              >
-                <LeagueShowcaseCard league={slot.league} variant={slot.variant} />
-              </div>
-            ))}
+      <div className="mx-auto max-w-7xl px-4">
+        {/* Section header — editorial split.
+            Description copy assumes exactly three active Golden Leagues (U15/U17/U19).
+            If coverage ever expands beyond three age groups, update the header copy. */}
+        <div className="mb-8 flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+          <div>
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary">
+              {t('leagues.showcase.header.eyebrow')}
+            </span>
+            <h2
+              className={`mt-2 text-[26px] font-extrabold tracking-tight leading-[1.1] sm:text-3xl ${
+                isKa ? 'font-sans' : ''
+              }`}
+              style={!isKa ? { fontFamily: 'var(--font-noto-serif, var(--font-sans))' } : undefined}
+            >
+              {t('leagues.showcase.header.title')}
+              <span className="text-primary italic">
+                {t('leagues.showcase.header.titleAccent')}
+              </span>
+            </h2>
+            <p className="mt-3 max-w-[540px] text-sm leading-relaxed text-foreground-secondary sm:text-base">
+              {t('leagues.showcase.header.description')}
+            </p>
           </div>
-        )}
 
-        {/* Additional full-width cards */}
-        {restSlots.map((slot) => (
-          <LeagueShowcaseCard key={slot.league.id} league={slot.league} variant={slot.variant} />
-        ))}
+          <div className="flex flex-col items-end gap-1.5 sm:pb-1">
+            <div className="text-xs font-bold uppercase tracking-wider text-primary">
+              {leagues.length} {t('leagues.showcase.header.leaguesLabel')}
+            </div>
+            {season && (
+              <div className="text-xs text-foreground-faint">
+                {season} {t('leagues.showcase.header.seasonSuffix')}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Hero card — full width */}
+          <LeagueShowcaseCard league={heroSlot.league} variant={heroSlot.variant} />
+
+          {/* Second row — 5:7 split or single card */}
+          {secondRow.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+              {secondRow.map((slot) => (
+                <div
+                  key={slot.league.id}
+                  className={slot.span === 'narrow' ? 'md:col-span-5' : 'md:col-span-7'}
+                >
+                  <LeagueShowcaseCard league={slot.league} variant={slot.variant} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Additional full-width cards */}
+          {restSlots.map((slot) => (
+            <LeagueShowcaseCard key={slot.league.id} league={slot.league} variant={slot.variant} />
+          ))}
+        </div>
       </div>
     </section>
   )
