@@ -146,6 +146,14 @@ export const en = {
       pixellotTracked: 'Pixellot Tracked',
       clubsCount: 'clubs',
       matchesCount: 'matches',
+      header: {
+        eyebrow: "Georgia's Official Youth Competitions",
+        title: "Georgia's ",
+        titleAccent: 'Golden Leagues',
+        description: 'Three age groups. Every match captured. One source of verified player data.',
+        leaguesLabel: 'Leagues',
+        seasonSuffix: 'Season',
+      },
     },
   },
   privacy: {
@@ -407,6 +415,15 @@ export const ka = {
       pixellotTracked: 'Pixellot-ით ფიქსირებული',
       clubsCount: 'კლუბი',
       matchesCount: 'მატჩი',
+      header: {
+        eyebrow: 'საქართველოს ოფიციალური ახალგაზრდული ჩემპიონატები',
+        title: 'საქართველოს ',
+        titleAccent: 'ოქროს ლიგები',
+        description:
+          'სამი ასაკობრივი ჯგუფი. ყოველი მატჩი ჩაწერილი. ერთი წყარო გადამოწმებული სტატისტიკისთვის.',
+        leaguesLabel: 'ლიგა',
+        seasonSuffix: 'სეზონი',
+      },
     },
   },
   privacy: {
