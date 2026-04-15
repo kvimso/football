@@ -1,93 +1,60 @@
-import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
-import { createClient } from '@/lib/supabase/server'
-import { LandingHero } from '@/components/landing/LandingHero'
-import { ClubLogoSlider } from '@/components/landing/ClubLogoSlider'
+import { Nav } from '@/components/landing/Nav'
+import { Hero } from '@/components/landing/Hero'
+import { MarketPulse } from '@/components/landing/MarketPulse'
 import { SuccessStories } from '@/components/landing/SuccessStories'
-import { AudiencePanels } from '@/components/landing/AudiencePanels'
-import { Partners } from '@/components/landing/Partners'
-import { FadeInOnScroll } from '@/components/ui/FadeInOnScroll'
-import type { FeaturedPlayer, FeaturedClub } from '@/components/landing/types'
+import { Manifesto } from '@/components/landing/Manifesto'
+import { WhatWeOffer } from '@/components/landing/WhatWeOffer'
+import { Footer } from '@/components/landing/Footer'
+import type { SliderPlayer } from '@/components/landing/PlayerSlider'
 
-// Static demo players for hero slider (used when no DB players are featured)
-const DEMO_SLIDER_PLAYERS: FeaturedPlayer[] = [
+// Curated hero slider — swap for DB-driven featured players once Phase 7 lands.
+const DEMO_SLIDER_PLAYERS: SliderPlayer[] = [
   {
     id: 'demo-1',
     name: 'Amiran Tkeshelashvili',
-    name_ka: 'ამირან ტყეშელაშვილი',
     position: 'MID',
     date_of_birth: '2007-03-15',
     photo_url: '/images/landing/slider-1.jpg',
-    club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+    club: { name: 'Torpedo Kutaisi' },
   },
   {
     id: 'demo-2',
     name: 'Dimitri Maisuradze',
-    name_ka: 'დიმიტრი მაისურაძე',
     position: 'DEF',
     date_of_birth: '2006-08-22',
     photo_url: '/images/landing/slider-2.jpg',
-    club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+    club: { name: 'Torpedo Kutaisi' },
   },
   {
     id: 'demo-3',
     name: 'Aleko Basiladze',
-    name_ka: 'ალეკო ბასილაძე',
     position: 'ATT',
     date_of_birth: '2007-01-10',
     photo_url: '/images/landing/slider-3.jpg',
-    club: { name: 'Torpedo Kutaisi', name_ka: 'ტორპედო ქუთაისი' },
+    club: { name: 'Torpedo Kutaisi' },
   },
   {
     id: 'demo-4',
     name: 'Giorgi Cereteli',
-    name_ka: 'გიორგი ცერეთელი',
     position: 'MID',
     date_of_birth: '2005-11-05',
     photo_url: '/images/landing/slider-4.jpg',
-    club: { name: 'Locomotive Tbilisi', name_ka: 'ლოკომოტივი თბილისი' },
+    club: { name: 'Locomotive Tbilisi' },
   },
 ]
 
-export default async function Home() {
-  // Skip expensive getUser() call if no auth cookie — most visitors are anonymous
-  const cookieStore = await cookies()
-  const hasAuthCookie = cookieStore.getAll().some((c) => c.name.startsWith('sb-'))
-
-  if (hasAuthCookie) {
-    try {
-      const supabase = await createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (user) redirect('/players')
-    } catch {
-      // Auth check failed — show landing page
-    }
-  }
-
-  // Fetch clubs for logo slider
-  const supabase = await createClient()
-  const { data: clubs } = await supabase
-    .from('clubs')
-    .select('id, name, name_ka, slug, logo_url')
-    .order('name')
-
+export default function Home() {
   return (
     <>
-      <LandingHero players={DEMO_SLIDER_PLAYERS} />
-      <FadeInOnScroll>
-        <ClubLogoSlider clubs={clubs ?? []} />
-      </FadeInOnScroll>
-      <FadeInOnScroll delay={50}>
+      <Nav />
+      <main>
+        <Hero players={DEMO_SLIDER_PLAYERS} />
+        <MarketPulse />
         <SuccessStories />
-      </FadeInOnScroll>
-      <FadeInOnScroll delay={100}>
-        <AudiencePanels />
-      </FadeInOnScroll>
-      <FadeInOnScroll delay={150}>
-        <Partners />
-      </FadeInOnScroll>
+        <Manifesto />
+        <WhatWeOffer />
+      </main>
+      <Footer />
     </>
   )
 }

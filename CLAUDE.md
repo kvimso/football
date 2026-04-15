@@ -297,7 +297,8 @@ Real-time chat between scouts and academy admins. **Will replace the contact req
 - Database: paired columns (`name` + `name_ka`, `description` + `description_ka`)
 - Georgian font: Noto Sans Georgian loaded via `next/font`
 - Language preference stored in cookie (persists across sessions)
-- **All pages including landing page and chat (Phase 6.5) must be fully bilingual**
+- **All pages including chat (Phase 6.5) must be fully bilingual** — with one exception:
+- **Landing page (`src/app/(public)`) is English-only.** The editorial rewrite (2026-04-15) hard-codes all copy. No `t()` calls, no language toggle, no Georgian strings under `src/components/landing/`. The `(public)` layout pins `data-theme="light"` and loads Noto Serif scoped to that subtree. Marketing-adjacent pages (about, contact) keep bilingual support.
 
 ---
 
