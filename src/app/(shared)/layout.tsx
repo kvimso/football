@@ -1,12 +1,12 @@
-import { LandingNav } from '@/components/landing/LandingNav'
-import { LandingFooter } from '@/components/landing/LandingFooter'
+import { Nav } from '@/components/landing/Nav'
+import { Footer } from '@/components/landing/Footer'
 
 export default function SharedLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <LandingNav />
+      <Nav />
       <main className="flex-1">{children}</main>
-      <LandingFooter />
+      <Footer />
     </div>
   )
 }
