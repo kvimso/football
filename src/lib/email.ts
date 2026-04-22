@@ -27,7 +27,7 @@ export async function sendEmail({ to, subject, html }: SendEmailParams): Promise
 
   try {
     const { error } = await client.emails.send({
-      from: 'Georgian Football Platform <noreply@georgianfootball.com>',
+      from: 'Binocly <onboarding@resend.dev>',
       to,
       subject,
       html,
