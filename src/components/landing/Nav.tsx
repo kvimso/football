@@ -8,14 +8,24 @@ export function Nav() {
           Binocly
         </Link>
         <div className="landing-nav-links">
-          <Link href="/players">Players</Link>
           <Link href="/leagues">Leagues</Link>
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
         </div>
-        <Link href="/register" className="landing-nav-cta">
-          Get Started
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/login"
+            className="text-[11px] font-semibold uppercase tracking-widest text-foreground-faint transition-colors hover:text-foreground"
+          >
+            Login
+          </Link>
+          <Link
+            href="/demo"
+            className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[color-mix(in_srgb,var(--primary)_88%,black)]"
+          >
+            Request Demo
+          </Link>
+        </div>
       </div>
     </nav>
   )
