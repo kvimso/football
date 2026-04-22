@@ -113,20 +113,30 @@ export function Navbar() {
         <div className="flex items-center">
           <Link
             href={user ? dashboardHref : '/'}
-            className="rounded bg-primary px-2 py-0.5 text-sm font-bold text-btn-primary-text"
+            className="text-lg font-bold tracking-tight text-foreground transition-colors hover:text-primary"
+            style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
             title={user ? t('nav.dashboard') : undefined}
           >
-            GFT
+            Binocly
           </Link>
         </div>
 
         {/* Desktop nav links — center (plain Links to match LandingNav exactly) */}
         <div className="hidden items-center gap-5 md:flex">
-          <CenterLink href="/leagues">{t('nav.leagues')}</CenterLink>
           {showPublicLinks && (
             <>
+              <CenterLink href="/leagues">{t('nav.leagues')}</CenterLink>
               <CenterLink href="/about">{t('nav.about')}</CenterLink>
               <CenterLink href="/contact">{t('nav.contact')}</CenterLink>
+            </>
+          )}
+          {user && userRole === 'scout' && (
+            <>
+              <CenterLink href="/app/players">Players</CenterLink>
+              <CenterLink href="/app/clubs">Clubs</CenterLink>
+              <CenterLink href="/app/schedule">Schedule</CenterLink>
+              <CenterLink href="/app/standings">Standings</CenterLink>
+              <CenterLink href="/app/leagues">Leagues</CenterLink>
             </>
           )}
           {showRequestDemo && user && <CenterLink href="/demo">{t('nav.requestDemo')}</CenterLink>}
@@ -154,16 +164,16 @@ export function Navbar() {
             <>
               <ThemeToggle />
               <Link
-                href="/demo"
-                className="inline-flex items-center rounded-md bg-primary px-3 py-1 text-sm font-medium text-btn-primary-text transition-colors hover:opacity-90"
-              >
-                {t('nav.requestDemo')}
-              </Link>
-              <Link
                 href="/login"
-                className="text-sm text-foreground-muted hover:text-foreground transition-colors"
+                className="text-[11px] font-semibold uppercase tracking-widest text-foreground-faint transition-colors hover:text-foreground"
               >
                 {t('nav.login')}
+              </Link>
+              <Link
+                href="/demo"
+                className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.22em] text-white transition-colors hover:bg-[color-mix(in_srgb,var(--primary)_88%,black)]"
+              >
+                {t('nav.requestDemo')}
               </Link>
             </>
           )}
@@ -205,11 +215,11 @@ export function Navbar() {
         <div className="overflow-hidden">
           <div className="border-t border-border bg-nav-bg px-4 py-3">
             <div className="flex flex-col gap-2">
-              <NavLink href="/leagues" onClick={closeMobile}>
-                {t('nav.leagues')}
-              </NavLink>
               {showPublicLinks && (
                 <>
+                  <NavLink href="/leagues" onClick={closeMobile}>
+                    {t('nav.leagues')}
+                  </NavLink>
                   <NavLink href="/about" onClick={closeMobile}>
                     {t('nav.about')}
                   </NavLink>
@@ -234,6 +244,25 @@ export function Navbar() {
                         ? t('nav.admin')
                         : t('nav.dashboard')}
                   </NavLink>
+                  {userRole === 'scout' && (
+                    <>
+                      <NavLink href="/app/players" onClick={closeMobile}>
+                        Players
+                      </NavLink>
+                      <NavLink href="/app/clubs" onClick={closeMobile}>
+                        Clubs
+                      </NavLink>
+                      <NavLink href="/app/schedule" onClick={closeMobile}>
+                        Schedule
+                      </NavLink>
+                      <NavLink href="/app/standings" onClick={closeMobile}>
+                        Standings
+                      </NavLink>
+                      <NavLink href="/app/leagues" onClick={closeMobile}>
+                        Leagues
+                      </NavLink>
+                    </>
+                  )}
                   {showMessages && (
                     <NavLink href={messagesHref} onClick={closeMobile}>
                       {t('nav.messages')}
