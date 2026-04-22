@@ -40,10 +40,11 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
         | 'demo.statusDeclined'
 
     return (
-      <div className="text-center py-8">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+      <div className="py-6 text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
           <svg
-            className="h-8 w-8 text-primary"
+            aria-hidden="true"
+            className="h-7 w-7 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -56,10 +57,10 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
             />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-foreground">{t('demo.alreadySubmitted')}</h2>
-        <p className="mt-3 text-sm text-foreground-muted">{t(statusKey)}</p>
+        <h3 className="text-lg font-semibold text-foreground">{t('demo.alreadySubmitted')}</h3>
+        <p className="mt-3 text-[13px] leading-relaxed text-foreground-secondary">{t(statusKey)}</p>
         {existingStatus === 'declined' && (
-          <p className="mt-2 text-sm text-foreground-muted">
+          <p className="mt-2 text-[13px] text-foreground-secondary">
             <a href="mailto:info@gft.ge" className="font-medium text-primary hover:underline">
               info@gft.ge
             </a>
@@ -71,10 +72,11 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
 
   if (sent) {
     return (
-      <div className="text-center py-8">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+      <div className="py-6 text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
           <svg
-            className="h-8 w-8 text-primary"
+            aria-hidden="true"
+            className="h-7 w-7 text-primary"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -83,8 +85,10 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-foreground">{t('demo.successTitle')}</h2>
-        <p className="mt-2 text-sm text-foreground-muted">{t('demo.successMessage')}</p>
+        <h3 className="text-lg font-semibold text-foreground">{t('demo.successTitle')}</h3>
+        <p className="mt-2 text-[13px] leading-relaxed text-foreground-secondary">
+          {t('demo.successMessage')}
+        </p>
       </div>
     )
   }
@@ -126,12 +130,15 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
   }
 
   const inputClasses =
-    'mt-1 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors'
+    'mt-1.5 w-full rounded-lg border border-border bg-background px-3.5 py-3 text-[13px] text-foreground outline-none transition-colors focus:border-primary focus:ring-[3px] focus:ring-primary/10'
+
+  const labelClasses =
+    'block text-[10px] font-bold uppercase tracking-[0.18em] text-foreground-faint'
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {error && (
-        <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-sm text-danger">
+        <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-[13px] text-danger">
           {error}
         </div>
       )}
@@ -147,7 +154,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
       />
 
       <div>
-        <label htmlFor="demo-name" className="block text-sm font-medium text-foreground-muted">
+        <label htmlFor="demo-name" className={labelClasses}>
           {t('demo.formName')}
         </label>
         <input
@@ -161,7 +168,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
       </div>
 
       <div>
-        <label htmlFor="demo-email" className="block text-sm font-medium text-foreground-muted">
+        <label htmlFor="demo-email" className={labelClasses}>
           {t('demo.formEmail')}
         </label>
         <input
@@ -175,7 +182,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
       </div>
 
       <div>
-        <label htmlFor="demo-org" className="block text-sm font-medium text-foreground-muted">
+        <label htmlFor="demo-org" className={labelClasses}>
           {t('demo.formOrganization')}
         </label>
         <input
@@ -190,7 +197,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="demo-role" className="block text-sm font-medium text-foreground-muted">
+          <label htmlFor="demo-role" className={labelClasses}>
             {t('demo.formRole')}
           </label>
           <select
@@ -198,7 +205,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
             required
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className={inputClasses}
+            className={`${inputClasses} appearance-none`}
           >
             <option value="">{t('demo.selectRole')}</option>
             {DEMO_ROLES.map((r) => (
@@ -210,7 +217,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
         </div>
 
         <div>
-          <label htmlFor="demo-country" className="block text-sm font-medium text-foreground-muted">
+          <label htmlFor="demo-country" className={labelClasses}>
             {t('demo.formCountry')}
           </label>
           <select
@@ -218,7 +225,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
             required
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            className={inputClasses}
+            className={`${inputClasses} appearance-none`}
           >
             <option value="">{t('demo.selectCountry')}</option>
             {SCOUT_COUNTRIES.map((c) => (
@@ -231,12 +238,12 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
       </div>
 
       <div>
-        <label htmlFor="demo-message" className="block text-sm font-medium text-foreground-muted">
+        <label htmlFor="demo-message" className={labelClasses}>
           {t('demo.formMessage')}
         </label>
         <textarea
           id="demo-message"
-          rows={4}
+          rows={3}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={t('demo.formMessagePlaceholder')}
@@ -247,7 +254,7 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
       <button
         type="submit"
         disabled={isPending}
-        className="btn-primary w-full py-3 text-base disabled:opacity-50"
+        className="w-full rounded-[10px] bg-primary px-4 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-white shadow-[0_4px_14px_rgba(27,138,74,0.18)] transition-all hover:-translate-y-[1px] hover:bg-[color-mix(in_srgb,var(--primary)_88%,black)] hover:shadow-[0_6px_20px_rgba(27,138,74,0.26)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
       >
         {isPending ? t('demo.submitting') : t('demo.submit')}
       </button>
