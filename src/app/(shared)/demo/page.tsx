@@ -115,18 +115,6 @@ export default async function DemoPage() {
       {/* Right column — form card */}
       <div className="flex items-center bg-surface px-8 py-16 lg:col-span-5 lg:px-16 lg:py-24">
         <div className="mx-auto w-full max-w-md">
-          <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
-            Request access
-          </div>
-          <h2
-            className="mb-3 text-3xl font-bold tracking-tight text-foreground"
-            style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
-          >
-            Schedule a demo
-          </h2>
-          <p className="mb-8 text-[13px] leading-relaxed text-foreground-secondary">
-            24-hour response. No obligation.
-          </p>
           <DemoRequestForm defaultEmail={userEmail} existingStatus={existingStatus} />
         </div>
       </div>

@@ -136,128 +136,142 @@ export function DemoRequestForm({ defaultEmail, existingStatus }: DemoRequestFor
     'block text-[10px] font-bold uppercase tracking-[0.18em] text-foreground-faint'
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {error && (
-        <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-[13px] text-danger">
-          {error}
-        </div>
-      )}
-
-      {/* Honeypot — hidden from real users */}
-      <input
-        type="text"
-        name="website"
-        aria-hidden="true"
-        tabIndex={-1}
-        autoComplete="off"
-        className="absolute -left-[9999px]"
-      />
-
-      <div>
-        <label htmlFor="demo-name" className={labelClasses}>
-          {t('demo.formName')}
-        </label>
-        <input
-          id="demo-name"
-          type="text"
-          required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className={inputClasses}
-        />
+    <>
+      <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.22em] text-primary">
+        Request access
       </div>
-
-      <div>
-        <label htmlFor="demo-email" className={labelClasses}>
-          {t('demo.formEmail')}
-        </label>
-        <input
-          id="demo-email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={inputClasses}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="demo-org" className={labelClasses}>
-          {t('demo.formOrganization')}
-        </label>
-        <input
-          id="demo-org"
-          type="text"
-          required
-          value={organization}
-          onChange={(e) => setOrganization(e.target.value)}
-          className={inputClasses}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="demo-role" className={labelClasses}>
-            {t('demo.formRole')}
-          </label>
-          <select
-            id="demo-role"
-            required
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className={`${inputClasses} appearance-none`}
-          >
-            <option value="">{t('demo.selectRole')}</option>
-            {DEMO_ROLES.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="demo-country" className={labelClasses}>
-            {t('demo.formCountry')}
-          </label>
-          <select
-            id="demo-country"
-            required
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className={`${inputClasses} appearance-none`}
-          >
-            <option value="">{t('demo.selectCountry')}</option>
-            {SCOUT_COUNTRIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="demo-message" className={labelClasses}>
-          {t('demo.formMessage')}
-        </label>
-        <textarea
-          id="demo-message"
-          rows={3}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder={t('demo.formMessagePlaceholder')}
-          className={`${inputClasses} resize-none`}
-        />
-      </div>
-
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full rounded-[10px] bg-primary px-4 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-white shadow-[0_4px_14px_rgba(27,138,74,0.18)] transition-all hover:-translate-y-[1px] hover:bg-[color-mix(in_srgb,var(--primary)_88%,black)] hover:shadow-[0_6px_20px_rgba(27,138,74,0.26)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+      <h2
+        className="mb-3 text-3xl font-bold tracking-tight text-foreground"
+        style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
       >
-        {isPending ? t('demo.submitting') : t('demo.submit')}
-      </button>
-    </form>
+        Schedule a demo
+      </h2>
+      <p className="mb-8 text-[13px] leading-relaxed text-foreground-secondary">
+        24-hour response. No obligation.
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="rounded-lg border border-danger/30 bg-danger-muted px-4 py-3 text-[13px] text-danger">
+            {error}
+          </div>
+        )}
+
+        {/* Honeypot — hidden from real users */}
+        <input
+          type="text"
+          name="website"
+          aria-hidden="true"
+          tabIndex={-1}
+          autoComplete="off"
+          className="absolute -left-[9999px]"
+        />
+
+        <div>
+          <label htmlFor="demo-name" className={labelClasses}>
+            {t('demo.formName')}
+          </label>
+          <input
+            id="demo-name"
+            type="text"
+            required
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className={inputClasses}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="demo-email" className={labelClasses}>
+            {t('demo.formEmail')}
+          </label>
+          <input
+            id="demo-email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClasses}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="demo-org" className={labelClasses}>
+            {t('demo.formOrganization')}
+          </label>
+          <input
+            id="demo-org"
+            type="text"
+            required
+            value={organization}
+            onChange={(e) => setOrganization(e.target.value)}
+            className={inputClasses}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label htmlFor="demo-role" className={labelClasses}>
+              {t('demo.formRole')}
+            </label>
+            <select
+              id="demo-role"
+              required
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className={`${inputClasses} appearance-none`}
+            >
+              <option value="">{t('demo.selectRole')}</option>
+              {DEMO_ROLES.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="demo-country" className={labelClasses}>
+              {t('demo.formCountry')}
+            </label>
+            <select
+              id="demo-country"
+              required
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className={`${inputClasses} appearance-none`}
+            >
+              <option value="">{t('demo.selectCountry')}</option>
+              {SCOUT_COUNTRIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="demo-message" className={labelClasses}>
+            {t('demo.formMessage')}
+          </label>
+          <textarea
+            id="demo-message"
+            rows={3}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder={t('demo.formMessagePlaceholder')}
+            className={`${inputClasses} resize-none`}
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isPending}
+          className="w-full rounded-[10px] bg-primary px-4 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-white shadow-[0_4px_14px_rgba(27,138,74,0.18)] transition-all hover:-translate-y-[1px] hover:bg-[color-mix(in_srgb,var(--primary)_88%,black)] hover:shadow-[0_6px_20px_rgba(27,138,74,0.26)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+        >
+          {isPending ? t('demo.submitting') : t('demo.submit')}
+        </button>
+      </form>
+    </>
   )
 }
