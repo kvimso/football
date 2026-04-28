@@ -44,11 +44,10 @@ export interface MessageSender {
 export interface ReferencedPlayer {
   id: string
   name: string
-  name_ka: string | null
   position: string | null
   photo_url: string | null
   slug: string
-  club: { name: string; name_ka: string | null } | null
+  club: { name: string; slug: string } | null
 }
 
 export interface MessageWithSender {
@@ -122,6 +121,8 @@ export interface PlayerSearchResult {
   photo_url: string | null
   slug: string
   platform_id: string | null
+  club_id: string | null
   club_name: string | null
   club_name_ka: string | null
+  club_slug: string | null
 }

@@ -1,58 +1,42 @@
-import type { Lang } from '@/lib/translations'
-
 /**
  * Derive the display name for a conversation partner.
- * Scouts see the club name (with Georgian variant); admins see the scout name.
+ * Scouts see the club name; admins see the scout name.
  * Handles both ConversationItem (nullable club) and ConversationDetail (non-null club).
  */
 export function getConversationDisplayName(
-  club: { name: string; name_ka: string | null } | null | undefined,
+  club: { name: string } | null | undefined,
   otherParty: { full_name: string },
-  userRole: 'scout' | 'academy_admin',
-  lang: Lang,
-  t: (key: string) => string
+  userRole: 'scout' | 'academy_admin'
 ): string {
-  const rawName =
-    userRole === 'scout'
-      ? lang === 'ka' && club?.name_ka
-        ? club.name_ka
-        : (club?.name ?? otherParty.full_name)
-      : otherParty.full_name
-  return rawName || (userRole === 'scout' ? t('common.unknownClub') : t('common.unknownScout'))
+  const rawName = userRole === 'scout' ? (club?.name ?? otherParty.full_name) : otherParty.full_name
+  return rawName || (userRole === 'scout' ? 'the club' : 'Unknown scout')
 }
 
 /**
  * Smart timestamp for chat inbox:
  * - Today: "2:45 PM"
- * - Yesterday: "Yesterday" / "გუშინ"
+ * - Yesterday: "Yesterday"
  * - This week: weekday name
- * - Older: "Mar 1" / "1 მარ"
+ * - Older: "Mar 1"
  */
-export function formatMessageTime(dateStr: string, lang: Lang, t: (key: string) => string): string {
+export function formatMessageTime(dateStr: string): string {
   const date = new Date(dateStr)
   const now = new Date()
 
-  // Compare dates ignoring time
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const messageDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
   const diffDays = Math.floor((today.getTime() - messageDay.getTime()) / (1000 * 60 * 60 * 24))
 
   if (diffDays === 0) {
-    return date.toLocaleTimeString(lang === 'ka' ? 'ka-GE' : 'en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    })
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
   }
   if (diffDays === 1) {
-    return t('chat.yesterday')
+    return 'Yesterday'
   }
   if (diffDays < 7) {
-    return date.toLocaleDateString(lang === 'ka' ? 'ka-GE' : 'en-US', { weekday: 'long' })
+    return date.toLocaleDateString('en-US', { weekday: 'long' })
   }
-  return date.toLocaleDateString(lang === 'ka' ? 'ka-GE' : 'en-US', {
-    month: 'short',
-    day: 'numeric',
-  })
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 /**
@@ -66,17 +50,17 @@ export function truncateMessage(text: string, maxLen: number = 60): string {
 /**
  * Format date divider label: "Today", "Yesterday", "March 1, 2026"
  */
-export function formatDateDivider(dateStr: string, lang: Lang, t: (key: string) => string): string {
+export function formatDateDivider(dateStr: string): string {
   const date = new Date(dateStr)
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const messageDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
   const diffDays = Math.floor((today.getTime() - messageDay.getTime()) / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 0) return t('chat.today')
-  if (diffDays === 1) return t('chat.yesterday')
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
 
-  return date.toLocaleDateString(lang === 'ka' ? 'ka-GE' : 'en-US', {
+  return date.toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
     year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
@@ -117,11 +101,8 @@ export function isSameTimeGroup(a: string, b: string, windowMinutes: number = 5)
 /**
  * Format time for message bubble: "2:45 PM"
  */
-export function formatBubbleTime(dateStr: string, lang: Lang): string {
-  return new Date(dateStr).toLocaleTimeString(lang === 'ka' ? 'ka-GE' : 'en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  })
+export function formatBubbleTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 }
 
 /**
@@ -153,7 +134,6 @@ export function linkifyMessage(content: string): MessagePart[] {
   const parts: MessagePart[] = []
   let lastIndex = 0
 
-  // Reset regex state
   URL_REGEX.lastIndex = 0
   let match: RegExpExecArray | null
 
@@ -161,12 +141,10 @@ export function linkifyMessage(content: string): MessagePart[] {
     if (match.index > lastIndex) {
       parts.push(content.slice(lastIndex, match.index))
     }
-    // Strip trailing punctuation that's likely not part of the URL
     let url = match[0]
     while (/[.,;:!?)}\]>]$/.test(url)) url = url.slice(0, -1)
     parts.push({ type: 'link', url })
     lastIndex = match.index + url.length
-    // Adjust regex lastIndex since we may have shortened the match
     URL_REGEX.lastIndex = lastIndex
   }
 
@@ -188,7 +166,6 @@ export function isEmojiOnly(text: string): boolean {
   if (!text || text.length > 30) return false
   const trimmed = text.trim()
   if (!trimmed) return false
-  // Count actual emoji (not whitespace)
   const emojiMatches = trimmed.match(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu)
   if (!emojiMatches || emojiMatches.length > 6) return false
   return EMOJI_ONLY_REGEX.test(trimmed)
@@ -203,25 +180,21 @@ export function getLastMessagePreview(
     last_message: { content: string | null; message_type: string; sender_id: string } | null
   },
   userId: string,
-  t: (key: string) => string,
   maxLen: number = 50
 ): string {
   if (!conv.last_message) return ''
 
   const { content, message_type, sender_id } = conv.last_message
   const isMe = sender_id === userId
-  const prefix = isMe ? `${t('chat.you')}: ` : ''
+  const prefix = isMe ? 'You: ' : ''
 
   switch (message_type) {
     case 'file':
-      return prefix + t('chat.messagePreviewFile')
+      return prefix + 'Sent a file'
     case 'player_ref':
-      return prefix + t('chat.messagePreviewPlayerRef')
+      return prefix + 'Shared a player'
     case 'system':
-      if (content && content.startsWith('chat.')) {
-        return t(content)
-      }
-      return t('chat.messagePreviewSystem')
+      return 'System message'
     default:
       return prefix + truncateMessage(content ?? '', maxLen)
   }

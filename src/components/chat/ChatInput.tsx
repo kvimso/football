@@ -11,7 +11,6 @@ import {
 import { PlayerSearchModal } from '@/components/chat/PlayerSearchModal'
 import { CHAT_LIMITS, ALLOWED_CHAT_FILE_EXTENSIONS } from '@/lib/constants'
 import type { PlayerSearchResult } from '@/lib/types'
-import type { Lang } from '@/lib/translations'
 
 interface ChatInputProps {
   conversationId: string
@@ -26,8 +25,18 @@ interface ChatInputProps {
   onSendPlayerRef: (player: PlayerSearchResult) => Promise<void>
   isBlocked: boolean
   blockedByMe: boolean
-  lang: Lang
-  t: (key: string) => string
+}
+
+const ERROR_LABELS: Record<string, string> = {
+  'errors.fileTooLarge': 'File is too large. Maximum size is 10MB.',
+  'errors.fileTypeNotAllowed': 'This file type is not allowed.',
+  'errors.failedToSend': 'Failed to send. Please try again.',
+  'chat.failedToSend': 'Failed to send. Please try again.',
+}
+
+function labelForError(key: string | undefined | null): string {
+  if (!key) return 'Failed to send. Please try again.'
+  return ERROR_LABELS[key] ?? key
 }
 
 export function ChatInput({
@@ -37,8 +46,6 @@ export function ChatInput({
   onSendPlayerRef,
   isBlocked,
   blockedByMe,
-  lang,
-  t,
 }: ChatInputProps) {
   const [text, setText] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -51,14 +58,12 @@ export function ChatInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Auto-dismiss errors after 5 seconds
   useEffect(() => {
     if (!error) return
     const timer = setTimeout(() => setError(null), 5000)
     return () => clearTimeout(timer)
   }, [error])
 
-  // Cleanup pasted preview on dismiss and unmount
   useEffect(() => {
     return () => {
       if (pastedPreview) URL.revokeObjectURL(pastedPreview.previewUrl)
@@ -86,12 +91,12 @@ export function ChatInput({
     try {
       await onSendText(content)
     } catch {
-      setError(t('chat.failedToSend'))
+      setError('Failed to send. Please try again.')
     } finally {
       setIsSending(false)
       textareaRef.current?.focus()
     }
-  }, [canSend, text, resetTextarea, onSendText, t])
+  }, [canSend, text, resetTextarea, onSendText])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -106,15 +111,13 @@ export function ChatInput({
   const handleTextChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.target.value)
     setError(null)
-    // Auto-grow textarea up to 4 lines
     const el = e.target
     el.style.height = 'auto'
     const lineHeight = 20
-    const maxHeight = lineHeight * 4 + 16 // 4 lines + padding
+    const maxHeight = lineHeight * 4 + 16
     el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`
   }, [])
 
-  // Shared file upload + send logic
   const uploadAndSendFile = useCallback(
     async (file: File) => {
       setIsUploading(true)
@@ -128,41 +131,40 @@ export function ChatInput({
         const res = await fetch('/api/chat-upload', { method: 'POST', body: formData })
         if (!res.ok) {
           const data = await res.json()
-          setError(t(data.error ?? 'chat.failedToSend'))
+          setError(labelForError(data.error))
           return
         }
 
         const { storage_path, file_url, file_name, file_type, file_size_bytes } = await res.json()
         await onSendFile({ storage_path, file_url, file_name, file_type, file_size_bytes })
       } catch {
-        setError(t('chat.failedToSend'))
+        setError('Failed to send. Please try again.')
       } finally {
         setIsUploading(false)
       }
     },
-    [conversationId, onSendFile, t]
+    [conversationId, onSendFile]
   )
 
   const handleFileSelect = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
       if (!file) return
-      // Reset file input
       e.target.value = ''
 
       if (file.size > CHAT_LIMITS.MAX_FILE_SIZE_BYTES) {
-        setError(t('errors.fileTooLarge'))
+        setError('File is too large. Maximum size is 10MB.')
         return
       }
 
       if (!ALLOWED_CHAT_FILE_EXTENSIONS.some((ext) => file.name.toLowerCase().endsWith(ext))) {
-        setError(t('errors.fileTypeNotAllowed'))
+        setError('This file type is not allowed.')
         return
       }
 
       await uploadAndSendFile(file)
     },
-    [uploadAndSendFile, t]
+    [uploadAndSendFile]
   )
 
   const handlePlayerSelect = useCallback(
@@ -170,40 +172,37 @@ export function ChatInput({
       try {
         await onSendPlayerRef(player)
       } catch {
-        setError(t('chat.failedToSend'))
+        setError('Failed to send. Please try again.')
       }
     },
-    [onSendPlayerRef, t]
+    [onSendPlayerRef]
   )
 
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent) => {
-      const items = e.clipboardData?.items
-      if (!items) return
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items
+    if (!items) return
 
-      for (const item of Array.from(items)) {
-        if (item.type.startsWith('image/')) {
-          e.preventDefault()
-          const file = item.getAsFile()
-          if (!file) return
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault()
+        const file = item.getAsFile()
+        if (!file) return
 
-          if (file.size > CHAT_LIMITS.MAX_FILE_SIZE_BYTES) {
-            setError(t('errors.fileTooLarge'))
-            return
-          }
-
-          const previewUrl = URL.createObjectURL(file)
-          const ext = file.type.split('/')[1] || 'png'
-          const namedFile = new File([file], `pasted-image-${Date.now()}.${ext}`, {
-            type: file.type,
-          })
-          setPastedPreview({ file: namedFile, previewUrl })
+        if (file.size > CHAT_LIMITS.MAX_FILE_SIZE_BYTES) {
+          setError('File is too large. Maximum size is 10MB.')
           return
         }
+
+        const previewUrl = URL.createObjectURL(file)
+        const ext = file.type.split('/')[1] || 'png'
+        const namedFile = new File([file], `pasted-image-${Date.now()}.${ext}`, {
+          type: file.type,
+        })
+        setPastedPreview({ file: namedFile, previewUrl })
+        return
       }
-    },
-    [t]
-  )
+    }
+  }, [])
 
   const handleSendPastedImage = useCallback(async () => {
     if (!pastedPreview) return
@@ -213,11 +212,10 @@ export function ChatInput({
     await uploadAndSendFile(file)
   }, [pastedPreview, uploadAndSendFile])
 
-  // Blocked state
   if (isBlocked) {
     return (
-      <div className="bg-surface/50 px-4 py-3">
-        <div className="flex items-center gap-2 rounded-lg bg-danger-muted px-3 py-2 text-sm text-danger">
+      <div className="px-4 py-3">
+        <div className="flex items-center gap-2 rounded-xl bg-danger-muted px-3 py-2 text-sm text-danger">
           <svg
             className="h-4 w-4 shrink-0"
             fill="none"
@@ -231,7 +229,11 @@ export function ChatInput({
               d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
             />
           </svg>
-          <span>{blockedByMe ? t('chat.blockedByYou') : t('chat.closedByAcademy')}</span>
+          <span>
+            {blockedByMe
+              ? 'You blocked this scout. Unblock to continue.'
+              : 'This conversation has been closed by the academy.'}
+          </span>
         </div>
       </div>
     )
@@ -239,15 +241,14 @@ export function ChatInput({
 
   return (
     <>
-      <div className="bg-surface/50 px-3 py-2.5">
-        {/* Error */}
+      <div className="px-3 py-3">
         {error && (
           <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-danger-muted px-3 py-1.5 text-xs text-danger animate-slide-in-down">
             <span>{error}</span>
             <button
               onClick={() => setError(null)}
               className="shrink-0 hover:text-danger"
-              aria-label={t('common.dismiss')}
+              aria-label="Dismiss"
             >
               <svg
                 className="h-3.5 w-3.5"
@@ -262,24 +263,22 @@ export function ChatInput({
           </div>
         )}
 
-        {/* Uploading indicator */}
         {isUploading && (
           <div className="mb-2 flex items-center gap-2 text-xs text-foreground-muted">
             <div className="h-3 w-3 animate-spin rounded-full border border-primary border-t-transparent" />
-            {t('chat.uploadingFile')}
+            Uploading file…
           </div>
         )}
 
-        {/* Pasted image preview */}
         {pastedPreview && (
-          <div className="mb-2 flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2 animate-slide-in-down">
+          <div className="mb-2 flex items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2 animate-slide-in-down">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={pastedPreview.previewUrl}
-              alt={t('chat.pastedImage')}
+              alt="Pasted image"
               className="h-16 w-16 rounded-lg object-cover"
             />
-            <div className="flex-1 text-xs text-foreground-muted">{t('chat.pastedImageReady')}</div>
+            <div className="flex-1 text-xs text-foreground-muted">Image ready to send</div>
             <button
               onClick={() => {
                 URL.revokeObjectURL(pastedPreview.previewUrl)
@@ -287,27 +286,25 @@ export function ChatInput({
               }}
               className="rounded px-2 py-1 text-xs text-danger hover:bg-danger-muted"
             >
-              {t('common.cancel')}
+              Cancel
             </button>
             <button
               onClick={handleSendPastedImage}
               disabled={isUploading}
-              className="rounded bg-primary px-3 py-1 text-xs text-background hover:bg-primary/90 disabled:opacity-50"
+              className="rounded bg-primary px-3 py-1 text-xs font-medium text-background hover:bg-primary/90 disabled:opacity-50"
             >
-              {t('common.send')}
+              Send
             </button>
           </div>
         )}
 
-        <div className="flex items-center gap-1.5">
-          {/* Action buttons group */}
-          <div className="flex shrink-0 items-center">
-            {/* Attach button */}
+        <div className="flex items-end gap-2">
+          <div className="flex shrink-0 items-center pb-1">
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground disabled:opacity-50"
-              aria-label={t('aria.attachFile')}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-elevated hover:text-foreground disabled:opacity-50"
+              aria-label="Attach file"
             >
               <svg
                 className="h-5 w-5"
@@ -324,11 +321,10 @@ export function ChatInput({
               </svg>
             </button>
 
-            {/* Player ref button */}
             <button
               onClick={() => setShowPlayerSearch(true)}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground"
-              aria-label={t('aria.addPlayerRef')}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-elevated hover:text-foreground"
+              aria-label="Reference a player"
             >
               <svg
                 className="h-5 w-5"
@@ -346,7 +342,6 @@ export function ChatInput({
             </button>
           </div>
 
-          {/* Hidden file input */}
           <input
             ref={fileInputRef}
             type="file"
@@ -355,7 +350,6 @@ export function ChatInput({
             onChange={handleFileSelect}
           />
 
-          {/* Textarea — pill-shaped input */}
           <div className="relative min-w-0 flex-1">
             <textarea
               ref={textareaRef}
@@ -363,19 +357,18 @@ export function ChatInput({
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
               onPaste={handlePaste}
-              placeholder={t('chat.typeMessage')}
+              placeholder="Write a message…"
               rows={1}
               disabled={isSending}
-              className="max-h-[96px] min-h-[40px] w-full resize-none overflow-hidden rounded-3xl border border-border bg-surface px-4 py-2.5 text-sm text-foreground transition-colors placeholder:text-foreground-muted focus:border-primary focus:outline-none"
+              className="max-h-[120px] min-h-[44px] w-full resize-none overflow-hidden rounded-3xl border border-border bg-background px-4 py-3 text-sm text-foreground transition-colors placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
-          {/* Send button — slightly larger */}
           <button
             onClick={handleSend}
             disabled={!canSend}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-background shadow-sm transition-all hover:bg-primary-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-primary"
-            aria-label={t('aria.sendMessage')}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-background shadow-sm transition-all hover:bg-primary-hover hover:shadow-md disabled:opacity-40 disabled:shadow-none disabled:hover:bg-primary"
+            aria-label="Send message"
           >
             <svg
               className="h-5 w-5"
@@ -393,23 +386,19 @@ export function ChatInput({
           </button>
         </div>
 
-        {/* Character counter */}
         {showCharCount && (
           <div
             className={`mt-1 text-right text-[11px] ${isOverLimit ? 'text-danger' : 'text-foreground-muted'}`}
           >
-            {CHAT_LIMITS.MAX_MESSAGE_LENGTH - charCount} {t('chat.charCount')}
+            {CHAT_LIMITS.MAX_MESSAGE_LENGTH - charCount} characters remaining
           </div>
         )}
       </div>
 
-      {/* Player search modal */}
       <PlayerSearchModal
         isOpen={showPlayerSearch}
         onClose={() => setShowPlayerSearch(false)}
         onSelect={handlePlayerSelect}
-        lang={lang}
-        t={t}
       />
     </>
   )

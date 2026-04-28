@@ -110,7 +110,7 @@ function getItemHref(item: ActivityItem): string {
     case 'player_update':
       return `/players/${item.playerSlug}`
     case 'message':
-      return `/dashboard/messages/${item.conversationId}`
+      return `/messages/${item.conversationId}`
   }
 }
 

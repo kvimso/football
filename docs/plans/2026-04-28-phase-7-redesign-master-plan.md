@@ -1359,21 +1359,21 @@ NotificationBell continues to badge unread. Confirm `/messages` nav link badge s
 
 ### Phase A
 
-- [ ] Audit doc with current-state screenshots saved (locally, not committed unless Andria asks).
-- [ ] 2–3 whole-page mockups produced (HTML/CSS, real tokens, embedded variant nav).
-- [ ] Andria signs off on a variant.
+- [x] Audit doc with current-state screenshots saved (locally, not committed unless Andria asks). _(skipped per Track 0 D3 — solo dev iterates on real code)_
+- [x] 2–3 whole-page mockups produced (HTML/CSS, real tokens, embedded variant nav). _(skipped — same)_
+- [x] Andria signs off on a variant. _(skipped — same)_
 
 ### Phase B
 
-- [ ] Chat moved from `/dashboard/messages` to `/messages` under `(platform)`.
-- [ ] All chat internal links updated.
-- [ ] PlayerRefCard renders non-clickable, with "from <club>" link to club page.
-- [ ] All `t()` calls in `src/components/chat/` replaced with hardcoded English.
-- [ ] Visual variant from Phase A applied.
-- [ ] MobileChatDrawer animates.
-- [ ] Block/unblock copy polished.
-- [ ] Manual smoke: send text, image, doc, player ref — all behave correctly.
-- [ ] `npm run build` clean.
+- [x] Chat moved from `/dashboard/messages` to `/messages` under `(platform)`.
+- [x] All chat internal links updated.
+- [x] PlayerRefCard renders non-clickable, with "from <club>" link to club page.
+- [x] All `t()` calls in `src/components/chat/` replaced with hardcoded English.
+- [x] Visual variant from Phase A applied. _(warm-editorial: serif headlines, surface/elevated bubbles, no green-vs-gray, chunkier input)_
+- [x] MobileChatDrawer animates.
+- [x] Block/unblock copy polished.
+- [ ] Manual smoke: send text, image, doc, player ref — all behave correctly. _(deferred to Andria)_
+- [x] `npm run build` clean.
 
 ### Research Insights
 
@@ -2279,7 +2279,7 @@ After all 9 tracks land:
 - [ ] Track 2: `/clubs` + `/clubs/[slug]` rebuilt, navbar updated, middleware fixed.
 - [ ] Track 3: `/leagues` link-out shipped (with placeholder URLs if Andria hasn't provided).
 - [x] Track 4: academy admin can edit club logo / hero / history / gallery → public page reflects.
-- [ ] Track 5: chat moved to `/messages`, redesigned, PlayerRefCard reworked, `t()` stripped.
+- [x] Track 5: chat moved to `/messages`, redesigned, PlayerRefCard reworked, `t()` stripped.
 - [ ] Track 6: demolition complete, `npm run build` clean, no `_archive/`.
 - [ ] Track 7: zero `t()` calls, zero `useLang()`/`getServerT()`, `_ka` columns dropped.
 - [ ] Track 8: warmth pass applied, Andria signs off "no hospital vibes."
