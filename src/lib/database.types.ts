@@ -84,12 +84,16 @@ export type Database = {
           created_at: string | null
           description: string | null
           description_ka: string | null
+          gallery_urls: string[]
+          hero_photo_url: string | null
+          history_text: string | null
           id: string
           logo_url: string | null
           name: string
           name_ka: string
           region: string | null
           slug: string
+          tier: number
           updated_at: string | null
           website: string | null
         }
@@ -98,12 +102,16 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           description_ka?: string | null
+          gallery_urls?: string[]
+          hero_photo_url?: string | null
+          history_text?: string | null
           id?: string
           logo_url?: string | null
           name: string
           name_ka: string
           region?: string | null
           slug: string
+          tier?: number
           updated_at?: string | null
           website?: string | null
         }
@@ -112,12 +120,16 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           description_ka?: string | null
+          gallery_urls?: string[]
+          hero_photo_url?: string | null
+          history_text?: string | null
           id?: string
           logo_url?: string | null
           name?: string
           name_ka?: string
           region?: string | null
           slug?: string
+          tier?: number
           updated_at?: string | null
           website?: string | null
         }
