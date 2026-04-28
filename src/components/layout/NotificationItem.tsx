@@ -79,7 +79,7 @@ export function NotificationItem({
           {title}
         </p>
         {body && <p className="mt-0.5 text-[11px] text-foreground-muted/70 truncate">{body}</p>}
-        <p className="mt-0.5 text-[10px] text-foreground-muted/50">{timeAgo(createdAt)}</p>
+        <p className="mt-0.5 text-[11px] text-foreground-muted/50">{timeAgo(createdAt)}</p>
       </div>
 
       {/* Unread dot */}

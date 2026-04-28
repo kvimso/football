@@ -58,7 +58,7 @@ function DirectionBar({
           </div>
         ))}
       </div>
-      <div className="mt-1 flex justify-between text-[10px] text-foreground-faint">
+      <div className="mt-1 flex justify-between text-[11px] text-foreground-faint">
         <span>{t('matches.leftFlank')}</span>
         <span>{t('matches.center')}</span>
         <span>{t('matches.rightFlank')}</span>

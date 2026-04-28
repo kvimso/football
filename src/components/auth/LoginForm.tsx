@@ -43,10 +43,13 @@ export function LoginForm() {
     <div className="flex min-h-[calc(100dvh-4rem)] items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-lg">
-          {/* GFT branding */}
+          {/* Brand wordmark */}
           <div className="mb-6 text-center">
-            <span className="inline-block rounded bg-primary px-3 py-1 text-lg font-bold text-foreground">
-              GFT
+            <span
+              className="inline-block text-2xl font-bold tracking-tight text-primary"
+              style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
+            >
+              Binocly
             </span>
             <h1 className="mt-4 text-2xl font-bold text-foreground">{t('auth.welcomeBack')}</h1>
             <p className="mt-1 text-sm text-foreground-muted">{t('auth.loginTitle')}</p>

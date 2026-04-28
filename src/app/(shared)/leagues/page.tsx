@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Noto_Serif } from 'next/font/google'
 import { createClient } from '@/lib/supabase/server'
 import { LeagueHero } from '@/components/league/LeagueHero'
 import { LeagueShowcase } from '@/components/league/LeagueShowcase'
@@ -7,13 +6,6 @@ import { HowItWorks } from '@/components/league/HowItWorks'
 import { SeasonCalendar } from '@/components/league/SeasonCalendar'
 import { LeagueCTA } from '@/components/league/LeagueCTA'
 import { FadeInOnScroll } from '@/components/ui/FadeInOnScroll'
-
-const notoSerif = Noto_Serif({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  display: 'swap',
-  variable: '--font-noto-serif',
-})
 
 export const revalidate = 300 // 5 minutes ISR — leagues change infrequently
 
@@ -50,7 +42,7 @@ export default async function LeaguesPage() {
   const activeLeagues = leagues ?? []
 
   return (
-    <div className={notoSerif.variable}>
+    <div>
       <FadeInOnScroll>
         <LeagueHero />
       </FadeInOnScroll>

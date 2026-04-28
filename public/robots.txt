@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /contact
+
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /platform/
+Disallow: /players/
+Disallow: /matches/
+Disallow: /clubs/
+Disallow: /login
+Disallow: /register
+Disallow: /_next/

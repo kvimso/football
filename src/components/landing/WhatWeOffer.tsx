@@ -59,8 +59,8 @@ export function WhatWeOffer() {
               37,600 youth players. Every stat camera-verified by Pixellot. No inflation, no fiction
               — just the truth of what happens on the pitch.
             </p>
-            <Link href="/players" className="landing-offer-link">
-              Browse all players →
+            <Link href="/register" className="landing-offer-link">
+              Get started →
             </Link>
           </div>
           <div className="landing-offer-stack">

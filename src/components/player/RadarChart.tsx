@@ -106,7 +106,7 @@ export function RadarChart({ skills, labels }: RadarChartProps) {
             y={y}
             textAnchor="middle"
             dominantBaseline="central"
-            className="text-[10px] fill-foreground-muted font-medium"
+            className="text-[11px] fill-foreground-muted font-medium"
           >
             {label}
           </text>
@@ -123,7 +123,7 @@ export function RadarChart({ skills, labels }: RadarChartProps) {
             y={y}
             textAnchor="middle"
             dominantBaseline="central"
-            className="text-[9px] fill-foreground font-bold"
+            className="text-[11px] fill-foreground font-bold"
           >
             {val}
           </text>

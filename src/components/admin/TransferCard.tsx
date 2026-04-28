@@ -68,7 +68,7 @@ export function TransferCard({
         {/* Position badge */}
         {pos && (
           <span
-            className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase leading-none tracking-wider ${posClasses}`}
+            className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-bold uppercase leading-none tracking-wider ${posClasses}`}
           >
             {pos}
           </span>
@@ -116,7 +116,7 @@ export function TransferCard({
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <span className="text-[10px] font-medium text-foreground-muted/40">{daysLeft}d</span>
+            <span className="text-[11px] font-medium text-foreground-muted/40">{daysLeft}d</span>
           </div>
         </div>
       )}

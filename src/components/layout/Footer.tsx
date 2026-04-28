@@ -14,9 +14,10 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="inline-block rounded bg-primary px-2 py-0.5 text-sm font-bold text-background"
+              className="text-lg font-bold tracking-tight text-foreground transition-colors hover:text-primary"
+              style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
             >
-              GFT
+              Binocly
             </Link>
             <span className="text-xs text-foreground-faint">{t('footer.location')}</span>
           </div>

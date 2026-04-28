@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { Inter, Noto_Sans_Georgian } from 'next/font/google'
+import { Inter, Noto_Sans_Georgian, Noto_Serif } from 'next/font/google'
 import { ThemeProvider, type Theme } from '@/context/ThemeContext'
 import { LanguageProvider } from '@/context/LanguageContext'
 import { AuthProvider } from '@/context/AuthContext'
@@ -17,6 +17,14 @@ const notoGeorgian = Noto_Sans_Georgian({
   variable: '--font-noto-georgian',
   subsets: ['georgian'],
   weight: ['400', '500', '600', '700'],
+})
+
+const notoSerif = Noto_Serif({
+  variable: '--font-noto-serif',
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -69,7 +77,9 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} {...(dataTheme ? { 'data-theme': dataTheme } : {})} suppressHydrationWarning>
-      <body className={`${inter.variable} ${notoGeorgian.variable} font-sans antialiased`}>
+      <body
+        className={`${inter.variable} ${notoGeorgian.variable} ${notoSerif.variable} font-sans antialiased`}
+      >
         <ThemeProvider initialTheme={initialTheme}>
           <LanguageProvider initialLang={lang as 'en' | 'ka'}>
             <AuthProvider

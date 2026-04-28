@@ -93,7 +93,7 @@ export function ActivityFeed({ items }: ActivityFeedProps) {
               <path strokeLinecap="round" strokeLinejoin="round" d={iconPath} />
             </svg>
             <span className="flex-1 min-w-0 text-sm text-foreground truncate">{description}</span>
-            <span className="shrink-0 text-[10px] text-foreground-muted">
+            <span className="shrink-0 text-[11px] text-foreground-muted">
               {timeAgo(item.timestamp)}
             </span>
           </Link>

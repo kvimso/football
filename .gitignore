@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 nul
+
+# visual companion + figma + playwright artifacts (top-level, transient)
+/*.png
+/.playwright-mcp/
+/.superpowers/
+/.next-old-root/

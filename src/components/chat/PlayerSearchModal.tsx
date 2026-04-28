@@ -204,7 +204,7 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
                     </span>
                     {player.position && (
                       <span
-                        className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${posClass}`}
+                        className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-bold ${posClass}`}
                       >
                         {player.position}
                       </span>

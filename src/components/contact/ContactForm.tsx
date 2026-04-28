@@ -77,7 +77,7 @@ export function ContactForm({
   }
 
   /* Hardcoded dark-theme styles — this form always sits on a dark gradient card */
-  const labelClass = 'block text-[10px] font-bold uppercase tracking-[0.15em]'
+  const labelClass = 'block text-[11px] font-bold uppercase tracking-[0.15em]'
   const labelStyle = { color: 'rgba(238,236,232,0.35)' }
   const inputStyle = {
     background: 'rgba(255,255,255,0.04)',
@@ -112,7 +112,7 @@ export function ContactForm({
           {t('contact.formTitle')}
         </h2>
         <span
-          className="text-[10px] font-bold uppercase"
+          className="text-[11px] font-bold uppercase"
           style={{
             color: '#4ADE80',
             background: 'rgba(74,222,128,0.08)',

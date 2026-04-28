@@ -329,7 +329,7 @@ function CompareBar({
         {/* P1 side */}
         <div className="flex items-center gap-1.5">
           <span
-            className="w-10 shrink-0 text-[10px] tabular-nums text-primary text-left"
+            className="w-10 shrink-0 text-[11px] tabular-nums text-primary text-left"
             aria-hidden="true"
           >
             {winner === 1 ? diffText : ''}
@@ -363,7 +363,7 @@ function CompareBar({
             {v2 == null ? '\u2014' : `${n2}${suffix}`}
           </span>
           <span
-            className="w-10 shrink-0 text-[10px] tabular-nums text-primary text-right"
+            className="w-10 shrink-0 text-[11px] tabular-nums text-primary text-right"
             aria-hidden="true"
           >
             {winner === 2 ? diffText : ''}

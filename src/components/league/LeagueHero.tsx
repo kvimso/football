@@ -78,11 +78,11 @@ export async function LeagueHero() {
   const isKa = lang === 'ka'
 
   return (
-    <section className="py-12 sm:py-16">
+    <section className="pt-12 sm:pt-16">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-12">
+        <div className="grid items-stretch gap-10 lg:grid-cols-[1fr_1fr] lg:gap-12">
           {/* Left — content */}
-          <div className="text-center lg:text-left">
+          <div className="flex h-full flex-col justify-center text-center lg:text-left">
             {/* Eyebrow */}
             <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary">
               {t('leagues.hero.eyebrow')}
@@ -122,15 +122,15 @@ export async function LeagueHero() {
           </div>
 
           {/* Right — hero photo */}
-          <div className="relative mx-auto w-full max-w-lg lg:mx-0">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
+          <div className="relative mx-auto w-full max-w-lg lg:mx-0 lg:h-full lg:max-w-none">
+            <div className="relative aspect-[3/4] h-full overflow-hidden rounded-2xl lg:aspect-auto lg:min-h-[640px]">
               <Image
                 src="/images/leagues/collage-main.jpg"
                 alt=""
                 fill
                 priority
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 500px"
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 600px"
                 placeholder="blur"
                 blurDataURL={BLUR_DATA_URL}
               />
@@ -138,10 +138,10 @@ export async function LeagueHero() {
 
             {/* Floating Starlive badge */}
             <div className="absolute -bottom-3 right-4 z-20 rounded-lg bg-primary-hover px-3 py-2 shadow-lg sm:right-8">
-              <div className="text-[0.7rem] font-bold text-white leading-tight">
+              <div className="text-xs font-bold text-white leading-tight">
                 {t('leagues.hero.badgeMain')}
               </div>
-              <div className="text-[0.6rem] font-medium text-white/75 leading-tight">
+              <div className="text-[11px] font-medium text-white/75 leading-tight">
                 {t('leagues.hero.badgeSub')}
               </div>
             </div>

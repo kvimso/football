@@ -9,7 +9,7 @@ export async function ContactHero() {
       <div className="mx-auto max-w-[1200px]">
         <div className="flex items-center gap-2">
           <span className="inline-block h-[2px] w-5 bg-primary" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
             {t('contact.label')}
           </span>
         </div>

@@ -102,11 +102,11 @@ export async function SeasonCalendar({ leagues }: Props) {
               {months.map((m, i) => (
                 <div
                   key={`${m.year}-${m.month}`}
-                  className="text-center text-[10px] font-semibold uppercase tracking-wider text-foreground-faint"
+                  className="text-center text-[11px] font-semibold uppercase tracking-wider text-foreground-faint"
                 >
                   {m.label}
                   {(i === 0 || m.month === 0) && (
-                    <span className="block text-[9px] text-foreground-faint/60">{m.year}</span>
+                    <span className="block text-[11px] text-foreground-faint/60">{m.year}</span>
                   )}
                 </div>
               ))}
@@ -130,7 +130,7 @@ export async function SeasonCalendar({ leagues }: Props) {
                   {/* League label */}
                   <div className="flex items-center gap-2 pr-3">
                     <span
-                      className={`inline-block rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${ageClasses}`}
+                      className={`inline-block rounded-full px-1.5 py-0.5 text-[11px] font-bold uppercase ${ageClasses}`}
                     >
                       {league.age_group}
                     </span>

@@ -168,14 +168,14 @@ function SearchMockup() {
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
-        <span className="text-[0.7rem] text-foreground-faint">Search players...</span>
+        <span className="text-xs text-foreground-faint">Search players...</span>
       </div>
       {/* Filter pills */}
       <div className="flex flex-wrap gap-1.5">
         {pills.map((pill, i) => (
           <span
             key={pill}
-            className={`rounded-full px-2.5 py-1 text-[0.65rem] font-medium ${
+            className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${
               i === 0 || i === 2
                 ? 'bg-primary/15 text-primary'
                 : 'bg-elevated/50 text-foreground-faint'
@@ -214,7 +214,7 @@ export async function AboutFeatures() {
             </span>
           </div>
           <h2
-            className={`mt-4 text-2xl font-black sm:text-3xl lg:text-[2.25rem] ${isKa ? 'font-sans' : ''}`}
+            className={`mt-4 text-2xl font-black sm:text-3xl lg:text-4xl ${isKa ? 'font-sans' : ''}`}
             style={!isKa ? { fontFamily: 'var(--font-noto-serif, var(--font-sans))' } : undefined}
           >
             {t('about.featuresHeading')}
@@ -277,7 +277,7 @@ export async function AboutFeatures() {
                         aria-hidden="true"
                       />
                       <span
-                        className={`text-[0.65rem] font-bold uppercase tracking-widest ${
+                        className={`text-[11px] font-bold uppercase tracking-widest ${
                           isDark ? 'text-[rgba(238,236,232,0.4)]' : 'text-foreground-faint'
                         }`}
                       >
@@ -309,7 +309,7 @@ export async function AboutFeatures() {
                       />
                     </h3>
                     <p
-                      className={`mt-2 text-[0.85rem] leading-relaxed ${
+                      className={`mt-2 text-sm leading-relaxed ${
                         isDark ? 'text-[rgba(238,236,232,0.55)]' : 'text-foreground-secondary'
                       }`}
                     >

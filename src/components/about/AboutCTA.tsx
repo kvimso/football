@@ -8,7 +8,7 @@ interface Props {
 export async function AboutCTA({ isLoggedIn }: Props) {
   const { t } = await getServerT()
 
-  const primaryHref = isLoggedIn ? '/leagues' : '/register'
+  const primaryHref = isLoggedIn ? '/app/leagues' : '/register'
   const primaryLabel = isLoggedIn ? t('about.ctaPrimaryAuth') : t('about.ctaPrimary')
 
   return (

@@ -123,7 +123,7 @@ export function WatchlistSidebar({
             }`}
           >
             <span>{t('dashboard.allPlayers')}</span>
-            <span className="text-[10px]">{totalCount}</span>
+            <span className="text-[11px]">{totalCount}</span>
           </button>
 
           {/* Each folder */}
@@ -167,7 +167,7 @@ export function WatchlistSidebar({
                     }`}
                   >
                     <span className="truncate">{folder.name}</span>
-                    <span className="text-[10px]">{folderCounts[folder.id] ?? 0}</span>
+                    <span className="text-[11px]">{folderCounts[folder.id] ?? 0}</span>
                   </button>
                   <div className="hidden group-hover:flex items-center gap-0.5 pr-1">
                     <button

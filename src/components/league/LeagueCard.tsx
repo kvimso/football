@@ -22,7 +22,7 @@ export async function LeagueCard({ league }: LeagueCardProps) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <span
-            className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${ageClasses}`}
+            className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold uppercase ${ageClasses}`}
           >
             {league.age_group}
           </span>
