@@ -24,29 +24,17 @@ export default async function PlatformScoutDetailPage({
 
   if (error || !scout) notFound()
 
-  // Get watched players and contact requests
-  const [{ data: watchlistItems }, { data: requests }] = await Promise.all([
-    admin
-      .from('watchlist')
-      .select(
-        `
-        id, notes, created_at,
-        player:players!watchlist_player_id_fkey(id, name, name_ka, position, slug, club:clubs!players_club_id_fkey(name))
+  // Historical contact requests (legacy — chat replaced this surface)
+  const { data: requests } = await admin
+    .from('contact_requests')
+    .select(
       `
-      )
-      .eq('user_id', id)
-      .order('created_at', { ascending: false }),
-    admin
-      .from('contact_requests')
-      .select(
-        `
         id, message, status, created_at,
-        player:players!contact_requests_player_id_fkey(id, name, name_ka, slug, club:clubs!players_club_id_fkey(name))
+        player:players!contact_requests_player_id_fkey(id, name, name_ka, club:clubs!players_club_id_fkey(name))
       `
-      )
-      .eq('scout_id', id)
-      .order('created_at', { ascending: false }),
-  ])
+    )
+    .eq('scout_id', id)
+    .order('created_at', { ascending: false })
 
   return (
     <div>
@@ -95,45 +83,7 @@ export default async function PlatformScoutDetailPage({
         </div>
       </div>
 
-      {/* Watched players */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-foreground">
-          {t('platform.scouts.watchedPlayers')} ({(watchlistItems ?? []).length})
-        </h2>
-        {(watchlistItems ?? []).length > 0 ? (
-          <div className="mt-3 space-y-2">
-            {(watchlistItems ?? []).map((item) => {
-              const player = unwrapRelation(item.player)
-              const club = player?.club ? unwrapRelation(player.club) : null
-              return (
-                <div key={item.id} className="card flex items-center justify-between p-3">
-                  <div>
-                    <Link
-                      href={`/players/${player?.slug ?? ''}`}
-                      className="text-sm font-medium text-primary hover:underline"
-                    >
-                      {player?.name ?? t('common.unknown')}
-                    </Link>
-                    <p className="text-xs text-foreground-muted">
-                      {player?.position} {club?.name ? `— ${club.name}` : ''}
-                    </p>
-                    {item.notes && (
-                      <p className="mt-1 text-xs text-foreground-muted/70 italic">{item.notes}</p>
-                    )}
-                  </div>
-                  <span className="text-xs text-foreground-muted">
-                    {item.created_at ? format(new Date(item.created_at), 'MMM d, yyyy') : ''}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        ) : (
-          <p className="mt-3 text-sm text-foreground-muted">{t('dashboard.noWatchlist')}</p>
-        )}
-      </div>
-
-      {/* Contact requests */}
+      {/* Contact requests (legacy — chat replaced this surface) */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-foreground">
           {t('platform.scouts.contactRequests')} ({(requests ?? []).length})
@@ -146,12 +96,9 @@ export default async function PlatformScoutDetailPage({
               return (
                 <div key={req.id} className="card flex items-center justify-between p-3">
                   <div className="min-w-0 flex-1">
-                    <Link
-                      href={`/players/${player?.slug ?? ''}`}
-                      className="text-sm font-medium text-primary hover:underline"
-                    >
+                    <span className="text-sm font-medium text-foreground">
                       {player?.name ?? t('common.unknown')}
-                    </Link>
+                    </span>
                     {club?.name && (
                       <span className="ml-2 text-xs text-foreground-muted">({club.name})</span>
                     )}

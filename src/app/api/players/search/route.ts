@@ -14,6 +14,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'errors.notAuthenticated' }, { status: 401 })
   }
 
+  // Gate to academy_admin and platform_admin only — chat's PlayerSearchModal is the
+  // sole consumer; scouts have no global player browser post-Phase-7.
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  if (profile?.role !== 'academy_admin' && profile?.role !== 'platform_admin') {
+    return NextResponse.json({ error: 'errors.unauthorized' }, { status: 403 })
+  }
+
   const { searchParams } = new URL(request.url)
   const query = searchParams.get('q')?.trim()
   const limitParam = parseInt(searchParams.get('limit') ?? '10', 10)

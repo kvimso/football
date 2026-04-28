@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useLang } from '@/hooks/useLang'
 import { platformAcceptTransfer, platformDeclineTransfer } from '@/app/actions/platform-transfers'
@@ -132,12 +131,9 @@ export function PlatformTransfersList({ transfers }: { transfers: Transfer[] }) 
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <Link
-                  href={`/players/${transfer.player?.slug ?? ''}`}
-                  className="text-sm font-medium text-primary hover:underline"
-                >
+                <span className="text-sm font-medium text-foreground">
                   {playerName ?? t('common.unknown')}
-                </Link>
+                </span>
                 {transfer.player?.platform_id && (
                   <span className="font-mono text-[11px] text-foreground-muted/60">
                     {transfer.player.platform_id}

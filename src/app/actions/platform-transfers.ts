@@ -24,7 +24,6 @@ export async function platformAcceptTransfer(requestId: string) {
 
   revalidatePath('/platform/transfers')
   revalidatePath('/platform/players')
-  revalidatePath('/players')
   return { success: true }
 }
 

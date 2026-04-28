@@ -8,7 +8,6 @@ import { useAuth } from '@/context/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from './ThemeToggle'
 import { AvatarDropdown } from './AvatarDropdown'
-import { LanguageToggle } from '@/components/ui/LanguageToggle'
 
 /** Desktop center link — plain styling matching LandingNav exactly */
 function CenterLink({ href, children }: { href: string; children: React.ReactNode }) {
@@ -146,8 +145,6 @@ export function Navbar() {
 
         {/* Right side actions */}
         <div className="flex items-center justify-end gap-2">
-          <LanguageToggle />
-
           {user ? (
             <>
               <ThemeToggle />
