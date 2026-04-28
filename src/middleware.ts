@@ -38,34 +38,10 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Landing redirect: authenticated visitors skip the marketing page.
-  // Done here (not in page.tsx) so the landing stays statically renderable.
+  // Landing is shared between anonymous and logged-in users (audit C1).
+  // Logged-in CTAs swap via useAuth() in landing components — they do NOT
+  // get redirected to a dashboard. /players no longer exists post-Phase-7.
   if (pathname === '/') {
-    const hasAuthCookie = request.cookies.getAll().some((c) => c.name.startsWith('sb-'))
-    if (hasAuthCookie) {
-      try {
-        const supabase = createServerClient(url, key, {
-          cookies: {
-            getAll() {
-              return request.cookies.getAll()
-            },
-            setAll() {
-              /* no-op: we only read user, not refresh session here */
-            },
-          },
-        })
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (user) {
-          const playersUrl = request.nextUrl.clone()
-          playersUrl.pathname = '/players'
-          return NextResponse.redirect(playersUrl)
-        }
-      } catch {
-        // Auth check failed — fall through to public landing
-      }
-    }
     return NextResponse.next({ request })
   }
 

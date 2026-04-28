@@ -100,3 +100,33 @@ export function calculateAge(dateOfBirth: string | Date): number {
   }
   return age
 }
+
+/**
+ * Roster age groups used by /clubs/[slug] filter UI.
+ * Narrower than the full POSITIONS/AGE_GROUPS in constants.ts, which model
+ * every player in the system. Roster filters expose only the three youth
+ * tiers scouts care about.
+ */
+export const ROSTER_AGE_GROUPS = ['U15', 'U17', 'U19'] as const
+export type RosterAgeGroup = (typeof ROSTER_AGE_GROUPS)[number]
+
+/**
+ * FIFA convention: a player's age group for season N/N+1 is calculated
+ * against August 1 of year N. Returns null for missing or malformed DOB,
+ * or for players outside the U15-U19 youth range.
+ */
+export function computeAgeGroup(dateOfBirth: string | null): RosterAgeGroup | null {
+  if (!dateOfBirth) return null
+  const birth = new Date(dateOfBirth)
+  if (Number.isNaN(birth.getTime())) return null
+  const now = new Date()
+  const seasonYear = now.getMonth() >= 7 ? now.getFullYear() : now.getFullYear() - 1
+  const cutoff = new Date(Date.UTC(seasonYear, 7, 1))
+  let age = cutoff.getUTCFullYear() - birth.getUTCFullYear()
+  const m = cutoff.getUTCMonth() - birth.getUTCMonth()
+  if (m < 0 || (m === 0 && cutoff.getUTCDate() < birth.getUTCDate())) age--
+  if (age <= 14) return 'U15'
+  if (age <= 16) return 'U17'
+  if (age <= 18) return 'U19'
+  return null
+}

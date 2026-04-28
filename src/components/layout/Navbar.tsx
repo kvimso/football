@@ -97,13 +97,12 @@ export function Navbar() {
 
   const closeMobile = useCallback(() => setMenuOpen(false), [])
 
-  const dashboardHref =
-    userRole === 'platform_admin'
-      ? '/platform'
-      : userRole === 'academy_admin'
-        ? '/admin'
-        : '/dashboard'
+  // Scouts no longer have a dashboard — their home is the landing page.
+  const homeHref =
+    userRole === 'platform_admin' ? '/platform' : userRole === 'academy_admin' ? '/admin' : '/'
 
+  // Track 5 moves scout chat from /dashboard/messages → /messages. Until that
+  // ships, scouts continue to use the legacy path.
   const messagesHref = userRole === 'academy_admin' ? '/admin/messages' : '/dashboard/messages'
 
   return (
@@ -112,10 +111,9 @@ export function Navbar() {
         {/* Logo — left */}
         <div className="flex items-center">
           <Link
-            href={user ? dashboardHref : '/'}
+            href={user ? homeHref : '/'}
             className="text-lg font-bold tracking-tight text-foreground transition-colors hover:text-primary"
             style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
-            title={user ? t('nav.dashboard') : undefined}
           >
             Binocly
           </Link>
@@ -130,13 +128,10 @@ export function Navbar() {
               <CenterLink href="/contact">{t('nav.contact')}</CenterLink>
             </>
           )}
-          {user && userRole === 'scout' && (
+          {user && userRole === 'scout' && isApproved && (
             <>
-              <CenterLink href="/app/players">Players</CenterLink>
-              <CenterLink href="/app/clubs">Clubs</CenterLink>
-              <CenterLink href="/app/schedule">Schedule</CenterLink>
-              <CenterLink href="/app/standings">Standings</CenterLink>
-              <CenterLink href="/app/leagues">Leagues</CenterLink>
+              <CenterLink href="/clubs">Clubs</CenterLink>
+              <CenterLink href="/leagues">Leagues</CenterLink>
             </>
           )}
           {showRequestDemo && user && <CenterLink href="/demo">{t('nav.requestDemo')}</CenterLink>}
@@ -237,28 +232,17 @@ export function Navbar() {
               {user && (
                 <>
                   <div className="border-t border-border my-1" />
-                  <NavLink href={dashboardHref} onClick={closeMobile}>
-                    {userRole === 'platform_admin'
-                      ? t('platform.title')
-                      : userRole === 'academy_admin'
-                        ? t('nav.admin')
-                        : t('nav.dashboard')}
-                  </NavLink>
-                  {userRole === 'scout' && (
+                  {userRole !== 'scout' && (
+                    <NavLink href={homeHref} onClick={closeMobile}>
+                      {userRole === 'platform_admin' ? t('platform.title') : t('nav.admin')}
+                    </NavLink>
+                  )}
+                  {userRole === 'scout' && isApproved && (
                     <>
-                      <NavLink href="/app/players" onClick={closeMobile}>
-                        Players
-                      </NavLink>
-                      <NavLink href="/app/clubs" onClick={closeMobile}>
+                      <NavLink href="/clubs" onClick={closeMobile}>
                         Clubs
                       </NavLink>
-                      <NavLink href="/app/schedule" onClick={closeMobile}>
-                        Schedule
-                      </NavLink>
-                      <NavLink href="/app/standings" onClick={closeMobile}>
-                        Standings
-                      </NavLink>
-                      <NavLink href="/app/leagues" onClick={closeMobile}>
+                      <NavLink href="/leagues" onClick={closeMobile}>
                         Leagues
                       </NavLink>
                     </>
