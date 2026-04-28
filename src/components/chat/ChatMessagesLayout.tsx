@@ -1,6 +1,5 @@
 'use client'
 
-import { useLang } from '@/hooks/useLang'
 import { useConversationList } from '@/hooks/useConversationList'
 import { ConversationListContext } from '@/context/ConversationListContext'
 import { ChatSidebar } from '@/components/chat/ChatSidebar'
@@ -25,34 +24,26 @@ export function ChatMessagesLayout({
   error,
   children,
 }: ChatMessagesLayoutProps) {
-  const { t } = useLang()
   const { conversations } = useConversationList({ initialConversations, userId })
 
   return (
     <ConversationListContext.Provider value={conversations}>
       <ChatDrawerProvider>
-        {/* Split-pane container: sidebar + thread
-            h-full fills the flex-1 area from parent layout (no magic number needed) */}
-        <div className="flex h-full overflow-hidden rounded-lg border border-border">
-          {/* Desktop sidebar — hidden below lg */}
+        {/* Split-pane container: sidebar + thread.
+            h-full fills the calc'd height set by the parent layout. */}
+        <div className="flex h-full overflow-hidden rounded-2xl border border-border bg-surface/30">
           <nav
-            aria-label={t('chat.conversationList')}
-            className="hidden lg:flex w-80 shrink-0 flex-col border-r border-border bg-background"
+            aria-label="Conversation list"
+            className="hidden lg:flex w-80 shrink-0 flex-col border-r border-border/60 bg-surface/40"
           >
             <ChatSidebar userRole={userRole} basePath={basePath} userId={userId} error={error} />
           </nav>
 
-          {/* Mobile drawer — hidden at lg+ */}
           <MobileChatDrawer>
             <ChatSidebar userRole={userRole} basePath={basePath} userId={userId} error={error} />
           </MobileChatDrawer>
 
-          {/* Thread pane / empty state */}
-          <div
-            role="region"
-            aria-label={t('chat.messageThread')}
-            className="flex-1 min-w-0 flex flex-col"
-          >
+          <div role="region" aria-label="Message thread" className="flex-1 min-w-0 flex flex-col">
             {children}
           </div>
         </div>

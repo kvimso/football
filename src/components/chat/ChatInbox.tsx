@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useLang } from '@/hooks/useLang'
 import { useConversations } from '@/context/ConversationListContext'
 import {
   formatMessageTime,
@@ -13,13 +12,12 @@ import {
 
 interface ChatInboxProps {
   userRole: 'scout' | 'academy_admin'
-  basePath: string // '/dashboard/messages' or '/admin/messages'
+  basePath: string // '/messages' or '/admin/messages'
   userId: string
   error?: string | null
 }
 
 export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps) {
-  const { t, lang } = useLang()
   const router = useRouter()
   const conversations = useConversations()
 
@@ -39,12 +37,10 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
             d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
           />
         </svg>
-        <h3 className="mt-4 text-lg font-semibold text-foreground">
-          {t('common.somethingWentWrong')}
-        </h3>
+        <h3 className="mt-4 text-lg font-semibold text-foreground">Something went wrong</h3>
         <p className="mt-1 max-w-sm text-sm text-foreground-muted">{error}</p>
         <button onClick={() => router.refresh()} className="btn-primary mt-4 text-sm">
-          {t('common.tryAgain')}
+          Try again
         </button>
       </div>
     )
@@ -52,9 +48,9 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
 
   if (conversations.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
         <svg
-          className="h-16 w-16 text-foreground-muted/30"
+          className="h-14 w-14 text-foreground-muted/30"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -66,15 +62,17 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
             d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
           />
         </svg>
-        <h3 className="mt-4 text-lg font-semibold text-foreground">{t('chat.noConversations')}</h3>
+        <h3 className="mt-4 font-serif text-lg font-semibold text-foreground">
+          {userRole === 'scout' ? 'No conversations yet' : 'No scout messages yet'}
+        </h3>
         <p className="mt-1 max-w-sm text-sm text-foreground-muted">
           {userRole === 'scout'
-            ? t('chat.noConversationsHint')
-            : t('chat.noConversationsHintAdmin')}
+            ? 'Open a club profile and message the academy directly.'
+            : 'When scouts message your academy, conversations will appear here.'}
         </p>
         {userRole === 'scout' && (
-          <Link href="/leagues" className="btn-primary mt-4 text-sm">
-            {t('nav.exploreLeagues')}
+          <Link href="/clubs" className="btn-primary mt-4 text-sm">
+            Browse clubs
           </Link>
         )}
       </div>
@@ -84,20 +82,14 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
   return (
     <div className="space-y-1.5" role="list">
       {conversations.map((conv) => {
-        const displayName = getConversationDisplayName(
-          conv.club,
-          conv.other_party,
-          userRole,
-          lang,
-          t
-        )
+        const displayName = getConversationDisplayName(conv.club, conv.other_party, userRole)
 
         const subtitle = userRole === 'scout' ? null : conv.other_party.organization
 
-        const lastMessagePreview = getLastMessagePreview(conv, userId, t, 60)
+        const lastMessagePreview = getLastMessagePreview(conv, userId, 60)
         const timestamp = conv.last_message?.created_at
-          ? formatMessageTime(conv.last_message.created_at, lang, t)
-          : formatMessageTime(conv.created_at, lang, t)
+          ? formatMessageTime(conv.last_message.created_at)
+          : formatMessageTime(conv.created_at)
 
         return (
           <Link
@@ -108,7 +100,6 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
               conv.unread_count > 0 ? 'border-primary/20' : ''
             } ${conv.is_blocked ? 'opacity-60' : ''}`}
           >
-            {/* Avatar */}
             <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10">
               {userRole === 'scout' && conv.club?.logo_url ? (
                 <Image
@@ -125,7 +116,6 @@ export function ChatInbox({ userRole, basePath, userId, error }: ChatInboxProps)
               )}
             </div>
 
-            {/* Content */}
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">

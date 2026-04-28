@@ -101,9 +101,7 @@ export function Navbar() {
   const homeHref =
     userRole === 'platform_admin' ? '/platform' : userRole === 'academy_admin' ? '/admin' : '/'
 
-  // Track 5 moves scout chat from /dashboard/messages → /messages. Until that
-  // ships, scouts continue to use the legacy path.
-  const messagesHref = userRole === 'academy_admin' ? '/admin/messages' : '/dashboard/messages'
+  const messagesHref = userRole === 'academy_admin' ? '/admin/messages' : '/messages'
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-nav-bg shadow-sm">

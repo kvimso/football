@@ -10,15 +10,12 @@ import {
 } from '@/lib/chat-utils'
 import { PlayerRefCard } from '@/components/chat/PlayerRefCard'
 import type { MessageWithSender } from '@/lib/types'
-import type { Lang } from '@/lib/translations'
 
 interface MessageBubbleProps {
   message: MessageWithSender
   isMine: boolean
   showSenderName: boolean
   showTimestamp: boolean
-  lang: Lang
-  t: (key: string) => string
   onRetry?: () => void
   isNew?: boolean
 }
@@ -28,8 +25,6 @@ export function MessageBubble({
   isMine,
   showSenderName,
   showTimestamp,
-  lang,
-  t,
   onRetry,
   isNew,
 }: MessageBubbleProps) {
@@ -49,17 +44,16 @@ export function MessageBubble({
   if (message.message_type === 'system') {
     return (
       <div className="flex justify-center py-1">
-        <span className="rounded-full bg-surface px-3 py-1 text-xs text-foreground-muted">
-          {message.content?.startsWith('chat.') ? t(message.content) : message.content}
+        <span className="rounded-full bg-elevated px-3 py-1 text-xs text-foreground-muted">
+          {renderSystemMessage(message.content)}
         </span>
       </div>
     )
   }
 
-  const senderName = message.sender?.full_name ?? t('common.unknown')
-  const time = formatBubbleTime(message.created_at, lang)
+  const senderName = message.sender?.full_name ?? 'Unknown'
+  const time = formatBubbleTime(message.created_at)
 
-  // Tighter spacing for consecutive messages from same sender
   const tightSpacing = !showSenderName && !showTimestamp
 
   return (
@@ -67,14 +61,12 @@ export function MessageBubble({
       className={`flex ${isMine ? 'justify-end' : 'justify-start'} ${tightSpacing ? 'mt-0.5' : 'mt-2'} ${isNew ? 'animate-chat-fade-in' : ''}`}
     >
       <div className={`max-w-[75%] ${isMine ? 'items-end' : 'items-start'} flex flex-col`}>
-        {/* Sender name for received messages */}
         {!isMine && showSenderName && (
           <span className="mb-0.5 ml-3 text-[11px] font-medium text-foreground-muted">
             {senderName}
           </span>
         )}
 
-        {/* Timestamp */}
         {showTimestamp && (
           <span
             className={`mb-0.5 text-[11px] text-foreground-muted ${isMine ? 'mr-3 text-right' : 'ml-3'}`}
@@ -83,13 +75,13 @@ export function MessageBubble({
           </span>
         )}
 
-        {/* Message content */}
+        {/* Message content — own-side and other-side both use surface tokens for less clinical feel */}
         <div
-          className={`shadow-sm ${
+          className={
             isMine
-              ? 'rounded-2xl rounded-br-sm bg-primary text-background'
-              : 'rounded-2xl rounded-bl-sm bg-surface text-foreground border border-border'
-          }`}
+              ? 'rounded-2xl rounded-br-sm bg-primary/95 text-background shadow-sm'
+              : 'rounded-2xl rounded-bl-sm border border-border bg-surface text-foreground shadow-sm'
+          }
         >
           {message.message_type === 'text' &&
             (() => {
@@ -134,8 +126,8 @@ export function MessageBubble({
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={message.file_url ?? ''}
-                      alt={message.file_name ?? t('chat.unnamedImage')}
-                      className="max-h-[300px] max-w-[300px] rounded-xl object-cover"
+                      alt={message.file_name ?? 'Image'}
+                      className="max-h-[320px] max-w-[320px] rounded-xl object-cover"
                       loading="lazy"
                     />
                   </button>
@@ -153,15 +145,13 @@ export function MessageBubble({
                   target="_blank"
                   rel="noopener noreferrer"
                   download={message.file_name ?? undefined}
-                  aria-label={t('aria.downloadFile')}
+                  aria-label="Download file"
                   className={`flex items-center gap-2 rounded-xl px-3 py-2 ${
-                    isMine
-                      ? 'bg-white/20 hover:bg-white/30'
-                      : 'bg-background hover:bg-background/80'
+                    isMine ? 'bg-white/15 hover:bg-white/25' : 'bg-elevated hover:bg-elevated/80'
                   } transition-colors`}
                 >
                   <svg
-                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-background/70' : 'text-foreground-muted'}`}
+                    className={`h-8 w-8 shrink-0 ${isMine ? 'text-background/80' : 'text-foreground-muted'}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -177,13 +167,13 @@ export function MessageBubble({
                     <p
                       className={`truncate text-sm font-medium ${isMine ? 'text-background' : 'text-foreground'}`}
                     >
-                      {message.file_name ?? t('chat.unnamedFile')}
+                      {message.file_name ?? 'File'}
                     </p>
                     <p
                       className={`text-xs ${isMine ? 'text-background/60' : 'text-foreground-muted'}`}
                     >
                       {message.file_size_bytes ? formatFileSize(message.file_size_bytes) : ''}{' '}
-                      &middot; {t('chat.downloadFile')}
+                      &middot; Download
                     </p>
                   </div>
                 </a>
@@ -193,41 +183,35 @@ export function MessageBubble({
 
           {message.message_type === 'player_ref' && (
             <div className="p-2">
-              <PlayerRefCard player={message.referenced_player ?? null} lang={lang} t={t} />
+              <PlayerRefCard player={message.referenced_player ?? null} />
             </div>
           )}
         </div>
 
-        {/* Status indicators for sent messages */}
         {isMine && (
           <div className="mt-0.5 mr-1 flex items-center gap-1 self-end">
             {message._status === 'sending' && (
-              <span className="text-[11px] text-foreground-muted">{t('chat.sending')}</span>
+              <span className="text-[11px] text-foreground-muted">Sending…</span>
             )}
             {message._status === 'failed' && (
               <span className="flex items-center gap-1">
-                <span className="text-[11px] text-danger">{t('chat.failedToSend')}</span>
+                <span className="text-[11px] text-danger">Failed to send</span>
                 {onRetry && (
                   <button
                     onClick={onRetry}
-                    aria-label={t('aria.retrySend')}
+                    aria-label="Retry sending"
                     className="text-[11px] font-medium text-primary hover:underline"
                   >
-                    {t('chat.retry')}
+                    Retry
                   </button>
                 )}
               </span>
             )}
             {(!message._status || message._status === 'sent') && (
               <span
-                title={
-                  message.read_at
-                    ? `${t('chat.read')} ${formatBubbleTime(message.read_at, lang)}`
-                    : t('chat.delivered')
-                }
+                title={message.read_at ? `Read ${formatBubbleTime(message.read_at)}` : 'Delivered'}
               >
                 {message.read_at ? (
-                  // Double check — read
                   <svg
                     className="h-3.5 w-3.5 text-primary"
                     fill="none"
@@ -242,7 +226,6 @@ export function MessageBubble({
                     />
                   </svg>
                 ) : (
-                  // Single check — delivered
                   <svg
                     className="h-3.5 w-3.5 text-foreground-muted"
                     fill="none"
@@ -268,7 +251,7 @@ export function MessageBubble({
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300"
             onClick={() => setImageExpanded(false)}
-            aria-label={t('aria.closeImage')}
+            aria-label="Close image"
           >
             <svg
               className="h-8 w-8"
@@ -283,11 +266,23 @@ export function MessageBubble({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={message.file_url}
-            alt={message.file_name ?? t('chat.unnamedImage')}
+            alt={message.file_name ?? 'Image'}
             className="max-h-[90vh] max-w-[90vw] object-contain"
           />
         </div>
       )}
     </div>
   )
+}
+
+// Translate legacy 'chat.foo' system message keys to English. New system messages
+// should be sent as plain English from the server.
+const SYSTEM_MESSAGE_LABELS: Record<string, string> = {
+  'chat.conversationStarted': 'Conversation started',
+}
+
+function renderSystemMessage(content: string | null): string {
+  if (!content) return ''
+  if (content.startsWith('chat.')) return SYSTEM_MESSAGE_LABELS[content] ?? content
+  return content
 }

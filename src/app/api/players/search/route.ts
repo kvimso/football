@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     .select(
       `
       id, name, name_ka, position, date_of_birth, photo_url, slug, platform_id, club_id,
-      club:clubs!players_club_id_fkey ( name, name_ka )
+      club:clubs!players_club_id_fkey ( name, name_ka, slug )
     `
     )
     .in('status', ['active', 'free_agent'])
@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
       club_id: p.club_id,
       club_name: club?.name ?? null,
       club_name_ka: club?.name_ka ?? null,
+      club_slug: club?.slug ?? null,
     }
   })
 

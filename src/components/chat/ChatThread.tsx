@@ -5,7 +5,6 @@ import { flushSync } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { useLang } from '@/hooks/useLang'
 import { useChatDrawer } from '@/context/ChatDrawerContext'
 import { groupMessagesByDate, isSameTimeGroup, getConversationDisplayName } from '@/lib/chat-utils'
 import { realtimeMessageSchema, realtimeMessageUpdateSchema } from '@/lib/validations'
@@ -36,7 +35,6 @@ export function ChatThread({
   userId,
   userRole,
 }: ChatThreadProps) {
-  const { t, lang } = useLang()
   const { openDrawer } = useChatDrawer()
   const [messages, setMessages] = useState<MessageWithSender[]>(initialMessages)
   const [hasMore, setHasMore] = useState(hasMoreInitial)
@@ -59,24 +57,20 @@ export function ChatThread({
     initialMessages.find((m) => m.sender_id !== userId && !m.read_at)?.id ?? null
   )
 
-  // Keep last non-zero count visible during fade-out animation
   const displayCountRef = useRef(0)
   if (newMessageCount > 0) displayCountRef.current = newMessageCount
   const displayCount = displayCountRef.current
 
-  const backPath = userRole === 'scout' ? '/dashboard/messages' : '/admin/messages'
+  const backPath = userRole === 'scout' ? '/messages' : '/admin/messages'
   const displayName = getConversationDisplayName(
     conversation.club,
     conversation.other_party,
-    userRole,
-    lang,
-    t
+    userRole
   )
 
   // Block/unblock handler
   const handleBlockAction = useCallback(async () => {
     if (blockedByMe && !blockConfirming) {
-      // Unblock — no confirmation needed
       setBlockLoading(true)
       try {
         const res = await fetch(`/api/conversations/${conversation.id}/block`, {
@@ -95,12 +89,10 @@ export function ChatThread({
     }
 
     if (!blockConfirming) {
-      // First click — show confirmation
       setBlockConfirming(true)
       return
     }
 
-    // Second click — confirm block
     setBlockLoading(true)
     setBlockConfirming(false)
     try {
@@ -118,14 +110,12 @@ export function ChatThread({
     }
   }, [conversation.id, blockedByMe, blockConfirming])
 
-  // Cancel block confirmation on click outside (after a timeout)
   useEffect(() => {
     if (!blockConfirming) return
     const timer = setTimeout(() => setBlockConfirming(false), 3000)
     return () => clearTimeout(timer)
   }, [blockConfirming])
 
-  // Close menu on click outside
   useEffect(() => {
     if (!menuOpen) return
     const handleClickOutside = (e: MouseEvent) => {
@@ -138,7 +128,6 @@ export function ChatThread({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
-  // Scroll to bottom helper — uses scrollTo on container (not scrollIntoView which can scroll parent containers)
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     const el = scrollContainerRef.current
     if (!el) return
@@ -150,17 +139,14 @@ export function ChatThread({
     setNewMessageCount(0)
   }, [])
 
-  // Ref to hold latest scrollToBottom — avoids it in effect dependency arrays
   const scrollToBottomRef = useRef(scrollToBottom)
   scrollToBottomRef.current = scrollToBottom
 
-  // Scroll to bottom on initial mount
   useEffect(() => {
     scrollToBottom('instant')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Track scroll position — rAF-throttled, stable callback (no deps)
   const scrollRafRef = useRef<number | null>(null)
 
   const handleScroll = useCallback(() => {
@@ -178,14 +164,12 @@ export function ChatThread({
     })
   }, [])
 
-  // Cleanup rAF on unmount
   useEffect(() => {
     return () => {
       if (scrollRafRef.current !== null) cancelAnimationFrame(scrollRafRef.current)
     }
   }, [])
 
-  // Mark messages as read
   useEffect(() => {
     const markRead = async () => {
       if (document.visibilityState !== 'visible') return
@@ -200,7 +184,6 @@ export function ChatThread({
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [conversation.id])
 
-  // Realtime subscription — deferred to survive React StrictMode double-mount
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null)
   const wasAddedRef = useRef(false)
 
@@ -208,7 +191,6 @@ export function ChatThread({
     let cancelled = false
     const supabase = createClient()
 
-    // Defer subscription so StrictMode's synchronous cleanup cancels before it runs
     const timer = setTimeout(() => {
       if (cancelled) return
 
@@ -223,7 +205,6 @@ export function ChatThread({
             filter: `conversation_id=eq.${conversation.id}`,
           },
           (payload) => {
-            // Validate Realtime payload with Zod
             const result = realtimeMessageSchema.safeParse(payload.new)
             if (!result.success) {
               console.warn('Malformed realtime message:', result.error)
@@ -231,17 +212,13 @@ export function ChatThread({
             }
             const newMsg = result.data
 
-            // Pure state updater — no side effects inside
             setMessages((prev) => {
-              // Check if already exists (by real ID)
               if (prev.some((m) => m.id === newMsg.id)) {
                 wasAddedRef.current = false
                 return prev
               }
 
-              // Check if this is our own message that we sent optimistically
               if (newMsg.sender_id === userId) {
-                // Replace temp message with real one if exists
                 const tempIdx = prev.findIndex(
                   (m) =>
                     m.id.startsWith('temp-') &&
@@ -266,12 +243,10 @@ export function ChatThread({
                   }
                   return updated
                 }
-                // Own message but no temp found — POST response already handled it
                 wasAddedRef.current = false
                 return prev
               }
 
-              // New message from other party
               wasAddedRef.current = true
               const realtimeMsg: MessageWithSender = {
                 id: newMsg.id,
@@ -286,14 +261,13 @@ export function ChatThread({
                 referenced_player_id: newMsg.referenced_player_id,
                 read_at: newMsg.read_at,
                 created_at: newMsg.created_at,
-                sender: null, // Will be populated on next load
+                sender: null,
                 referenced_player: null,
               }
 
               return [...prev, realtimeMsg]
             })
 
-            // Side effects OUTSIDE the updater — only when message was actually added
             if (wasAddedRef.current && newMsg.sender_id !== userId) {
               setLastAnnouncement(newMsg.content?.slice(0, 100) ?? '')
 
@@ -304,7 +278,6 @@ export function ChatThread({
               }
             }
 
-            // Mark as read if visible
             if (document.visibilityState === 'visible' && newMsg.sender_id !== userId) {
               fetch(`/api/messages/${conversation.id}/read`, { method: 'PATCH' })
             }
@@ -351,7 +324,6 @@ export function ChatThread({
     }
   }, [conversation.id, userId])
 
-  // Load older messages — use ref to avoid recreating callback on every message change
   const messagesRef = useRef(messages)
   messagesRef.current = messages
 
@@ -372,7 +344,6 @@ export function ChatThread({
       setMessages((prev) => [...normalized, ...prev])
       setHasMore(data.has_more)
 
-      // Restore scroll position
       requestAnimationFrame(() => {
         if (el) el.scrollTop = el.scrollHeight - prevHeight
       })
@@ -381,7 +352,6 @@ export function ChatThread({
     }
   }, [hasMore, isLoadingMore, conversation.id])
 
-  // Unified send message helper (optimistic update + POST)
   const sendMessage = useCallback(
     async (
       type: MessageType,
@@ -410,7 +380,7 @@ export function ChatThread({
         referenced_player_id: payload.referenced_player_id ?? null,
         read_at: null,
         created_at: new Date().toISOString(),
-        sender: { id: userId, full_name: t('chat.you'), role: userRole as UserRole },
+        sender: { id: userId, full_name: 'You', role: userRole as UserRole },
         referenced_player: payload.referenced_player ?? null,
         _status: 'sending',
       }
@@ -458,7 +428,7 @@ export function ChatThread({
         )
       }
     },
-    [conversation.id, userId, userRole, scrollToBottom, t]
+    [conversation.id, userId, userRole, scrollToBottom]
   )
 
   const sendTextMessage = useCallback(
@@ -492,11 +462,13 @@ export function ChatThread({
       const refPlayer: ReferencedPlayer = {
         id: player.id,
         name: player.name,
-        name_ka: player.name_ka,
         position: player.position,
         photo_url: player.photo_url,
         slug: player.slug,
-        club: player.club_name ? { name: player.club_name, name_ka: player.club_name_ka } : null,
+        club:
+          player.club_name && player.club_slug
+            ? { name: player.club_name, slug: player.club_slug }
+            : null,
       }
       await sendMessage('player_ref', {
         referenced_player_id: player.id,
@@ -506,10 +478,8 @@ export function ChatThread({
     [sendMessage]
   )
 
-  // Retry failed message
   const retryMessage = useCallback(
     async (failedMsg: MessageWithSender) => {
-      // Remove the failed message and resend
       setMessages((prev) => prev.filter((m) => m.id !== failedMsg.id))
 
       if (failedMsg.message_type === 'text' && failedMsg.content) {
@@ -519,18 +489,16 @@ export function ChatThread({
     [sendTextMessage]
   )
 
-  // Group messages by date (memoized — only recalculates when messages change)
   const dateGroups = useMemo(() => groupMessagesByDate(messages), [messages])
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-surface">
+    <div className="relative flex h-full w-full flex-col overflow-hidden bg-background">
       {/* Thread Header */}
-      <div className="flex items-center gap-3 bg-surface/50 px-4 py-3">
-        {/* Mobile: back button */}
+      <div className="flex items-center gap-3 border-b border-border/60 bg-surface/40 px-4 py-3">
         <Link
           href={backPath}
-          aria-label={t('aria.goBack')}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground lg:hidden"
+          aria-label="Go back"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-elevated hover:text-foreground lg:hidden"
         >
           <svg
             className="h-5 w-5"
@@ -543,11 +511,10 @@ export function ChatThread({
           </svg>
         </Link>
 
-        {/* Mobile: hamburger to open conversation drawer */}
         <button
           onClick={openDrawer}
-          aria-label={t('chat.switchConversation')}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground lg:hidden"
+          aria-label="Switch conversation"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-elevated hover:text-foreground lg:hidden"
         >
           <svg
             className="h-5 w-5"
@@ -581,15 +548,11 @@ export function ChatThread({
             )}
           </div>
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-bold leading-tight text-foreground">
+            <h2 className="truncate font-serif text-base font-semibold leading-tight text-foreground">
               {displayName}
             </h2>
             <span className="block text-[11px] leading-tight text-foreground-muted">
-              {isBlocked
-                ? t('chat.blocked')
-                : userRole === 'scout'
-                  ? t('roles.admin')
-                  : t('roles.scout')}
+              {isBlocked ? 'Blocked' : userRole === 'scout' ? 'Academy admin' : 'Scout'}
             </span>
           </div>
         </div>
@@ -601,8 +564,8 @@ export function ChatThread({
                 setMenuOpen((prev) => !prev)
                 setBlockConfirming(false)
               }}
-              aria-label={t('aria.chatOptions')}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-surface hover:text-foreground"
+              aria-label="Conversation options"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-foreground-muted transition-colors hover:bg-elevated hover:text-foreground"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="5" r="1.5" />
@@ -612,7 +575,7 @@ export function ChatThread({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 z-20 min-w-[160px] overflow-hidden rounded-xl border border-border bg-surface shadow-lg">
+              <div className="absolute right-0 top-full mt-1 z-20 min-w-[200px] overflow-hidden rounded-xl border border-border bg-surface shadow-lg">
                 <button
                   onClick={() => {
                     handleBlockAction()
@@ -620,7 +583,7 @@ export function ChatThread({
                     setMenuOpen(false)
                   }}
                   disabled={blockLoading}
-                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-surface disabled:opacity-50"
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors hover:bg-elevated disabled:opacity-50"
                 >
                   {blockLoading ? (
                     <span className="h-3.5 w-3.5 animate-spin rounded-full border border-foreground-muted border-t-transparent" />
@@ -642,17 +605,17 @@ export function ChatThread({
                   <span
                     className={
                       blockConfirming
-                        ? 'text-danger font-medium'
+                        ? 'text-danger font-semibold'
                         : isBlocked && blockedByMe
                           ? 'text-foreground'
                           : 'text-danger'
                     }
                   >
                     {blockConfirming
-                      ? t('chat.confirmBlock')
+                      ? 'Tap again to confirm'
                       : isBlocked && blockedByMe
-                        ? t('chat.unblock')
-                        : t('chat.block')}
+                        ? 'Unblock scout'
+                        : 'Block scout'}
                   </span>
                 </button>
               </div>
@@ -661,7 +624,6 @@ export function ChatThread({
         )}
       </div>
 
-      {/* Connection status banner */}
       {connectionStatus !== 'connected' && (
         <div
           className={`flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium animate-slide-in-down ${
@@ -671,44 +633,41 @@ export function ChatThread({
           }`}
         >
           <span className="h-2 w-2 rounded-full animate-pulse bg-current" />
-          {connectionStatus === 'reconnecting' ? t('chat.reconnecting') : t('chat.connectionLost')}
+          {connectionStatus === 'reconnecting' ? 'Reconnecting…' : 'Connection lost'}
         </div>
       )}
 
-      {/* Message List */}
       <div
         ref={scrollContainerRef}
         onScroll={handleScroll}
         role="log"
         aria-live="polite"
-        className="flex-1 overflow-y-auto bg-background px-4 py-3"
+        className="flex-1 overflow-y-auto px-4 py-4"
       >
-        {/* Load older */}
         {hasMore && (
           <div className="mb-4 flex justify-center">
             <button
               onClick={loadOlder}
               disabled={isLoadingMore}
-              aria-label={t('aria.loadOlder')}
+              aria-label="Load older messages"
               className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-foreground-muted transition-colors hover:bg-surface disabled:opacity-50"
             >
               {isLoadingMore ? (
                 <span className="flex items-center gap-1.5">
                   <span className="h-3 w-3 animate-spin rounded-full border border-foreground-muted border-t-transparent" />
-                  {t('common.loading')}
+                  Loading…
                 </span>
               ) : (
-                t('chat.loadOlder')
+                'Load older messages'
               )}
             </button>
           </div>
         )}
 
-        {/* Messages grouped by date */}
         <div>
           {dateGroups.map((group) => (
             <div key={group.date}>
-              <DateDivider date={group.messages[0].created_at} lang={lang} t={t} />
+              <DateDivider date={group.messages[0].created_at} />
               {group.messages.map((msg, idx) => {
                 const prevMsg = idx > 0 ? group.messages[idx - 1] : null
                 const isMine = msg.sender_id === userId
@@ -721,12 +680,11 @@ export function ChatThread({
 
                 return (
                   <div key={msg.id}>
-                    {/* Unread separator */}
                     {msg.id === firstUnreadIdRef.current && (
                       <div className="flex items-center gap-3 px-4 py-2 animate-slide-in-down">
                         <div className="h-px flex-1 bg-primary/50" />
                         <span className="shrink-0 text-[11px] font-medium uppercase tracking-wider text-primary">
-                          {t('chat.newMessages')}
+                          New messages
                         </span>
                         <div className="h-px flex-1 bg-primary/50" />
                       </div>
@@ -736,8 +694,6 @@ export function ChatThread({
                       isMine={isMine}
                       showSenderName={showSenderName}
                       showTimestamp={showTimestamp}
-                      lang={lang}
-                      t={t}
                       onRetry={msg._status === 'failed' ? () => retryMessage(msg) : undefined}
                       isNew={isNew}
                     />
@@ -749,9 +705,8 @@ export function ChatThread({
         </div>
       </div>
 
-      {/* New messages pill — always rendered, transitions in/out */}
       <div
-        className={`absolute bottom-20 left-1/2 z-10 -translate-x-1/2 transition-[opacity,transform] duration-200 ease-out ${
+        className={`absolute bottom-24 left-1/2 z-10 -translate-x-1/2 transition-[opacity,transform] duration-200 ease-out ${
           newMessageCount > 0
             ? 'translate-y-0 opacity-100'
             : 'translate-y-2 opacity-0 pointer-events-none'
@@ -760,11 +715,12 @@ export function ChatThread({
       >
         <button
           onClick={() => scrollToBottom()}
-          aria-label={t('aria.scrollToLatest')}
+          aria-label="Scroll to latest messages"
           tabIndex={newMessageCount > 0 ? 0 : -1}
           className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-background shadow-lg transition-transform hover:scale-105"
         >
-          {displayCount > 99 ? '99+' : displayCount} {t('chat.newMessages')}
+          {displayCount > 99 ? '99+' : displayCount} new{' '}
+          {displayCount === 1 ? 'message' : 'messages'}
           <svg
             className="h-3 w-3"
             fill="none"
@@ -781,19 +737,17 @@ export function ChatThread({
         </button>
       </div>
 
-      {/* Chat Input */}
-      <ChatInput
-        conversationId={conversation.id}
-        onSendText={sendTextMessage}
-        onSendFile={sendFileMessage}
-        onSendPlayerRef={sendPlayerRefMessage}
-        isBlocked={isBlocked}
-        blockedByMe={blockedByMe}
-        lang={lang}
-        t={t}
-      />
+      <div className="border-t border-border/60 bg-surface/40">
+        <ChatInput
+          conversationId={conversation.id}
+          onSendText={sendTextMessage}
+          onSendFile={sendFileMessage}
+          onSendPlayerRef={sendPlayerRefMessage}
+          isBlocked={isBlocked}
+          blockedByMe={blockedByMe}
+        />
+      </div>
 
-      {/* Screen reader announcement for new messages */}
       <div className="sr-only" aria-live="polite" aria-atomic="false">
         {lastAnnouncement}
       </div>

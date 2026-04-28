@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
-import { useLang } from '@/hooks/useLang'
 import { useChatDrawer } from '@/context/ChatDrawerContext'
 
 interface MobileChatDrawerProps {
@@ -14,7 +13,6 @@ const FOCUSABLE_SELECTOR =
 
 export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
   const { isDrawerOpen, closeDrawer } = useChatDrawer()
-  const { t } = useLang()
   const pathname = usePathname()
   const panelRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -28,10 +26,8 @@ export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
   useEffect(() => {
     if (!isDrawerOpen) return
 
-    // Save the element that had focus before opening
     previousFocusRef.current = document.activeElement as HTMLElement
 
-    // Focus the first focusable element in the panel
     const timer = requestAnimationFrame(() => {
       const firstFocusable = panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR)
       firstFocusable?.focus()
@@ -43,7 +39,6 @@ export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
         return
       }
 
-      // Focus trap: cycle Tab within the drawer
       if (e.key === 'Tab' && panelRef.current) {
         const focusable = Array.from(
           panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
@@ -70,7 +65,6 @@ export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
     }
   }, [isDrawerOpen, closeDrawer])
 
-  // Restore focus when drawer closes
   useEffect(() => {
     if (!isDrawerOpen && previousFocusRef.current) {
       previousFocusRef.current.focus()
@@ -83,21 +77,19 @@ export function MobileChatDrawer({ children }: MobileChatDrawerProps) {
       className={`fixed inset-0 z-50 lg:hidden ${isDrawerOpen ? '' : 'pointer-events-none'}`}
       aria-hidden={!isDrawerOpen}
     >
-      {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ease-out ${
           isDrawerOpen ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={closeDrawer}
       />
 
-      {/* Drawer panel */}
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={t('chat.conversationList')}
-        className={`absolute inset-y-0 left-0 w-80 max-w-[85vw] bg-background shadow-xl transition-transform duration-300 ease-in-out ${
+        aria-label="Conversation list"
+        className={`absolute inset-y-0 left-0 w-80 max-w-[85vw] bg-background shadow-xl transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0.24,1)] ${
           isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >

@@ -191,8 +191,8 @@ export async function fetchInitialMessages(
       referenced_player_id, read_at, created_at,
       sender:profiles!messages_sender_id_fkey ( id, full_name, role ),
       referenced_player:players!messages_referenced_player_id_fkey (
-        id, name, name_ka, position, photo_url, slug,
-        club:clubs!players_club_id_fkey ( name, name_ka )
+        id, name, position, photo_url, slug,
+        club:clubs!players_club_id_fkey ( name, slug )
       )
     `
     )

@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           <div>
             <h2 className="text-lg font-semibold text-foreground">{t('dashboard.messagesCard')}</h2>
           </div>
-          <Link href="/dashboard/messages" className="btn-primary text-sm">
+          <Link href="/messages" className="btn-primary text-sm">
             {t('dashboard.viewMessages')}
           </Link>
         </div>

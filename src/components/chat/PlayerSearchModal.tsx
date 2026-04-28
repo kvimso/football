@@ -5,17 +5,14 @@ import Image from 'next/image'
 import { useDebouncedCallback } from '@/hooks/useDebounce'
 import { POSITION_COLOR_CLASSES } from '@/lib/constants'
 import type { PlayerSearchResult, Position } from '@/lib/types'
-import type { Lang } from '@/lib/translations'
 
 interface PlayerSearchModalProps {
   isOpen: boolean
   onClose: () => void
   onSelect: (player: PlayerSearchResult) => void
-  lang: Lang
-  t: (key: string) => string
 }
 
-export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: PlayerSearchModalProps) {
+export function PlayerSearchModal({ isOpen, onClose, onSelect }: PlayerSearchModalProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<PlayerSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
@@ -29,7 +26,6 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
     }
   }, [isOpen])
 
-  // Escape key to close modal
   useEffect(() => {
     if (!isOpen) return
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -87,16 +83,15 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={t('chat.addPlayerRef')}
-        className="w-full max-w-md rounded-xl border border-border bg-background shadow-xl"
+        aria-label="Reference a player"
+        className="w-full max-w-md rounded-2xl border border-border bg-background shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h3 className="text-sm font-semibold text-foreground">{t('chat.addPlayerRef')}</h3>
+          <h3 className="font-serif text-base font-semibold text-foreground">Reference a player</h3>
           <button
             onClick={onClose}
-            aria-label={t('aria.closeModal')}
+            aria-label="Close"
             className="text-foreground-muted hover:text-foreground"
           >
             <svg
@@ -111,7 +106,6 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
           </button>
         </div>
 
-        {/* Search input */}
         <div className="border-b border-border px-4 py-3">
           <div className="relative">
             <svg
@@ -132,13 +126,12 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
               type="text"
               value={query}
               onChange={handleInputChange}
-              placeholder={t('chat.searchPlayers')}
+              placeholder="Search players..."
               className="w-full rounded-lg border border-border bg-surface py-2 pr-3 pl-9 text-sm text-foreground placeholder:text-foreground-muted focus:border-primary focus:outline-none"
             />
           </div>
         </div>
 
-        {/* Results */}
         <div className="max-h-72 overflow-y-auto">
           {isSearching && (
             <div className="flex items-center justify-center py-8">
@@ -147,21 +140,16 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
           )}
 
           {!isSearching && query.length > 0 && results.length === 0 && (
-            <div className="py-8 text-center text-sm text-foreground-muted">
-              {t('common.noResults')}
-            </div>
+            <div className="py-8 text-center text-sm text-foreground-muted">No results found</div>
           )}
 
           {!isSearching && query.length === 0 && (
             <div className="py-8 text-center text-sm text-foreground-muted">
-              {t('chat.searchPlayersHint')}
+              Search for a player to share
             </div>
           )}
 
           {results.map((player) => {
-            const displayName = lang === 'ka' && player.name_ka ? player.name_ka : player.name
-            const clubName =
-              lang === 'ka' && player.club_name_ka ? player.club_name_ka : player.club_name
             const posClass = player.position
               ? POSITION_COLOR_CLASSES[player.position as Position]
               : ''
@@ -170,16 +158,16 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
               <button
                 key={player.id}
                 onClick={() => handleSelect(player)}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-surface"
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-elevated"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-elevated">
                   {player.photo_url ? (
                     <Image
                       src={player.photo_url}
-                      alt={displayName}
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 rounded-full object-cover"
+                      alt={player.name}
+                      width={36}
+                      height={36}
+                      className="h-9 w-9 rounded-full object-cover"
                     />
                   ) : (
                     <svg
@@ -200,7 +188,7 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate text-sm font-medium text-foreground">
-                      {displayName}
+                      {player.name}
                     </span>
                     {player.position && (
                       <span
@@ -210,7 +198,9 @@ export function PlayerSearchModal({ isOpen, onClose, onSelect, lang, t }: Player
                       </span>
                     )}
                   </div>
-                  {clubName && <p className="truncate text-xs text-foreground-muted">{clubName}</p>}
+                  {player.club_name && (
+                    <p className="truncate text-xs text-foreground-muted">{player.club_name}</p>
+                  )}
                 </div>
               </button>
             )
