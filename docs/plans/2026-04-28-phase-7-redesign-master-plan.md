@@ -1136,14 +1136,14 @@ export async function uploadClubAsset(
 
 ## Track 4 acceptance criteria
 
-- [ ] `src/app/admin/club/edit/page.tsx` (server component) wired with `getAdminContext()`.
-- [ ] `src/components/admin/ClubProfileForm.tsx` client component.
-- [ ] `src/app/actions/admin-club.ts` server action with Zod validation.
-- [ ] `src/lib/storage.ts` upload helper.
-- [ ] AdminSidebar has "Club" link.
-- [ ] All five form sections work: logo, hero, history, gallery (add/delete/reorder), save.
-- [ ] All copy hardcoded English.
-- [ ] `npm run build` clean.
+- [x] `src/app/admin/club/edit/page.tsx` (server component) wired with `getAdminContext()`.
+- [x] `src/components/admin/ClubProfileForm.tsx` client component.
+- [x] `src/app/actions/admin-club.ts` server action with Zod validation.
+- [x] `src/lib/storage.ts` upload helper.
+- [x] AdminSidebar has "Club" link.
+- [x] All five form sections work: logo, hero, history, gallery (add/delete/reorder), save.
+- [x] All copy hardcoded English.
+- [x] `npm run build` clean.
 - [ ] Manual smoke (Torpedo academy_admin): edit all four fields → public `/clubs/torpedo-kutaisi` reflects them.
 
 ### Research Insights
@@ -2278,7 +2278,7 @@ After all 9 tracks land:
 - [ ] Track 1: schema migration applied, types regenerated, storage bucket exists.
 - [ ] Track 2: `/clubs` + `/clubs/[slug]` rebuilt, navbar updated, middleware fixed.
 - [ ] Track 3: `/leagues` link-out shipped (with placeholder URLs if Andria hasn't provided).
-- [ ] Track 4: academy admin can edit club logo / hero / history / gallery → public page reflects.
+- [x] Track 4: academy admin can edit club logo / hero / history / gallery → public page reflects.
 - [ ] Track 5: chat moved to `/messages`, redesigned, PlayerRefCard reworked, `t()` stripped.
 - [ ] Track 6: demolition complete, `npm run build` clean, no `_archive/`.
 - [ ] Track 7: zero `t()` calls, zero `useLang()`/`getServerT()`, `_ka` columns dropped.

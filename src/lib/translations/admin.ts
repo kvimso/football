@@ -90,6 +90,7 @@ export const en = {
     nav: {
       dashboard: 'Dashboard',
       players: 'Players',
+      club: 'Club',
       requests: 'Requests',
       transfers: 'Transfers',
       messages: 'Messages',
@@ -544,6 +545,7 @@ export const ka = {
     nav: {
       dashboard: 'მთავარი',
       players: 'მოთამაშეები',
+      club: 'კლუბი',
       requests: 'მოთხოვნები',
       transfers: 'ტრანსფერები',
       messages: 'შეტყობინებები',
