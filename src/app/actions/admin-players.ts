@@ -64,7 +64,6 @@ export async function createPlayer(data: PlayerFormInput) {
   }
 
   revalidatePath('/admin/players')
-  revalidatePath('/players')
   return { success: true, slug: finalSlug }
 }
 
@@ -111,6 +110,5 @@ export async function updatePlayer(playerId: string, data: PlayerFormInput) {
   }
 
   revalidatePath('/admin/players')
-  revalidatePath('/players')
   return { success: true }
 }

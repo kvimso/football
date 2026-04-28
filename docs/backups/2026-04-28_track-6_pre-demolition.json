@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "captured_at": "2026-04-28",
+    "purpose": "Pre-Track-6 demolition snapshot. Tables dropped by migration 20250101000051_redesign_cleanup.sql.",
+    "row_counts": {
+      "player_views": 26,
+      "watchlist": 7,
+      "watchlist_folders": 1,
+      "watchlist_folder_players": 2,
+      "watchlist_tags": 0
+    }
+  },
+  "player_views": [
+    {"id":"5ffb4adb-6013-401c-88a9-10eeae88e7aa","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"342532df-bb24-4f26-bac2-1cd2dcd25844","viewed_at":"2026-02-23T14:55:03.863634+00:00"},
+    {"id":"9a945e3a-82e1-4028-8c94-bee305b99606","player_id":"b1b2c3d4-0007-4000-8000-000000000007","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-02-23T17:36:39.998458+00:00"},
+    {"id":"d9579aac-8ae6-4667-adac-c51c254c3261","player_id":"516139f5-06f9-4e03-a3cb-a8c41f2a91f2","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-02-26T22:27:20.910864+00:00"},
+    {"id":"d8ac573a-71e5-412a-a307-075f7bf59047","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-02-27T18:02:30.385755+00:00"},
+    {"id":"fe0436b4-c60e-4f01-9189-3323e56ffe66","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-01T13:31:02.257803+00:00"},
+    {"id":"216f8139-1e1a-4a25-9ca5-a02146e0c226","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-01T13:40:01.652889+00:00"},
+    {"id":"10046733-d45d-40f4-9ede-5903d9a9ae13","player_id":"b1b2c3d4-0002-4000-8000-000000000002","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-01T13:41:40.216091+00:00"},
+    {"id":"60cf97ec-85d2-4fc9-a669-93e81c7685fc","player_id":"b1b2c3d4-0006-4000-8000-000000000006","viewer_id":"342532df-bb24-4f26-bac2-1cd2dcd25844","viewed_at":"2026-03-01T19:00:31.775995+00:00"},
+    {"id":"e1fe40db-ef1e-4842-ba5d-17dac77229dc","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-01T22:55:34.963904+00:00"},
+    {"id":"c5559441-60bd-494d-8d51-7189648107f8","player_id":"b1b2c3d4-0011-4000-8000-000000000011","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-02T15:11:57.531706+00:00"},
+    {"id":"30436f13-6b13-4d73-a197-a2ca63511c4e","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-02T15:13:12.528869+00:00"},
+    {"id":"a761498f-d4f6-4e37-afed-d9b45d60c0b5","player_id":"b1b2c3d4-0011-4000-8000-000000000011","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-02T15:17:32.256193+00:00"},
+    {"id":"bd5ab70d-af29-45ed-905f-42191189c8b0","player_id":"b1b2c3d4-0011-4000-8000-000000000011","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-03T11:36:31.881326+00:00"},
+    {"id":"4ad70cca-386e-4a49-b3d7-4daf9b9bfd4d","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-03T20:15:06.774089+00:00"},
+    {"id":"f530916c-e7e2-409c-9efb-a145ff76a0c8","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-04T21:20:01.488741+00:00"},
+    {"id":"e9be4418-d872-4dd7-8eb9-205947c90647","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-04T21:50:30.538762+00:00"},
+    {"id":"433d30ca-5b87-4df7-8aa8-36f48a9cb27c","player_id":"b1b2c3d4-0007-4000-8000-000000000007","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-04T22:00:05.72058+00:00"},
+    {"id":"527b1ed5-765e-4bbf-bfe8-493e15c2331b","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-12T14:00:38.374281+00:00"},
+    {"id":"9b77f798-36d9-4837-af00-8b2c8e87a13f","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-12T16:12:15.379855+00:00"},
+    {"id":"9f5ded9d-97f3-45eb-9d9b-c16f57b63d6d","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-16T19:45:56.06646+00:00"},
+    {"id":"f5cb5137-42da-4fa0-a338-31025b2202ca","player_id":"b1b2c3d4-0006-4000-8000-000000000006","viewer_id":"848ffed6-aee5-464b-9477-e6da4c9fc09e","viewed_at":"2026-03-18T09:45:07.430724+00:00"},
+    {"id":"0ef53d17-cad4-4a18-9ae8-f0abbcee4ec9","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","viewed_at":"2026-03-18T11:56:18.558787+00:00"},
+    {"id":"d4459a4a-3eb4-4caf-9fbd-e10900a83769","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"a125f3b2-3912-4fca-82cf-008e660bf803","viewed_at":"2026-03-18T19:13:02.090807+00:00"},
+    {"id":"7ad56b1a-2855-4d92-96ad-7c96d85d8ce8","player_id":"b1b2c3d4-0002-4000-8000-000000000002","viewer_id":"a125f3b2-3912-4fca-82cf-008e660bf803","viewed_at":"2026-03-18T19:13:41.30336+00:00"},
+    {"id":"69b1697b-aba8-4244-ae50-d0d5dbc98001","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"342532df-bb24-4f26-bac2-1cd2dcd25844","viewed_at":"2026-03-18T19:26:16.948735+00:00"},
+    {"id":"7b9a0479-e96e-4b95-aa6f-01d179dc8bb2","player_id":"b1b2c3d4-0001-4000-8000-000000000001","viewer_id":"0b805619-5e52-4976-9c40-eca48dd330f6","viewed_at":"2026-03-19T23:12:02.106969+00:00"}
+  ],
+  "watchlist": [
+    {"id":"6411f0e0-5d76-43a4-962f-c637e6ec0257","user_id":"d2deacb4-c366-40a2-92d4-fbe1927ee502","player_id":"b1b2c3d4-0001-4000-8000-000000000001","notes":null,"created_at":"2026-02-18T12:33:35.03966+00:00"},
+    {"id":"eb7e7737-f333-4b7a-84ec-9342fab76e04","user_id":"0b805619-5e52-4976-9c40-eca48dd330f6","player_id":"b1b2c3d4-0001-4000-8000-000000000001","notes":"es kai bichia","created_at":"2026-02-23T12:56:06.510742+00:00"},
+    {"id":"f0e57fdc-e85e-42a8-bd13-1d9897e8a5c6","user_id":"0b805619-5e52-4976-9c40-eca48dd330f6","player_id":"b1b2c3d4-0011-4000-8000-000000000011","notes":null,"created_at":"2026-03-02T15:17:38.852818+00:00"},
+    {"id":"6965adba-18bf-44e0-8e8c-39fe402e3ce4","user_id":"a125f3b2-3912-4fca-82cf-008e660bf803","player_id":"b1b2c3d4-0001-4000-8000-000000000001","notes":null,"created_at":"2026-03-18T19:16:10.560006+00:00"},
+    {"id":"b7917f18-b4c7-44fd-8e2f-4932632b01c4","user_id":"a125f3b2-3912-4fca-82cf-008e660bf803","player_id":"b1b2c3d4-0002-4000-8000-000000000002","notes":null,"created_at":"2026-03-18T19:16:11.718527+00:00"},
+    {"id":"858ec3bf-3fa6-438c-904c-3c5618cfa07d","user_id":"a125f3b2-3912-4fca-82cf-008e660bf803","player_id":"b1b2c3d4-0006-4000-8000-000000000006","notes":null,"created_at":"2026-03-18T19:16:12.747673+00:00"},
+    {"id":"e35e84b5-2a42-4ce0-82b8-be83893aad57","user_id":"a125f3b2-3912-4fca-82cf-008e660bf803","player_id":"b1b2c3d4-0005-4000-8000-000000000005","notes":null,"created_at":"2026-03-18T19:16:13.783937+00:00"}
+  ],
+  "watchlist_folders": [
+    {"id":"f2f70a3d-9f1d-4279-85fd-85f95150dee3","user_id":"a125f3b2-3912-4fca-82cf-008e660bf803","name":"striker","created_at":"2026-03-18T19:16:32.918774+00:00"}
+  ],
+  "watchlist_folder_players": [
+    {"id":"17dae5c8-a662-4ac3-8f80-a2952e97410a","folder_id":"f2f70a3d-9f1d-4279-85fd-85f95150dee3","watchlist_id":"e35e84b5-2a42-4ce0-82b8-be83893aad57"},
+    {"id":"cece549b-3c0b-49e8-9504-12a5e0fee4b8","folder_id":"f2f70a3d-9f1d-4279-85fd-85f95150dee3","watchlist_id":"858ec3bf-3fa6-438c-904c-3c5618cfa07d"}
+  ],
+  "watchlist_tags": []
+}

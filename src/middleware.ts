@@ -39,8 +39,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Landing is shared between anonymous and logged-in users (audit C1).
-  // Logged-in CTAs swap via useAuth() in landing components — they do NOT
-  // get redirected to a dashboard. /players no longer exists post-Phase-7.
+  // Logged-in CTAs swap via useAuth() in landing components.
   if (pathname === '/') {
     return NextResponse.next({ request })
   }
@@ -123,27 +122,26 @@ export async function middleware(request: NextRequest) {
       return redirectResponse
     }
 
-    // Role-based routing for role-scoped paths
-    // Prevents wrong-role users from accessing other role panels
+    // Role-based routing for role-scoped paths.
+    // Scouts have no dashboard — landing `/` is their home.
     const ROLE_HOME: Record<string, string> = {
-      scout: '/dashboard',
+      scout: '/',
       academy_admin: '/admin',
       platform_admin: '/platform',
     }
     const PATH_ALLOWED_ROLES: Record<string, string[]> = {
-      '/dashboard': ['scout'],
       '/admin': ['academy_admin'],
       '/platform': ['platform_admin'],
     }
 
-    const roleScopedPath = ['/dashboard', '/admin', '/platform'].find(
+    const roleScopedPath = ['/admin', '/platform'].find(
       (p) => pathname === p || pathname.startsWith(p + '/')
     )
 
     if (roleScopedPath) {
       const allowedRoles = PATH_ALLOWED_ROLES[roleScopedPath]
       if (allowedRoles && !allowedRoles.includes(role)) {
-        const destination = ROLE_HOME[role] ?? '/dashboard'
+        const destination = ROLE_HOME[role] ?? '/'
         const redirectUrl = request.nextUrl.clone()
         redirectUrl.pathname = destination
         const redirectResponse = NextResponse.redirect(redirectUrl)

@@ -1601,14 +1601,14 @@ Big destructive change. Two options:
 
 ## Track 6 acceptance criteria
 
-- [ ] Phase A reference audit produced (markdown checklist).
-- [ ] Phases B–F completed; `npm run build` clean after each.
-- [ ] Phase G migration applied to remote.
-- [ ] Phase H middleware fix applied.
-- [ ] Phase I navbar updated.
-- [ ] Phase J 9-scenario smoke passes.
-- [ ] No `_archive/` folder created — git history is the archive.
-- [ ] Pixellot env vars left in Vercel (remove in v2 prep).
+- [x] Phase A reference audit produced (markdown checklist). _(in-conversation; survivors: admin/page.tsx rewrite, notifications/create.ts, scout/transfer surface link cleanup, /api/players/search role gate, navbar LanguageToggle, middleware /dashboard fix)_
+- [x] Phases B–F completed; `npm run build` clean after each.
+- [x] Phase G migration applied to remote. _(20250101000051_redesign_cleanup.sql; backup at docs/backups/2026-04-28_track-6_pre-demolition.json)_
+- [x] Phase H middleware fix applied.
+- [x] Phase I navbar updated.
+- [ ] Phase J 9-scenario smoke passes. _(deferred to Andria — manual)_
+- [x] No `_archive/` folder created — git history is the archive.
+- [x] Pixellot env vars left in Vercel (remove in v2 prep).
 
 ### Research Insights
 
@@ -2280,7 +2280,7 @@ After all 9 tracks land:
 - [ ] Track 3: `/leagues` link-out shipped (with placeholder URLs if Andria hasn't provided).
 - [x] Track 4: academy admin can edit club logo / hero / history / gallery → public page reflects.
 - [x] Track 5: chat moved to `/messages`, redesigned, PlayerRefCard reworked, `t()` stripped.
-- [ ] Track 6: demolition complete, `npm run build` clean, no `_archive/`.
+- [x] Track 6: demolition complete, `npm run build` clean, no `_archive/`.
 - [ ] Track 7: zero `t()` calls, zero `useLang()`/`getServerT()`, `_ka` columns dropped.
 - [ ] Track 8: warmth pass applied, Andria signs off "no hospital vibes."
 

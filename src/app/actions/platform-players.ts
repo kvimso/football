@@ -61,7 +61,6 @@ export async function platformCreatePlayer(data: PlatformPlayerFormInput) {
   }
 
   revalidatePath('/platform/players')
-  revalidatePath('/players')
   return { success: true }
 }
 
@@ -136,7 +135,6 @@ export async function platformUpdatePlayer(playerId: string, data: PlatformPlaye
   }
 
   revalidatePath('/platform/players')
-  revalidatePath('/players')
   return { success: true }
 }
 
@@ -153,6 +151,5 @@ export async function platformDeletePlayer(playerId: string) {
   }
 
   revalidatePath('/platform/players')
-  revalidatePath('/players')
   return { success: true }
 }

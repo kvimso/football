@@ -31,7 +31,7 @@ export default async function PendingPage() {
   if (isApproved) {
     if (role === 'platform_admin') redirect('/platform')
     if (role === 'academy_admin') redirect('/admin')
-    redirect('/dashboard')
+    redirect('/')
   }
 
   // Fetch demo request status for the user (via admin client — table has REVOKE)
