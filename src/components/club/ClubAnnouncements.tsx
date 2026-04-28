@@ -6,15 +6,20 @@ interface Announcement {
 
 interface ClubAnnouncementsProps {
   announcements: Announcement[]
-  title: string
+  title?: string
 }
 
-export function ClubAnnouncements({ announcements, title }: ClubAnnouncementsProps) {
+export function ClubAnnouncements({
+  announcements,
+  title = 'Announcements',
+}: ClubAnnouncementsProps) {
   if (announcements.length === 0) return null
 
   return (
-    <div className="mt-10">
-      <h2 className="mb-4 text-2xl font-bold text-foreground">{title}</h2>
+    <section className="mt-12">
+      <h2 className="mb-6 font-serif text-2xl font-semibold tracking-tight text-foreground">
+        {title}
+      </h2>
       <div className="space-y-3">
         {announcements.map((a) => {
           const date = new Date(a.created_at)
@@ -51,6 +56,6 @@ export function ClubAnnouncements({ announcements, title }: ClubAnnouncementsPro
           )
         })}
       </div>
-    </div>
+    </section>
   )
 }
