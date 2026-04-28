@@ -14,10 +14,7 @@ export function Footer() {
           </div>
           <nav className="landing-footer-col" aria-label="Platform links">
             <h4>Platform</h4>
-            <Link href="/players">Players</Link>
             <Link href="/leagues">Leagues</Link>
-            <Link href="/matches">Matches</Link>
-            <Link href="/clubs">Clubs</Link>
           </nav>
           <nav className="landing-footer-col" aria-label="Company links">
             <h4>Company</h4>

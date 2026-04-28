@@ -51,7 +51,7 @@ export async function AboutStats() {
               >
                 {t(numberKey)}
               </span>
-              <span className="mt-2 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-foreground-faint">
+              <span className="mt-2 text-[11px] font-bold uppercase tracking-[0.15em] text-foreground-faint">
                 {t(labelKey)}
               </span>
             </div>

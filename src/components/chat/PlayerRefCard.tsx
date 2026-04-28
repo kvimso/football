@@ -67,7 +67,7 @@ export function PlayerRefCard({ player, lang, t }: PlayerRefCardProps) {
         <div className="flex items-center gap-2">
           <span className="truncate text-sm font-semibold text-foreground">{displayName}</span>
           {player.position && (
-            <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${posClass}`}>
+            <span className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-bold ${posClass}`}>
               {player.position}
             </span>
           )}

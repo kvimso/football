@@ -247,7 +247,7 @@ export function PlayerDirectoryClient({
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
               {t('players.featured')}
             </span>
             <h3 className="mt-1 truncate text-lg font-bold text-foreground group-hover:text-primary transition-colors">
@@ -255,7 +255,7 @@ export function PlayerDirectoryClient({
             </h3>
             <div className="mt-0.5 flex items-center gap-2 text-sm text-foreground-muted">
               <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${featuredPosClasses}`}
+                className={`rounded-full px-1.5 py-0.5 text-[11px] font-bold uppercase ${featuredPosClasses}`}
               >
                 {featuredPlayer.position}
               </span>

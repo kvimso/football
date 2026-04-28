@@ -195,13 +195,13 @@ export function NotificationList({ initialNotifications, initialTotal }: Props) 
                     >
                       {n.title}
                     </p>
-                    <span className="shrink-0 text-[10px] text-foreground-muted/50">
+                    <span className="shrink-0 text-[11px] text-foreground-muted/50">
                       {timeAgo(n.created_at)}
                     </span>
                   </div>
                   {n.body && <p className="mt-0.5 text-xs text-foreground-muted/70">{n.body}</p>}
                   <span
-                    className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full ${icon.badge}`}
+                    className={`inline-block mt-1 text-[11px] px-1.5 py-0.5 rounded-full ${icon.badge}`}
                   >
                     {t(TYPE_KEYS[n.type])}
                   </span>

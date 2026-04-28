@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import { getServerT } from '@/lib/server-translations'
-import { AGE_GROUP_COLOR_CLASSES, BLUR_DATA_URL } from '@/lib/constants'
-import type { AgeGroup } from '@/lib/types'
+import { BLUR_DATA_URL } from '@/lib/constants'
 import type { Database } from '@/lib/database.types'
 
 type League = Database['public']['Tables']['leagues']['Row']
@@ -15,19 +14,26 @@ interface Props {
 
 /** Static fallback photos by age group — used when league has no photo_url */
 const FALLBACK_PHOTOS: Record<string, string> = {
-  U15: '/images/leagues/league-u15.jpg',
+  U15: '/images/leagues/league-u15-v4.jpg',
   U17: '/images/leagues/league-u17.jpg',
   U19: '/images/leagues/league-u19.jpg',
 }
+
+/** Age-group identity colors — drives both the accent rule and the hover tint gradient */
+const AGE_ACCENT: Record<string, string> = {
+  U15: '#1B8A4A', // forest green
+  U17: '#B87A08', // amber
+  U19: '#2563EB', // blue
+}
+const DEFAULT_ACCENT = '#1B8A4A'
 
 export async function LeagueShowcaseCard({ league, variant }: Props) {
   const { t, lang } = await getServerT()
   const displayName = lang === 'ka' ? league.name_ka : league.name
   const desc = lang === 'ka' ? league.description_ka : league.description
-  const ageClasses =
-    AGE_GROUP_COLOR_CLASSES[league.age_group as AgeGroup] ?? 'bg-primary/10 text-primary'
   const isValidUrl = league.starlive_url.startsWith('https://')
   const photoSrc = league.photo_url || FALLBACK_PHOTOS[league.age_group]
+  const accent = AGE_ACCENT[league.age_group] ?? DEFAULT_ACCENT
 
   const Wrapper = isValidUrl ? 'a' : 'div'
   const linkProps = isValidUrl
@@ -56,34 +62,36 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-surface to-elevated" />
         )}
 
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10" />
+        {/* Gradient overlay — light bottom fade for text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />
 
-        {/* Color tint overlay — visible only on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#15703C]/70 via-[#15703C]/40 to-[#15703C]/15 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        {/* Color tint overlay — visible only on hover, driven by age group */}
+        <div
+          className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            backgroundImage: `linear-gradient(to top, ${accent}b3, ${accent}66, ${accent}26)`,
+          }}
+        />
 
         {/* Content — above gradient */}
         <div className="relative z-10 p-6 sm:p-8">
-          <span
-            className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${ageClasses}`}
-          >
-            {league.age_group}
-          </span>
-          <h3 className="mt-3 text-xl font-extrabold text-white sm:text-2xl">{displayName}</h3>
+          <h3 className="text-xl font-extrabold text-white sm:text-2xl">{displayName}</h3>
           {desc && (
             <p className="mt-2 max-w-md text-sm leading-relaxed text-white/75 line-clamp-2">
               {desc}
             </p>
           )}
           <div className="mt-3 flex items-center gap-3 text-xs text-white/60">
+            <span className="font-bold uppercase tracking-widest" style={{ color: accent }}>
+              {league.age_group}
+            </span>
+            <span>&middot;</span>
             <span>
               {t('leagues.season')}: {league.season}
             </span>
-            <span>&middot;</span>
-            <span>{t('leagues.showcase.pixellotTracked')}</span>
           </div>
           {isValidUrl && (
-            <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-primary">
+            <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-white">
               {t('leagues.viewOnStarlive')}
               <ExternalLinkIcon />
             </div>
@@ -92,14 +100,6 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
       </Wrapper>
     )
   }
-
-  // Warm and Green variants — now with photo backgrounds too
-  const HOVER_TINTS: Record<CardVariant, string> = {
-    hero: '',
-    warm: 'from-[#B87A08]/70 via-[#B87A08]/40 to-[#B87A08]/15',
-    green: 'from-[#1E40AF]/80 via-[#1E40AF]/50 to-[#1E40AF]/20',
-  }
-  const hoverTint = HOVER_TINTS[variant]
 
   return (
     <Wrapper
@@ -120,29 +120,31 @@ export async function LeagueShowcaseCard({ league, variant }: Props) {
         />
       ) : null}
 
-      {/* Dark gradient overlay (default state) */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/20 transition-opacity duration-300" />
+      {/* Dark gradient overlay — light bottom fade for text legibility */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent transition-opacity duration-300" />
 
-      {/* Color tint overlay — visible only on hover */}
-      {hoverTint && (
-        <div
-          className={`absolute inset-0 bg-gradient-to-t ${hoverTint} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
-        />
-      )}
+      {/* Color tint overlay — visible only on hover, driven by age group */}
+      <div
+        className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          backgroundImage: `linear-gradient(to top, ${accent}b3, ${accent}66, ${accent}26)`,
+        }}
+      />
 
       {/* Content */}
       <div className="relative z-10 p-5 sm:p-6">
-        <span
-          className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${ageClasses}`}
-        >
-          {league.age_group}
-        </span>
-        <h3 className="mt-2 text-lg font-bold text-white">{displayName}</h3>
+        <h3 className="text-lg font-bold text-white">{displayName}</h3>
         {desc && (
           <p className="mt-1.5 text-sm leading-relaxed line-clamp-2 text-white/70">{desc}</p>
         )}
-        <div className="mt-1.5 text-xs text-white/50">
-          {t('leagues.season')}: {league.season}
+        <div className="mt-2 flex items-center gap-2 text-xs text-white/55">
+          <span className="font-bold uppercase tracking-widest" style={{ color: accent }}>
+            {league.age_group}
+          </span>
+          <span>&middot;</span>
+          <span>
+            {t('leagues.season')}: {league.season}
+          </span>
         </div>
         {isValidUrl && (
           <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-white">

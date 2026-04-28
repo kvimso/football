@@ -287,7 +287,7 @@ export function AISearchBar({ onSearchResults, onClearSearch, isActive }: AISear
                   />
                 </svg>
                 <span className="truncate flex-1">{entry.query_text}</span>
-                <span className="shrink-0 text-[10px] text-foreground-muted/40">
+                <span className="shrink-0 text-[11px] text-foreground-muted/40">
                   {entry.result_count}
                 </span>
               </button>

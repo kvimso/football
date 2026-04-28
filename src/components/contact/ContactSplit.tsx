@@ -52,7 +52,7 @@ export async function ContactSplit({ defaultSubject }: { defaultSubject?: string
             {/* Contact info overlaid at bottom — hardcoded light text since it's always over a dark gradient */}
             <div className="absolute inset-x-0 bottom-0 flex flex-col gap-5 p-6 sm:p-8">
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
                   {t('contact.officeLabel')}
                 </div>
                 <div
@@ -69,7 +69,7 @@ export async function ContactSplit({ defaultSubject }: { defaultSubject?: string
                 </div>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
                   {t('contact.emailLabel')}
                 </div>
                 <a
@@ -81,7 +81,7 @@ export async function ContactSplit({ defaultSubject }: { defaultSubject?: string
                 </a>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#4ADE80]">
                   {t('contact.responseLabel')}
                 </div>
                 <div className="mt-1.5 text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>

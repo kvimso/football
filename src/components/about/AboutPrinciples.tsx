@@ -15,17 +15,17 @@ export async function AboutPrinciples() {
             {PRINCIPLES.map((i) => (
               <div key={i} className="flex gap-5">
                 <span
-                  className="shrink-0 text-[3rem] font-black leading-none text-primary"
+                  className="shrink-0 text-5xl font-black leading-none text-primary"
                   style={{ opacity: 0.3, width: 60 }}
                   aria-hidden="true"
                 >
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div>
-                  <h3 className="text-[1.05rem] font-extrabold text-foreground">
+                  <h3 className="text-base font-extrabold text-foreground">
                     {t(`about.principle${i}Title`)}
                   </h3>
-                  <p className="mt-2 text-[0.875rem] leading-[1.65] text-foreground-secondary">
+                  <p className="mt-2 text-sm leading-[1.65] text-foreground-secondary">
                     {t(`about.principle${i}Desc`)}
                   </p>
                 </div>
@@ -62,9 +62,7 @@ export async function AboutPrinciples() {
               {/* Source */}
               <div className="mt-4">
                 <p className="text-sm font-bold text-foreground">{t('about.quoteSource')}</p>
-                <p className="mt-0.5 text-[0.8rem] text-foreground-faint">
-                  {t('about.quoteSourceDesc')}
-                </p>
+                <p className="mt-0.5 text-xs text-foreground-faint">{t('about.quoteSourceDesc')}</p>
               </div>
             </div>
           </div>

@@ -33,7 +33,7 @@ export async function AboutBento() {
 
           {/* Pull quote */}
           <blockquote className="max-w-[300px] border-l-2 border-primary pl-5">
-            <p className="text-[0.95rem] leading-relaxed text-foreground italic">
+            <p className="text-base leading-relaxed text-foreground italic">
               {t('about.bentoPullQuote')}
             </p>
           </blockquote>
@@ -56,7 +56,7 @@ export async function AboutBento() {
               {/* Label */}
               <div className="flex items-center gap-2">
                 <div className="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden="true" />
-                <span className="text-[0.7rem] font-bold uppercase tracking-widest text-danger">
+                <span className="text-xs font-bold uppercase tracking-widest text-danger">
                   {t('about.problemLabel')}
                 </span>
               </div>
@@ -64,7 +64,7 @@ export async function AboutBento() {
               <h3 className="mt-4 text-xl font-extrabold sm:text-2xl" style={{ color: '#EEECE8' }}>
                 {t('about.problemTitle')}
               </h3>
-              <p className="mt-2 text-[0.85rem]" style={{ color: 'rgba(238,236,232,0.5)' }}>
+              <p className="mt-2 text-sm" style={{ color: 'rgba(238,236,232,0.5)' }}>
                 {t('about.problemSubtitle')}
               </p>
 
@@ -91,11 +91,11 @@ export async function AboutBento() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-[0.9rem] font-bold" style={{ color: '#EEECE8' }}>
+                      <h4 className="text-sm font-bold" style={{ color: '#EEECE8' }}>
                         {t(`about.problemItem${i}Title`)}
                       </h4>
                       <p
-                        className="mt-0.5 text-[0.78rem] leading-relaxed"
+                        className="mt-0.5 text-xs leading-relaxed"
                         style={{ color: 'rgba(238,236,232,0.55)' }}
                       >
                         {t(`about.problemItem${i}Desc`)}
@@ -156,14 +156,11 @@ export async function AboutBento() {
                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                   />
                 </svg>
-                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-white">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-white">
                   {t('about.bentoImageTag')}
                 </span>
               </div>
-              <p
-                className="text-[0.8rem] leading-relaxed"
-                style={{ color: 'rgba(238,236,232,0.85)' }}
-              >
+              <p className="text-xs leading-relaxed" style={{ color: 'rgba(238,236,232,0.85)' }}>
                 {t('about.bentoImageDesc')}
               </p>
             </div>
@@ -196,7 +193,7 @@ export async function AboutBento() {
                   aria-hidden="true"
                 />
                 <span
-                  className="text-[0.7rem] font-bold uppercase tracking-widest"
+                  className="text-xs font-bold uppercase tracking-widest"
                   style={{ color: '#A7F3D0' }}
                 >
                   {t('about.solutionLabel')}
@@ -206,7 +203,7 @@ export async function AboutBento() {
               <h3 className="mt-4 text-xl font-extrabold sm:text-2xl">
                 {t('about.solutionTitle')}
               </h3>
-              <p className="mt-2 text-[0.85rem]" style={{ color: 'rgba(167,243,208,0.7)' }}>
+              <p className="mt-2 text-sm" style={{ color: 'rgba(167,243,208,0.7)' }}>
                 {t('about.solutionSubtitle')}
               </p>
 
@@ -232,11 +229,9 @@ export async function AboutBento() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-[0.9rem] font-bold">
-                        {t(`about.solutionItem${i}Title`)}
-                      </h4>
+                      <h4 className="text-sm font-bold">{t(`about.solutionItem${i}Title`)}</h4>
                       <p
-                        className="mt-0.5 text-[0.78rem] leading-relaxed"
+                        className="mt-0.5 text-xs leading-relaxed"
                         style={{ color: 'rgba(255,255,255,0.55)' }}
                       >
                         {t(`about.solutionItem${i}Desc`)}

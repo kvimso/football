@@ -6,8 +6,12 @@ export default async function NotFound() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-      <Link href="/" className="mb-8 text-2xl font-bold text-primary">
-        GFT
+      <Link
+        href="/"
+        className="mb-8 text-2xl font-bold tracking-tight text-primary"
+        style={{ fontFamily: 'var(--font-noto-serif, Georgia, serif)' }}
+      >
+        Binocly
       </Link>
       <div className="text-8xl font-bold text-primary/30">404</div>
       <h1 className="mt-4 text-2xl font-bold text-foreground">{t('notFound.title')}</h1>

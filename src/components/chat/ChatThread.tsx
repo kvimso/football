@@ -725,7 +725,7 @@ export function ChatThread({
                     {msg.id === firstUnreadIdRef.current && (
                       <div className="flex items-center gap-3 px-4 py-2 animate-slide-in-down">
                         <div className="h-px flex-1 bg-primary/50" />
-                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-primary">
+                        <span className="shrink-0 text-[11px] font-medium uppercase tracking-wider text-primary">
                           {t('chat.newMessages')}
                         </span>
                         <div className="h-px flex-1 bg-primary/50" />

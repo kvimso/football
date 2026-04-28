@@ -45,7 +45,7 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
           <div className="flex items-center gap-2">
             <h3 className="truncate text-sm font-semibold text-foreground">{displayName}</h3>
             <span
-              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}
+              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-bold uppercase ${posClasses}`}
             >
               {player.position}
             </span>
@@ -70,7 +70,7 @@ export function PlayerCard({ player, viewCount }: PlayerCardProps) {
 
       {/* Featured badge */}
       {isFeatured && (
-        <span className="mt-2 inline-block rounded-full bg-primary-muted px-2 py-0.5 text-[10px] font-semibold text-primary">
+        <span className="mt-2 inline-block rounded-full bg-primary-muted px-2 py-0.5 text-[11px] font-semibold text-primary">
           {t('players.featured')}
         </span>
       )}

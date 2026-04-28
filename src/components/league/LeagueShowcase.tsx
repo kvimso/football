@@ -73,7 +73,7 @@ export async function LeagueShowcase({ leagues }: Props) {
   const season = leagues[0]?.season ?? ''
 
   return (
-    <section className="py-10 sm:py-14">
+    <section className="pt-[20px] pb-10 sm:pb-14">
       <div className="mx-auto max-w-7xl px-4">
         {/* Section header — editorial split.
             Description copy assumes exactly three active Golden Leagues (U15/U17/U19).

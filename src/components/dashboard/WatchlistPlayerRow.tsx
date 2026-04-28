@@ -127,7 +127,7 @@ export function WatchlistPlayerRow({
               {displayName}
             </Link>
             <span
-              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold uppercase ${posClasses}`}
+              className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-bold uppercase ${posClasses}`}
             >
               {player.position}
             </span>

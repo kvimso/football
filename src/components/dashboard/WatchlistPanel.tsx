@@ -119,7 +119,7 @@ function PanelRow({
         <div className="flex items-center gap-1.5">
           <span className="text-sm font-medium text-foreground truncate">{displayName}</span>
           <span
-            className={`shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase ${posClasses}`}
+            className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-bold uppercase ${posClasses}`}
           >
             {player.position}
           </span>

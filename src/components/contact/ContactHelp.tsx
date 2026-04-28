@@ -100,7 +100,7 @@ export async function ContactHelp() {
             <span className="inline-block h-[2px] w-5 bg-primary" />
           </div>
           <h2
-            className={`text-[1.75rem] font-extrabold tracking-tight ${isKa ? 'font-sans' : ''}`}
+            className={`text-3xl font-extrabold tracking-tight ${isKa ? 'font-sans' : ''}`}
             style={{
               ...(!isKa ? { fontFamily: 'var(--font-noto-serif, var(--font-sans))' } : {}),
               letterSpacing: '-0.02em',
@@ -128,7 +128,7 @@ export async function ContactHelp() {
               </div>
               {/* Text */}
               <div>
-                <h3 className="text-[15px] font-bold text-foreground">{t(tile.titleKey)}</h3>
+                <h3 className="text-base font-bold text-foreground">{t(tile.titleKey)}</h3>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-foreground-secondary">
                   {t(tile.descKey)}
                 </p>
@@ -142,7 +142,7 @@ export async function ContactHelp() {
 
         {/* Partner footer */}
         <div className="mt-12 flex flex-col items-center gap-4 border-t border-border pt-6 sm:flex-row sm:justify-center sm:gap-6">
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground-faint">
+          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground-faint">
             {t('contact.partnersLabel')}
           </span>
           <div className="flex items-center gap-6 opacity-30" aria-hidden="true">

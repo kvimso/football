@@ -144,7 +144,7 @@ export function DashboardSidebar({ unreadCount: initialUnreadCount }: DashboardS
                     <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary" />
                   )}
                 </div>
-                <span className="text-[10px] font-medium">{t(link.labelKey)}</span>
+                <span className="text-[11px] font-medium">{t(link.labelKey)}</span>
               </Link>
             )
           })}

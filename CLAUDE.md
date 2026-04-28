@@ -534,3 +534,25 @@ NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 
 ### Auth Guards
 - **Do not bypass platform admin auth guards** — `platform_admin` role exists with full `/platform/*` admin routes; always use `getPlatformAdminContext()` for authorization
+
+---
+
+## Visual Companion (superpowers brainstorming)
+
+When using the visual companion during UI brainstorming:
+
+- **Always build whole-page mockups** (nav + content + footer). No isolated component fragments — Andria needs full-page context to judge designs.
+- **Multi-variant comparisons get in-page navigation.** If you're showing two or more design options, embed tab/arrow buttons inside the mockup itself that swap the body via JS `onclick` handlers. One HTML file, one URL — he flips between variants without waiting for a new screen.
+- Use real project tokens (cream `#FDFCFA`, green `#1B8A4A`, etc.) and real copy where possible — placeholders hide problems.
+
+---
+
+## Have in Mind (pre-launch checklist)
+
+`Haveinmind.md` (project root) is a running list of decisions and setup steps **deferred during development** that MUST be resolved before Binocly ships to production — domain purchase, env wiring, email sender setup, final pricing, etc.
+
+**Claude's responsibility:**
+
+- Any time a discussion reaches a "we'll deal with that later" or "not yet" point on a launch-blocking item, **append a new section to `Haveinmind.md`** with status + what to do + why deferred.
+- Before claiming a feature "complete" or before final-launch work, **remind Andria to review `Haveinmind.md`** — unresolved items there likely block shipping.
+- Keep entries dated and concrete (links, file paths, exact addresses) so future-Andria can act without re-research.

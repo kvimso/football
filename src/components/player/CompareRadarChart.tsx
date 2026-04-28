@@ -144,7 +144,7 @@ export function CompareRadarChart({
               y={y}
               textAnchor="middle"
               dominantBaseline="central"
-              className="text-[10px] fill-foreground-muted font-medium"
+              className="text-[11px] fill-foreground-muted font-medium"
             >
               {label}
             </text>

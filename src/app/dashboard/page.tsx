@@ -51,7 +51,7 @@ export default async function DashboardPage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-foreground">{t('dashboard.leaguesSection')}</h2>
-          <Link href="/leagues" className="text-sm text-primary hover:underline">
+          <Link href="/app/leagues" className="text-sm text-primary hover:underline">
             {t('dashboard.viewAllLeagues')}
           </Link>
         </div>

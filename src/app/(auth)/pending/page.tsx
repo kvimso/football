@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 import type { DemoRequestSummary } from '@/lib/types'
 
 export const metadata: Metadata = {
-  title: 'Pending Approval | GFT',
+  title: 'Pending Approval | Binocly',
 }
 
 export default async function PendingPage() {
